@@ -1078,6 +1078,7 @@ fn highlight(line: &str, lang: Option<Lang>, st: &mut HlState) -> Vec<Span<'stat
 
 /// Light styling for plain-text pages: first line bold, section headers accent, `≈` dim.
 fn style_page(text: &str) -> Vec<Line<'static>> {
+    let text = text.replace('`', "");
     text.lines()
         .enumerate()
         .map(|(n, l)| {
@@ -1202,7 +1203,8 @@ mod snapshot {
         let root = std::env::var("ROOT").map(std::path::PathBuf::from).unwrap_or_else(|_| std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."));
         let ws = Workspace::open(&root).unwrap();
         let mut app = App::new(&ws).unwrap();
-        let mut term = Terminal::new(TestBackend::new(130, 34)).unwrap();
+        let size = |k: &str, d: u16| std::env::var(k).ok().and_then(|v| v.parse().ok()).unwrap_or(d);
+        let mut term = Terminal::new(TestBackend::new(size("COLS", 130), size("ROWS", 34))).unwrap();
         let keys = std::env::var("KEYS").unwrap_or_default();
         for c in keys.chars() {
             let code = match c {
@@ -1216,5 +1218,85 @@ mod snapshot {
         }
         term.draw(|f| app.draw(f)).unwrap();
         println!("{}", dump(&term));
+        if let Ok(out) = std::env::var("SVG") {
+            std::fs::write(out, svg(&term)).unwrap();
+        }
+    }
+
+    /// The screen as an SVG "screenshot" (for the README): one text run per
+    /// same-styled stretch, background rects, a terminal-like frame.
+    fn svg(term: &Terminal<TestBackend>) -> String {
+        use ratatui::style::{Color, Modifier};
+        let buf = term.backend().buffer();
+        let (cw, ch) = (8.4_f64, 18.0_f64);
+        let (pad, bar) = (14.0, 30.0);
+        let w = buf.area.width as f64 * cw + 2.0 * pad;
+        let h = buf.area.height as f64 * ch + 2.0 * pad + bar;
+        let bg = "#16191f";
+        let fg_default = "#d7dae0";
+        let col = |c: Color, fallback: &str| -> String {
+            match c {
+                Color::Reset => fallback.into(),
+                Color::Black => "#16191f".into(),
+                Color::Red => "#ef6b73".into(),
+                Color::Green => "#8bd17c".into(),
+                Color::Yellow => "#e8c36a".into(),
+                Color::Blue => "#6aa8f0".into(),
+                Color::Magenta => "#c792ea".into(),
+                Color::Cyan => "#5fd3d3".into(),
+                Color::Gray => "#a9b1bd".into(),
+                Color::DarkGray => "#6b7380".into(),
+                Color::White => "#f2f4f7".into(),
+                Color::Rgb(r, g, b) => format!("#{r:02x}{g:02x}{b:02x}"),
+                _ => fallback.into(),
+            }
+        };
+        let esc = |s: &str| s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;");
+        let mut out = format!(
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{w}\" height=\"{h}\" viewBox=\"0 0 {w} {h}\" font-family=\"ui-monospace, SFMono-Regular, Menlo, Consolas, monospace\" font-size=\"13.5\">\n\
+             <rect width=\"{w}\" height=\"{h}\" rx=\"10\" fill=\"{bg}\"/>\n\
+             <circle cx=\"22\" cy=\"15\" r=\"5.5\" fill=\"#ff5f57\"/><circle cx=\"40\" cy=\"15\" r=\"5.5\" fill=\"#febc2e\"/><circle cx=\"58\" cy=\"15\" r=\"5.5\" fill=\"#28c840\"/>\n"
+        );
+        for y in 0..buf.area.height {
+            let ty = pad + bar + y as f64 * ch;
+            let mut x = 0;
+            while x < buf.area.width {
+                let c0 = &buf[(x, y)];
+                let (f0, b0, m0) = (c0.fg, c0.bg, c0.modifier);
+                let mut text = String::new();
+                let start = x;
+                while x < buf.area.width {
+                    let c = &buf[(x, y)];
+                    if c.fg != f0 || c.bg != b0 || c.modifier != m0 {
+                        break;
+                    }
+                    text.push_str(c.symbol());
+                    x += 1;
+                }
+                let n = (x - start) as f64;
+                let px = pad + start as f64 * cw;
+                let reversed = m0.contains(Modifier::REVERSED);
+                let (mut fgc, mut bgc) = (col(f0, fg_default), if b0 == Color::Reset { String::new() } else { col(b0, bg) });
+                if reversed {
+                    (fgc, bgc) = (if b0 == Color::Reset { bg.into() } else { col(b0, bg) }, col(f0, fg_default));
+                }
+                if !bgc.is_empty() {
+                    out.push_str(&format!("<rect x=\"{px:.1}\" y=\"{:.1}\" width=\"{:.1}\" height=\"{ch}\" fill=\"{bgc}\"/>", ty, n * cw));
+                }
+                if text.trim().is_empty() {
+                    continue;
+                }
+                let weight = if m0.contains(Modifier::BOLD) { " font-weight=\"700\"" } else { "" };
+                let italic = if m0.contains(Modifier::ITALIC) { " font-style=\"italic\"" } else { "" };
+                out.push_str(&format!(
+                    "<text x=\"{px:.1}\" y=\"{:.1}\" fill=\"{fgc}\"{weight}{italic} textLength=\"{:.1}\" lengthAdjust=\"spacingAndGlyphs\" xml:space=\"preserve\">{}</text>\n",
+                    ty + ch * 0.74,
+                    n * cw,
+                    esc(&text)
+                ));
+            }
+        }
+        out.push_str("</svg>\n");
+        out
     }
 }

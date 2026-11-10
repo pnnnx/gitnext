@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "gitnext": {
+      "args": [
+        "mcp"
+      ],
+      "command": "gitnext"
+    }
+  }
+}

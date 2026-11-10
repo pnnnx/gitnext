@@ -1,0 +1,303 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="634" viewBox="0 0 1120 634" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" xmlns:c2pa="http://c2pa.org/manifest">
+<rect width="1120" height="634" rx="10" fill="#16191f"/>
+<circle cx="22" cy="15" r="5.5" fill="#ff5f57"/><circle cx="40" cy="15" r="5.5" fill="#febc2e"/><circle cx="58" cy="15" r="5.5" fill="#28c840"/>
+<text x="14.0" y="57.3" fill="#5fd3d3" font-weight="700" textLength="75.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> gitnext </text>
+<text x="89.6" y="57.3" fill="#d7dae0" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">· </text>
+<text x="106.4" y="57.3" fill="#d7dae0" font-weight="700" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">tp</text>
+<text x="123.2" y="57.3" fill="#6b7380" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> · </text>
+<text x="148.4" y="57.3" fill="#d7dae0" textLength="33.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">main</text>
+<text x="182.0" y="57.3" fill="#6b7380" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> · </text>
+<text x="207.2" y="57.3" fill="#e8c36a" textLength="75.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">9 changed</text>
+<text x="694.4" y="57.3" fill="#6b7380" textLength="411.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">30 code files · 146 functions and types   ? help </text>
+<text x="14.0" y="75.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">╭</text>
+<text x="22.4" y="75.3" fill="#a9b1bd" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> files </text>
+<text x="81.2" y="75.3" fill="#6b7380" textLength="218.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">─────────────────────────╮</text>
+<text x="299.6" y="75.3" fill="#5fd3d3" textLength="302.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">╭ symbols · 11 ────────────────────╮</text>
+<text x="602.0" y="75.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">╭</text>
+<text x="610.4" y="75.3" fill="#a9b1bd" textLength="67.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> detail </text>
+<text x="677.6" y="75.3" fill="#6b7380" textLength="428.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">──────────────────────────────────────────────────╮</text>
+<text x="14.0" y="93.3" fill="#6b7380" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│▾ </text>
+<text x="39.2" y="93.3" fill="#d7dae0" font-weight="700" textLength="50.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">crates</text>
+<text x="89.6" y="93.3" fill="#e8c36a" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> ●</text>
+<text x="291.2" y="93.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="93.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="308.0" y="93.3" fill="#6b7380" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">struct </text>
+<text x="366.8" y="93.3" fill="#d7dae0" textLength="226.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">FileStore                  </text>
+<text x="593.6" y="93.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="93.3" fill="#6b7380" textLength="33.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│fn </text>
+<text x="635.6" y="93.3" fill="#d7dae0" font-weight="700" textLength="126.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">FileStore::open</text>
+<text x="1097.6" y="93.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="111.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="39.2" y="111.3" fill="#6b7380" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">▸ </text>
+<text x="56.0" y="111.3" fill="#d7dae0" font-weight="700" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">cli</text>
+<text x="291.2" y="111.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="111.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<rect x="308.0" y="98.0" width="285.6" height="18" fill="#5fd3d3"/><text x="308.0" y="111.3" fill="#16191f" font-weight="700" textLength="285.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">  fn     open                     </text>
+<text x="593.6" y="111.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="111.3" fill="#6b7380" textLength="386.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│crates/core/src/storage/file.rs · lines 19–28</text>
+<text x="1097.6" y="111.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="129.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="39.2" y="129.3" fill="#6b7380" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">▾ </text>
+<text x="56.0" y="129.3" fill="#d7dae0" font-weight="700" textLength="33.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">core</text>
+<text x="89.6" y="129.3" fill="#e8c36a" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> ●</text>
+<text x="291.2" y="129.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="129.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="324.8" y="129.3" fill="#6b7380" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">fn     </text>
+<text x="383.6" y="129.3" fill="#d7dae0" textLength="210.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">save                     </text>
+<text x="593.6" y="129.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="129.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="1097.6" y="129.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="147.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="56.0" y="147.3" fill="#6b7380" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">▾ </text>
+<text x="72.8" y="147.3" fill="#d7dae0" font-weight="700" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">src</text>
+<text x="98.0" y="147.3" fill="#e8c36a" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> ●</text>
+<text x="291.2" y="147.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="147.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="324.8" y="147.3" fill="#6b7380" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">fn     </text>
+<text x="383.6" y="147.3" fill="#d7dae0" textLength="210.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">get                      </text>
+<text x="593.6" y="147.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="147.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="610.4" y="147.3" fill="#d7dae0" font-style="italic" textLength="243.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">Open (or create) a task file.</text>
+<text x="1097.6" y="147.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="165.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="72.8" y="165.3" fill="#6b7380" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">▾ </text>
+<text x="89.6" y="165.3" fill="#d7dae0" font-weight="700" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">storage</text>
+<text x="291.2" y="165.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="165.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="324.8" y="165.3" fill="#6b7380" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">fn     </text>
+<text x="383.6" y="165.3" fill="#d7dae0" textLength="210.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">all                      </text>
+<text x="593.6" y="165.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="165.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="1097.6" y="165.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="183.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<rect x="22.4" y="170.0" width="67.2" height="18" fill="#d7dae0"/><rect x="89.6" y="170.0" width="16.8" height="18" fill="#6b7380"/><rect x="106.4" y="170.0" width="184.8" height="18" fill="#d7dae0"/><text x="106.4" y="183.3" fill="#16191f" textLength="184.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">file.rs               </text>
+<text x="291.2" y="183.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="183.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="324.8" y="183.3" fill="#6b7380" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">fn     </text>
+<text x="383.6" y="183.3" fill="#d7dae0" textLength="210.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">delete                   </text>
+<text x="593.6" y="183.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="183.3" fill="#6b7380" textLength="100.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│  takes    </text>
+<text x="702.8" y="183.3" fill="#e8c36a" font-weight="700" textLength="50.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">path  </text>
+<text x="753.2" y="183.3" fill="#e8c36a" textLength="134.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">impl AsRef&lt;Path&gt;</text>
+<text x="1097.6" y="183.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="201.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="106.4" y="201.3" fill="#d7dae0" textLength="184.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">memory.rs             </text>
+<text x="291.2" y="201.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="201.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="324.8" y="201.3" fill="#6b7380" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">fn     </text>
+<text x="383.6" y="201.3" fill="#d7dae0" textLength="210.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">flush                    </text>
+<text x="593.6" y="201.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="201.3" fill="#6b7380" textLength="117.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│  returns  → </text>
+<text x="719.6" y="201.3" fill="#8bd17c" font-weight="700" textLength="100.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">Result&lt;Self&gt;</text>
+<text x="1097.6" y="201.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="219.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="106.4" y="219.3" fill="#d7dae0" textLength="184.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">mod.rs                </text>
+<text x="291.2" y="219.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="219.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="324.8" y="219.3" fill="#6b7380" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">fn     </text>
+<text x="383.6" y="219.3" fill="#d7dae0" textLength="210.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">is_dirty                 </text>
+<text x="593.6" y="219.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="219.3" fill="#6b7380" textLength="428.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│  signature pub fn open(path: impl AsRef&lt;Path&gt;) -&gt;</text>
+<text x="1097.6" y="219.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="237.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="89.6" y="237.3" fill="#d7dae0" textLength="201.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">error.rs                </text>
+<text x="291.2" y="237.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="237.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="308.0" y="237.3" fill="#6b7380" textLength="151.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">fn     format_line</text>
+<text x="593.6" y="237.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="237.3" fill="#6b7380" textLength="109.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│Result&lt;Self&gt;</text>
+<text x="1097.6" y="237.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="255.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="89.6" y="255.3" fill="#d7dae0" textLength="201.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">export.rs               </text>
+<text x="291.2" y="255.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="255.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="308.0" y="255.3" fill="#6b7380" textLength="151.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">fn     parse_lines</text>
+<text x="593.6" y="255.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="255.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="1097.6" y="255.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="273.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="89.6" y="273.3" fill="#d7dae0" textLength="201.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">lib.rs                  </text>
+<text x="291.2" y="273.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="273.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="308.0" y="273.3" fill="#6b7380" textLength="142.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">fn     parse_line</text>
+<text x="593.6" y="273.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="273.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="610.4" y="273.3" fill="#c792ea" textLength="109.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">← called by 1</text>
+<text x="1097.6" y="273.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="291.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="89.6" y="291.3" fill="#d7dae0" textLength="67.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">model.rs</text>
+<text x="156.8" y="291.3" fill="#e8c36a" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> ●</text>
+<text x="291.2" y="291.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="291.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="291.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="291.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="610.4" y="291.3" fill="#d7dae0" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">  run  </text>
+<text x="669.2" y="291.3" fill="#6b7380" textLength="109.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">commands.rs:9</text>
+<text x="1097.6" y="291.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="309.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="89.6" y="309.3" fill="#d7dae0" textLength="201.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">query.rs                </text>
+<text x="291.2" y="309.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="309.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="309.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="309.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="1097.6" y="309.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="327.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="89.6" y="327.3" fill="#d7dae0" textLength="201.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">sync.rs                 </text>
+<text x="291.2" y="327.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="327.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="327.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="327.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="610.4" y="327.3" fill="#c792ea" textLength="75.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">→ calls 2</text>
+<text x="1097.6" y="327.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="345.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="56.0" y="345.3" fill="#6b7380" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">▸ </text>
+<text x="72.8" y="345.3" fill="#d7dae0" font-weight="700" textLength="42.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">tests</text>
+<text x="291.2" y="345.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="345.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="345.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="345.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="610.4" y="345.3" fill="#d7dae0" textLength="126.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">  parse_lines  </text>
+<text x="736.4" y="345.3" fill="#6b7380" textLength="84.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">file.rs:74</text>
+<text x="1097.6" y="345.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="363.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="72.8" y="363.3" fill="#d7dae0" textLength="218.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">Cargo.toml                </text>
+<text x="291.2" y="363.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="363.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="363.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="363.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="610.4" y="363.3" fill="#d7dae0" textLength="126.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">  with_tasks   </text>
+<text x="736.4" y="363.3" fill="#6b7380" textLength="100.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">memory.rs:21</text>
+<text x="1097.6" y="363.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="381.3" fill="#6b7380" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│▸ </text>
+<text x="39.2" y="381.3" fill="#d7dae0" font-weight="700" textLength="50.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">native</text>
+<text x="291.2" y="381.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="381.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="381.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="381.3" fill="#6b7380" textLength="487.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│  outside this repo: .as_ref, .into, .kind, .to_path_buf,</text>
+<text x="1097.6" y="381.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="399.3" fill="#6b7380" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│▸ </text>
+<text x="39.2" y="399.3" fill="#d7dae0" font-weight="700" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">py</text>
+<text x="56.0" y="399.3" fill="#e8c36a" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> ●</text>
+<text x="291.2" y="399.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="399.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="399.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="399.3" fill="#6b7380" textLength="386.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│Err, Ok, String::new, std::fs::read_to_string</text>
+<text x="1097.6" y="399.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="417.3" fill="#6b7380" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│▸ </text>
+<text x="39.2" y="417.3" fill="#d7dae0" font-weight="700" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">scripts</text>
+<text x="291.2" y="417.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="417.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="417.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="417.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="1097.6" y="417.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="435.3" fill="#6b7380" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│  </text>
+<text x="39.2" y="435.3" fill="#d7dae0" textLength="75.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">AGENTS.md</text>
+<text x="114.8" y="435.3" fill="#e8c36a" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> ●</text>
+<text x="291.2" y="435.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="435.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="435.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="435.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="610.4" y="435.3" fill="#c792ea" textLength="117.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">→ uses types 2</text>
+<text x="1097.6" y="435.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="453.3" fill="#6b7380" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│  </text>
+<text x="39.2" y="453.3" fill="#d7dae0" textLength="252.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">Cargo.lock                    </text>
+<text x="291.2" y="453.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="453.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="453.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="453.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="610.4" y="453.3" fill="#d7dae0" textLength="109.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">  Result     </text>
+<text x="719.6" y="453.3" fill="#6b7380" textLength="92.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">error.rs:17</text>
+<text x="1097.6" y="453.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="471.3" fill="#6b7380" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│  </text>
+<text x="39.2" y="471.3" fill="#d7dae0" textLength="252.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">Cargo.toml                    </text>
+<text x="291.2" y="471.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="471.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="471.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="471.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="610.4" y="471.3" fill="#d7dae0" textLength="109.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">  FileStore  </text>
+<text x="719.6" y="471.3" fill="#6b7380" textLength="84.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">file.rs:11</text>
+<text x="1097.6" y="471.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="489.3" fill="#6b7380" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│  </text>
+<text x="39.2" y="489.3" fill="#d7dae0" textLength="252.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">README.md                     </text>
+<text x="291.2" y="489.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="489.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="489.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="489.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="1097.6" y="489.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="507.3" fill="#6b7380" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│  </text>
+<text x="39.2" y="507.3" fill="#d7dae0" textLength="252.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">TESTING.md                    </text>
+<text x="291.2" y="507.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="507.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="507.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="507.3" fill="#6b7380" textLength="42.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│code</text>
+<text x="1097.6" y="507.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="525.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="291.2" y="525.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="525.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="525.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="525.3" fill="#6b7380" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│  19  </text>
+<text x="694.4" y="525.3" fill="#c792ea" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">pub</text>
+<text x="728.0" y="525.3" fill="#c792ea" textLength="16.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">fn</text>
+<text x="753.2" y="525.3" fill="#6aa8f0" textLength="33.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">open</text>
+<text x="786.8" y="525.3" fill="#d7dae0" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">(path: </text>
+<text x="845.6" y="525.3" fill="#c792ea" textLength="33.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">impl</text>
+<text x="887.6" y="525.3" fill="#5fd3d3" textLength="42.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">AsRef</text>
+<text x="929.6" y="525.3" fill="#d7dae0" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">&lt;</text>
+<text x="938.0" y="525.3" fill="#5fd3d3" textLength="33.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">Path</text>
+<text x="971.6" y="525.3" fill="#d7dae0" textLength="126.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">&gt;) -&gt;          </text>
+<text x="1097.6" y="525.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="543.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="291.2" y="543.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="543.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="543.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="543.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="610.4" y="543.3" fill="#5fd3d3" textLength="50.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">Result</text>
+<text x="660.8" y="543.3" fill="#d7dae0" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">&lt;</text>
+<text x="669.2" y="543.3" fill="#c792ea" textLength="33.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">Self</text>
+<text x="702.8" y="543.3" fill="#d7dae0" textLength="394.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">&gt; {                                            </text>
+<text x="1097.6" y="543.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="561.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="291.2" y="561.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="561.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="561.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="561.3" fill="#6b7380" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│  20  </text>
+<text x="728.0" y="561.3" fill="#c792ea" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">let</text>
+<text x="753.2" y="561.3" fill="#d7dae0" textLength="109.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> path = path.</text>
+<text x="862.4" y="561.3" fill="#6aa8f0" textLength="50.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">as_ref</text>
+<text x="912.8" y="561.3" fill="#d7dae0" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">().</text>
+<text x="938.0" y="561.3" fill="#6aa8f0" textLength="92.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">to_path_buf</text>
+<text x="1030.4" y="561.3" fill="#d7dae0" textLength="67.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">();     </text>
+<text x="1097.6" y="561.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="579.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="291.2" y="579.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="299.6" y="579.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="593.6" y="579.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="602.0" y="579.3" fill="#6b7380" textLength="58.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│  21  </text>
+<text x="728.0" y="579.3" fill="#c792ea" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">let</text>
+<text x="753.2" y="579.3" fill="#d7dae0" textLength="67.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> text = </text>
+<text x="820.4" y="579.3" fill="#c792ea" textLength="42.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">match</text>
+<text x="1097.6" y="579.3" fill="#6b7380" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">│</text>
+<text x="14.0" y="597.3" fill="#6b7380" textLength="285.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve">╰────────────────────────────────╯</text>
+<text x="299.6" y="597.3" fill="#5fd3d3" textLength="302.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">╰──────────────────────────────────╯</text>
+<text x="602.0" y="597.3" fill="#6b7380" textLength="504.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve">╰──────────────────────────────────────────────────────────╯</text>
+<text x="22.4" y="615.3" fill="#5fd3d3" textLength="50.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">ctrl-p</text>
+<text x="72.8" y="615.3" fill="#6b7380" textLength="134.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> all commands   </text>
+<text x="207.2" y="615.3" fill="#5fd3d3" textLength="25.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve">tab</text>
+<text x="232.4" y="615.3" fill="#6b7380" textLength="67.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> pane   </text>
+<text x="299.6" y="615.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">/</text>
+<text x="308.0" y="615.3" fill="#6b7380" textLength="84.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> search   </text>
+<text x="392.0" y="615.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">s</text>
+<text x="400.4" y="615.3" fill="#6b7380" textLength="92.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> changes   </text>
+<text x="492.8" y="615.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">c</text>
+<text x="501.2" y="615.3" fill="#6b7380" textLength="84.0" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> commit   </text>
+<text x="585.2" y="615.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">B</text>
+<text x="593.6" y="615.3" fill="#6b7380" textLength="100.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> branches   </text>
+<text x="694.4" y="615.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">U</text>
+<text x="702.8" y="615.3" fill="#6b7380" textLength="67.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> undo   </text>
+<text x="770.0" y="615.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">o</text>
+<text x="778.4" y="615.3" fill="#6b7380" textLength="100.8" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> overview   </text>
+<text x="879.2" y="615.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">a</text>
+<text x="887.6" y="615.3" fill="#6b7380" textLength="75.6" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> agent   </text>
+<text x="963.2" y="615.3" fill="#5fd3d3" textLength="8.4" lengthAdjust="spacingAndGlyphs" xml:space="preserve">q</text>
+<text x="971.6" y="615.3" fill="#6b7380" textLength="67.2" lengthAdjust="spacingAndGlyphs" xml:space="preserve"> quit   </text>
+<metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTpkMWE5M2QxNi1mZGM2LTRhY2ItOTMxMy1iYjYwNTMzYjBkMWMAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaD34ELfMuNCMi6nDItscQ+sAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDpmOTM0ZjQyYS1jNzM0LTQ1ZmQtYWZiZC1iNWYxMGQwNTM4NGNscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNo+tOTMSsSzw5OiZO8b7tPDQAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggoJ5IBjWm2Et+RvqRetCgf1LjqTgk8OM19zxzV7Ecp4ukZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaJmmZZzPn0MrgLooPZkotgQAAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIBFIZhigqjBXQZovuO7d0zMlRruAlOTs6ggD7AyX63nXZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GZrNZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOmQxYTkzZDE2LWZkYzYtNGFjYi05MzEzLWJiNjA1MzNiMGQxYy9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOmIyNTMwMWZjLWM3ZGEtNDdkZi1iNzM5LWNlZDBjN2QyNjkzNHJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCCgnkgGNabYS35G+pF60KB/UuOpOCTw4zX3PHNXsRyni6JjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggQu+cCKxICuta0U9Q1Wn7+GP8YL1W45DtT1hK2/S03YuiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggYg/cMWvR61DrI78VWCVKPuvWMXuWVX71Gn9KRsFZ7vx0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQGlWu02tYFa8swz/QdIu9ArFUehGqmM4U3SmJoSXPF3rOCOE/U9vtJj0I4cXIBxrOsH8Mjz90u3d+wXPjTjaVqo=</c2pa:manifest></metadata></svg>
