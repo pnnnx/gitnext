@@ -57,6 +57,8 @@ fn tools() -> Value {
                 "inputSchema": { "type": "object", "properties": props, "required": req } })
     };
     json!([
+        tool("look", "Use this first. One call answers whatever you need next. what = a function/class/method name → its code, who calls it, what it calls, the tests that reach it with the command to run them, and what a change would affect; a file or folder → every signature with line numbers; an error/traceback → the code where it happened; words → where they appear. Pass several targets at once to save steps.",
+             json!({ "what": { "type": "string" }, "targets": { "type": "array", "items": { "type": "string" }, "description": "several targets in one call" } }), &[]),
         tool("overview", "Start here in an unfamiliar repo: languages, areas with purposes, entry points (main, routes, CLI commands), area dependencies, recent activity, hotspots, health — one screen.",
              json!({}), &[]),
         tool("brief", "Resuming work? Branch, uncommitted symbol changes, what the last agent session edited and looked at, recent commits — a few hundred tokens.",
@@ -172,7 +174,12 @@ impl Server {
                 }
                 let mut ids = Vec::new();
                 for q in &list {
-                    ids.extend(find_many(g, q)?);
+                    let found = find_many(g, q)?;
+                    let first = &g.syms[found[0]].sym.qualified;
+                    if found.iter().any(|&i| &g.syms[i].sym.qualified != first) {
+                        return Err(format!("{}name one of them, e.g. {}", render::candidates(g, q, &found), g.short_name(found[0])));
+                    }
+                    ids.extend(found);
                 }
                 let force = a.get("force").and_then(Value::as_bool).unwrap_or(false);
                 let mut out = String::new();
@@ -290,8 +297,15 @@ impl Server {
             }
             "brief" => agents::brief(&self.ws, g),
             "look" => {
-                let what = any_str(a, &["what", "path", "symbol", "name", "query", "text"]).unwrap_or("").trim().to_string();
-                self.look(&what)?
+                let targets: Vec<String> = match a.get("targets").or_else(|| a.get("what")) {
+                    Some(Value::Array(v)) => v.iter().filter_map(|x| x.as_str().map(str::to_string)).collect(),
+                    _ => vec![any_str(a, &["what", "path", "symbol", "name", "query", "text"]).unwrap_or("").trim().to_string()],
+                };
+                if targets.len() > 1 {
+                    gitnext_ops::look::look_many(&self.ws, &self.graph, &targets, self.profile == Profile::Lite)
+                } else {
+                    self.look(&targets[0])?
+                }
             }
             "replace" | "add_after" => {
                 let q = any_str(a, &["symbol", "name", "function"]).ok_or("give `symbol`")?;
@@ -315,114 +329,9 @@ impl Server {
 }
 
 impl Server {
-    /// `look`: one entry point for small models. Decides by the shape of `what`.
+    /// `look`: one call for any target; shared with `gitnext look`.
     fn look(&mut self, what: &str) -> Result<String, String> {
-        let g = &self.graph;
-        let root = self.ws.root.clone();
-        let opts = Opts::default();
-        if what.is_empty() || what == "." || what == "/" {
-            let mut s = gitnext_ops::insight::overview(self.ws.repo.as_ref(), g, &root);
-            s.push_str("next: look at a folder or file from above\n");
-            return Ok(s);
-        }
-        // an error / traceback
-        let errorish = what.contains('\n') && (what.contains("Traceback") || what.contains("Error") || what.contains("error") || what.contains("panicked") || what.contains("FAILED"));
-        if errorish || what.starts_with("Traceback") {
-            let s = gitnext_ops::locate::render_locate(g, &root, what, true);
-            if !s.starts_with("no repo locations") {
-                return Ok(s);
-            }
-        }
-        // a file or folder (exact, or a unique file name like `utils.py`)
-        let p = what.trim_start_matches("./").trim_end_matches('/');
-        let file = g.files.iter().find(|f| f.path == p).map(|f| f.path.clone()).or_else(|| {
-            let v: Vec<&str> = g.files.iter().filter(|f| f.path.ends_with(&format!("/{p}"))).map(|f| f.path.as_str()).collect();
-            (v.len() == 1).then(|| v[0].to_string())
-        });
-        if let Some(f) = file {
-            let parsed = g.files.iter().any(|x| x.path == f && x.parsed);
-            if parsed {
-                let mut s = render::outline(g, &root, &f, opts);
-                s.push_str("next: look(\"<name>\") shows one function's code; replace(symbol, code) changes it\n");
-                return Ok(s);
-            }
-            let text = std::fs::read_to_string(root.join(&f)).map_err(|e| e.to_string())?;
-            return Ok(agents::cap_tokens(&text, 1200));
-        }
-        let is_dir = g.files.iter().any(|f| f.path.starts_with(&format!("{p}/")));
-        if is_dir {
-            let mut s = render::outline(g, &root, p, opts);
-            if s.trim().is_empty() || s.starts_with("no parsed") {
-                s = render::deps(g, p);
-            }
-            s.push_str("next: look(\"<file>\") for every function in a file\n");
-            return Ok(s);
-        }
-        // a symbol (also "class Foo", "def bar", "function baz")
-        let bare = what
-            .split_whitespace()
-            .collect::<Vec<_>>();
-        let what = match bare.as_slice() {
-            [kw, name] if matches!(*kw, "class" | "def" | "fn" | "function" | "func" | "struct" | "method" | "trait" | "enum" | "type") => *name,
-            _ => what,
-        };
-        let what = what.trim_end_matches("()").trim_end_matches(':');
-        let ids = g.find(what);
-        if !ids.is_empty() {
-            let first = g.syms[ids[0]].sym.qualified.clone();
-            let same = ids.iter().all(|&i| g.syms[i].sym.qualified == first);
-            if ids.len() <= 2 || same {
-                let mut s = render::read(g, &root, &ids);
-                let callers: Vec<String> = g.callers(ids[0]).into_iter().filter(|(c, _)| !g.syms[*c].sym.test).take(6).map(|(c, l)| format!("{} ({}:{l})", g.short_name(c), g.syms[c].file)).collect();
-                if !callers.is_empty() {
-                    s.push_str(&format!("called by: {}\n", callers.join(", ")));
-                }
-                s.push_str(&format!("to change it: replace(symbol=\"{}\", code=<whole new definition>)\n", g.short_name(ids[0])));
-                return Ok(s);
-            }
-            let mut s = format!("{} things are called `{what}` — look at one of them:\n", ids.len());
-            for &i in ids.iter().take(12) {
-                let r = &g.syms[i];
-                s.push_str(&format!("  {} ({}) {}:{}\n", g.short_name(i), r.sym.kind.as_str(), r.file, r.sym.start_line));
-            }
-            return Ok(s);
-        }
-        // words: symbols by name/doc, then plain text
-        let hits = g.search(what, 10);
-        let mut s = String::new();
-        if !hits.is_empty() {
-            s.push_str("functions and classes:\n");
-            for i in hits {
-                let r = &g.syms[i];
-                let sum = r.sym.summary.as_deref().map(|x| format!(" — {x}")).unwrap_or_default();
-                s.push_str(&format!("  {} ({}) {}:{}{sum}\n", g.short_name(i), r.sym.kind.as_str(), r.file, r.sym.start_line));
-            }
-        }
-        let low = what.to_lowercase();
-        let mut text_hits = Vec::new();
-        for f in g.files.iter().filter(|f| f.lines < 20_000) {
-            let Ok(t) = std::fs::read_to_string(root.join(&f.path)) else { continue };
-            for (n, line) in t.lines().enumerate() {
-                if line.to_lowercase().contains(&low) {
-                    text_hits.push(format!("  {}:{}: {}", f.path, n + 1, line.trim().chars().take(120).collect::<String>()));
-                    if text_hits.len() >= 15 {
-                        break;
-                    }
-                }
-            }
-            if text_hits.len() >= 15 {
-                break;
-            }
-        }
-        if !text_hits.is_empty() {
-            s.push_str("text:\n");
-            s.push_str(&text_hits.join("\n"));
-            s.push('\n');
-        }
-        if s.is_empty() {
-            s = format!("nothing found for `{what}`. Try a file name, a function name or other words; look(\".\") shows the whole project\n");
-        }
-        Ok(s)
+        Ok(gitnext_ops::look::look(&self.ws, &self.graph, what, self.profile == Profile::Lite))
     }
 
     /// Record the call in .gitnext/journal.jsonl with a token-savings estimate.
@@ -558,7 +467,7 @@ fn handle(server: &mut Server, msg: &Value) -> Option<Value> {
                 "serverInfo": { "name": "gitnext", "version": env!("CARGO_PKG_VERSION") },
                 "instructions": match server.profile {
                     Profile::Lite => "Code tools: look(what) for any file, function, error or words; replace / add_after to change code. Don't read whole files.",
-                    Profile::Full => "Code navigation and editing for this repository. New here? overview. Then cheapest first: map(dir) → outline(path) → read(symbols). \
+                    Profile::Full => "Code navigation and editing for this repository. Start with look: one call gives a symbol's code, callers, callees, tests and impact (pass several targets at once). New here? overview. \
                                  Edit with replace_symbol / insert_after / rename_symbol instead of rewriting files. \
                                  Use impact / tests_for before changing signatures; locate turns errors into code. \
                                  Resuming? brief, then changes. After understanding undocumented code, annotate it. Output is compact text with file:line locations.",

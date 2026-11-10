@@ -104,8 +104,8 @@ edges:
   L45 calls python::store::JsonBackend::load -> json::load
   L50 calls python::store::JsonBackend::save -> open
   L51 calls python::store::JsonBackend::save -> json::dump
-  L52 calls python::store::JsonBackend::save -> events::emit
   L52 calls python::store::JsonBackend::save -> len
+  L52 calls python::store::JsonBackend::save -> python::events::emit
   L56 calls python::store::JsonBackend::size -> Self::load
   L56 calls python::store::JsonBackend::size -> len
   L59 uses python::store::JsonBackend::default -> JsonBackend

@@ -17,6 +17,7 @@ pub mod history;
 pub mod insight;
 pub mod journal;
 pub mod locate;
+pub mod look;
 pub mod lsp;
 pub mod render;
 

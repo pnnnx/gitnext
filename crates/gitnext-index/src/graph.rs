@@ -21,7 +21,7 @@ pub struct Graph {
     visible: HashMap<String, HashSet<String>>,
     dir_graph: OnceLock<HashMap<String, BTreeMap<String, usize>>>,
     /// target symbol → (referring symbol, edge kind, line); built lazily from all edges.
-    rev: OnceLock<RevIndex>,
+    rev: OnceLock<(RevIndex, Guesses)>,
     short: OnceLock<Vec<String>>,
     /// Inferred purposes of directories (`dir:<path>` notes).
     pub dir_notes: HashMap<String, String>,
@@ -31,6 +31,9 @@ pub struct Graph {
 
 /// target symbol → (referring symbol, edge kind, line)
 type RevIndex = HashMap<usize, Vec<(usize, EdgeKind, u32)>>;
+/// (source, target) pairs known only through an ambiguous reference
+/// (`x.run()` with an unknown receiver matching several `run` methods).
+type Guesses = HashSet<(usize, usize)>;
 
 /// One node of an impact (reverse dependency) walk.
 #[derive(Debug, Clone, Serialize)]
@@ -42,6 +45,8 @@ pub struct ImpactNode {
     /// How it depends on `via`: calls / uses / implements / inherits.
     pub how: &'static str,
     pub test: bool,
+    /// false: reached through an ambiguous call (receiver type unknown)
+    pub certain: bool,
 }
 
 /// Compact reference to a symbol, for listings and JSON output.
@@ -685,16 +690,29 @@ impl Graph {
 
     /// Reverse index of all resolved non-import edges.
     fn rev(&self) -> &RevIndex {
+        &self.rev_all().0
+    }
+
+    fn rev_all(&self) -> &(RevIndex, Guesses) {
         self.rev.get_or_init(|| {
             let mut m: HashMap<usize, Vec<(usize, EdgeKind, u32)>> = HashMap::new();
+            let mut sure: HashSet<(usize, usize)> = HashSet::new();
+            let mut guess: HashSet<(usize, usize)> = HashSet::new();
             for (file, e) in &self.edges {
                 if e.kind == EdgeKind::Imports {
                     continue;
                 }
                 let Some(src) = self.source_of(file, e) else { continue };
-                for t in self.resolve(file, e) {
+                let targets = self.resolve(file, e);
+                let distinct: HashSet<&str> = targets.iter().map(|&t| self.syms[t].sym.qualified.as_str()).collect();
+                for t in targets {
                     if t != src {
                         m.entry(t).or_default().push((src, e.kind, e.line));
+                        if distinct.len() > 1 {
+                            guess.insert((src, t));
+                        } else {
+                            sure.insert((src, t));
+                        }
                     }
                 }
             }
@@ -702,8 +720,15 @@ impl Graph {
                 v.sort_unstable_by_key(|x| (x.0, x.2));
                 v.dedup_by_key(|x| (x.0, x.1));
             }
-            m
+            guess.retain(|p| !sure.contains(p));
+            (m, guess)
         })
+    }
+
+    /// `src` reaches `target` only through an ambiguous reference (several
+    /// same-named candidates, receiver type unknown).
+    pub fn is_guess(&self, src: usize, target: usize) -> bool {
+        self.rev_all().1.contains(&(src, target))
     }
 
     /// Everything that references symbol `target` (calls, type uses, impls, subclassing).
@@ -750,6 +775,7 @@ impl Graph {
                     }
                 }
                 for (src, kind, _) in refs {
+                    let guess = self.is_guess(src, t);
                     if seen.insert(src) {
                         let s = &self.syms[src].sym;
                         out.push(ImpactNode {
@@ -758,8 +784,12 @@ impl Graph {
                             via: self.syms[t].sym.qualified.clone(),
                             how: kind.as_str(),
                             test: s.test,
+                            certain: !guess,
                         });
-                        next.push(src);
+                        // a guess is shown but not followed: its own callers are unrelated
+                        if !guess {
+                            next.push(src);
+                        }
                     }
                 }
             }

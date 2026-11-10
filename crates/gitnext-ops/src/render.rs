@@ -343,7 +343,8 @@ pub fn callees(g: &Graph, i: usize, o: Opts) -> String {
 
 /// Who is affected if `i` changes: reverse dependency tree, files to re-check, tests to run.
 pub fn impact(g: &Graph, i: usize, depth: usize, o: Opts) -> String {
-    let nodes = g.impact(i, depth);
+    let all = g.impact(i, depth);
+    let (maybe, nodes): (Vec<_>, Vec<_>) = all.into_iter().partition(|n| !n.certain);
     let (tests, real): (Vec<_>, Vec<_>) = nodes.iter().partition(|n| n.test);
     let mut files: Vec<&str> = real.iter().map(|n| n.symbol.file.as_str()).collect();
     files.sort_unstable();
@@ -388,6 +389,16 @@ pub fn impact(g: &Graph, i: usize, depth: usize, o: Opts) -> String {
         } else {
             let _ = writeln!(s, "tests: {} … +{} (--tests)", v[..8].join(", "), v.len() - 8);
         }
+    }
+    if !maybe.is_empty() {
+        let shown: Vec<String> = maybe.iter().take(12).map(|n| format!("{} ({}:{})", n.symbol.short, n.symbol.file, n.symbol.line)).collect();
+        let _ = writeln!(
+            s,
+            "maybe ({}, call on an object of unknown type with the same method name — not followed further): {}{}",
+            maybe.len(),
+            shown.join(", "),
+            if maybe.len() > 12 { " …" } else { "" }
+        );
     }
     s
 }

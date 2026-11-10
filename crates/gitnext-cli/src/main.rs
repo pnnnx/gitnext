@@ -398,7 +398,7 @@ fn run() -> Result<()> {
             let g = ws.graph()?;
             let mut ids = Vec::new();
             for q in &symbols {
-                ids.extend(lookup_many(&g, q)?);
+                ids.extend(lookup_same(&g, q)?);
             }
             if out.json {
                 let v: Vec<_> = ids.iter().map(|&i| serde_json::json!({
@@ -659,6 +659,20 @@ pub(crate) fn lookup(g: &Graph, q: &str) -> Result<Vec<usize>> {
     let first = &g.syms[ids[0]].sym.qualified;
     if ids.iter().any(|&i| &g.syms[i].sym.qualified != first) && ids.len() > 3 {
         bail!("{}", render::candidates(g, q, &ids).trim_end());
+    }
+    Ok(ids)
+}
+
+/// Like [`lookup_many`], but several *different* symbols (three `main`s) is an
+/// error listing them; overloads / declaration+definition of one symbol are fine.
+pub(crate) fn lookup_same(g: &Graph, q: &str) -> Result<Vec<usize>> {
+    let ids = lookup_many(g, q)?;
+    let first = &g.syms[ids[0]].sym.qualified;
+    if ids.iter().any(|&i| &g.syms[i].sym.qualified != first) {
+        let mut msg = render::candidates(g, q, &ids);
+        msg.push_str("name one of them, e.g. ");
+        msg.push_str(g.short_name(ids[0]));
+        bail!("{msg}");
     }
     Ok(ids)
 }

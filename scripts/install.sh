@@ -1,11 +1,11 @@
 #!/bin/sh
-# Install gitnext: a prebuilt binary from GitHub Releases when there is one for
-# this machine, otherwise build from source with cargo.
+# Install gitnext. From a clone: builds that source. Otherwise: a prebuilt binary
+# from GitHub Releases when there is one for this machine, else cargo from git.
 #
 #   curl -fsSL https://raw.githubusercontent.com/pnnnx/gitnext/main/scripts/install.sh | sh
 #   sh scripts/install.sh            # from a clone: builds this checkout
 #
-# Environment: GITNEXT_REPO=owner/gitnext  GITNEXT_VERSION=v0.1.0  GITNEXT_BIN_DIR=~/.local/bin
+# Environment: GITNEXT_REPO=pnnnx/gitnext (a fork: its owner/name)  GITNEXT_VERSION=v0.1.0  GITNEXT_BIN_DIR=~/.local/bin
 set -eu
 
 REPO="${GITNEXT_REPO:-pnnnx/gitnext}"
@@ -41,7 +41,11 @@ from_source() {
 }
 
 BIN=""
-if [ -n "$arch" ] && [ -n "$os" ] && [ "$REPO" != "pnnnx/gitnext" ] && command -v curl >/dev/null 2>&1; then
+# run from a clone: build exactly this source
+if [ -f "$(dirname "$0")/../crates/gitnext-cli/Cargo.toml" ]; then
+  from_source
+fi
+if [ -z "$BIN" ] && [ -n "$arch" ] && [ -n "$os" ] && command -v curl >/dev/null 2>&1; then
   if [ "$VERSION" = latest ]; then
     url="https://github.com/$REPO/releases/latest/download/gitnext-$target.tar.gz"
   else

@@ -12,7 +12,7 @@ base=$(git log --format=%H --grep='ab: planted bug' -1)
 check "1. test file not modified" "git diff --quiet $base -- tests/test_brief.py"
 check "2. core_tools handled in the code" "grep -rq --include=*.py core_tools loca/"
 check "2. a test mentions core_tools" "grep -rq core_tools tests/"
-check "3. estimate_tokens renamed everywhere" "! grep -rqw --include=*.py estimate_tokens . && grep -rq --include=*.py 'def approx_tokens' loca/"
+check "3. detect_test_command renamed to find_test_command everywhere" "! grep -rqw --include=*.py detect_test_command . && grep -rq --include=*.py 'def find_test_command' loca/"
 check "4. the whole test suite is green" "python3 -m pytest -q -x"
 echo
 echo "$ok/$total checks passed"

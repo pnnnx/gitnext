@@ -54,18 +54,18 @@ pub const LITE_TOOLS: &[&str] = &["look", "replace", "add_after"];
 /// Instruction block for capable agents (CLAUDE.md, Cursor rules).
 pub fn instructions_full() -> String {
     "## Code navigation: gitnext\n\n\
-     This repo is indexed by gitnext (MCP server `gitnext`). Its tools answer from a symbol index — \
-     cheaper and more exact than listing directories, grepping and reading whole files.\n\n\
-     1. Orient: `overview` once, then `map(dir)` for the area you work in.\n\
-     2. Before opening a code file: `outline(path)` (signatures + line numbers, ~15% of the file), \
-     then `read(symbols)` for only the bodies you need.\n\
-     3. Find: `search(query)` for names/docs; `callers` / `callees` / `impact` / `hierarchy` for relations.\n\
-     4. Edit by symbol: `replace_symbol` / `insert_after` / `rename_symbol` — send only the new code, \
-     no need to read the file first. Run `impact` before changing a signature and the command from `tests_for` after.\n\
-     5. Compiler/test output or a traceback → `locate`.\n\
-     6. Resuming work: `changes` (what changed since your last look, including the user's edits).\n\
-     7. Worked out what undocumented code does? `annotate` it in one line; later sessions get it for free.\n\n\
-     Plain file reads are fine for non-code files (configs, docs) and for small files.\n"
+     This repo is indexed by gitnext (MCP server `gitnext`, or the `gitnext` command). \
+     Every extra step re-sends the whole conversation, so prefer one call that answers everything:\n\n\
+     1. `look` first. For a function / class / method it returns the code, who calls it, what it calls, \
+     the tests that reach it with the command to run them, and what a change would affect — one call \
+     instead of read + grep + callers + test search. Pass several targets at once \
+     (`look` with `targets: [\"Agent.execute\", \"brief\", \"loca/config.py\"]`, or `gitnext look A B C`).\n\
+     2. A file or folder in `look` gives every signature with line numbers; an error or traceback gives the code where it happened.\n\
+     3. Edit by symbol: `replace_symbol` / `insert_after` / `rename_symbol` (rename also fixes imports, `__all__`, tests and \
+     `module.func` uses, and lists any text it did not change) — no need to read the file first.\n\
+     4. New repo: `overview` once. Resuming: `brief`, then `changes`.\n\
+     5. Worked out what undocumented code does? `annotate` it in one line; later sessions get it for free.\n\n\
+     Plain reads are fine for non-code files and small files. Run the tests yourself — gitnext does not run them.\n"
         .into()
 }
 

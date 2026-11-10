@@ -26,7 +26,7 @@ pub fn analyze(rel: &Path, src: &str, pkg: Option<&CrateHint>) -> anyhow::Result
     let is_pkg = rel_s.ends_with("__init__.py");
     let in_test = is_test_path(&rel_s);
 
-    let mut ex = Ex { src: src.as_bytes(), out: FileAnalysis::default(), imported: HashSet::new() };
+    let mut ex = Ex { src: src.as_bytes(), out: FileAnalysis::default(), imported: HashSet::new(), aliases: std::collections::HashMap::new() };
     ex.out.module_doc = docstring(root, ex.src);
     ex.out.symbols.push(Symbol {
         kind: Kind::Module,
@@ -83,6 +83,8 @@ struct Ex<'a> {
     out: FileAnalysis,
     /// Local names bound by `import x` / `from m import x` at module level.
     imported: HashSet<String>,
+    /// local name → module path it stands for (`tt` → `loca::tools::tests`)
+    aliases: std::collections::HashMap<String, String>,
 }
 
 const BUILTIN_TYPES: &[&str] = &[
@@ -96,14 +98,28 @@ impl<'a> Ex<'a> {
     }
 
     fn imports(&mut self, root: Node, module: &str, package: &str) {
-        let mut cur = root.walk();
-        let children: Vec<Node> = root.named_children(&mut cur).collect();
+        // imports anywhere: module level, inside functions (`def test(): from x import y`), in if/try
+        let mut children: Vec<Node> = Vec::new();
+        let mut stack = vec![root];
+        while let Some(n) = stack.pop() {
+            let mut cur = n.walk();
+            for c in n.named_children(&mut cur) {
+                if matches!(c.kind(), "import_statement" | "import_from_statement") {
+                    children.push(c);
+                } else {
+                    stack.push(c);
+                }
+            }
+        }
+        children.sort_by_key(|n| n.start_byte());
         for n in children {
             match n.kind() {
                 "import_statement" => {
                     let mut c = n.walk();
                     for name in n.children_by_field_name("name", &mut c) {
                         let (path, bound) = self.import_name(name);
+                        let target = if name.kind() == "aliased_import" { path.replace('.', "::") } else { bound.clone() };
+                        self.aliases.insert(bound.clone(), target);
                         self.imported.insert(bound);
                         self.out.edges.push(Edge { from: module.into(), to: path.replace('.', "::"), kind: EdgeKind::Imports, line: line(n), col: 0 });
                     }
@@ -137,8 +153,9 @@ impl<'a> Ex<'a> {
                     }
                     for name in names {
                         let (path, bound) = self.import_name(name);
-                        self.imported.insert(bound);
                         let to = if base.is_empty() { path.replace('.', "::") } else { format!("{base}::{}", path.replace('.', "::")) };
+                        self.aliases.insert(bound.clone(), to.clone());
+                        self.imported.insert(bound);
                         self.out.edges.push(Edge { from: module.into(), to, kind: EdgeKind::Imports, line: line(n), col: 0 });
                     }
                 }
@@ -461,6 +478,10 @@ impl<'a> Ex<'a> {
                         match obj.map(|o| (o.kind(), self.text(o))) {
                             Some((_, "self" | "cls")) => Some(format!("Self::{attr}")),
                             // `Class.method()` or `module.func()` for imported / capitalised names
+                            // `tt.run()` where `tt` is an imported module: the module's function
+                            Some(("identifier", o)) if self.aliases.contains_key(o) && !self.aliases[o].is_empty() => {
+                                Some(format!("{}::{attr}", self.aliases[o]))
+                            }
                             Some(("identifier", o)) if self.imported.contains(o) || o.chars().next().is_some_and(|c| c.is_ascii_uppercase()) => {
                                 Some(format!("{o}::{attr}"))
                             }
@@ -472,6 +493,21 @@ impl<'a> Ex<'a> {
                 if let Some(nm) = name {
                     let (l, c) = name_pos(f);
                     out.push((nm, l, c));
+                }
+            }
+        }
+        // `real = tt.detect_test_command`, `tt.detect_test_command = fake`: a module function
+        // referenced (or patched) without being called
+        if n.kind() == "attribute" {
+            let is_callee = n.parent().is_some_and(|p| p.kind() == "call" && p.child_by_field_name("function").map(|f| f.id()) == Some(n.id()));
+            if !is_callee {
+                if let (Some(o), Some(attr)) = (n.child_by_field_name("object"), n.child_by_field_name("attribute")) {
+                    if o.kind() == "identifier" {
+                        if let Some(path) = self.aliases.get(self.text(o)).filter(|p| !p.is_empty()) {
+                            let (l, c) = name_pos(n);
+                            out.push((format!("{path}::{}", self.text(attr)), l, c));
+                        }
+                    }
                 }
             }
         }

@@ -411,7 +411,7 @@ fn ensure_gitignore(dir: &Path) -> Result<()> {
     let gi = dir.join(".gitignore");
     let mut text = std::fs::read_to_string(&gi).unwrap_or_else(|_| "# local state — map/ and notes.tsv are meant to be committed\n".into());
     let mut changed = !gi.exists();
-    for line in ["index.db", "index.db-*", "journal.jsonl", "hook-seen.tsv", "tui-welcomed"] {
+    for line in ["index.db", "index.db-*", "journal.jsonl", "hook-seen.tsv", "tui-welcomed", ".fuse_hidden*"] {
         if !text.lines().any(|l| l.trim() == line) {
             text.push_str(line);
             text.push('\n');

@@ -163,6 +163,12 @@ pub enum More {
     },
     /// Where were we: branch, uncommitted symbol changes, last agent session, recent commits
     Brief,
+    /// One call for any target: symbol → code + callers + callees + tests + impact; file/folder → outline;
+    /// error text → where; words → where they appear. Several targets at once.
+    Look {
+        #[arg(required = true)]
+        targets: Vec<String>,
+    },
     /// Check that everything is in place for agents (binary on PATH, index, map, agent configs, model server)
     Doctor,
     /// Take back the last commit; its changes stay staged (refuses if already pushed)
@@ -424,6 +430,10 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
         More::Msg => {
             let cv = gitnext_ops::changes::changes(ws.repo()?)?;
             println!("{}", cv.draft);
+        }
+        More::Look { targets } => {
+            let g = ws.graph()?;
+            out.text(&gitnext_ops::look::look_many(&ws, &g, &targets, false));
         }
         More::Doctor => {
             let v = gitnext_ops::agents::doctor(&ws, env!("CARGO_PKG_VERSION"));

@@ -30,7 +30,7 @@ What gets written (all inside the project, all idempotent):
 | loca | `agents_md = compact` in `.gitnext/config` (short map in `AGENTS.md`); with `--tools` also `.loca/config.json` (MCP, lite profile) and a block in `LOCA.md` |
 
 Using it afterwards (MCP tools):
-- big models: `overview` → `map` → `outline` → `read`; edit with `replace_symbol`, `insert_after`, `rename_symbol`; `impact` and `tests_for` before changing signatures; `brief` / `changes` when resuming;
+- big models: `look` first — one call gives a symbol's code, callers, callees, tests (with the command) and impact; pass several targets at once. Then edit with `replace_symbol`, `insert_after`, `rename_symbol`; `overview` once in a new repo, `brief` / `changes` when resuming. Every extra step re-sends the whole conversation, so batch;
 - small local models (lite profile): `look(what)` for any file, name, error or words; `replace(symbol, code)`; `add_after(symbol, code)`.
 
 Removing it: delete `.gitnext/`, the `gitnext` entries in the MCP config files and

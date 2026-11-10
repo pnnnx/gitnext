@@ -149,7 +149,7 @@ pub struct TestRef {
 pub fn tests_for(g: &Graph, i: usize, depth: usize) -> Vec<TestRef> {
     let mut out: Vec<TestRef> = Vec::new();
     for n in g.impact(i, depth) {
-        if !n.test {
+        if !n.test || !n.certain {
             continue;
         }
         let Some(idx) = g.find(&n.symbol.qualified).into_iter().find(|&x| g.syms[x].file == n.symbol.file && g.syms[x].sym.start_line == n.symbol.line) else { continue };

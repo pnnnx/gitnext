@@ -7,7 +7,7 @@
 //! Languages: Rust, Python, C and C++ (C is parsed with the C++ grammar).
 
 /// Bump when extractor output changes; the index re-parses everything on mismatch.
-pub const PARSER_VERSION: u32 = 15;
+pub const PARSER_VERSION: u32 = 16;
 
 mod cfamily;
 mod python;

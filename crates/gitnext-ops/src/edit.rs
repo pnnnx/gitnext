@@ -143,6 +143,9 @@ pub struct RenameReport {
     pub changed: Vec<String>,
     /// References that might be this symbol but resolved ambiguously — left untouched.
     pub skipped: Vec<String>,
+    /// Lines that still contain the old name as a word after the rename (strings,
+    /// comments, dynamic access): to check by hand.
+    pub leftover: Vec<String>,
     pub files: usize,
     pub dry_run: bool,
 }
@@ -158,6 +161,28 @@ fn word_hits(line: &str, word: &str) -> Vec<usize> {
         .map(|(i, _)| i)
         .filter(|&i| (i == 0 || !is_ident(b[i - 1])) && (i + word.len() >= b.len() || !is_ident(b[i + word.len()])))
         .collect()
+}
+
+/// Line numbers (1-based) of a Python `__all__ = [...]` / `(...)` assignment.
+fn dunder_all_lines(lines: &[String]) -> std::collections::HashSet<usize> {
+    let mut out = std::collections::HashSet::new();
+    let mut depth: i32 = 0;
+    let mut inside = false;
+    for (n, l) in lines.iter().enumerate() {
+        let t = l.trim_start();
+        if !inside && (t.starts_with("__all__ =") || t.starts_with("__all__=") || t.starts_with("__all__ +=")) {
+            inside = true;
+            depth = 0;
+        }
+        if inside {
+            out.insert(n + 1);
+            depth += l.matches(['[', '(']).count() as i32 - l.matches([']', ')']).count() as i32;
+            if depth <= 0 {
+                inside = false;
+            }
+        }
+    }
+    out
 }
 
 /// Rename a symbol at its definition(s) and every unambiguous reference
@@ -219,6 +244,30 @@ pub fn rename(root: &Path, g: &Graph, i: usize, new_name: &str, dry_run: bool) -
         edits.entry(file.clone()).or_default().entry(e.line as usize).or_default().extend(col);
     }
 
+    // whatever the graph did not reach: `__all__` entries are renamed, everything
+    // else that still spells the old name (strings, comments, dynamic access) is reported
+    for f in g.files.iter().filter(|f| f.parsed) {
+        let lines = lines_of(&f.path);
+        let all_lines: std::collections::HashSet<usize> = if f.path.ends_with(".py") { dunder_all_lines(&lines) } else { Default::default() };
+        for (n, text) in lines.iter().enumerate() {
+            let l = n + 1;
+            for c in word_hits(text, &old) {
+                let done = edits.get(&f.path).and_then(|m| m.get(&l)).is_some_and(|cols| cols.contains(&c));
+                if done {
+                    continue;
+                }
+                let quoted = c > 0 && matches!(text.as_bytes()[c - 1], b'"' | b'\'') && text.as_bytes().get(c + old.len()).is_some_and(|b| matches!(b, b'"' | b'\''));
+                if all_lines.contains(&l) && quoted {
+                    edits.entry(f.path.clone()).or_default().entry(l).or_default().push(c);
+                } else if !twins.iter().any(|&t| g.syms[t].file == f.path && l >= g.syms[t].sym.start_line as usize && l <= g.syms[t].sym.start_line as usize + 1) {
+                    report.leftover.push(format!("{}:{l}: {}", f.path, text.trim().chars().take(100).collect::<String>()));
+                }
+            }
+        }
+    }
+    report.leftover.sort();
+    report.leftover.dedup();
+
     // overriding methods in subclasses / trait impls keep the old name: warn
     if target.sym.kind == gitnext_parse::Kind::Method {
         for o in g.overrides(i) {
@@ -279,6 +328,14 @@ pub fn render_rename(r: &RenameReport) -> String {
     if !r.changed.is_empty() {
         s.push_str(&r.changed.join(", "));
         s.push('\n');
+    }
+    if !r.leftover.is_empty() {
+        s.push_str(&format!("the old name still appears as text ({}) — strings, comments or dynamic access; change by hand if they mean this symbol:\n", r.leftover.len()));
+        for x in r.leftover.iter().take(30) {
+            s.push_str("  ");
+            s.push_str(x);
+            s.push('\n');
+        }
     }
     if !r.skipped.is_empty() {
         s.push_str(&format!("not changed ({}): check manually\n", r.skipped.len()));
