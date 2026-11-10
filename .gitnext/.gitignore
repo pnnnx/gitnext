@@ -1,0 +1,6 @@
+# local cache — the map/ folder is meant to be committed
+index.db
+index.db-*
+journal.jsonl
+hook-seen.tsv
+tui-welcomed

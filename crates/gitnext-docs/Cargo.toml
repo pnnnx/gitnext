@@ -1,0 +1,10 @@
+[package]
+name = "gitnext-docs"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow = "1.0.104"
+gitnext-index = { version = "0.1.0", path = "../gitnext-index" }
+gitnext-parse = { version = "0.1.0", path = "../gitnext-parse" }

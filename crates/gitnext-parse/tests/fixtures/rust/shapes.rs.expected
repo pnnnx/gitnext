@@ -1,0 +1,165 @@
+module doc: Geometry primitives used by the renderer.
+symbols:
+L1-114 module crate::rust::shapes [pub]
+    sig: mod crate::rust::shapes
+    doc: Geometry primitives used by the renderer.
+L7-14 trait crate::rust::shapes::Shape [pub]
+    sig: pub trait Shape: Display
+    parent: crate::rust::shapes
+    doc: Anything with an area.
+L9-9 method crate::rust::shapes::Shape::area [pub] (decl)
+    sig: fn area(&self) -> f64
+    parent: crate::rust::shapes::Shape
+    in: self: &self
+    out: f64
+    doc: Area in square units.
+L11-13 method crate::rust::shapes::Shape::filled [pub]
+    sig: fn filled(&self) -> bool
+    parent: crate::rust::shapes::Shape
+    in: self: &self
+    out: bool
+    doc: Default: shapes are drawn filled.
+L18-21 struct crate::rust::shapes::Circle [pub]
+    sig: pub struct Circle
+    parent: crate::rust::shapes
+    in: radius: f64, label: Option<String>
+    doc: A circle by radius.
+L24-27 enum crate::rust::shapes::Rect [pub]
+    sig: pub enum Rect
+    parent: crate::rust::shapes
+    in: Square: (f64), Box: { w: f64, h: f64 }
+    doc: Rectangle kinds.
+L29-29 type crate::rust::shapes::Registry [pub]
+    sig: pub type Registry = HashMap<String, Box<dyn Shape>>
+    parent: crate::rust::shapes
+    out: HashMap<String, Box<dyn Shape>>
+L31-31 const crate::rust::shapes::PI2 [pub]
+    sig: pub const PI2: f64
+    parent: crate::rust::shapes
+    out: f64
+L35-37 method crate::rust::shapes::Circle::new [pub]
+    sig: pub fn new(radius: f64) -> Self
+    parent: crate::rust::shapes::Circle
+    in: radius: f64
+    out: Self
+    doc: New circle with no label.
+L40-43 method crate::rust::shapes::Circle::labeled [pub]
+    sig: pub fn labeled(mut self, l: impl Into<String>) -> Self
+    parent: crate::rust::shapes::Circle
+    in: self: mut self, l: impl Into<String>
+    out: Self
+    doc: Builder: attach a label.
+L45-47 method crate::rust::shapes::Circle::circumference
+    sig: fn circumference(&self) -> f64
+    parent: crate::rust::shapes::Circle
+    in: self: &self
+    out: f64
+L51-53 method crate::rust::shapes::Circle::area
+    sig: fn area(&self) -> f64
+    parent: crate::rust::shapes::Circle
+    implements: Shape
+    in: self: &self
+    out: f64
+L57-59 method crate::rust::shapes::Circle::fmt
+    sig: fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
+    parent: crate::rust::shapes::Circle
+    implements: Display
+    in: self: &self, f: &mut fmt::Formatter<'_>
+    out: fmt::Result
+L63-68 method crate::rust::shapes::Rect::area
+    sig: fn area(&self) -> f64
+    parent: crate::rust::shapes::Rect
+    implements: Shape
+    in: self: &self
+    out: f64
+L69-71 method crate::rust::shapes::Rect::filled
+    sig: fn filled(&self) -> bool
+    parent: crate::rust::shapes::Rect
+    implements: Shape
+    in: self: &self
+    out: bool
+L75-77 method crate::rust::shapes::Rect::fmt
+    sig: fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
+    parent: crate::rust::shapes::Rect
+    implements: Display
+    in: self: &self, f: &mut fmt::Formatter<'_>
+    out: fmt::Result
+L81-83 function crate::rust::shapes::total_area [pub]
+    sig: pub fn total_area(reg: &Registry) -> f64
+    parent: crate::rust::shapes
+    in: reg: &Registry
+    out: f64
+    doc: Sum of areas of every shape in the registry.
+L86-88 function crate::rust::shapes::largest [pub]
+    sig: pub fn largest<'a, S: Shape + ?Sized>(shapes: &'a [Box<S>]) -> Option<&'a S>
+    parent: crate::rust::shapes
+    in: shapes: &'a [Box<S>]
+    out: Option<&'a S>
+    doc: Largest shape, if any.
+L90-98 module crate::rust::shapes::io [pub]
+    sig: pub mod io
+    parent: crate::rust::shapes
+L94-97 function crate::rust::shapes::io::parse [pub]
+    sig: pub fn parse(line: &str) -> Option<Circle>
+    parent: crate::rust::shapes::io
+    in: line: &str
+    out: Option<Circle>
+    doc: Parse `circle 2.5`.
+L100-103 function crate::rust::shapes::load_remote [pub]
+    sig: pub async fn load_remote(url: &str) -> Result<Vec<Circle>, String>
+    parent: crate::rust::shapes
+    in: url: &str
+    out: Result<Vec<Circle>, String>
+L106-113 module crate::rust::shapes::tests (test)
+    sig: mod tests
+    parent: crate::rust::shapes
+L110-112 function crate::rust::shapes::tests::circle_area (test)
+    sig: fn circle_area()
+    parent: crate::rust::shapes::tests
+edges:
+  L3 imports crate::rust::shapes -> std::collections::HashMap
+  L4 imports crate::rust::shapes -> std::fmt::{self, Display}
+  L7 inherits crate::rust::shapes::Shape -> Display
+  L29 uses crate::rust::shapes::Registry -> Shape
+  L36 uses crate::rust::shapes::Circle::new -> Circle
+  L40 uses crate::rust::shapes::Circle::labeled -> Into
+  L41 calls crate::rust::shapes::Circle::labeled -> .into
+  L41 calls crate::rust::shapes::Circle::labeled -> Some
+  L51 implements crate::rust::shapes::Circle -> Shape
+  L57 implements crate::rust::shapes::Circle -> Display
+  L57 uses crate::rust::shapes::Circle::fmt -> Formatter
+  L57 uses crate::rust::shapes::Circle::fmt -> Result
+  L58 calls crate::rust::shapes::Circle::fmt -> Self::circumference
+  L69 implements crate::rust::shapes::Rect -> Shape
+  L75 implements crate::rust::shapes::Rect -> Display
+  L75 uses crate::rust::shapes::Rect::fmt -> Formatter
+  L75 uses crate::rust::shapes::Rect::fmt -> Result
+  L76 calls crate::rust::shapes::Rect::fmt -> Self::area
+  L81 uses crate::rust::shapes::total_area -> Registry
+  L82 calls crate::rust::shapes::total_area -> .area
+  L82 calls crate::rust::shapes::total_area -> .map
+  L82 calls crate::rust::shapes::total_area -> .sum
+  L82 calls crate::rust::shapes::total_area -> .values
+  L86 uses crate::rust::shapes::largest -> Shape
+  L86 uses crate::rust::shapes::largest -> Sized
+  L87 calls crate::rust::shapes::largest -> .area
+  L87 calls crate::rust::shapes::largest -> .as_ref
+  L87 calls crate::rust::shapes::largest -> .iter
+  L87 calls crate::rust::shapes::largest -> .map
+  L87 calls crate::rust::shapes::largest -> .max_by
+  L87 calls crate::rust::shapes::largest -> .total_cmp
+  L91 imports crate::rust::shapes::io -> super::Circle
+  L94 uses crate::rust::shapes::io::parse -> Circle
+  L95 calls crate::rust::shapes::io::parse -> .ok
+  L95 calls crate::rust::shapes::io::parse -> .parse
+  L95 calls crate::rust::shapes::io::parse -> .strip_prefix
+  L96 calls crate::rust::shapes::io::parse -> Circle::new
+  L96 calls crate::rust::shapes::io::parse -> Some
+  L100 uses crate::rust::shapes::load_remote -> Circle
+  L100 uses crate::rust::shapes::load_remote -> Result
+  L102 calls crate::rust::shapes::load_remote -> .unwrap
+  L102 calls crate::rust::shapes::load_remote -> Ok
+  L102 calls crate::rust::shapes::load_remote -> io::parse
+  L107 imports crate::rust::shapes::tests -> super::*
+  L111 calls crate::rust::shapes::tests::circle_area -> .area
+  L111 calls crate::rust::shapes::tests::circle_area -> Circle::new

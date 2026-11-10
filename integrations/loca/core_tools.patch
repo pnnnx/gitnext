@@ -1,0 +1,14 @@
+diff --git a/loca/agent.py b/loca/agent.py
+index 774f4ba..078ce06 100644
+--- a/loca/agent.py
++++ b/loca/agent.py
+@@ -244,6 +244,9 @@ class Agent:
+         self._ratio = 1.0          # calibrates estimate_tokens against real counts
+         self.active: set | None = None   # None — модели видны все инструменты
+         core = (CODE_CORE if sub_kind == "code" else None) if sub else MAIN_CORE
++        # extra tools always visible (e.g. MCP "mcp__gitnext__look"), from config "core_tools"
++        if core and ctx.cfg.get("core_tools"):
++            core = tuple(core) + tuple(ctx.cfg["core_tools"])
+         if core and ctx.cfg.get("lean_tools", True):
+             self.active = {n for n in core if n in self.tools}
+             hidden = [t for t in self.tools.values()

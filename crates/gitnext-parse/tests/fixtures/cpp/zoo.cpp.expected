@@ -1,0 +1,128 @@
+module doc: Animals and an enclosure, to exercise C++ parsing.
+symbols:
+L1-84 module cpp/zoo.cpp [pub]
+    sig: file cpp/zoo.cpp
+    doc: Animals and an enclosure, to exercise C++ parsing.
+L9-19 class zoo::Animal [pub]
+    sig: class Animal
+    parent: zoo
+    in: name_: std::string
+    doc: Base class for every animal.
+L11-11 method zoo::Animal::Animal [pub]
+    sig: explicit Animal(std::string name)
+    parent: zoo::Animal
+    in: name: std::string
+L12-12 method zoo::Animal::~Animal [pub] (decl)
+    sig: virtual ~Animal() = default
+    parent: zoo::Animal
+L14-14 method zoo::Animal::sound [pub] (decl)
+    sig: virtual std::string sound() const = 0
+    parent: zoo::Animal
+    out: std::string
+    doc: Sound the animal makes.
+L15-15 method zoo::Animal::name [pub]
+    sig: const std::string& name() const
+    parent: zoo::Animal
+    out: const std::string&
+L21-26 class zoo::Dog [pub]
+    sig: class Dog : public Animal
+    parent: zoo
+L24-24 method zoo::Dog::sound [pub]
+    sig: std::string sound() const override
+    parent: zoo::Dog
+    out: std::string
+L25-25 method zoo::Dog::fetch [pub] (decl)
+    sig: void fetch(int times)
+    parent: zoo::Dog
+    in: times: int
+L28-36 class zoo::Cat [pub]
+    sig: class Cat final : public Animal, private Comparable
+    parent: zoo
+    in: lives_: int
+L30-30 method zoo::Cat::Cat [pub]
+    sig: Cat(std::string name, int lives)
+    parent: zoo::Cat
+    in: name: std::string, lives: int
+L31-31 method zoo::Cat::sound [pub] (decl)
+    sig: std::string sound() const override
+    parent: zoo::Cat
+    out: std::string
+L32-32 method zoo::Cat::operator< [pub]
+    sig: bool operator<(const Cat& other) const
+    parent: zoo::Cat
+    in: other: const Cat&
+    out: bool
+L38-38 enum zoo::Diet [pub]
+    sig: enum class Diet
+    parent: zoo
+    in: Meat, Plants, Both
+L40-43 struct zoo::Feeding [pub]
+    sig: struct Feeding
+    parent: zoo
+    in: diet: Diet, grams: int
+L46-54 class zoo::Enclosure [pub]
+    sig: template<typename T> class Enclosure
+    parent: zoo
+    in: animals_: std::vector<std::unique_ptr<T>>
+L48-48 method zoo::Enclosure::add [pub]
+    sig: void add(std::unique_ptr<T> a)
+    parent: zoo::Enclosure
+    in: a: std::unique_ptr<T>
+L49-49 method zoo::Enclosure::size [pub]
+    sig: std::size_t size() const
+    parent: zoo::Enclosure
+    out: std::size_t
+L50-50 method zoo::Enclosure::chorus [pub] (decl)
+    sig: std::vector<std::string> chorus() const
+    parent: zoo::Enclosure
+    out: std::vector<std::string>
+L56-60 method zoo::Dog::fetch [pub]
+    sig: void Dog::fetch(int times)
+    parent: zoo::Dog
+    in: times: int
+L62-62 method zoo::Cat::sound [pub]
+    sig: std::string Cat::sound() const
+    parent: zoo::Cat
+    out: std::string
+L65-69 method zoo::Enclosure::chorus [pub]
+    sig: template<typename T> std::vector<std::string> Enclosure<T>::chorus() const
+    parent: zoo::Enclosure
+    out: std::vector<std::string>
+L72-74 function zoo::plan_for [pub]
+    sig: Feeding plan_for(const Animal& a)
+    parent: zoo
+    in: a: const Animal&
+    out: Feeding
+    doc: Feeding plan for one animal.
+L78-83 function main [pub]
+    sig: int main()
+    out: int
+edges:
+  L2 imports cpp/zoo.cpp -> memory
+  L3 imports cpp/zoo.cpp -> string
+  L4 imports cpp/zoo.cpp -> vector
+  L21 inherits zoo::Dog -> Animal
+  L28 inherits zoo::Cat -> Animal
+  L28 inherits zoo::Cat -> Comparable
+  L32 uses zoo::Cat::operator< -> Cat
+  L41 uses zoo::Feeding -> Diet
+  L48 calls zoo::Enclosure::add -> .push_back
+  L48 calls zoo::Enclosure::add -> std::move
+  L49 calls zoo::Enclosure::size -> .size
+  L58 calls zoo::Dog::fetch -> Self::sound
+  L67 calls zoo::Enclosure::chorus -> .push_back
+  L67 calls zoo::Enclosure::chorus -> .sound
+  L72 uses zoo::plan_for -> Animal
+  L72 uses zoo::plan_for -> Feeding
+  L73 calls zoo::plan_for -> .sound
+  L79 uses main -> Animal
+  L79 uses main -> Enclosure
+  L80 calls main -> .add
+  L80 calls main -> std::make_unique
+  L80 uses main -> Dog
+  L81 calls main -> .add
+  L81 calls main -> std::make_unique
+  L81 uses main -> Cat
+  L82 calls main -> .chorus
+  L82 calls main -> .size
+  L82 calls main -> static_cast

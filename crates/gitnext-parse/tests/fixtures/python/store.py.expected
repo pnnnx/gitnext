@@ -1,0 +1,133 @@
+module doc: Task storage with pluggable backends.
+symbols:
+L1-98 module python::store [pub]
+    sig: module python.store
+    doc: Task storage with pluggable backends.
+L12-12 const python::store::DEFAULT_PATH [pub]
+    sig: DEFAULT_PATH
+    parent: python::store
+L16-20 class python::store::Record [pub]
+    sig: @dataclass class Record
+    parent: python::store
+    in: id: int, title: str, tags: list[str]
+    doc: One stored row.
+L23-30 class python::store::Backend [pub]
+    sig: class Backend
+    parent: python::store
+    doc: Abstract storage backend.
+L26-27 method python::store::Backend::load [pub]
+    sig: def load(self) -> list[Record]
+    parent: python::store::Backend
+    in: self
+    out: list[Record]
+L29-30 method python::store::Backend::save [pub]
+    sig: def save(self, records: Iterable[Record]) -> None
+    parent: python::store::Backend
+    in: self, records: Iterable[Record]
+    out: None
+L33-60 class python::store::JsonBackend [pub]
+    sig: class JsonBackend(Backend)
+    parent: python::store
+    in: path, pretty, _cache: Optional[list[Record]]
+    doc: Stores records as JSON on disk.
+L36-39 method python::store::JsonBackend::__init__ [pub]
+    sig: def __init__(self, path: str = DEFAULT_PATH, *, pretty: bool = False)
+    parent: python::store::JsonBackend
+    in: self, path: str = DEFAULT_PATH, pretty: bool = False
+L41-46 method python::store::JsonBackend::load [pub]
+    sig: def load(self) -> list[Record]
+    parent: python::store::JsonBackend
+    in: self
+    out: list[Record]
+    doc: Read every record (cached).
+L48-52 method python::store::JsonBackend::save [pub]
+    sig: def save(self, records)
+    parent: python::store::JsonBackend
+    in: self, records
+L55-56 method python::store::JsonBackend::size [pub]
+    sig: @property def size(self) -> int
+    parent: python::store::JsonBackend
+    in: self
+    out: int
+L59-60 method python::store::JsonBackend::default [pub]
+    sig: @staticmethod def default() -> "JsonBackend"
+    parent: python::store::JsonBackend
+    out: JsonBackend
+L63-84 class python::store::Store [pub]
+    sig: class Store
+    parent: python::store
+    in: backend
+L64-65 method python::store::Store::__init__ [pub]
+    sig: def __init__(self, backend: Backend)
+    parent: python::store::Store
+    in: self, backend: Backend
+L67-73 method python::store::Store::add [pub]
+    sig: def add(self, title: str, *tags: str) -> Record
+    parent: python::store::Store
+    in: self, title: str, *tags: str
+    out: Record
+    doc: Add a task and persist it.
+L75-79 method python::store::Store::sync [pub]
+    sig: async def sync(self, remote, retries: int = 3) -> bool
+    parent: python::store::Store
+    in: self, remote, retries: int = 3
+    out: bool
+L81-84 method python::store::Store::find [pub]
+    sig: def find(self, pred=lambda r: True)
+    parent: python::store::Store
+    in: self, pred = lambda r: True
+L87-89 function python::store::open_store [pub]
+    sig: def open_store(path: str = DEFAULT_PATH) -> Store
+    parent: python::store
+    in: path: str = DEFAULT_PATH
+    out: Store
+    doc: Store backed by a JSON file.
+L92-93 function python::store::to_task [pub]
+    sig: def to_task(rec: Record) -> Task
+    parent: python::store
+    in: rec: Record
+    out: Task
+edges:
+  L4 imports python::store -> json
+  L5 imports python::store -> dataclasses::dataclass
+  L5 imports python::store -> dataclasses::field
+  L6 imports python::store -> typing::Iterable
+  L6 imports python::store -> typing::Optional
+  L8 imports python::store -> python::model::Task
+  L9 imports python::store -> python::events
+  L26 uses python::store::Backend::load -> Record
+  L29 uses python::store::Backend::save -> Record
+  L33 inherits python::store::JsonBackend -> Backend
+  L41 uses python::store::JsonBackend::load -> Record
+  L44 calls python::store::JsonBackend::load -> open
+  L45 calls python::store::JsonBackend::load -> Record
+  L45 calls python::store::JsonBackend::load -> json::load
+  L50 calls python::store::JsonBackend::save -> open
+  L51 calls python::store::JsonBackend::save -> json::dump
+  L52 calls python::store::JsonBackend::save -> events::emit
+  L52 calls python::store::JsonBackend::save -> len
+  L56 calls python::store::JsonBackend::size -> Self::load
+  L56 calls python::store::JsonBackend::size -> len
+  L59 uses python::store::JsonBackend::default -> JsonBackend
+  L60 calls python::store::JsonBackend::default -> JsonBackend
+  L64 uses python::store::Store::__init__ -> Backend
+  L67 uses python::store::Store::add -> Record
+  L69 calls python::store::Store::add -> .load
+  L70 calls python::store::Store::add -> Record
+  L70 calls python::store::Store::add -> len
+  L70 calls python::store::Store::add -> list
+  L71 calls python::store::Store::add -> .append
+  L72 calls python::store::Store::add -> .save
+  L76 calls python::store::Store::sync -> range
+  L77 calls python::store::Store::sync -> .load
+  L77 calls python::store::Store::sync -> .push
+  L84 calls python::store::Store::find -> .load
+  L87 uses python::store::open_store -> Store
+  L89 calls python::store::open_store -> JsonBackend
+  L89 calls python::store::open_store -> Store
+  L92 uses python::store::to_task -> Record
+  L92 uses python::store::to_task -> Task
+  L93 calls python::store::to_task -> Task
+  L97 calls python::store -> .add
+  L97 calls python::store -> open_store
+  L97 calls python::store -> print

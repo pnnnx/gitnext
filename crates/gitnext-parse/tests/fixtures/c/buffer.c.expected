@@ -1,0 +1,66 @@
+module doc: Growable byte buffer.
+symbols:
+L1-65 module c/buffer.c [pub]
+    sig: file c/buffer.c
+    doc: Growable byte buffer.
+L6-6 const BUF_MIN [pub]
+    sig: #define BUF_MIN 16
+L7-7 macro BUF_GROW [pub]
+    sig: #define BUF_GROW(n) ((n) * 2)
+L9-13 struct buffer [pub]
+    sig: struct buffer
+    in: data: unsigned char*, len: size_t, cap: size_t
+L9-13 type buffer_t [pub]
+    sig: typedef struct buffer { unsigned char *data; size_t len; size_t cap; } buffer_t
+    out: struct buffer
+L15-15 type visit_fn [pub]
+    sig: typedef int (*visit_fn)(unsigned char byte, void *ctx)
+    out: int
+L17-17 enum buf_status [pub]
+    sig: enum buf_status
+    in: BUF_OK = 0, BUF_NOMEM = 1
+L19-19 function ensure (decl)
+    sig: static int ensure(buffer_t *b, size_t need)
+    in: b: buffer_t*, need: size_t
+    out: int
+L22-29 function buf_new [pub]
+    sig: buffer_t *buf_new(void)
+    out: buffer_t*
+    doc: Create an empty buffer.
+L32-41 function ensure
+    sig: static int ensure(buffer_t *b, size_t need)
+    in: b: buffer_t*, need: size_t
+    out: int
+    doc: Grow the storage to at least `need` bytes.
+L43-49 function buf_append [pub]
+    sig: int buf_append(buffer_t *b, const void *src, size_t n)
+    in: b: buffer_t*, src: const void*, n: size_t
+    out: int
+L52-58 function buf_each [pub]
+    sig: int buf_each(const buffer_t *b, visit_fn fn, void *ctx)
+    in: b: const buffer_t*, fn: visit_fn, ctx: void*
+    out: int
+    doc: Call `fn` for every byte; stops when it returns non-zero.
+L60-64 function buf_free [pub]
+    sig: void buf_free(buffer_t *b)
+    in: b: buffer_t*
+edges:
+  L2 imports c/buffer.c -> stdlib.h
+  L3 imports c/buffer.c -> string.h
+  L4 imports c/buffer.c -> buffer.h
+  L19 uses ensure -> buffer_t
+  L22 uses buf_new -> buffer_t
+  L23 calls buf_new -> calloc
+  L24 calls buf_new -> BUF_MIN
+  L24 calls buf_new -> ensure
+  L25 calls buf_new -> free
+  L35 calls ensure -> BUF_GROW
+  L36 calls ensure -> realloc
+  L43 uses buf_append -> buffer_t
+  L44 calls buf_append -> ensure
+  L46 calls buf_append -> memcpy
+  L52 uses buf_each -> buffer_t
+  L52 uses buf_each -> visit_fn
+  L60 uses buf_free -> buffer_t
+  L62 calls buf_free -> free
+  L63 calls buf_free -> free

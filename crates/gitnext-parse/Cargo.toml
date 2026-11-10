@@ -1,0 +1,13 @@
+[package]
+name = "gitnext-parse"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow = "1.0.104"
+serde = { version = "1.0.229", features = ["derive"] }
+tree-sitter = "0.27.2"
+tree-sitter-cpp = "0.23.4"
+tree-sitter-python = "0.25.0"
+tree-sitter-rust = "0.24.2"

@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  # tests open the repository itself; give git an identity for commit tests
+  GIT_AUTHOR_NAME: ci
+  GIT_AUTHOR_EMAIL: ci@example.invalid
+  GIT_COMMITTER_NAME: ci
+  GIT_COMMITTER_EMAIL: ci@example.invalid
+
+jobs:
+  test:
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: clippy
+        run: cargo clippy --all-targets -- -D warnings
+      - name: tests (incl. parser fixtures)
+        run: cargo test
+      - name: smoke test of the binary
+        run: |
+          cargo build
+          ./target/debug/gitnext index
+          ./target/debug/gitnext outline crates/gitnext-parse/src/lib.rs | head -5
+          ./target/debug/gitnext status

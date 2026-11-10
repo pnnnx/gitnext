@@ -1,0 +1,22 @@
+symbols:
+L1-22 module c/buffer.h [pub]
+    sig: file c/buffer.h
+L10-10 type buffer_t [pub]
+    sig: typedef struct buffer buffer_t
+    out: struct buffer
+L13-13 function buf_new [pub] (decl)
+    sig: buffer_t *buf_new(void)
+    out: buffer_t*
+    doc: Create an empty buffer; NULL when out of memory.
+L14-14 function buf_append [pub] (decl)
+    sig: int buf_append(buffer_t *b, const void *src, size_t n)
+    in: b: buffer_t*, src: const void*, n: size_t
+    out: int
+L15-15 function buf_free [pub] (decl)
+    sig: void buf_free(buffer_t *b)
+    in: b: buffer_t*
+edges:
+  L4 imports c/buffer.h -> stddef.h
+  L13 uses buf_new -> buffer_t
+  L14 uses buf_append -> buffer_t
+  L15 uses buf_free -> buffer_t
