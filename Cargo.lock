@@ -703,6 +703,7 @@ dependencies = [
  "gitnext-ops",
  "gitnext-parse",
  "ratatui",
+ "unicode-width",
 ]
 
 [[package]]

@@ -11,3 +11,4 @@ gitnext-index = { version = "0.2.0", path = "../gitnext-index" }
 gitnext-ops = { version = "0.2.0", path = "../gitnext-ops" }
 gitnext-parse = { version = "0.2.0", path = "../gitnext-parse" }
 ratatui = "0.30.2"
+unicode-width = "0.2.3"
