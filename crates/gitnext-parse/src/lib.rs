@@ -9,7 +9,7 @@
 //! TypeScript, JavaScript, Go and Java.
 
 /// Bump when extractor output changes; the index re-parses everything on mismatch.
-pub const PARSER_VERSION: u32 = 21;
+pub const PARSER_VERSION: u32 = 22;
 
 mod cfamily;
 mod generic;

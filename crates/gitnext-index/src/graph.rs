@@ -528,6 +528,7 @@ impl Graph {
         let Some(all) = self.by_name.get(name) else { return vec![] };
         let cands: Vec<usize> = all.iter().copied().filter(|&i| self.syms[i].sym.kind.is_callable()).collect();
         let cands = self.visible_only(&e.from, file, cands);
+        let cands_all = cands.clone();
         let caller = self.source_of(file, e).map(|i| &self.syms[i]);
         let caller_owner = caller.and_then(|c| c.sym.parent.clone()).unwrap_or_default();
         let qual = qualifier(&e.to);
@@ -635,6 +636,18 @@ impl Graph {
                 .collect()
         };
         if picked.is_empty() && gitnext_parse::lang_for(std::path::Path::new(file)).is_some_and(gitnext_parse::Lang::is_generic) && !qual.is_empty() && qual != "Self" {
+            // `Type::method` with Type a repo type but the method defined above it (base class,
+            // embedded struct, interface default): inherited first, else any method of that name
+            let types: Vec<usize> = self.by_name.get(qual).map(|v| v.iter().copied().filter(|&i| self.syms[i].sym.kind.is_type()).collect()).unwrap_or_default();
+            if !types.is_empty() {
+                for &t in &types {
+                    let inh = self.inherited(&self.syms[t].sym.qualified, name, file);
+                    if !inh.is_empty() {
+                        return inh;
+                    }
+                }
+                return cands_all.into_iter().filter(|&i| self.syms[i].sym.kind == Kind::Method).collect();
+            }
             // `pkg::index::create` where the index file only re-exports `create`: in-repo path → by name
             let first = e.to.split("::").next().unwrap_or("");
             if self.is_repo_root(first) {

@@ -464,8 +464,14 @@ fn run() -> Result<()> {
             if out.json {
                 let v: Vec<_> = ids
                     .iter()
-                    .map(|&i| serde_json::json!({ "symbol": g.sym_ref(i),
-                        "callers": g.callers(i).into_iter().filter(|(c, _)| out.opts.tests || !g.syms[*c].sym.test).map(|(c, l)| (g.sym_ref(c), l)).collect::<Vec<_>>() }))
+                    .map(|&i| {
+                        // `maybe`: a call on a value of unknown type that could reach this method
+                        let (sure, maybe): (Vec<_>, Vec<_>) =
+                            g.callers(i).into_iter().filter(|(c, _)| out.opts.tests || !g.syms[*c].sym.test).partition(|(c, _)| !g.is_guess(*c, i));
+                        serde_json::json!({ "symbol": g.sym_ref(i),
+                            "callers": sure.into_iter().map(|(c, l)| (g.sym_ref(c), l)).collect::<Vec<_>>(),
+                            "maybe": maybe.into_iter().map(|(c, l)| (g.sym_ref(c), l)).collect::<Vec<_>>() })
+                    })
                     .collect();
                 return out.json(&v);
             }
