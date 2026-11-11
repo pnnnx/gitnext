@@ -54,7 +54,7 @@ gitnext             # открыть TUI
 | скелет файла или папки | `gitnext outline <путь>` / `outline` |
 | поправить функцию, не читая файл | `gitnext edit replace <Sym> -f new.py` / `replace_symbol` |
 | переименовать везде (импорты, тесты, `__all__`, `mod.func`) | `gitnext rename <старое> <новое>` / `rename_symbol` |
-| что сломается и какие тесты гонять | `gitnext impact <Sym>` · `gitnext tests-for <Sym>` |
+| что сломается и какие тесты гонять | `gitnext impact <Sym>` · `gitnext tests-for <Sym>` (10 самых вероятных + одна команда на остальные) |
 | ошибка или traceback → код | `gitnext locate` (stdin) / `locate` |
 | на чём остановились | `gitnext brief` · `gitnext journal` |
 | какие библиотеки и версии использует код | `gitnext libs` (а `look` показывает их у каждой функции) |

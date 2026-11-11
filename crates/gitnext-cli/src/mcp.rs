@@ -103,8 +103,8 @@ fn tools() -> Value {
              json!({ "items": { "type": "array", "items": { "type": "object", "properties": { "symbol": { "type": "string" }, "summary": { "type": "string" } }, "required": ["symbol", "summary"] } } }), &["items"]),
         tool("locate", "Paste a compiler error, panic, test failure or traceback: returns the repo symbols at those file:line locations (innermost function/method) and the code of the top one.",
              json!({ "text": { "type": "string" } }), &["text"]),
-        tool("tests_for", "Tests that exercise a symbol (via the call graph) and the exact command to run only those tests.",
-             json!({ "symbol": sym, "depth": { "type": "integer" } }), &["symbol"]),
+        tool("tests_for", "Tests that exercise a symbol: the 10 most likely to fail if it breaks (direct calls and tests named after it first) with the exact command to run them, plus one command for the whole test files.",
+             json!({ "symbol": sym, "depth": { "type": "integer" }, "all": { "type": "boolean", "description": "name every test, not only the top 10" } }), &["symbol"]),
         tool("history", "Commits that changed one symbol (added / signature / body / docs), newest first — the 'why is it like this' view without reading git logs.",
              json!({ "symbol": sym, "limit": { "type": "integer" } }), &["symbol"]),
         tool("changelog", "Semantic changelog of a git range (e.g. main..HEAD): breaking API changes with external refs, added symbols by area, changed bodies, commits.",
@@ -282,7 +282,8 @@ impl Server {
             "locate" => gitnext_ops::locate::render_locate(g, &root, s_arg(a, "text").ok_or("missing `text`")?, true),
             "tests_for" => {
                 let d = a.get("depth").and_then(Value::as_u64).unwrap_or(4) as usize;
-                sym("symbol")?.iter().map(|&i| gitnext_ops::locate::render_tests_for(g, &root, i, d)).collect()
+                let all = a.get("all").and_then(Value::as_bool).unwrap_or(false);
+                sym("symbol")?.iter().map(|&i| gitnext_ops::locate::render_tests_for(g, &root, i, d, all)).collect()
             }
             "history" => {
                 let repo = self.ws.repo().map_err(|e| e.to_string())?;

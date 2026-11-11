@@ -262,7 +262,7 @@ Claude Code подхватит сервер при запуске в этой п
 | `gitnext rename <Sym> <new> [--dry-run]` | переименовать во всех однозначных местах, предупредить о переопределениях |
 | `gitnext overview` · `activity` · `hotspots` · `dead` · `cycles` · `entrypoints` | понимание проекта |
 | `gitnext history <Sym>` · `changelog a..b` · `since <rev>` | семантическая история |
-| `gitnext locate` (stdin) · `tests-for <Sym>` | ошибка → код; тесты и команда запуска |
+| `gitnext locate` (stdin) · `tests-for <Sym> [--all]` | ошибка → код; 10 тестов, которые упадут вероятнее всего, команда на них и на весь тестовый файл (`--all` — все тесты поимённо) |
 | `gitnext explain [path] [--dry-run]` · `annotate <Sym\|dir:path> "текст"` | описания для кода без документации (`.gitnext/notes.tsv`) |
 | `gitnext lsp [--lang rust\|python\|c]` | точный граф: неоднозначные вызовы через rust-analyzer / pyright / clangd |
 | `gitnext journal [-n 3]` | журнал агента |

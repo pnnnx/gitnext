@@ -143,17 +143,16 @@ fn symbol(ws: &Workspace, g: &Graph, ids: &[usize], lite: bool) -> String {
     if t.is_empty() {
         let _ = writeln!(s, "tests: none reach it through the call graph");
     } else {
-        let names: Vec<String> = t.iter().take(8).map(|x| g.short_name(x.symbol).to_string()).collect();
+        // most likely to fail first: name those, one command for them and one for the rest
+        let top = &t[..t.len().min(locate::TOP_TESTS)];
+        let names: Vec<String> = top.iter().take(8).map(|x| g.short_name(x.symbol).to_string()).collect();
         let _ = writeln!(s, "tests ({}): {}{}", t.len(), names.join(", "), if t.len() > 8 { " …" } else { "" });
-        let mut files: Vec<&str> = t.iter().map(|x| g.syms[x.symbol].file.as_str()).collect();
-        files.sort_unstable();
-        files.dedup();
-        if t.len() > 8 && files.iter().all(|f| f.ends_with(".py")) {
-            // too many to name one by one: the files that hold them
-            let _ = writeln!(s, "  run: python3 -m pytest -q {}", files.join(" "));
-        } else {
-            for cmd in locate::run_commands(g, root, &t).into_iter().take(2) {
-                let _ = writeln!(s, "  run: {cmd}");
+        for cmd in locate::run_commands(g, root, top).into_iter().take(2) {
+            let _ = writeln!(s, "  run: {cmd}");
+        }
+        if top.len() < t.len() {
+            if let Some(cmd) = locate::file_commands(g, root, &t).into_iter().next() {
+                let _ = writeln!(s, "  all of them: {cmd}");
             }
         }
     }

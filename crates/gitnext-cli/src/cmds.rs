@@ -189,11 +189,14 @@ pub enum More {
     Msg,
     /// Hooks for agent harnesses (reads the hook JSON on stdin): `read`, `session-start`
     Hook { event: String },
-    /// Tests that exercise a symbol, with the command to run just those
+    /// Tests that exercise a symbol: the 10 most likely to fail first, with the command to run them
     TestsFor {
         symbol: String,
         #[arg(short, long, default_value_t = 4)]
         depth: usize,
+        /// Name every test, not only the 10 most likely
+        #[arg(short, long)]
+        all: bool,
     },
 }
 
@@ -248,10 +251,10 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             };
             out.text(&gitnext_ops::locate::render_locate(&g, &ws.root, &t, !no_code));
         }
-        More::TestsFor { symbol, depth } => {
+        More::TestsFor { symbol, depth, all } => {
             let g = ws.graph()?;
             for i in lookup(&g, &symbol)? {
-                out.text(&gitnext_ops::locate::render_tests_for(&g, &ws.root, i, depth));
+                out.text(&gitnext_ops::locate::render_tests_for(&g, &ws.root, i, depth, all));
             }
         }
         More::Lsp { lang, limit, all } => {

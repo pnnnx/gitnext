@@ -53,7 +53,7 @@ gitnext             # open the TUI
 | skeleton of a file or folder | `gitnext outline <path>` / `outline` |
 | edit one function without reading the file | `gitnext edit replace <Sym> -f new.py` / `replace_symbol` |
 | rename everywhere (imports, tests, `__all__`, `mod.func`) | `gitnext rename <old> <new>` / `rename_symbol` |
-| what breaks, which tests to run | `gitnext impact <Sym>` · `gitnext tests-for <Sym>` |
+| what breaks, which tests to run | `gitnext impact <Sym>` · `gitnext tests-for <Sym>` (the 10 most likely to fail + one command for the rest) |
 | error or traceback → code | `gitnext locate` (stdin) / `locate` |
 | where were we | `gitnext brief` · `gitnext journal` |
 | which libraries the code calls, with versions | `gitnext libs` (and `look` shows them per function) |
