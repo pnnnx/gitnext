@@ -2,7 +2,7 @@
  {"name": "cobra", "lang": "go", "url": "https://github.com/spf13/cobra", "commit": "adbc8813901bba65827259daa8e22ff94ec1f30e",
   "setup": "go mod download"},
  {"name": "click", "lang": "python", "url": "https://github.com/pallets/click", "commit": "8abb77a8432e03ed14a95f972b44f905279415a7",
-  "setup": "python3 -m venv .venv && .venv/bin/pip -q install -e . pytest"},
+  "setup": "PY=$(command -v python3.13 || command -v python3.12 || command -v python3.11 || command -v python3.10 || echo python3) && rm -rf .venv && $PY -m venv .venv && .venv/bin/python -m pip -q install --upgrade pip && .venv/bin/pip -q install -e . pytest"},
  {"name": "zustand", "lang": "typescript", "url": "https://github.com/pmndrs/zustand", "commit": "9fed2eb2f3af672da9f7bf694b996df3831fc207",
   "setup": "npm install --ignore-scripts --no-audit --no-fund --loglevel=error"},
  {"name": "jsoup", "lang": "java", "url": "https://github.com/jhy/jsoup", "commit": "d90d57521d931db7bf7ee464a4c0a1a9293db088",

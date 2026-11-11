@@ -35,6 +35,7 @@ import run as ev  # eval/run.py: repos, languages, compiler / test plumbing
 
 HERE = Path(__file__).resolve().parent
 MAX_OUT = 6000  # chars of tool output shown to the model
+CTX_CHARS = int(os.environ.get("AGENT_CTX_CHARS", "40000"))  # ~ the model's context: older tool output is cut beyond it
 
 
 # ---------------------------------------------------------------- tools
@@ -128,6 +129,7 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
         if time.time() > deadline:
             used["timeout"] = True
             break
+        fit(msgs)
         r = chat(host, msgs, tools, 1024)
         u = r.get("usage", {})
         used["tokens_in"] += u.get("prompt_tokens", 0)
@@ -157,6 +159,16 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
             break
     used["answer"] = answer[:500]
     return used
+
+
+def fit(msgs: list) -> None:
+    """Shorten the oldest tool results until the conversation fits the context (same for every mode)."""
+    size = lambda: sum(len(m.get("content") or "") + len(json.dumps(m.get("tool_calls") or "")) for m in msgs)
+    for m in msgs:
+        if size() <= CTX_CHARS:
+            return
+        if m["role"] == "tool" and len(m["content"]) > 400:
+            m["content"] = m["content"][:300] + "\n… (cut: old output)"
 
 
 # ---------------------------------------------------------------- tasks
