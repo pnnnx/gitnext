@@ -81,7 +81,7 @@ fn rename_text_also_fixes_comments_and_strings_but_not_longer_words() {
         "rename-text",
         &[
             ("app/__init__.py", ""),
-            ("app/core.py", "# detect is used by run; detector is another thing\ndef detect(x):\n    return x\n\n\ndef run():\n    return detect(1), 'detect', 'detector'\n"),
+            ("app/core.py", "# `detect` is used by run(); detector is another thing\n# to detect a change, call detect()\ndef detect(x):\n    return x\n\n\ndef run():\n    return detect(1), 'detect', 'detector', 'detect it'\n"),
         ],
     );
     let g = graph(&dir);
@@ -90,7 +90,24 @@ fn rename_text_also_fixes_comments_and_strings_but_not_longer_words() {
     assert!(!r.leftover.is_empty());
     edit::rename_leftover_text(&dir, &mut r).unwrap();
     let text = std::fs::read_to_string(dir.join("app/core.py")).unwrap();
-    assert_eq!(text, "# find is used by run; detector is another thing\ndef find(x):\n    return x\n\n\ndef run():\n    return find(1), 'find', 'detector'\n");
-    assert!(r.leftover.is_empty(), "{:?}", r.leftover);
+    // code-shaped mentions change; the English verb "to detect" and the sentence 'detect it' stay
+    assert_eq!(text, "# `find` is used by run(); detector is another thing\n# to detect a change, call find()\ndef find(x):\n    return x\n\n\ndef run():\n    return find(1), 'find', 'detector', 'detect it'\n");
+    std::fs::remove_dir_all(&dir).ok();
+}
+
+#[test]
+fn rename_text_leaves_other_symbols_in_code_alone() {
+    // `fmt.print` is someone else's `print`: --text only touches comments and strings
+    let dir = project(
+        "rename-text-code",
+        &[("app/__init__.py", ""), ("app/core.py", "import fmt\n\n\n# print() is ours\ndef print(x):\n    return fmt.print(x)\n\n\ndef run():\n    return print(1), 'print'\n")],
+    );
+    let g = graph(&dir);
+    let i = g.find("print").into_iter().find(|&i| g.syms[i].file == "app/core.py").unwrap();
+    let mut r = edit::rename(&dir, &g, i, "show", false).unwrap();
+    edit::rename_leftover_text(&dir, &mut r).unwrap();
+    let text = std::fs::read_to_string(dir.join("app/core.py")).unwrap();
+    assert!(text.contains("fmt.print(x)"), "{text}");
+    assert!(text.contains("# show() is ours") && text.contains("def show(x)") && text.contains("return show(1), 'show'"), "{text}");
     std::fs::remove_dir_all(&dir).ok();
 }

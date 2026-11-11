@@ -1,0 +1,1068 @@
+[
+ {
+  "repo": "cobra",
+  "lang": "go",
+  "commit": "adbc8813901b",
+  "index_seconds": 0.2,
+  "symbols": 288,
+  "files": 19,
+  "edges": 5106,
+  "sample": [
+   "main::Command::NamePadding",
+   "main::CheckErr",
+   "main::Command::CommandPathPadding",
+   "main::Command::GenPowerShellCompletionWithDesc",
+   "main::Command::Print",
+   "main::Command::OutOrStderr",
+   "main::Command::PrintErrf",
+   "main::MinimumNArgs"
+  ],
+  "baseline_failing_tests": [
+   "TestFailGenFishCompletionFile"
+  ],
+  "callers": [
+   {
+    "symbol": "main::Command::NamePadding",
+    "truth": [
+     "main::defaultUsageFunc"
+    ],
+    "found": [
+     "main::defaultUsageFunc"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "main::CheckErr",
+    "truth": [
+     "main::Command::InitDefaultHelpCmd",
+     "main::Command::UsageString",
+     "main::WriteStringAndCheck"
+    ],
+    "found": [
+     "main::Command::InitDefaultHelpCmd",
+     "main::Command::UsageString",
+     "main::WriteStringAndCheck"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "main::Command::CommandPathPadding",
+    "truth": [
+     "main::defaultUsageFunc"
+    ],
+    "found": [
+     "main::defaultUsageFunc"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "main::Command::GenPowerShellCompletionWithDesc",
+    "truth": [
+     "main::Command::InitDefaultCompletionCmd"
+    ],
+    "found": [
+     "main::Command::InitDefaultCompletionCmd"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "main::Command::Print",
+    "truth": [
+     "main::Command::ParseFlags",
+     "main::Command::Printf",
+     "main::Command::Println"
+    ],
+    "found": [
+     "main::Command::ParseFlags",
+     "main::Command::Printf",
+     "main::Command::Println",
+     "main::preExecHook"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 0.75,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "main::Command::OutOrStderr",
+    "truth": [
+     "main::Command::Print",
+     "main::Command::UsageFunc"
+    ],
+    "found": [
+     "main::Command::Print",
+     "main::Command::UsageFunc"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "main::Command::PrintErrf",
+    "truth": [
+     "main::Command::ExecuteC"
+    ],
+    "found": [
+     "main::Command::ExecuteC"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "main::MinimumNArgs",
+    "truth": [
+     "main::Command::initCompleteCmd"
+    ],
+    "found": [
+     "main::Command::initCompleteCmd"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   }
+  ],
+  "rename": [
+   {
+    "symbol": "main::Command::NamePadding",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "main::CheckErr",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "main::Command::CommandPathPadding",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "main::Command::GenPowerShellCompletionWithDesc",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "main::Command::Print",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "doc/man_examples_test.go:48:\tfmt.Print(out.String())",
+    "detail": ""
+   },
+   {
+    "symbol": "main::Command::OutOrStderr",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "main::Command::PrintErrf",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "main::MinimumNArgs",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   }
+  ],
+  "tests": [
+   {
+    "symbol": "main::Command::NamePadding",
+    "level": "name",
+    "truth": 1,
+    "predicted": 125,
+    "recall": 1.0,
+    "precision": 0.008,
+    "missed": [],
+    "recall_graph_only": 0.0
+   },
+   {
+    "symbol": "main::CheckErr",
+    "level": "name",
+    "truth": 2,
+    "predicted": 244,
+    "recall": 1.0,
+    "precision": 0.00819672131147541,
+    "missed": [],
+    "recall_graph_only": 1.0
+   },
+   {
+    "symbol": "main::Command::CommandPathPadding",
+    "level": "name",
+    "truth": 1,
+    "predicted": 125,
+    "recall": 1.0,
+    "precision": 0.008,
+    "missed": [],
+    "recall_graph_only": 0.0
+   },
+   {
+    "symbol": "main::Command::GenPowerShellCompletionWithDesc",
+    "skipped": "no test fails when it throws",
+    "predicted": 208
+   }
+  ],
+  "look": [
+   {
+    "symbol": "main::Command::NamePadding",
+    "look_tokens": 167,
+    "file_tokens": 15286
+   },
+   {
+    "symbol": "main::CheckErr",
+    "look_tokens": 277,
+    "file_tokens": 1871
+   },
+   {
+    "symbol": "main::Command::CommandPathPadding",
+    "look_tokens": 187,
+    "file_tokens": 15286
+   },
+   {
+    "symbol": "main::Command::GenPowerShellCompletionWithDesc",
+    "look_tokens": 207,
+    "file_tokens": 3403
+   },
+   {
+    "symbol": "main::Command::Print",
+    "look_tokens": 206,
+    "file_tokens": 15286
+   },
+   {
+    "symbol": "main::Command::OutOrStderr",
+    "look_tokens": 146,
+    "file_tokens": 15286
+   },
+   {
+    "symbol": "main::Command::PrintErrf",
+    "look_tokens": 171,
+    "file_tokens": 15286
+   },
+   {
+    "symbol": "main::MinimumNArgs",
+    "look_tokens": 226,
+    "file_tokens": 1120
+   }
+  ],
+  "seconds": 12,
+  "summary": {
+   "callers_recall": 1.0,
+   "callers_precision": 0.969,
+   "callers_checked": 8,
+   "rename_ok": 1.0,
+   "rename_checked": 8,
+   "tests_recall": 1.0,
+   "tests_precision": 0.008,
+   "tests_checked": 3,
+   "look_vs_file": 0.059
+  }
+ },
+ {
+  "repo": "click",
+  "lang": "python",
+  "commit": "8abb77a8432e",
+  "index_seconds": 0.3,
+  "symbols": 761,
+  "files": 32,
+  "edges": 8909,
+  "sample": [
+   "click::types::Path::coerce_path_result",
+   "click::core::Option::get_help_extra",
+   "click::formatting::HelpFormatter::write_heading",
+   "click::formatting::HelpFormatter::indentation",
+   "click::globals::push_context",
+   "click::_textwrap::TextWrapper::extra_indent",
+   "click::termui::confirm",
+   "click::core::Command::format_usage"
+  ],
+  "baseline_failing_tests": [],
+  "callers": [],
+  "rename": [
+   {
+    "symbol": "click::types::Path::coerce_path_result",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "click::core::Option::get_help_extra",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "click::formatting::HelpFormatter::write_heading",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "tests/test_custom_classes.py:53:        def write_heading(self, heading):\ntests/test_custom_classes.py:55:            return super().write_heading(heading)",
+    "detail": ""
+   },
+   {
+    "symbol": "click::formatting::HelpFormatter::indentation",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "src/click/formatting.py:290:        \"\"\"A context manager that increases the indentation.\"\"\"",
+    "detail": ""
+   },
+   {
+    "symbol": "click::globals::push_context",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "click::_textwrap::TextWrapper::extra_indent",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "click::termui::confirm",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "tests/test_termui.py:1413:        pytest.param(click.confirm, \"y\", \"Hello World!\", \" [y/N]: y\\n\", id=\"confirm_gnx\"),\ntests/test_utils/test_confirm.py:7:        if click.confirm(\"Foo\"):\ntests/test_utils/test_confirm.py:26:        if click.confirm(\"Foo\", default=True):\ntests/test_utils/test_echo.py:13",
+    "detail": ""
+   },
+   {
+    "symbol": "click::core::Command::format_usage",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   }
+  ],
+  "tests": [
+   {
+    "symbol": "click::types::Path::coerce_path_result",
+    "level": "name",
+    "truth": 9,
+    "predicted": 0,
+    "recall": 0.0,
+    "precision": 0.0,
+    "missed": [
+     "test_dual_options_custom_type_sentinel_flag_value",
+     "test_envvar_container_type",
+     "test_other_command_invoke_with_defaults",
+     "test_path_allow_dash",
+     "test_path_dash_no_byteswarning",
+     "test_path_option",
+     "test_path_resolve_symlink",
+     "test_path_type"
+    ],
+    "recall_graph_only": 0.0
+   },
+   {
+    "symbol": "click::core::Option::get_help_extra",
+    "level": "name",
+    "truth": 89,
+    "predicted": 11,
+    "recall": 0.12359550561797752,
+    "precision": 1.0,
+    "missed": [
+     "test_aliased_command_canonical_name",
+     "test_argument_help",
+     "test_argument_help_deprecated_without_help_lists_all",
+     "test_argument_help_empty_string_lists_all",
+     "test_argument_help_lists_undocumented_arguments",
+     "test_argument_help_optional_metavar",
+     "test_argument_help_options_only_no_arguments_section",
+     "test_argument_help_undocumented_arguments_only_no_section"
+    ],
+    "recall_graph_only": 0.12359550561797752
+   },
+   {
+    "symbol": "click::formatting::HelpFormatter::write_heading",
+    "level": "name",
+    "truth": 76,
+    "predicted": 23,
+    "recall": 0.13157894736842105,
+    "precision": 0.43478260869565216,
+    "missed": [
+     "test_aliased_command_canonical_name",
+     "test_argument_help",
+     "test_argument_help_deprecated_without_help_lists_all",
+     "test_argument_help_empty_string_lists_all",
+     "test_argument_help_lists_undocumented_arguments",
+     "test_argument_help_optional_metavar",
+     "test_argument_help_options_only_no_arguments_section",
+     "test_argument_help_undocumented_arguments_only_no_section"
+    ],
+    "recall_graph_only": 0.0
+   },
+   {
+    "symbol": "click::formatting::HelpFormatter::indentation",
+    "level": "name",
+    "truth": 10,
+    "predicted": 23,
+    "recall": 0.5,
+    "precision": 0.21739130434782608,
+    "missed": [
+     "test_basic_group",
+     "test_chaining_help",
+     "test_deprecated_empty_help_no_leading_space",
+     "test_deprecated_help_text_is_not_translated",
+     "test_deprecated_in_help_messages"
+    ],
+    "recall_graph_only": 0.0
+   }
+  ],
+  "look": [
+   {
+    "symbol": "click::types::Path::coerce_path_result",
+    "look_tokens": 216,
+    "file_tokens": 11834
+   },
+   {
+    "symbol": "click::core::Option::get_help_extra",
+    "look_tokens": 958,
+    "file_tokens": 39086
+   },
+   {
+    "symbol": "click::formatting::HelpFormatter::write_heading",
+    "look_tokens": 206,
+    "file_tokens": 2611
+   },
+   {
+    "symbol": "click::formatting::HelpFormatter::indentation",
+    "look_tokens": 224,
+    "file_tokens": 2611
+   },
+   {
+    "symbol": "click::globals::push_context",
+    "look_tokens": 109,
+    "file_tokens": 481
+   },
+   {
+    "symbol": "click::_textwrap::TextWrapper::extra_indent",
+    "look_tokens": 289,
+    "file_tokens": 1568
+   },
+   {
+    "symbol": "click::termui::confirm",
+    "look_tokens": 591,
+    "file_tokens": 8971
+   },
+   {
+    "symbol": "click::core::Command::format_usage",
+    "look_tokens": 175,
+    "file_tokens": 39086
+   }
+  ],
+  "seconds": 63,
+  "summary": {
+   "callers_recall": null,
+   "callers_precision": null,
+   "callers_checked": 0,
+   "rename_ok": 1.0,
+   "rename_checked": 8,
+   "tests_recall": 0.189,
+   "tests_precision": 0.413,
+   "tests_checked": 4,
+   "look_vs_file": 0.086
+  }
+ },
+ {
+  "repo": "zustand",
+  "lang": "typescript",
+  "commit": "9fed2eb2f3af",
+  "index_seconds": 0.1,
+  "symbols": 175,
+  "files": 36,
+  "edges": 5251,
+  "sample": [
+   "src::middleware::persist::createJSONStorage"
+  ],
+  "baseline_failing_tests": [],
+  "callers": [
+   {
+    "symbol": "src::middleware::persist::createJSONStorage",
+    "truth": [
+     "src::middleware::persist::hydrate",
+     "src::middleware::persist::persistImpl"
+    ],
+    "found": [
+     "src::middleware::persist::persistImpl"
+    ],
+    "maybe": [],
+    "import_files": [
+     "src/middleware.ts"
+    ],
+    "recall": 0.5,
+    "precision": 1.0,
+    "recall_with_maybe": 0.5
+   }
+  ],
+  "rename": [
+   {
+    "symbol": "src::middleware::persist::createJSONStorage",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   }
+  ],
+  "tests": [
+   {
+    "symbol": "src::middleware::persist::createJSONStorage",
+    "skipped": "mutant does not compile"
+   }
+  ],
+  "look": [
+   {
+    "symbol": "src::middleware::persist::createJSONStorage",
+    "look_tokens": 349,
+    "file_tokens": 3010
+   }
+  ],
+  "seconds": 24,
+  "summary": {
+   "callers_recall": 0.5,
+   "callers_precision": 1.0,
+   "callers_checked": 1,
+   "rename_ok": 1.0,
+   "rename_checked": 1,
+   "tests_recall": null,
+   "tests_precision": null,
+   "tests_checked": 0,
+   "look_vs_file": 0.116
+  }
+ },
+ {
+  "repo": "jsoup",
+  "lang": "java",
+  "commit": "d90d57521d93",
+  "index_seconds": 2.4,
+  "symbols": 2663,
+  "files": 105,
+  "edges": 42271,
+  "sample": [
+   "org::jsoup::internal::SoftPool::release",
+   "org::jsoup::internal::StringUtil::appendNormalisedWhitespace",
+   "org::jsoup::internal::LegacyMatching::cssAttributeMatches",
+   "org::jsoup::select::Evaluator::asPredicate",
+   "org::jsoup::parser::TokenQueue::matchesWord",
+   "org::jsoup::internal::StringUtil::isAsciiLetter",
+   "org::jsoup::parser::TokenQueue::matchesWhitespace",
+   "org::jsoup::nodes::DocumentType::publicId"
+  ],
+  "baseline_failing_tests": [],
+  "callers": [
+   {
+    "symbol": "org::jsoup::internal::SoftPool::release",
+    "skipped": "compiler reported no uses"
+   },
+   {
+    "symbol": "org::jsoup::internal::StringUtil::appendNormalisedWhitespace",
+    "truth": [
+     "org::jsoup::internal::StringUtil::normaliseWhitespace"
+    ],
+    "found": [
+     "org::jsoup::internal::StringUtil::normaliseWhitespace",
+     "org::jsoup::nodes::Element::appendNormalisedText"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 0.5,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "org::jsoup::internal::LegacyMatching::cssAttributeMatches",
+    "skipped": "compiler reported no uses"
+   },
+   {
+    "symbol": "org::jsoup::select::Evaluator::asPredicate",
+    "skipped": "compiler reported no uses"
+   },
+   {
+    "symbol": "org::jsoup::parser::TokenQueue::matchesWord",
+    "truth": [
+     "org::jsoup::parser::TokenQueue::matchesCssIdentifier"
+    ],
+    "found": [
+     "org::jsoup::parser::TokenQueue::matchesCssIdentifier",
+     "org::jsoup::select::QueryParser::parseSimpleSequence"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 0.5,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "org::jsoup::internal::StringUtil::isAsciiLetter",
+    "truth": [
+     "org::jsoup::parser::TokenQueue::isIdentStart"
+    ],
+    "found": [
+     "org::jsoup::parser::CharacterReader::consumeLetterSequence",
+     "org::jsoup::parser::CharacterReader::consumeLetterThenDigitSequence",
+     "org::jsoup::parser::CharacterReader::matchesAsciiAlpha",
+     "org::jsoup::parser::Tag::validateTextTagName",
+     "org::jsoup::parser::TokenQueue::isIdentStart"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 0.2,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "org::jsoup::parser::TokenQueue::matchesWhitespace",
+    "truth": [
+     "org::jsoup::parser::TokenQueue::consumeCssValue",
+     "org::jsoup::parser::TokenQueue::consumeWhitespace"
+    ],
+    "found": [
+     "org::jsoup::parser::TokenQueue::consumeCssValue",
+     "org::jsoup::parser::TokenQueue::consumeWhitespace",
+     "org::jsoup::select::QueryParser::consumeAttributeValue"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 0.6666666666666666,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "org::jsoup::nodes::DocumentType::publicId",
+    "skipped": "compiler reported no uses"
+   }
+  ],
+  "rename": [
+   {
+    "symbol": "org::jsoup::internal::SoftPool::release",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": ".github/dependabot.yml:11:      # Et tu, junit? Keep us on 5, as 6 has min JDK17 - https://docs.junit.org/6.0.0-RC3/release-notes/#release-notes-6.0.0-M1\nchange-archive.txt:585:    jsoup 1.15.1 release.\nchange-archive.txt:1547: * Improved parse time, now 2.3x faster than previous release, with lower",
+    "detail": ""
+   },
+   {
+    "symbol": "org::jsoup::internal::StringUtil::appendNormalisedWhitespace",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "org::jsoup::internal::LegacyMatching::cssAttributeMatches",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "org::jsoup::select::Evaluator::asPredicate",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "org::jsoup::parser::TokenQueue::matchesWord",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "org::jsoup::internal::StringUtil::isAsciiLetter",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "src/test/java/org/jsoup/internal/StringUtilTest.java:207:    @Test void isAsciiLetter() {",
+    "detail": ""
+   },
+   {
+    "symbol": "org::jsoup::parser::TokenQueue::matchesWhitespace",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "org::jsoup::nodes::DocumentType::publicId",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "src/main/java/org/jsoup/nodes/DocumentType.java:29:    public DocumentType(String name, String publicId, String systemId) {\nsrc/main/java/org/jsoup/nodes/DocumentType.java:31:        Validate.notNull(publicId);\nsrc/main/java/org/jsoup/nodes/DocumentType.java:35:            .add(PublicId, publicId)\ns",
+    "detail": ""
+   }
+  ],
+  "tests": [
+   {
+    "symbol": "org::jsoup::internal::SoftPool::release",
+    "skipped": "no test fails when it throws",
+    "predicted": 515
+   },
+   {
+    "symbol": "org::jsoup::internal::StringUtil::appendNormalisedWhitespace",
+    "skipped": "no test fails when it throws",
+    "predicted": 124
+   },
+   {
+    "symbol": "org::jsoup::internal::LegacyMatching::cssAttributeMatches",
+    "skipped": "no test fails when it throws",
+    "predicted": 0
+   },
+   {
+    "symbol": "org::jsoup::select::Evaluator::asPredicate",
+    "skipped": "no test fails when it throws",
+    "predicted": 26
+   }
+  ],
+  "look": [
+   {
+    "symbol": "org::jsoup::internal::SoftPool::release",
+    "look_tokens": 442,
+    "file_tokens": 600
+   },
+   {
+    "symbol": "org::jsoup::internal::StringUtil::appendNormalisedWhitespace",
+    "look_tokens": 606,
+    "file_tokens": 4377
+   },
+   {
+    "symbol": "org::jsoup::internal::LegacyMatching::cssAttributeMatches",
+    "look_tokens": 245,
+    "file_tokens": 1068
+   },
+   {
+    "symbol": "org::jsoup::select::Evaluator::asPredicate",
+    "look_tokens": 401,
+    "file_tokens": 9555
+   },
+   {
+    "symbol": "org::jsoup::parser::TokenQueue::matchesWord",
+    "look_tokens": 154,
+    "file_tokens": 5312
+   },
+   {
+    "symbol": "org::jsoup::internal::StringUtil::isAsciiLetter",
+    "look_tokens": 367,
+    "file_tokens": 4377
+   },
+   {
+    "symbol": "org::jsoup::parser::TokenQueue::matchesWhitespace",
+    "look_tokens": 390,
+    "file_tokens": 5312
+   },
+   {
+    "symbol": "org::jsoup::nodes::DocumentType::publicId",
+    "look_tokens": 163,
+    "file_tokens": 964
+   }
+  ],
+  "seconds": 150,
+  "summary": {
+   "callers_recall": 1.0,
+   "callers_precision": 0.467,
+   "callers_checked": 4,
+   "rename_ok": 1.0,
+   "rename_checked": 8,
+   "tests_recall": null,
+   "tests_precision": null,
+   "tests_checked": 0,
+   "look_vs_file": 0.188
+  }
+ },
+ {
+  "repo": "semver",
+  "lang": "rust",
+  "commit": "280ebcb6edac",
+  "index_seconds": 0.0,
+  "symbols": 113,
+  "files": 13,
+  "edges": 1186,
+  "sample": [
+   "semver::identifier::Identifier::ptr_eq",
+   "semver::eval::matches_req",
+   "semver::identifier::Identifier::new_unchecked",
+   "semver::eval::matches_comparator",
+   "semver::identifier::Identifier::empty"
+  ],
+  "baseline_failing_tests": [],
+  "callers": [
+   {
+    "symbol": "semver::identifier::Identifier::ptr_eq",
+    "truth": [
+     "semver::identifier::Identifier::eq",
+     "semver::impls::BuildMetadata::cmp",
+     "semver::impls::Prerelease::cmp"
+    ],
+    "found": [
+     "semver::identifier::Identifier::eq",
+     "semver::impls::BuildMetadata::cmp",
+     "semver::impls::Prerelease::cmp"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "semver::eval::matches_req",
+    "truth": [
+     "semver::VersionReq::matches"
+    ],
+    "found": [
+     "semver::VersionReq::matches"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "semver::identifier::Identifier::new_unchecked",
+    "truth": [
+     "semver::identifier::Identifier::empty",
+     "semver::parse::build_identifier",
+     "semver::parse::prerelease_identifier"
+    ],
+    "found": [
+     "semver::parse::build_identifier",
+     "semver::parse::prerelease_identifier"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 0.6666666666666666,
+    "precision": 1.0,
+    "recall_with_maybe": 0.6666666666666666
+   },
+   {
+    "symbol": "semver::eval::matches_comparator",
+    "truth": [
+     "semver::Comparator::matches"
+    ],
+    "found": [
+     "semver::Comparator::matches"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "semver::identifier::Identifier::empty",
+    "truth": [
+     "semver::BuildMetadata::EMPTY",
+     "semver::Prerelease::EMPTY",
+     "semver::identifier::Identifier::is_empty",
+     "semver::identifier::Identifier::new_unchecked",
+     "semver::impls::Identifier::default"
+    ],
+    "found": [
+     "semver::identifier::Identifier::is_empty",
+     "semver::identifier::Identifier::new_unchecked",
+     "semver::impls::Identifier::default"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 0.6,
+    "precision": 1.0,
+    "recall_with_maybe": 0.6
+   }
+  ],
+  "rename": [
+   {
+    "symbol": "semver::identifier::Identifier::ptr_eq",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "semver::eval::matches_req",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "semver::identifier::Identifier::new_unchecked",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "src/identifier.rs:94:        const HEAD: NonNull<u8> = unsafe { NonNull::new_unchecked(!0 as *mut u8) };\nsrc/identifier.rs:120:                let size = bytes_for_varint(unsafe { NonZeroUsize::new_unchecked(len) }) + len;\nsrc/identifier.rs:292:    unsafe { NonNull::new_unchecked(modified) }\nsrc/ide",
+    "detail": ""
+   },
+   {
+    "symbol": "semver::eval::matches_comparator",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": null,
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "semver::identifier::Identifier::empty",
+    "ok": false,
+    "compiled": false,
+    "tests_ok": null,
+    "old_name_left": "src/identifier.rs:169:        let empty = Self::empty_gnx();\nsrc/identifier.rs:170:        let is_empty = self.head == empty.head && self.tail == empty.tail;\nsrc/identifier.rs:174:        mem::forget(empty);\nsrc/lib.rs:537:        identifier: Identifier::empty(),\nsrc/lib.rs:555:        identifier: I",
+    "detail": " &str) -> Self {\n    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nhelp: there is a method `is_empty` with a similar name\n    |\n555 |         identifier: Identifier::is_empty(),\n    |                                 +++\n\nFor more information about this error, try `rustc --explain E0599`.\nerror: could not compile `semver` (lib test) due to 2 previous errors\nwarning: build failed, waiting for other jobs to finish...\nerror: could not compile `semver` (lib) due to 2 previous errors\n"
+   }
+  ],
+  "tests": [
+   {
+    "symbol": "semver::identifier::Identifier::ptr_eq",
+    "level": "name",
+    "truth": 20,
+    "predicted": 0,
+    "recall": 0.0,
+    "precision": 0.0,
+    "missed": [
+     "test_basic",
+     "test_caret",
+     "test_cargo3202",
+     "test_eq",
+     "test_eq_hash",
+     "test_exact",
+     "test_ge",
+     "test_greater_than"
+    ],
+    "recall_graph_only": 0.0
+   },
+   {
+    "symbol": "semver::eval::matches_req",
+    "level": "name",
+    "truth": 11,
+    "predicted": 13,
+    "recall": 1.0,
+    "precision": 0.8461538461538461,
+    "missed": [],
+    "recall_graph_only": 1.0
+   },
+   {
+    "symbol": "semver::identifier::Identifier::new_unchecked",
+    "level": "name",
+    "truth": 24,
+    "predicted": 29,
+    "recall": 0.8333333333333334,
+    "precision": 0.6896551724137931,
+    "missed": [
+     "test_align",
+     "test_comparator_parse",
+     "test_leading_digit_in_pre_and_build",
+     "test_wildcard_and_another"
+    ],
+    "recall_graph_only": 0.8333333333333334
+   },
+   {
+    "symbol": "semver::eval::matches_comparator",
+    "skipped": "no test fails when it throws",
+    "predicted": 0
+   }
+  ],
+  "look": [
+   {
+    "symbol": "semver::identifier::Identifier::ptr_eq",
+    "look_tokens": 107,
+    "file_tokens": 4536
+   },
+   {
+    "symbol": "semver::eval::matches_req",
+    "look_tokens": 305,
+    "file_tokens": 1035
+   },
+   {
+    "symbol": "semver::identifier::Identifier::new_unchecked",
+    "look_tokens": 1070,
+    "file_tokens": 4536
+   },
+   {
+    "symbol": "semver::eval::matches_comparator",
+    "look_tokens": 125,
+    "file_tokens": 1035
+   },
+   {
+    "symbol": "semver::identifier::Identifier::empty",
+    "look_tokens": 206,
+    "file_tokens": 4536
+   }
+  ],
+  "seconds": 10,
+  "summary": {
+   "callers_recall": 0.853,
+   "callers_precision": 1.0,
+   "callers_checked": 5,
+   "rename_ok": 0.8,
+   "rename_checked": 5,
+   "tests_recall": 0.611,
+   "tests_precision": 0.512,
+   "tests_checked": 3,
+   "look_vs_file": 0.144
+  }
+ }
+]

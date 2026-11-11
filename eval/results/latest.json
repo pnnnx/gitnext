@@ -3,7 +3,7 @@
   "repo": "cobra",
   "lang": "go",
   "commit": "adbc8813901b",
-  "index_seconds": 0.0,
+  "index_seconds": 0.2,
   "symbols": 288,
   "files": 19,
   "edges": 5106,
@@ -30,6 +30,7 @@
      "main::defaultUsageFunc"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 1.0,
     "recall_with_maybe": 1.0
@@ -47,6 +48,7 @@
      "main::WriteStringAndCheck"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 1.0,
     "recall_with_maybe": 1.0
@@ -60,6 +62,7 @@
      "main::defaultUsageFunc"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 1.0,
     "recall_with_maybe": 1.0
@@ -73,6 +76,7 @@
      "main::Command::InitDefaultCompletionCmd"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 1.0,
     "recall_with_maybe": 1.0
@@ -91,6 +95,7 @@
      "main::preExecHook"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 0.75,
     "recall_with_maybe": 1.0
@@ -106,6 +111,7 @@
      "main::Command::UsageFunc"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 1.0,
     "recall_with_maybe": 1.0
@@ -119,6 +125,7 @@
      "main::Command::ExecuteC"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 1.0,
     "recall_with_maybe": 1.0
@@ -132,6 +139,7 @@
      "main::Command::initCompleteCmd"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 1.0,
     "recall_with_maybe": 1.0
@@ -142,7 +150,8 @@
     "symbol": "main::Command::NamePadding",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -150,7 +159,8 @@
     "symbol": "main::CheckErr",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -158,7 +168,8 @@
     "symbol": "main::Command::CommandPathPadding",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -166,23 +177,26 @@
     "symbol": "main::Command::GenPowerShellCompletionWithDesc",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
    {
     "symbol": "main::Command::Print",
-    "ok": false,
-    "compiled": false,
-    "tests_ok": null,
-    "old_name_left": "",
-    "detail": "# github.com/spf13/cobra/doc_test [github.com/spf13/cobra/doc.test]\ndoc/man_examples_test.go:48:6: undefined: fmt.PrintGnx\nok  \tgithub.com/spf13/cobra\t0.003s [no tests to run]\nFAIL\tgithub.com/spf13/cobra/doc [build failed]\nFAIL\n"
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "bash_completionsV2.go:179:    # Print the activeHelp statements before we finish\nbash_completionsV2.go:184:    # Print the activeHelp statements\nbash_completions_test.go:134:\t\tShort: \"Print anything to the screen\",\ncommand.go:1434:// Print is a convenience method to Print to the defined output, fall",
+    "detail": ""
    },
    {
     "symbol": "main::Command::OutOrStderr",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -190,7 +204,8 @@
     "symbol": "main::Command::PrintErrf",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -198,7 +213,8 @@
     "symbol": "main::MinimumNArgs",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    }
@@ -208,45 +224,42 @@
     "symbol": "main::Command::NamePadding",
     "level": "name",
     "truth": 1,
-    "predicted": 0,
-    "recall": 0.0,
-    "precision": 0.0,
-    "missed": [
-     "TestPluginWithSubCommands"
-    ]
+    "predicted": 125,
+    "recall": 1.0,
+    "precision": 0.008,
+    "missed": [],
+    "recall_graph_only": 0.0
    },
    {
     "symbol": "main::CheckErr",
     "level": "name",
     "truth": 2,
-    "predicted": 49,
-    "recall": 0.5,
-    "precision": 0.02040816326530612,
-    "missed": [
-     "TestNoArgs_WithArgs"
-    ]
+    "predicted": 244,
+    "recall": 1.0,
+    "precision": 0.00819672131147541,
+    "missed": [],
+    "recall_graph_only": 1.0
    },
    {
     "symbol": "main::Command::CommandPathPadding",
     "level": "name",
     "truth": 1,
-    "predicted": 0,
-    "recall": 0.0,
-    "precision": 0.0,
-    "missed": [
-     "TestUsageIsNotPrintedTwice"
-    ]
+    "predicted": 125,
+    "recall": 1.0,
+    "precision": 0.008,
+    "missed": [],
+    "recall_graph_only": 0.0
    },
    {
     "symbol": "main::Command::GenPowerShellCompletionWithDesc",
     "skipped": "no test fails when it throws",
-    "predicted": 13
+    "predicted": 208
    }
   ],
   "look": [
    {
     "symbol": "main::Command::NamePadding",
-    "look_tokens": 123,
+    "look_tokens": 167,
     "file_tokens": 15286
    },
    {
@@ -256,22 +269,22 @@
    },
    {
     "symbol": "main::Command::CommandPathPadding",
-    "look_tokens": 142,
+    "look_tokens": 187,
     "file_tokens": 15286
    },
    {
     "symbol": "main::Command::GenPowerShellCompletionWithDesc",
-    "look_tokens": 267,
+    "look_tokens": 207,
     "file_tokens": 3403
    },
    {
     "symbol": "main::Command::Print",
-    "look_tokens": 188,
+    "look_tokens": 206,
     "file_tokens": 15286
    },
    {
     "symbol": "main::Command::OutOrStderr",
-    "look_tokens": 225,
+    "look_tokens": 146,
     "file_tokens": 15286
    },
    {
@@ -285,17 +298,17 @@
     "file_tokens": 1120
    }
   ],
-  "seconds": 27,
+  "seconds": 21,
   "summary": {
    "callers_recall": 1.0,
    "callers_precision": 0.969,
    "callers_checked": 8,
-   "rename_ok": 0.875,
+   "rename_ok": 1.0,
    "rename_checked": 8,
-   "tests_recall": 0.167,
-   "tests_precision": 0.007,
+   "tests_recall": 1.0,
+   "tests_precision": 0.008,
    "tests_checked": 3,
-   "look_vs_file": 0.06
+   "look_vs_file": 0.059
   }
  },
  {
@@ -305,7 +318,7 @@
   "index_seconds": 0.4,
   "symbols": 761,
   "files": 32,
-  "edges": 8909,
+  "edges": 9055,
   "sample": [
    "click::types::Path::coerce_path_result",
    "click::core::Option::get_help_extra",
@@ -323,7 +336,8 @@
     "symbol": "click::types::Path::coerce_path_result",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -331,7 +345,8 @@
     "symbol": "click::core::Option::get_help_extra",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -339,7 +354,8 @@
     "symbol": "click::formatting::HelpFormatter::write_heading",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -347,15 +363,17 @@
     "symbol": "click::formatting::HelpFormatter::indentation",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
-    "old_name_left": "src/click/formatting.py:290:        \"\"\"A context manager that increases the indentation.\"\"\"",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "src/click/core.py:3099:        Help text indentation is cleaned here instead of only in the\nsrc/click/formatting.py:151:        \"\"\"Increases the indentation.\"\"\"\nsrc/click/formatting.py:155:        \"\"\"Decreases the indentation.\"\"\"\nsrc/click/formatting.py:290:        \"\"\"A context manager that increase",
     "detail": ""
    },
    {
     "symbol": "click::globals::push_context",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -363,7 +381,8 @@
     "symbol": "click::_textwrap::TextWrapper::extra_indent",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -371,15 +390,17 @@
     "symbol": "click::termui::confirm",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
-    "old_name_left": "",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "src/click/core.py:227:    \"\"\"Used a prompt to confirm a default or provide a value.\"\"\"\nsrc/click/core.py:3063:    :param confirmation_prompt: Prompt a second time to confirm the\nsrc/click/termui.py:191:    :param confirmation_prompt: Prompt a second time to confirm the\ntests/test_termui.py:1413:    ",
     "detail": ""
    },
    {
     "symbol": "click::core::Command::format_usage",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    }
@@ -401,7 +422,8 @@
      "test_path_option",
      "test_path_resolve_symlink",
      "test_path_type"
-    ]
+    ],
+    "recall_graph_only": 0.0
    },
    {
     "symbol": "click::core::Option::get_help_extra",
@@ -419,15 +441,16 @@
      "test_argument_help_optional_metavar",
      "test_argument_help_options_only_no_arguments_section",
      "test_argument_help_undocumented_arguments_only_no_section"
-    ]
+    ],
+    "recall_graph_only": 0.12359550561797752
    },
    {
     "symbol": "click::formatting::HelpFormatter::write_heading",
     "level": "name",
     "truth": 76,
-    "predicted": 0,
-    "recall": 0.0,
-    "precision": 0.0,
+    "predicted": 24,
+    "recall": 0.13157894736842105,
+    "precision": 0.4166666666666667,
     "missed": [
      "test_aliased_command_canonical_name",
      "test_argument_help",
@@ -437,25 +460,24 @@
      "test_argument_help_optional_metavar",
      "test_argument_help_options_only_no_arguments_section",
      "test_argument_help_undocumented_arguments_only_no_section"
-    ]
+    ],
+    "recall_graph_only": 0.0
    },
    {
     "symbol": "click::formatting::HelpFormatter::indentation",
     "level": "name",
     "truth": 10,
-    "predicted": 0,
-    "recall": 0.0,
-    "precision": 0.0,
+    "predicted": 24,
+    "recall": 0.5,
+    "precision": 0.20833333333333334,
     "missed": [
-     "test_basic_functionality",
      "test_basic_group",
      "test_chaining_help",
      "test_deprecated_empty_help_no_leading_space",
      "test_deprecated_help_text_is_not_translated",
-     "test_deprecated_in_help_messages",
-     "test_formatting_empty_help_lines",
-     "test_truncating_docstring"
-    ]
+     "test_deprecated_in_help_messages"
+    ],
+    "recall_graph_only": 0.0
    }
   ],
   "look": [
@@ -471,12 +493,12 @@
    },
    {
     "symbol": "click::formatting::HelpFormatter::write_heading",
-    "look_tokens": 124,
+    "look_tokens": 153,
     "file_tokens": 2611
    },
    {
     "symbol": "click::formatting::HelpFormatter::indentation",
-    "look_tokens": 142,
+    "look_tokens": 156,
     "file_tokens": 2611
    },
    {
@@ -491,26 +513,26 @@
    },
    {
     "symbol": "click::termui::confirm",
-    "look_tokens": 550,
+    "look_tokens": 591,
     "file_tokens": 8971
    },
    {
     "symbol": "click::core::Command::format_usage",
-    "look_tokens": 175,
+    "look_tokens": 189,
     "file_tokens": 39086
    }
   ],
-  "seconds": 70,
+  "seconds": 113,
   "summary": {
    "callers_recall": null,
    "callers_precision": null,
    "callers_checked": 0,
    "rename_ok": 1.0,
    "rename_checked": 8,
-   "tests_recall": 0.031,
-   "tests_precision": 0.25,
+   "tests_recall": 0.189,
+   "tests_precision": 0.406,
    "tests_checked": 4,
-   "look_vs_file": 0.078
+   "look_vs_file": 0.08
   }
  },
  {
@@ -529,7 +551,6 @@
    {
     "symbol": "src::middleware::persist::createJSONStorage",
     "truth": [
-     "src::middleware",
      "src::middleware::persist::hydrate",
      "src::middleware::persist::persistImpl"
     ],
@@ -537,9 +558,12 @@
      "src::middleware::persist::persistImpl"
     ],
     "maybe": [],
-    "recall": 0.3333333333333333,
+    "import_files": [
+     "src/middleware.ts"
+    ],
+    "recall": 0.5,
     "precision": 1.0,
-    "recall_with_maybe": 0.3333333333333333
+    "recall_with_maybe": 0.5
    }
   ],
   "rename": [
@@ -547,7 +571,8 @@
     "symbol": "src::middleware::persist::createJSONStorage",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    }
@@ -565,9 +590,9 @@
     "file_tokens": 3010
    }
   ],
-  "seconds": 29,
+  "seconds": 39,
   "summary": {
-   "callers_recall": 0.333,
+   "callers_recall": 0.5,
    "callers_precision": 1.0,
    "callers_checked": 1,
    "rename_ok": 1.0,
@@ -582,19 +607,19 @@
   "repo": "jsoup",
   "lang": "java",
   "commit": "d90d57521d93",
-  "index_seconds": 1.7,
-  "symbols": 2661,
+  "index_seconds": 2.8,
+  "symbols": 2663,
   "files": 105,
-  "edges": 42157,
+  "edges": 42271,
   "sample": [
    "org::jsoup::internal::SoftPool::release",
    "org::jsoup::internal::StringUtil::appendNormalisedWhitespace",
    "org::jsoup::internal::LegacyMatching::cssAttributeMatches",
+   "org::jsoup::select::Evaluator::asPredicate",
    "org::jsoup::parser::TokenQueue::matchesWord",
    "org::jsoup::internal::StringUtil::isAsciiLetter",
    "org::jsoup::parser::TokenQueue::matchesWhitespace",
-   "org::jsoup::nodes::DocumentType::publicId",
-   "org::jsoup::parser::ParseErrorList::tracking"
+   "org::jsoup::nodes::DocumentType::publicId"
   ],
   "baseline_failing_tests": [],
   "callers": [
@@ -612,12 +637,17 @@
      "org::jsoup::nodes::Element::appendNormalisedText"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 0.5,
     "recall_with_maybe": 1.0
    },
    {
     "symbol": "org::jsoup::internal::LegacyMatching::cssAttributeMatches",
+    "skipped": "compiler reported no uses"
+   },
+   {
+    "symbol": "org::jsoup::select::Evaluator::asPredicate",
     "skipped": "compiler reported no uses"
    },
    {
@@ -630,6 +660,7 @@
      "org::jsoup::select::QueryParser::parseSimpleSequence"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 0.5,
     "recall_with_maybe": 1.0
@@ -640,14 +671,16 @@
      "org::jsoup::parser::TokenQueue::isIdentStart"
     ],
     "found": [
+     "org::jsoup::parser::CharacterReader::consumeLetterSequence",
      "org::jsoup::parser::CharacterReader::consumeLetterThenDigitSequence",
      "org::jsoup::parser::CharacterReader::matchesAsciiAlpha",
      "org::jsoup::parser::Tag::validateTextTagName",
      "org::jsoup::parser::TokenQueue::isIdentStart"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
-    "precision": 0.25,
+    "precision": 0.2,
     "recall_with_maybe": 1.0
    },
    {
@@ -662,6 +695,7 @@
      "org::jsoup::select::QueryParser::consumeAttributeValue"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 0.6666666666666666,
     "recall_with_maybe": 1.0
@@ -669,26 +703,24 @@
    {
     "symbol": "org::jsoup::nodes::DocumentType::publicId",
     "skipped": "compiler reported no uses"
-   },
-   {
-    "symbol": "org::jsoup::parser::ParseErrorList::tracking",
-    "skipped": "compiler reported no uses"
    }
   ],
   "rename": [
    {
     "symbol": "org::jsoup::internal::SoftPool::release",
-    "ok": false,
-    "compiled": false,
-    "tests_ok": null,
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": ".github/dependabot.yml:11:      # Et tu, junit? Keep us on 5, as 6 has min JDK17 - https://docs.junit.org/6.0.0-RC3/release-notes/#release-notes-6.0.0-M1\nchange-archive.txt:585:    jsoup 1.15.1 release.\nchange-archive.txt:1547: * Improved parse time, now 2.3x faster than previous release, with lower",
-    "detail": "  method release_gnx()\n[ERROR]   location: variable response of type io.netty.handler.codec.http.FullHttpResponse\n[ERROR] -> [Help 1]\n[ERROR] \n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] \n[ERROR] For more information about the errors and possible solutions, please read the following articles:\n[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException\n"
+    "detail": ""
    },
    {
     "symbol": "org::jsoup::internal::StringUtil::appendNormalisedWhitespace",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -696,7 +728,17 @@
     "symbol": "org::jsoup::internal::LegacyMatching::cssAttributeMatches",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "org::jsoup::select::Evaluator::asPredicate",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -704,7 +746,8 @@
     "symbol": "org::jsoup::parser::TokenQueue::matchesWord",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -712,15 +755,17 @@
     "symbol": "org::jsoup::internal::StringUtil::isAsciiLetter",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
-    "old_name_left": "",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "src/test/java/org/jsoup/internal/StringUtilTest.java:207:    @Test void isAsciiLetter() {",
     "detail": ""
    },
    {
     "symbol": "org::jsoup::parser::TokenQueue::matchesWhitespace",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -728,16 +773,9 @@
     "symbol": "org::jsoup::nodes::DocumentType::publicId",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
-    "old_name_left": "",
-    "detail": ""
-   },
-   {
-    "symbol": "org::jsoup::parser::ParseErrorList::tracking",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": null,
-    "old_name_left": "change-archive.txt:29:  * Improvement: better fidelity of source positions when tracking is enabled. And implicitly created or closed elements\nchange-archive.txt:33:  * Improvement: when source tracking is enabled, the source position for attribute names and values is now available.\nchange-archive.t",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "src/main/java/org/jsoup/nodes/DocumentType.java:29:    public DocumentType(String name, String publicId, String systemId) {\nsrc/main/java/org/jsoup/nodes/DocumentType.java:31:        Validate.notNull(publicId);\nsrc/main/java/org/jsoup/nodes/DocumentType.java:35:            .add(PublicId, publicId)\ns",
     "detail": ""
    }
   ],
@@ -745,12 +783,12 @@
    {
     "symbol": "org::jsoup::internal::SoftPool::release",
     "skipped": "no test fails when it throws",
-    "predicted": 19
+    "predicted": 515
    },
    {
     "symbol": "org::jsoup::internal::StringUtil::appendNormalisedWhitespace",
     "skipped": "no test fails when it throws",
-    "predicted": 98
+    "predicted": 124
    },
    {
     "symbol": "org::jsoup::internal::LegacyMatching::cssAttributeMatches",
@@ -758,20 +796,20 @@
     "predicted": 0
    },
    {
-    "symbol": "org::jsoup::parser::TokenQueue::matchesWord",
+    "symbol": "org::jsoup::select::Evaluator::asPredicate",
     "skipped": "no test fails when it throws",
-    "predicted": 2
+    "predicted": 26
    }
   ],
   "look": [
    {
     "symbol": "org::jsoup::internal::SoftPool::release",
-    "look_tokens": 342,
+    "look_tokens": 442,
     "file_tokens": 600
    },
    {
     "symbol": "org::jsoup::internal::StringUtil::appendNormalisedWhitespace",
-    "look_tokens": 620,
+    "look_tokens": 606,
     "file_tokens": 4377
    },
    {
@@ -780,52 +818,52 @@
     "file_tokens": 1068
    },
    {
+    "symbol": "org::jsoup::select::Evaluator::asPredicate",
+    "look_tokens": 401,
+    "file_tokens": 9555
+   },
+   {
     "symbol": "org::jsoup::parser::TokenQueue::matchesWord",
-    "look_tokens": 146,
+    "look_tokens": 154,
     "file_tokens": 5312
    },
    {
     "symbol": "org::jsoup::internal::StringUtil::isAsciiLetter",
-    "look_tokens": 232,
+    "look_tokens": 367,
     "file_tokens": 4377
    },
    {
     "symbol": "org::jsoup::parser::TokenQueue::matchesWhitespace",
-    "look_tokens": 178,
+    "look_tokens": 390,
     "file_tokens": 5312
    },
    {
     "symbol": "org::jsoup::nodes::DocumentType::publicId",
     "look_tokens": 163,
     "file_tokens": 964
-   },
-   {
-    "symbol": "org::jsoup::parser::ParseErrorList::tracking",
-    "look_tokens": 336,
-    "file_tokens": 311
    }
   ],
-  "seconds": 172,
+  "seconds": 193,
   "summary": {
    "callers_recall": 1.0,
-   "callers_precision": 0.479,
+   "callers_precision": 0.467,
    "callers_checked": 4,
-   "rename_ok": 0.875,
+   "rename_ok": 1.0,
    "rename_checked": 8,
    "tests_recall": null,
    "tests_precision": null,
    "tests_checked": 0,
-   "look_vs_file": 0.288
+   "look_vs_file": 0.188
   }
  },
  {
   "repo": "semver",
   "lang": "rust",
   "commit": "280ebcb6edac",
-  "index_seconds": 0.0,
+  "index_seconds": 0.1,
   "symbols": 113,
   "files": 13,
-  "edges": 1186,
+  "edges": 1192,
   "sample": [
    "semver::identifier::Identifier::ptr_eq",
    "semver::eval::matches_req",
@@ -848,6 +886,7 @@
      "semver::impls::Prerelease::cmp"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 1.0,
     "recall_with_maybe": 1.0
@@ -861,6 +900,7 @@
      "semver::VersionReq::matches"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 1.0,
     "recall_with_maybe": 1.0
@@ -877,6 +917,7 @@
      "semver::parse::prerelease_identifier"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 0.6666666666666666,
     "precision": 1.0,
     "recall_with_maybe": 0.6666666666666666
@@ -890,6 +931,7 @@
      "semver::Comparator::matches"
     ],
     "maybe": [],
+    "import_files": [],
     "recall": 1.0,
     "precision": 1.0,
     "recall_with_maybe": 1.0
@@ -904,14 +946,17 @@
      "semver::impls::Identifier::default"
     ],
     "found": [
+     "semver::BuildMetadata::EMPTY",
+     "semver::Prerelease::EMPTY",
      "semver::identifier::Identifier::is_empty",
      "semver::identifier::Identifier::new_unchecked",
      "semver::impls::Identifier::default"
     ],
     "maybe": [],
-    "recall": 0.6,
+    "import_files": [],
+    "recall": 1.0,
     "precision": 1.0,
-    "recall_with_maybe": 0.6
+    "recall_with_maybe": 1.0
    }
   ],
   "rename": [
@@ -919,7 +964,8 @@
     "symbol": "semver::identifier::Identifier::ptr_eq",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -927,23 +973,26 @@
     "symbol": "semver::eval::matches_req",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
    {
     "symbol": "semver::identifier::Identifier::new_unchecked",
-    "ok": false,
-    "compiled": false,
-    "tests_ok": null,
-    "old_name_left": "",
-    "detail": "s an associated function `new_unchecked` with a similar name\n     |\n 384 -                     return unsafe { NonZeroUsize::new_unchecked_gnx(len) };\n 384 +                     return unsafe { NonZeroUsize::new_unchecked(len) };\n     |\n\nFor more information about this error, try `rustc --explain E0599`.\nerror: could not compile `semver` (lib) due to 6 previous errors\nwarning: build failed, waiting for other jobs to finish...\nerror: could not compile `semver` (lib test) due to 6 previous errors\n"
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "src/identifier.rs:94:        const HEAD: NonNull<u8> = unsafe { NonNull::new_unchecked(!0 as *mut u8) };\nsrc/identifier.rs:120:                let size = bytes_for_varint(unsafe { NonZeroUsize::new_unchecked(len) }) + len;\nsrc/identifier.rs:292:    unsafe { NonNull::new_unchecked(modified) }\nsrc/ide",
+    "detail": ""
    },
    {
     "symbol": "semver::eval::matches_comparator",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "",
     "detail": ""
    },
@@ -951,8 +1000,9 @@
     "symbol": "semver::identifier::Identifier::empty",
     "ok": true,
     "compiled": true,
-    "tests_ok": null,
-    "old_name_left": "",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "src/error.rs:35:            ErrorKind::Empty => formatter.write_str(\"empty string, expected a semver version\"),\nsrc/error.rs:70:                write!(formatter, \"empty identifier segment in {}\", pos)\nsrc/identifier.rs:169:        let empty = Self::empty_gnx();\nsrc/identifier.rs:170:        let is_e",
     "detail": ""
    }
   ],
@@ -973,43 +1023,33 @@
      "test_exact",
      "test_ge",
      "test_greater_than"
-    ]
+    ],
+    "recall_graph_only": 0.0
    },
    {
     "symbol": "semver::eval::matches_req",
     "level": "name",
     "truth": 11,
-    "predicted": 0,
-    "recall": 0.0,
-    "precision": 0.0,
-    "missed": [
-     "test_any",
-     "test_basic",
-     "test_caret",
-     "test_cargo3202",
-     "test_exact",
-     "test_greater_than",
-     "test_less_than",
-     "test_multiple"
-    ]
+    "predicted": 13,
+    "recall": 1.0,
+    "precision": 0.8461538461538461,
+    "missed": [],
+    "recall_graph_only": 1.0
    },
    {
     "symbol": "semver::identifier::Identifier::new_unchecked",
     "level": "name",
     "truth": 24,
-    "predicted": 6,
-    "recall": 0.041666666666666664,
-    "precision": 0.16666666666666666,
+    "predicted": 29,
+    "recall": 0.8333333333333334,
+    "precision": 0.6896551724137931,
     "missed": [
      "test_align",
-     "test_basic",
-     "test_caret",
-     "test_display",
-     "test_eq",
-     "test_exact",
-     "test_ge",
-     "test_greater_than"
-    ]
+     "test_comparator_parse",
+     "test_leading_digit_in_pre_and_build",
+     "test_wildcard_and_another"
+    ],
+    "recall_graph_only": 0.8333333333333334
    },
    {
     "symbol": "semver::eval::matches_comparator",
@@ -1025,17 +1065,17 @@
    },
    {
     "symbol": "semver::eval::matches_req",
-    "look_tokens": 229,
+    "look_tokens": 305,
     "file_tokens": 1035
    },
    {
     "symbol": "semver::identifier::Identifier::new_unchecked",
-    "look_tokens": 1062,
+    "look_tokens": 1070,
     "file_tokens": 4536
    },
    {
     "symbol": "semver::eval::matches_comparator",
-    "look_tokens": 129,
+    "look_tokens": 125,
     "file_tokens": 1035
    },
    {
@@ -1044,17 +1084,17 @@
     "file_tokens": 4536
    }
   ],
-  "seconds": 38,
+  "seconds": 16,
   "summary": {
-   "callers_recall": 0.853,
+   "callers_recall": 0.933,
    "callers_precision": 1.0,
    "callers_checked": 5,
-   "rename_ok": 0.8,
+   "rename_ok": 1.0,
    "rename_checked": 5,
-   "tests_recall": 0.014,
-   "tests_precision": 0.056,
+   "tests_recall": 0.611,
+   "tests_precision": 0.512,
    "tests_checked": 3,
-   "look_vs_file": 0.131
+   "look_vs_file": 0.145
   }
  }
 ]

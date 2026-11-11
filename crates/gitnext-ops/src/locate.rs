@@ -158,8 +158,109 @@ pub fn tests_for(g: &Graph, i: usize, depth: usize) -> Vec<TestRef> {
         }
         let how = if n.depth == 1 { "direct".to_string() } else { format!("{} hops", n.depth) };
         out.push(TestRef { symbol: idx, how });
+        // a test helper at the depth limit (`fn version(s)` in tests/util): the tests calling it
+        // are past the limit but run the code just the same
+        if n.depth == depth {
+            for m in g.impact(idx, 3) {
+                if !m.test || !m.certain {
+                    continue;
+                }
+                if let Some(j) = g.find(&m.symbol.qualified).into_iter().find(|&x| g.syms[x].file == m.symbol.file && g.syms[x].sym.start_line == m.symbol.line) {
+                    if g.syms[j].sym.kind.is_callable() && !out.iter().any(|t| t.symbol == j) {
+                        out.push(TestRef { symbol: j, how: format!("{} hops", depth + m.depth) });
+                    }
+                }
+            }
+        }
+    }
+    // the call graph misses dynamic calls (templates, decorators, trait objects, reflection);
+    // conventions catch many of those: a test named after the symbol, a test file named after its file
+    let r = &g.syms[i];
+    let name = r.sym.name.to_lowercase().replace('_', "");
+    let words = name_words(&r.sym.name);
+    let seen: std::collections::HashSet<usize> = out.iter().map(|t| t.symbol).collect();
+    let mirror = mirror_test_files(&r.file);
+    let mut named = Vec::new();
+    let mut in_mirror = Vec::new();
+    if name.len() >= 4 && !r.sym.test {
+        for (k, s) in g.syms.iter().enumerate() {
+            if !s.sym.test || !s.sym.kind.is_callable() || seen.contains(&k) || !is_runnable_test(s) {
+                continue;
+            }
+            if contains_words(&name_words(&s.sym.name), &words) {
+                named.push(TestRef { symbol: k, how: "named after it".into() });
+            } else if mirror.iter().any(|m| s.file.ends_with(m.as_str())) {
+                in_mirror.push(TestRef { symbol: k, how: "its test file".into() });
+            }
+        }
+    }
+    let mut uniq = std::collections::HashSet::new();
+    out.retain(|t| uniq.insert(t.symbol));
+    out.extend(named);
+    // the whole mirror file when the graph and names found little (dynamic dispatch: a CLI
+    // runner, templates, decorators reach the code without a call the graph can see)
+    if out.len() < 5 {
+        out.extend(in_mirror);
     }
     out
+}
+
+/// `testParseURL_basic` → ["test", "parse", "url", "basic"]: camelCase, snake_case, digits apart.
+fn name_words(n: &str) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    let cs: Vec<char> = n.chars().collect();
+    let mut cur = String::new();
+    for (i, &c) in cs.iter().enumerate() {
+        if !c.is_alphanumeric() {
+            if !cur.is_empty() {
+                out.push(std::mem::take(&mut cur));
+            }
+            continue;
+        }
+        let prev = i.checked_sub(1).map(|j| cs[j]);
+        let next = cs.get(i + 1).copied();
+        let boundary = c.is_uppercase() && prev.is_some_and(|p| p.is_lowercase() || p.is_ascii_digit() || (p.is_uppercase() && next.is_some_and(char::is_lowercase)));
+        if boundary && !cur.is_empty() {
+            out.push(std::mem::take(&mut cur));
+        }
+        cur.extend(c.to_lowercase());
+    }
+    if !cur.is_empty() {
+        out.push(cur);
+    }
+    out
+}
+
+/// `hay` has `needle` as consecutive words.
+fn contains_words(hay: &[String], needle: &[String]) -> bool {
+    !needle.is_empty() && hay.windows(needle.len()).any(|w| w == needle)
+}
+
+/// Test files that by convention test `file`: `command.go` → `command_test.go`,
+/// `Foo.java` → `FooTest.java`, `x.py` → `test_x.py`, `x.ts` → `x.test.ts`.
+fn mirror_test_files(file: &str) -> Vec<String> {
+    let base = file.rsplit('/').next().unwrap_or(file);
+    let (stem, ext) = base.rsplit_once('.').unwrap_or((base, ""));
+    match ext {
+        "go" => vec![format!("/{stem}_test.go"), format!("{stem}_test.go")],
+        "java" | "kt" => vec![format!("/{stem}Test.{ext}"), format!("/{stem}Tests.{ext}")],
+        "py" => vec![format!("/test_{stem}.py"), format!("/{stem}_test.py")],
+        "ts" | "tsx" | "js" | "jsx" | "mts" | "mjs" => ["test", "spec"].iter().flat_map(|k| [format!("/{stem}.{k}.ts"), format!("/{stem}.{k}.tsx"), format!("/{stem}.{k}.js")]).collect(),
+        "rs" => vec![format!("/{stem}.rs"), format!("tests/{stem}.rs")],
+        _ => vec![],
+    }
+}
+
+/// A test the runner executes on its own (not a helper inside a test file).
+fn is_runnable_test(s: &gitnext_index::SymbolRow) -> bool {
+    let n = &s.sym.name;
+    if s.file.ends_with(".go") {
+        return n.starts_with("Test") || n.starts_with("Fuzz");
+    }
+    if s.file.ends_with(".py") {
+        return n.starts_with("test");
+    }
+    true
 }
 
 /// Ready-to-run commands per language/package.
@@ -310,4 +411,20 @@ pub fn render_tests_for(g: &Graph, root: &Path, i: usize, depth: usize) -> Strin
         let _ = writeln!(s, "  {c}");
     }
     s
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{contains_words, name_words};
+
+    #[test]
+    fn test_names_match_whole_words() {
+        assert_eq!(name_words("testParseURL_basic2"), ["test", "parse", "url", "basic2"]);
+        assert_eq!(name_words("TestCommandExecute"), ["test", "command", "execute"]);
+        let w = |s: &str| name_words(s);
+        assert!(contains_words(&w("test_coerce_path_result"), &w("coerce_path_result")));
+        assert!(contains_words(&w("TestNamePadding"), &w("NamePadding")));
+        assert!(!contains_words(&w("testClosest"), &w("close")));
+        assert!(!contains_words(&w("closeAuthedConnections"), &w("closest")));
+    }
 }

@@ -217,13 +217,17 @@ def callers(root: Path, q: str) -> tuple[set[str], set[str]]:
     return sure, maybe
 
 
-def tests_for(root: Path, q: str) -> tuple[set[str], set[str]]:
+def tests_for(root: Path, q: str) -> tuple[set[str], set[str], set[str]]:
+    """(test names, test files, names found through the call graph only)"""
     code, out = gx(["tests-for", q], root)
-    names, files = set(), set()
-    for m in re.finditer(r"^(\S+)\s+(\S+?):\d+ \(", out, re.M):
-        names.add(m.group(1).rsplit("::", 1)[-1])
+    names, files, graph = set(), set(), set()
+    for m in re.finditer(r"^(\S+)\s+(\S+?):\d+ \(([^)]*)\)", out, re.M):
+        n = m.group(1).rsplit("::", 1)[-1]
+        names.add(n)
         files.add(m.group(2))
-    return names, files
+        if "hop" in m.group(3) or "direct" in m.group(3):
+            graph.add(n)
+    return names, files, graph
 
 
 def enclosing(syms: list[dict], file: str, line: int) -> str | None:
@@ -311,16 +315,21 @@ def check_callers(root: Path, repo: dict, syms: list[dict], s: dict) -> dict | N
     _, out = sh(L["compile"], root, timeout=1200)
     restore(root)
     sites = L["errors"](out, root)
-    truth = {q for f, ln in sites if (q := enclosing(syms, f, ln)) and q != s["qualified"]}
-    # the compiler stops early on some files; uses inside the function itself do not count
-    if not truth:
-        return {"symbol": s["qualified"], "skipped": "compiler reported no uses"}
+    modules = {x["qualified"] for x in syms if x["kind"] == "module"}
+    file_of = {x["qualified"]: x["file"] for x in syms}
+    hits = {(f, q) for f, ln in sites if (q := enclosing(syms, f, ln)) and q != s["qualified"]}
+    # an error on an import line (Java static import, TS re-export) is not a call, and javac then
+    # stops reporting the uses in that file: callers found there are not counted as wrong
+    import_files = {f for f, q in hits if q in modules}
+    truth = {q for f, q in hits if q not in modules}
     found = s["_callers"]
-    tp = len(found & truth)
+    if not truth and not import_files:
+        return {"symbol": s["qualified"], "skipped": "compiler reported no uses"}
+    ok_found = {c for c in found if c in truth or file_of.get(c) in import_files}
     return {
-        "symbol": s["qualified"], "truth": sorted(truth), "found": sorted(found), "maybe": sorted(s["_maybe"]),
-        "recall": tp / len(truth), "precision": tp / len(found) if found else 1.0,
-        "recall_with_maybe": len((found | s["_maybe"]) & truth) / len(truth),
+        "symbol": s["qualified"], "truth": sorted(truth), "found": sorted(found), "maybe": sorted(s["_maybe"]), "import_files": sorted(import_files),
+        "recall": len(found & truth) / len(truth) if truth else None, "precision": len(ok_found) / len(found) if found else 1.0,
+        "recall_with_maybe": len((found | s["_maybe"]) & truth) / len(truth) if truth else None,
     }
 
 
@@ -338,7 +347,7 @@ def _rename_token(line: str, old: str, new: str) -> str | None:
     return None if c < 0 else line[:c] + new + line[c + len(old):]
 
 
-def check_rename(root: Path, repo: dict, s: dict, run_tests: bool) -> dict:
+def check_rename(root: Path, repo: dict, s: dict, run_tests: bool, baseline_failed: set[str] = frozenset()) -> dict:
     L = LANG[repo["lang"]]
     new = s["name"] + ("_gnx" if "_" in s["name"] or s["name"].islower() else "Gnx")
     code, out = gx(["rename", s["qualified"], new, "--text"], root)
@@ -349,14 +358,15 @@ def check_rename(root: Path, repo: dict, s: dict, run_tests: bool) -> dict:
     left = sh(f"git grep -nw {s['name']} -- . ':!*.md' | head -5", root)[1].strip()
     ccode, cout = sh(L["compile"], root, timeout=1500)
     compiled = ccode == 0 and "error" not in cout.lower()[-400:] if repo["lang"] != "python" else ccode == 0
-    tests_ok = None
+    tests_ok, failed = None, set()
     if compiled and run_tests:
         tcode, tout = sh(L["tests"], root, timeout=1800)
-        failed = L["failed"](tout, root)
+        failed = L["failed"](tout, root) - baseline_failed
         tests_ok = not failed
     restore(root)
     gx(["index"], root)
     return {"symbol": s["qualified"], "ok": compiled and tests_ok is not False, "compiled": compiled, "tests_ok": tests_ok,
+            "tests_failed": sorted(failed)[:8] if tests_ok is False else [],
             "old_name_left": left[:300], "detail": "" if compiled else cout[-500:]}
 
 
@@ -377,14 +387,17 @@ def check_tests(root: Path, repo: dict, s: dict, baseline_failed: set[str]) -> d
     _, tout = sh(L["tests"], root, timeout=2400)
     truth = L["failed"](tout, root) - baseline_failed
     restore(root)
-    names, files = tests_for(root, s["qualified"])
+    names, files, graph = tests_for(root, s["qualified"])
     pred = files if L["level"] == "file" else names
     if not truth:
         return {"symbol": s["qualified"], "skipped": "no test fails when it throws", "predicted": len(pred)}
     tp = len(pred & truth)
-    return {"symbol": s["qualified"], "level": L["level"], "truth": len(truth), "predicted": len(pred),
-            "recall": tp / len(truth), "precision": tp / len(pred) if pred else 0.0,
-            "missed": sorted(truth - pred)[:8]}
+    out = {"symbol": s["qualified"], "level": L["level"], "truth": len(truth), "predicted": len(pred),
+           "recall": tp / len(truth), "precision": tp / len(pred) if pred else 0.0,
+           "missed": sorted(truth - pred)[:8]}
+    if L["level"] == "name":
+        out["recall_graph_only"] = len(graph & truth) / len(truth)
+    return out
 
 
 def look_cost(root: Path, s: dict) -> dict:
@@ -414,7 +427,7 @@ def run_repo(repo: dict, n: int, mutants: int, seed: int, tests_in_rename: bool)
     baseline_failed = L["failed"](tout, root)
     res["baseline_failing_tests"] = sorted(baseline_failed)[:20]
     res["callers"] = [x for s in sample if (x := check_callers(root, repo, syms, s))]
-    res["rename"] = [check_rename(root, repo, s, tests_in_rename) for s in sample]
+    res["rename"] = [check_rename(root, repo, s, tests_in_rename, baseline_failed) for s in sample]
     res["tests"] = [x for s in sample[:mutants] if (x := check_tests(root, repo, s, baseline_failed))]
     res["look"] = [look_cost(root, s) for s in sample]
     res["seconds"] = round(time.time() - t0)
@@ -427,7 +440,7 @@ def mean(v: list[float]) -> float | None:
 
 
 def summarize(r: dict) -> dict:
-    cal = [c for c in r["callers"] if "recall" in c]
+    cal = [c for c in r["callers"] if c.get("recall") is not None]
     tst = [t for t in r["tests"] if "recall" in t]
     looks = r["look"]
     return {
@@ -474,7 +487,8 @@ def main() -> None:
     ap.add_argument("--n", type=int, default=8, help="functions sampled per repo")
     ap.add_argument("--mutants", type=int, default=4, help="of those, how many get the test-suite check")
     ap.add_argument("--seed", type=int, default=7)
-    ap.add_argument("--rename-tests", action="store_true", help="also run the test suite after each rename")
+    ap.add_argument("--fast", action="store_true", help="after a rename only compile, skip the test suite (a rename that edits a\n"
+                    "string the tests compare against compiles fine and is still wrong)")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--bless", action="store_true")
     args = ap.parse_args()
@@ -486,7 +500,7 @@ def main() -> None:
     for repo in repos:
         print(f"== {repo['name']} ({repo['lang']})", flush=True)
         try:
-            r = run_repo(repo, args.n, args.mutants, args.seed, args.rename_tests)
+            r = run_repo(repo, args.n, args.mutants, args.seed, not args.fast)
         except Exception as e:  # one broken repo must not hide the others
             r = {"repo": repo["name"], "lang": repo["lang"], "error": str(e)}
         results.append(r)

@@ -1,0 +1,36 @@
+name: eval
+
+# gitnext's answers checked against real projects' compilers and test suites
+# (eval/run.py): callers vs compiler errors, rename vs build + tests, tests-for vs
+# a failing mutant. Weekly and on demand; fails when a rate drops below eval/baseline.json.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * 1"
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-go@v5
+        with: { go-version: "stable" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "21", cache: maven }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: build gitnext
+        run: cargo build --release -p gitnext-cli
+      - name: eval
+        run: GITNEXT=$PWD/target/release/gitnext python3 eval/run.py --check
+      - name: results
+        if: always()
+        run: cat eval/results/latest.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: eval-results, path: eval/results/latest.* }

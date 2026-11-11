@@ -340,7 +340,13 @@ impl<'a> Ex<'a> {
         }
         let q = sym.qualified.clone();
         let is_init = name == "__init__";
+        let in_test = sym.test;
         self.out.symbols.push(sym);
+        // classes defined inside the function (test doubles: `class CustomFormatter(HelpFormatter)`)
+        if let Some(b) = body {
+            let inner = Ctx { module: q.clone(), owner: None, in_test };
+            self.nested_classes(b, &inner);
+        }
         // `self.x = …` in __init__ become fields of the class.
         if is_init {
             if let (Some(b), Some(owner)) = (body, ctx.owner.as_ref()) {
@@ -386,6 +392,18 @@ impl<'a> Ex<'a> {
         for c in n.named_children(&mut cur) {
             if !matches!(c.kind(), "function_definition" | "class_definition") {
                 self.self_fields(c, out);
+            }
+        }
+    }
+
+    fn nested_classes(&mut self, n: Node, ctx: &Ctx) {
+        let mut cur = n.walk();
+        let kids: Vec<Node> = n.named_children(&mut cur).collect();
+        for c in kids {
+            match c.kind() {
+                "class_definition" => self.class(c, ctx, None),
+                "function_definition" | "lambda" => {}
+                _ => self.nested_classes(c, ctx),
             }
         }
     }

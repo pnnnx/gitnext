@@ -146,6 +146,9 @@ pub struct RenameReport {
     /// Lines that still contain the old name as a word after the rename (strings,
     /// comments, dynamic access): to check by hand.
     pub leftover: Vec<String>,
+    /// Overriding methods in subclasses, renamed with it.
+    #[serde(skip_serializing_if = "Vec::is_empty", default)]
+    pub overrides: Vec<String>,
     /// `--text`: leftover lines that were rewritten too.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub text_changed: Vec<String>,
@@ -166,21 +169,44 @@ pub fn rename_leftover_text(root: &Path, r: &mut RenameReport) -> Result<()> {
         }
     }
     let word = |c: Option<char>| c.is_some_and(|c| c.is_alphanumeric() || c == '_');
+    // `empty`, `release`, `close` are also English: in prose only where written as code
+    // (`empty()`, `Type::empty`, `#empty`, `` `empty` ``); `coerce_path_result` / `isAsciiLetter` anywhere
+    let distinctive = old.contains('_') || old.chars().skip(1).any(|c| c.is_uppercase() || c.is_ascii_digit());
     let mut done = Vec::new();
     for (f, lines) in by_file {
         let path = root.join(&f);
         let text = std::fs::read_to_string(&path)?;
+        // only inside comments and string literals: a word in code is some other symbol
+        // (`fmt.Print` is not `Command.Print`), and that is not ours to change
+        let spans = gitnext_parse::text_spans(Path::new(&f), &text);
+        let dynamic = f.ends_with(".py") || gitnext_parse::family_of(&f) == gitnext_parse::family_of("x.js");
+        let starts: Vec<usize> = std::iter::once(0).chain(text.match_indices('\n').map(|(i, _)| i + 1)).collect();
         let mut out: Vec<String> = text.split('\n').map(str::to_string).collect();
         for l in lines {
+            let line_start = starts.get(l - 1).copied().unwrap_or(0);
             let Some(line) = out.get_mut(l - 1) else { continue };
             let mut res = String::with_capacity(line.len());
             let mut rest = line.as_str();
             let mut changed = false;
+            let mut consumed = 0usize;
             while let Some(k) = rest.find(&old) {
                 let before = if k > 0 { rest[..k].chars().next_back() } else { res.chars().next_back() };
                 let after = rest[k + old.len()..].chars().next();
+                let at = line_start + consumed + k;
+                let in_text = spans.as_ref().is_none_or(|v| v.iter().any(|&(a, b)| a <= at && at + old.len() <= b));
+                let pre = &rest[..k];
+                let code_shaped = distinctive
+                    || matches!(after, Some('(' | '`'))
+                    || matches!(before, Some('`' | '#' | '.'))
+                    // the whole literal is the name: `getattr(x, 'detect')`, `obj["detect"]` — in Python / JS;
+                    // in Go / Java / Rust that is data (`cmd.Print("Print")` prints a word)
+                    || (dynamic && matches!(before, Some('"' | '\'')) && before == after)
+                    || pre.ends_with("::")
+                    || pre.ends_with("->");
+                let in_text = in_text && code_shaped;
                 res.push_str(&rest[..k]);
-                if !word(before) && !word(after) {
+                consumed += k + old.len();
+                if !word(before) && !word(after) && in_text {
                     res.push_str(&new);
                     changed = true;
                 } else {
@@ -246,8 +272,16 @@ pub fn rename(root: &Path, g: &Graph, i: usize, new_name: &str, dry_run: bool) -
     if new_name.is_empty() || !new_name.bytes().all(is_ident) || new_name.as_bytes()[0].is_ascii_digit() {
         bail!("`{new_name}` is not a valid identifier");
     }
-    // the symbol and its prototype / definition twins (C/C++ header + source)
-    let twins: Vec<usize> = (0..g.syms.len()).filter(|&j| g.syms[j].sym.qualified == target.sym.qualified).collect();
+    // the symbol and its prototype / definition twins (C/C++ header + source); a method's
+    // overrides in subclasses / implementations are renamed with it (dispatch must keep working)
+    let mut twins: Vec<usize> = (0..g.syms.len()).filter(|&j| g.syms[j].sym.qualified == target.sym.qualified).collect();
+    if target.sym.kind == gitnext_parse::Kind::Method {
+        for o in g.overrides(i) {
+            if !twins.contains(&o) {
+                twins.push(o);
+            }
+        }
+    }
     // file → line → set of byte columns to replace
     let mut edits: BTreeMap<String, BTreeMap<usize, Vec<usize>>> = BTreeMap::new();
     let mut report = RenameReport { old: old.clone(), new: new_name.into(), dry_run, ..Default::default() };
@@ -299,9 +333,21 @@ pub fn rename(root: &Path, g: &Graph, i: usize, new_name: &str, dry_run: bool) -
 
     // whatever the graph did not reach: `__all__` entries are renamed, everything
     // else that still spells the old name (strings, comments, dynamic access) is reported
+    // an import / export of this name: followed when the name is ours alone (no other
+    // exported definition in the same language family spells it)
+    let family = gitnext_parse::family_of(&target.file);
+    let ours_alone = g.find(&old).iter().all(|j| twins.contains(j) || g.syms[*j].sym.test || gitnext_parse::family_of(&g.syms[*j].file) != family || g.syms[*j].sym.visibility.is_none());
     for f in g.files.iter().filter(|f| f.parsed) {
         let lines = lines_of(&f.path);
         let all_lines: std::collections::HashSet<usize> = if f.path.ends_with(".py") { dunder_all_lines(&lines) } else { Default::default() };
+        let import_spans = if ours_alone && gitnext_parse::family_of(&f.path) == family && lines.iter().any(|t| !word_hits(t, &old).is_empty()) {
+            let text = lines.join("\n");
+            let starts: Vec<usize> = std::iter::once(0).chain(text.match_indices('\n').map(|(i, _)| i + 1)).collect();
+            let spans = gitnext_parse::import_name_spans(Path::new(&f.path), &text);
+            Some((starts, spans))
+        } else {
+            None
+        };
         for (n, text) in lines.iter().enumerate() {
             let l = n + 1;
             for c in word_hits(text, &old) {
@@ -310,7 +356,11 @@ pub fn rename(root: &Path, g: &Graph, i: usize, new_name: &str, dry_run: bool) -
                     continue;
                 }
                 let quoted = c > 0 && matches!(text.as_bytes()[c - 1], b'"' | b'\'') && text.as_bytes().get(c + old.len()).is_some_and(|b| matches!(b, b'"' | b'\''));
-                if all_lines.contains(&l) && quoted {
+                let in_import = import_spans.as_ref().is_some_and(|(starts, spans)| {
+                    let at = starts[n] + c;
+                    spans.iter().any(|&(a, b)| a == at && b == at + old.len())
+                });
+                if in_import || (all_lines.contains(&l) && quoted) {
                     edits.entry(f.path.clone()).or_default().entry(l).or_default().push(c);
                 } else if !twins.iter().any(|&t| g.syms[t].file == f.path && l >= g.syms[t].sym.start_line as usize && l <= g.syms[t].sym.start_line as usize + 1) {
                     report.leftover.push(format!("{}:{l}: {}", f.path, text.trim().chars().take(100).collect::<String>()));
@@ -321,12 +371,10 @@ pub fn rename(root: &Path, g: &Graph, i: usize, new_name: &str, dry_run: bool) -
     report.leftover.sort();
     report.leftover.dedup();
 
-    // overriding methods in subclasses / trait impls keep the old name: warn
-    if target.sym.kind == gitnext_parse::Kind::Method {
-        for o in g.overrides(i) {
-            let s = &g.syms[o];
-            report.skipped.push(format!("{}:{} override {} (rename it too to keep dispatch)", s.file, s.sym.start_line, g.short_name(o)));
-        }
+    // overrides are renamed with the method (see `twins`); say so
+    for &o in twins.iter().filter(|&&o| g.syms[o].sym.qualified != target.sym.qualified) {
+        let s = &g.syms[o];
+        report.overrides.push(format!("{} {}:{}", g.short_name(o), s.file, s.sym.start_line));
     }
     // 3. apply (all files validated before anything is written)
     let mut outputs: Vec<(String, String, String)> = Vec::new();
@@ -381,6 +429,9 @@ pub fn render_rename(r: &RenameReport) -> String {
     if !r.changed.is_empty() {
         s.push_str(&r.changed.join(", "));
         s.push('\n');
+    }
+    if !r.overrides.is_empty() {
+        s.push_str(&format!("overrides renamed too ({}): {}\n", r.overrides.len(), r.overrides.join(", ")));
     }
     if !r.text_changed.is_empty() {
         s.push_str(&format!("also as text ({}): {}\n", r.text_changed.len(), r.text_changed.join(", ")));

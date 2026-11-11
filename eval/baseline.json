@@ -1,0 +1,57 @@
+{
+ "cobra": {
+  "callers_recall": 1.0,
+  "callers_precision": 0.969,
+  "callers_checked": 8,
+  "rename_ok": 1.0,
+  "rename_checked": 8,
+  "tests_recall": 1.0,
+  "tests_precision": 0.008,
+  "tests_checked": 3,
+  "look_vs_file": 0.059
+ },
+ "click": {
+  "callers_recall": null,
+  "callers_precision": null,
+  "callers_checked": 0,
+  "rename_ok": 1.0,
+  "rename_checked": 8,
+  "tests_recall": 0.189,
+  "tests_precision": 0.406,
+  "tests_checked": 4,
+  "look_vs_file": 0.08
+ },
+ "zustand": {
+  "callers_recall": 0.5,
+  "callers_precision": 1.0,
+  "callers_checked": 1,
+  "rename_ok": 1.0,
+  "rename_checked": 1,
+  "tests_recall": null,
+  "tests_precision": null,
+  "tests_checked": 0,
+  "look_vs_file": 0.116
+ },
+ "jsoup": {
+  "callers_recall": 1.0,
+  "callers_precision": 0.467,
+  "callers_checked": 4,
+  "rename_ok": 1.0,
+  "rename_checked": 8,
+  "tests_recall": null,
+  "tests_precision": null,
+  "tests_checked": 0,
+  "look_vs_file": 0.188
+ },
+ "semver": {
+  "callers_recall": 0.933,
+  "callers_precision": 1.0,
+  "callers_checked": 5,
+  "rename_ok": 1.0,
+  "rename_checked": 5,
+  "tests_recall": 0.611,
+  "tests_precision": 0.512,
+  "tests_checked": 3,
+  "look_vs_file": 0.145
+ }
+}

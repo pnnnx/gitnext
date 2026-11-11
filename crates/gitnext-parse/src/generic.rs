@@ -94,7 +94,7 @@ pub(crate) fn analyze(spec: &Spec, rel: &Path, src: &str, pkg: Option<&CrateHint
     let module = (spec.module)(&rel_s, root, b, pkg);
     let in_test = is_test_path(&rel_s);
     let imports = (spec.imports)(root, b, &rel_s, &module, pkg);
-    let mut ex = Ex { spec, src: b, out: FileAnalysis::default(), aliases: imports.aliases };
+    let mut ex = Ex { spec, src: b, out: FileAnalysis::default(), aliases: imports.aliases, fields: HashMap::new() };
     for (to, line) in imports.edges {
         ex.out.edges.push(Edge { from: module.clone(), to, kind: EdgeKind::Imports, line, col: 0 });
     }
@@ -129,6 +129,8 @@ struct Ex<'a> {
     src: &'a [u8],
     out: FileAnalysis,
     aliases: HashMap<String, String>,
+    /// type (qualified) → its fields with a known type: `pool SoftPool`, `parent *Command`
+    fields: HashMap<String, HashMap<String, String>>,
 }
 
 impl<'a> Ex<'a> {
@@ -142,6 +144,46 @@ impl<'a> Ex<'a> {
             return;
         }
         self.reference(n, ctx, locals);
+        // Java `new Evaluator() { @Override … }`: an anonymous subclass — its methods override
+        // the base type's (a rename of the base method must reach them)
+        if n.kind() == "object_creation_expression" {
+            let body = (0..n.named_child_count()).filter_map(|i| n.named_child(i as _)).find(|x| x.kind() == "class_body");
+            if let (Some(body), Some(ty)) = (body, n.child_by_field_name("type")) {
+                let base = self.text(ty).split('<').next().unwrap_or("").to_string();
+                let q = format!("{}::{base}$anon{}", ctx.owner.as_deref().unwrap_or(&ctx.module), line(n));
+                self.out.symbols.push(Symbol {
+                    kind: Kind::Class,
+                    name: format!("{base}$anon{}", line(n)),
+                    qualified: q.clone(),
+                    parent: ctx.owner.clone().or_else(|| Some(ctx.module.clone())),
+                    trait_impl: None,
+                    start_line: line(n),
+                    end_line: n.end_position().row as u32 + 1,
+                    signature: format!("new {base}() {{ … }}"),
+                    params: vec![],
+                    returns: None,
+                    doc: None,
+                    summary: None,
+                    visibility: None,
+                    test: ctx.in_test,
+                    decl: false,
+                    body_hash: hash_hex(&self.src[n.start_byte()..n.end_byte()]),
+                    inferred: false,
+                });
+                let (l, col) = name_pos(ty);
+                self.out.edges.push(Edge { from: q.clone(), to: self.map_alias(&base.replace('.', "::")), kind: EdgeKind::Inherits, line: l, col });
+                let inner = Ctx { module: ctx.module.clone(), owner: Some(q), func: None, in_test: ctx.in_test, recv: None, vars: HashMap::new() };
+                let mut c2 = n.walk();
+                for ch in n.named_children(&mut c2) {
+                    if ch.id() == body.id() {
+                        self.walk(ch, &inner, &HashSet::new());
+                    } else {
+                        self.walk(ch, ctx, locals);
+                    }
+                }
+                return;
+            }
+        }
         let mut c = n.walk();
         for ch in n.named_children(&mut c) {
             self.walk(ch, ctx, locals);
@@ -212,6 +254,10 @@ impl<'a> Ex<'a> {
         }
         if kind.is_type() {
             self.heritage(n, &qualified);
+            let typed: HashMap<String, String> = self.out.symbols.last().map(|s| s.params.iter().filter_map(|p| Some((p.name.clone(), self.base_type(&p.ty)?))).collect()).unwrap_or_default();
+            if !typed.is_empty() {
+                self.fields.insert(qualified.clone(), typed);
+            }
         }
         // inside: a type's members belong to it; a function's body makes calls from it
         let recv = (n.kind() == "method_declaration" && self.spec.lang == Lang::Go)
@@ -384,6 +430,16 @@ impl<'a> Ex<'a> {
                 let (l, c) = name_pos(n.child_by_field_name(field).unwrap_or(n));
                 self.out.edges.push(Edge { from, to, kind: EdgeKind::Calls, line: l, col: c });
             }
+        } else if n.kind() == "method_reference" {
+            // Java `StringUtil::isAsciiLetter`, `this::visit`: the method is used (passed, not called here)
+            let mut c = n.walk();
+            let kids: Vec<Node> = n.named_children(&mut c).collect();
+            if let (Some(obj), Some(m)) = (kids.first(), kids.last().filter(|m| m.kind() == "identifier")) {
+                if let Some(to) = self.member_target(*obj, Some(*m), ctx, locals) {
+                    let (l, c) = name_pos(*m);
+                    self.out.edges.push(Edge { from, to, kind: EdgeKind::Calls, line: l, col: c });
+                }
+            }
         } else if let Some(&(_, field)) = self.spec.new.iter().find(|(k, _)| *k == n.kind()) {
             if let Some(t) = n.child_by_field_name(field) {
                 let name = self.text(t).split('<').next().unwrap_or("").replace('.', "::");
@@ -435,6 +491,23 @@ impl<'a> Ex<'a> {
         if obj.kind() == "identifier" {
             if let Some(t) = ctx.vars.get(o) {
                 return Some(format!("{t}::{m}"));
+            }
+            // Java: a bare field name is `this.field`
+            if self.spec.bare_is_self && !locals.contains(o) {
+                if let Some(t) = ctx.owner.as_ref().and_then(|w| self.fields.get(w)).and_then(|f| f.get(o)) {
+                    return Some(format!("{t}::{m}"));
+                }
+            }
+        }
+        // `this.pool.release()`, Go `s.parent.Find()`: a field of this object with a known type
+        if let Some(&(_, of, mf)) = self.spec.member.iter().find(|(k, _, _)| *k == obj.kind()) {
+            if let (Some(base), Some(field)) = (obj.child_by_field_name(of), obj.child_by_field_name(mf)) {
+                let b = self.text(base);
+                if self.spec.this.contains(&b) || self.spec.this.contains(&base.kind()) || ctx.recv.as_deref() == Some(b) {
+                    if let Some(t) = ctx.owner.as_ref().and_then(|w| self.fields.get(w)).and_then(|f| f.get(self.text(field))) {
+                        return Some(format!("{t}::{m}"));
+                    }
+                }
             }
         }
         if obj.kind() == "identifier" || obj.kind() == "package_identifier" {

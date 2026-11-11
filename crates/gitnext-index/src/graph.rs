@@ -389,7 +389,8 @@ impl Graph {
             .filter(|&i| {
                 // tests/, examples/, benches/ are separate targets: only visible to themselves.
                 let f = &self.syms[i].file;
-                !is_aux_target(f) || f == from_file || dir_of(f) == dir_of(from_file)
+                // … and their `mod util;` folders (tests/util/mod.rs is part of tests/x.rs)
+                !is_aux_target(f) || f == from_file || dir_of(f) == dir_of(from_file) || dir_of(f).strip_prefix(dir_of(from_file)).is_some_and(|r| r.starts_with('/'))
             })
             .collect()
     }
@@ -445,7 +446,12 @@ impl Graph {
             EdgeKind::Imports => {
                 let mut out = Vec::new();
                 let from_root = e.from.split("::").next().unwrap_or("");
+                let krate = crate_prefix(file, &e.from);
                 for path in flatten_use(&e.to) {
+                    let path = match (path.strip_prefix("crate::"), &krate) {
+                        (Some(rest), Some(k)) => format!("{k}::{rest}"),
+                        _ => path,
+                    };
                     out.extend(self.resolve_import(&path, from_root, file));
                 }
                 out.sort_unstable();
@@ -485,7 +491,7 @@ impl Graph {
             if f != file || e.kind != EdgeKind::Imports {
                 continue;
             }
-            let root = e.from.split("::").next().unwrap_or("");
+            let root = crate_prefix(file, &e.from).unwrap_or_else(|| e.from.split("::").next().unwrap_or("").to_string());
             for p in flatten_use(&e.to) {
                 out.insert(match p.strip_prefix("crate::") {
                     Some(rest) => format!("{root}::{rest}"),
@@ -635,7 +641,8 @@ impl Graph {
                 })
                 .collect()
         };
-        if picked.is_empty() && gitnext_parse::lang_for(std::path::Path::new(file)).is_some_and(gitnext_parse::Lang::is_generic) && !qual.is_empty() && qual != "Self" {
+        let rust = file.ends_with(".rs");
+        if picked.is_empty() && (rust || gitnext_parse::lang_for(std::path::Path::new(file)).is_some_and(gitnext_parse::Lang::is_generic)) && !qual.is_empty() && qual != "Self" {
             // `Type::method` with Type a repo type but the method defined above it (base class,
             // embedded struct, interface default): inherited first, else any method of that name
             let types: Vec<usize> = self.by_name.get(qual).map(|v| v.iter().copied().filter(|&i| self.syms[i].sym.kind.is_type()).collect()).unwrap_or_default();
@@ -646,7 +653,30 @@ impl Graph {
                         return inh;
                     }
                 }
+                // Rust: a std trait method on a repo type (`v.to_string()`) is not a repo method
+                if rust && COMMON_METHODS.contains(&name) {
+                    return vec![];
+                }
                 return cands_all.into_iter().filter(|&i| self.syms[i].sym.kind == Kind::Method).collect();
+            }
+            if rust {
+                return vec![];
+            }
+            // `Owner::field::method` (Java `import static Owner.field`): the field's declared type
+            let segs: Vec<&str> = e.to.split("::").collect();
+            if segs.len() >= 3 {
+                let owner = segs[segs.len() - 3];
+                let fty = self.by_name.get(owner).into_iter().flatten().filter(|&&i| self.syms[i].sym.kind.is_type()).find_map(|&i| {
+                    let p = self.syms[i].sym.params.iter().find(|p| p.name == qual)?;
+                    let t = p.ty.trim_start_matches(['*', '&', ' ', ':']).split(['<', '[', '(', ' ', '{', ',', '?']).next()?;
+                    Some(t.rsplit(['.', ':']).next()?.to_string()).filter(|t| !t.is_empty())
+                });
+                if let Some(t) = fty {
+                    let m: Vec<usize> = cands_all.iter().copied().filter(|&i| self.syms[i].sym.kind == Kind::Method && self.syms[i].sym.parent.as_deref().is_some_and(|p| last_segment(p) == t)).collect();
+                    if !m.is_empty() {
+                        return m;
+                    }
+                }
             }
             // `pkg::index::create` where the index file only re-exports `create`: in-repo path → by name
             let first = e.to.split("::").next().unwrap_or("");
@@ -749,7 +779,16 @@ impl Graph {
                 }
                 let Some(src) = self.source_of(file, e) else { continue };
                 let targets = self.resolve(file, e);
-                let distinct: HashSet<&str> = targets.iter().map(|&t| self.syms[t].sym.qualified.as_str()).collect();
+                // `Type::m` with the type named: same-named types in other modules (cfg variants,
+                // test doubles) all count as sure; only an unknown receiver (`.m`) is a guess
+                let typed = !e.to.starts_with('.') && e.to.contains("::");
+                let distinct: HashSet<&str> = targets
+                    .iter()
+                    .map(|&t| {
+                        let q = self.syms[t].sym.qualified.as_str();
+                        if typed { tail2(q) } else { q }
+                    })
+                    .collect();
                 for t in targets {
                     if t != src {
                         m.entry(t).or_default().push((src, e.kind, e.line));
@@ -1057,6 +1096,30 @@ fn drop_decls(syms: &[SymbolRow], c: Vec<usize>) -> Vec<usize> {
 
 /// What another file can import: exported, non-test definitions (a test file's
 /// helpers are its own). Keeps everything when nothing qualifies.
+/// `crate::` inside a Cargo test / bench / example target (`tests/foo.rs` is its own crate
+/// root, its `mod util;` is `tests/util/mod.rs`): the module of that directory, `semver::tests`.
+fn crate_prefix(file: &str, from: &str) -> Option<String> {
+    let (dir, name) = file.rsplit_once('/')?;
+    let d = dir.rsplit('/').next()?;
+    if !matches!(d, "tests" | "benches" | "examples") || !name.ends_with(".rs") {
+        return None;
+    }
+    let stem = name.strip_suffix(".rs")?;
+    let segs: Vec<&str> = from.split("::").collect();
+    let i = segs.iter().position(|s| *s == stem)?;
+    (i > 0).then(|| segs[..i].join("::"))
+}
+
+/// `a::b::Type::m` → `Type::m`.
+fn tail2(q: &str) -> &str {
+    let mut it = q.rmatch_indices("::");
+    it.next();
+    match it.next() {
+        Some((i, _)) => &q[i + 2..],
+        None => q,
+    }
+}
+
 fn importable(syms: &[SymbolRow], c: Vec<usize>, file: &str) -> Vec<usize> {
     let ok: Vec<usize> = c.iter().copied().filter(|&i| syms[i].file == file || (syms[i].sym.visibility.is_some() && !syms[i].sym.test)).collect();
     if ok.is_empty() { c } else { ok }

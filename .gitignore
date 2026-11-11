@@ -1,2 +1,5 @@
 target/
 integrations/loca/runs/
+eval/.work/
+eval/results/agent-*
+__pycache__/
