@@ -116,6 +116,8 @@ impl Index {
         std::fs::create_dir_all(&dir).with_context(|| format!("create {}", dir.display()))?;
         ensure_gitignore(&dir)?;
         let conn = Connection::open(dir.join("index.db"))?;
+        // several processes may open one repo at once (agent server, TUI, CLI): wait, don't fail
+        conn.busy_timeout(std::time::Duration::from_secs(30))?;
         conn.execute_batch("PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA foreign_keys=ON;")?;
         let mut idx = Index { conn, root: root.to_path_buf(), skip: skipped_dirs(root) };
         idx.migrate()?;
@@ -133,15 +135,18 @@ impl Index {
                file TEXT, line INTEGER, col INTEGER, file_hash TEXT, target_file TEXT, target_line INTEGER,
                PRIMARY KEY (file, line, col));",
         )?;
-        let v: Option<String> = self
-            .conn
-            .query_row("SELECT value FROM meta WHERE key='schema'", [], |r| r.get(0))
-            .optional()?;
         let want = format!("{SCHEMA_VERSION}.{}", gitnext_parse::PARSER_VERSION);
-        if v.as_deref() == Some(want.as_str()) {
+        let current = |c: &Connection| -> Result<Option<String>> { Ok(c.query_row("SELECT value FROM meta WHERE key='schema'", [], |r| r.get(0)).optional()?) };
+        if current(&self.conn)?.as_deref() == Some(want.as_str()) {
             return Ok(());
         }
-        self.conn.execute_batch(
+        // check and rebuild in one write transaction: a second process opening a fresh
+        // repo at the same moment waits here and then finds the schema already made
+        let tx = self.conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        if current(&tx)?.as_deref() == Some(want.as_str()) {
+            return Ok(());
+        }
+        tx.execute_batch(
             "DROP TABLE IF EXISTS edges; DROP TABLE IF EXISTS symbols; DROP TABLE IF EXISTS files;
              CREATE TABLE files (
                path TEXT PRIMARY KEY, mtime INTEGER, size INTEGER, hash TEXT,
@@ -158,7 +163,8 @@ impl Index {
                src TEXT, dst TEXT, kind TEXT, line INTEGER, col INTEGER);
              CREATE INDEX edges_src ON edges(src);",
         )?;
-        self.conn.execute("INSERT OR REPLACE INTO meta(key, value) VALUES ('schema', ?1)", [want])?;
+        tx.execute("INSERT OR REPLACE INTO meta(key, value) VALUES ('schema', ?1)", [want])?;
+        tx.commit()?;
         Ok(())
     }
 

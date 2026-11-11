@@ -7,9 +7,7 @@ L6-9 function js::app::Header [pub]
     in: onClose, title
     doc: Render the header.
 edges:
-  L1 calls js::app -> require
   L1 imports js::app -> express
-  L2 calls js::app -> require
   L2 imports js::app -> fs/promises
   L3 imports js::app -> js::ui::button
   L7 calls js::app::Header -> useState

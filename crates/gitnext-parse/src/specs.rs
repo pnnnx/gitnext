@@ -55,7 +55,7 @@ fn js_classify<'t>(n: Node<'t>, _src: &[u8], _ctx: &Ctx) -> Option<Def<'t>> {
         "enum_declaration" => def(Kind::Enum, n.child_by_field_name("name")),
         // const f = (…) => …; const f = function (…) {…}
         "variable_declarator" | "public_field_definition" | "field_definition" => {
-            let v = js_function_value(n.child_by_field_name("value")?)?;
+            let v = js_function_value(n.child_by_field_name("value")?, _src)?;
             let name = n.child_by_field_name("name").or_else(|| n.child_by_field_name("property"))?;
             if !matches!(name.kind(), "identifier" | "property_identifier") {
                 return None;
@@ -68,11 +68,17 @@ fn js_classify<'t>(n: Node<'t>, _src: &[u8], _ctx: &Ctx) -> Option<Def<'t>> {
 
 /// The function behind a value: `(…) => …`, and through wrappers —
 /// `(… ) as T`, `x satisfies T`, `memo(() => …)`, `forwardRef((p, ref) => …)`.
-fn js_function_value(v: Node) -> Option<Node> {
+fn js_function_value<'t>(v: Node<'t>, src: &[u8]) -> Option<Node<'t>> {
     match v.kind() {
         "arrow_function" | "function_expression" | "function" | "generator_function" => Some(v),
-        "as_expression" | "satisfies_expression" | "parenthesized_expression" | "non_null_expression" | "type_assertion" => js_function_value(v.named_child(0)?),
+        "as_expression" | "satisfies_expression" | "parenthesized_expression" | "non_null_expression" | "type_assertion" => js_function_value(v.named_child(0)?, src),
+        // only wrappers that return the component / callback itself, not any call taking a lambda
         "call_expression" => {
+            let callee = v.child_by_field_name("function")?;
+            let name = text(callee.child_by_field_name("property").unwrap_or(callee), src);
+            if !matches!(name, "memo" | "forwardRef" | "observer" | "useCallback" | "defineComponent" | "lazy" | "styled") {
+                return None;
+            }
             let args = v.child_by_field_name("arguments")?;
             let mut c = args.walk();
             let f = args.named_children(&mut c).find(|a| matches!(a.kind(), "arrow_function" | "function_expression" | "function"));
