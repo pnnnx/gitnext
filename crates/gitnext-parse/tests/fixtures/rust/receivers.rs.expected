@@ -1,0 +1,71 @@
+module doc: Receivers of method calls whose type the file tells: fields, `&Self`, macro bodies.
+symbols:
+L1-60 module crate::rust::receivers [pub]
+    sig: mod crate::rust::receivers
+    doc: Receivers of method calls whose type the file tells: fields, `&Self`, macro bodies.
+L3-3 struct crate::rust::receivers::Ident [pub]
+    sig: pub struct Ident
+    parent: crate::rust::receivers
+L5-11 struct crate::rust::receivers::Meta [pub]
+    sig: pub struct Meta
+    parent: crate::rust::receivers
+    in: id: Ident, extra: Ident, extra: Other
+L13-13 struct crate::rust::receivers::Other [pub]
+    sig: pub struct Other
+    parent: crate::rust::receivers
+L15-15 struct crate::rust::receivers::Pair [pub]
+    sig: pub struct Pair
+    parent: crate::rust::receivers
+    in: 0: Ident, 1: u8
+L17-20 struct crate::rust::receivers::View [pub]
+    sig: pub struct View<'a>
+    parent: crate::rust::receivers
+    in: meta: &'a mut Meta, count: usize
+L23-25 method crate::rust::receivers::Meta::is_empty [pub]
+    sig: pub fn is_empty(&self) -> bool
+    parent: crate::rust::receivers::Meta
+    in: self: &self
+    out: bool
+L26-28 method crate::rust::receivers::Meta::cmp_with [pub]
+    sig: pub fn cmp_with(&self, rhs: &Self) -> bool
+    parent: crate::rust::receivers::Meta
+    in: self: &self, rhs: &Self
+    out: bool
+L29-32 method crate::rust::receivers::Meta::mixed [pub]
+    sig: pub fn mixed(&self) -> bool
+    parent: crate::rust::receivers::Meta
+    in: self: &self
+    out: bool
+L36-38 method crate::rust::receivers::Pair::first_empty [pub]
+    sig: pub fn first_empty(&self) -> bool
+    parent: crate::rust::receivers::Pair
+    in: self: &self
+    out: bool
+L42-44 method crate::rust::receivers::View::deep [pub]
+    sig: pub fn deep(&self) -> bool
+    parent: crate::rust::receivers::View
+    in: self: &self
+    out: bool
+L45-47 method crate::rust::receivers::View::param [pub]
+    sig: pub fn param(&self, other: &Meta) -> bool
+    parent: crate::rust::receivers::View
+    in: self: &self, other: &Meta
+    out: bool
+L51-59 macro crate::rust::receivers::meta
+    sig: macro_rules! meta
+    parent: crate::rust::receivers
+edges:
+  L6 uses crate::rust::receivers::Meta -> Ident
+  L10 uses crate::rust::receivers::Meta -> Other
+  L15 uses crate::rust::receivers::Pair -> Ident
+  L18 uses crate::rust::receivers::View -> Meta
+  L24 calls crate::rust::receivers::Meta::is_empty -> Ident::is_empty
+  L27 calls crate::rust::receivers::Meta::cmp_with -> Self::as_str
+  L31 calls crate::rust::receivers::Meta::mixed -> .is_empty
+  L37 calls crate::rust::receivers::Pair::first_empty -> Ident::is_empty
+  L43 calls crate::rust::receivers::View::deep -> .is_power_of_two
+  L43 calls crate::rust::receivers::View::deep -> Ident::is_empty
+  L45 uses crate::rust::receivers::View::param -> Meta
+  L46 calls crate::rust::receivers::View::param -> Ident::is_empty
+  L53 calls crate::rust::receivers::meta -> Meta::build
+  L56 calls crate::rust::receivers::meta -> Meta::from_id

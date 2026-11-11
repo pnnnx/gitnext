@@ -636,7 +636,12 @@ impl Graph {
                 .collect();
             if own.is_empty() {
                 // inherited: walk base classes / implemented traits of the owner
-                self.inherited(&caller_owner, name, file)
+                let inh = self.inherited(&caller_owner, name, file);
+                if inh.is_empty() && file.ends_with(".rs") {
+                    self.same_type_other_module(&caller_owner, &cands)
+                } else {
+                    inh
+                }
             } else {
                 own
             }
@@ -704,6 +709,36 @@ impl Graph {
             }
         }
         prefer_same_file(&self.syms, picked, file)
+    }
+
+    /// Rust `self.as_str()` in `impl Display for BuildMetadata` (display.rs): the owner is
+    /// `semver::display::BuildMetadata`, the method sits in the `impl` next to the struct,
+    /// `semver::BuildMetadata`. Methods of the same type name in the same crate — only when the
+    /// crate defines one type of that name; with two (`map::Slice`, `set::Slice`) it stays unknown.
+    fn same_type_other_module(&self, owner: &str, cands: &[usize]) -> Vec<usize> {
+        let ty = last_segment(owner);
+        let krate = owner.split("::").next().unwrap_or("");
+        let in_crate = |q: &str| q.split("::").next() == Some(krate);
+        let defs: HashSet<&str> = self
+            .by_name
+            .get(ty)
+            .into_iter()
+            .flatten()
+            .map(|&i| &self.syms[i].sym)
+            .filter(|s| s.kind.is_type() && in_crate(&s.qualified))
+            .map(|s| s.qualified.as_str())
+            .collect();
+        if defs.len() != 1 {
+            return vec![];
+        }
+        cands
+            .iter()
+            .copied()
+            .filter(|&i| {
+                let s = &self.syms[i].sym;
+                s.kind == Kind::Method && s.parent.as_deref().is_some_and(|p| last_segment(p) == ty && in_crate(p))
+            })
+            .collect()
     }
 
     /// Names of the repo types a call returns, from the declared result type of what it
