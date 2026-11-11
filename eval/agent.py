@@ -111,6 +111,36 @@ def chat(host: str, messages: list, tools: list, max_tokens: int) -> dict:
         return json.loads(r.read())
 
 
+def text_calls(content: str, names: set[str]) -> list[dict]:
+    """Tool calls a small model wrote as text instead of through the API: a fenced
+    ```json {"name": …, "arguments": {…}}```, `<tool_call>{…}</tool_call>`, or `look {"what": "x"}`.
+    Returned in the API's own shape, so the conversation continues as if it had used it."""
+    dec = json.JSONDecoder()
+    found: list[tuple[str, dict]] = []
+    i = content.find("{")
+    while i >= 0:
+        try:
+            obj, end = dec.raw_decode(content, i)
+        except ValueError:
+            i = content.find("{", i + 1)
+            continue
+        if isinstance(obj, dict):
+            inner = obj.get("tool_call") or obj.get("function_call") or obj.get("function") or obj
+            before = re.search(r"([A-Za-z_]\w*)\s*[(:]?\s*$", content[:i])
+            if isinstance(inner, dict) and inner.get("name") in names:
+                args = inner.get("arguments", inner.get("parameters", {}))
+                if isinstance(args, str):
+                    try:
+                        args = json.loads(args)
+                    except ValueError:
+                        args = {}
+                found.append((inner["name"], args if isinstance(args, dict) else {}))
+            elif before and before.group(1) in names:  # look {"what": "x"}
+                found.append((before.group(1), obj))
+        i = content.find("{", end)
+    return [{"id": f"text{k}", "type": "function", "function": {"name": n, "arguments": json.dumps(a)}} for k, (n, a) in enumerate(found)]
+
+
 SYSTEM = ("You are a coding agent working in a software project. Use the tools to inspect and change the code. "
           "Be brief. When done, call finish with the answer. Do not modify tests unless asked.")
 
@@ -135,8 +165,14 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
         used["tokens_in"] += u.get("prompt_tokens", 0)
         used["tokens_out"] += u.get("completion_tokens", 0)
         m = r["choices"][0]["message"]
-        msgs.append({k: v for k, v in m.items() if k in ("role", "content", "tool_calls")})
         calls = m.get("tool_calls") or []
+        if not calls:
+            # the model wrote the call as text (the server's chat template did not parse it)
+            calls = text_calls(m.get("content") or "", {t["function"]["name"] for t in tools})
+            if calls:
+                used["text_calls"] = used.get("text_calls", 0) + len(calls)
+                m = {"role": "assistant", "content": "", "tool_calls": calls}
+        msgs.append({k: v for k, v in m.items() if k in ("role", "content", "tool_calls")})
         if not calls:
             answer = m.get("content") or ""
             break
@@ -198,23 +234,33 @@ def make_tasks(repo: dict, root: Path, kinds: list[str], seed: int) -> list[dict
     return tasks
 
 
-MUTATIONS = [(r"(?<![<>=!])<(?![<=])", "<="), (r" \+ 1\b", " - 1"), (r"(?<![=!<>])==(?!=)", "!="), (r"\btrue\b", "false"), (r"\bTrue\b", "False")]
+MUTATIONS = [(r"(?<![<>=!])<(?![<=])", "<="), (r" \+ 1\b", " - 1"), (r"(?<![=!<>])==(?!=)", "!="), (r"\btrue\b", "false"), (r"\bTrue\b", "False"),
+             (r"(?<![=!<>])!=(?!=)", "=="), (r" is not None\b", " is None"), (r" is None\b", " is not None"), (r"\bfalse\b", "true"), (r"\bFalse\b", "True"),
+             (r" - 1\b", " + 1"), (r" and ", " or "), (r" && ", " || ")]
+MAX_SEED_RUNS = 30  # test-suite runs spent looking for a mutant that some test notices
 
 
 def seed_bug(repo: dict, root: Path, syms: list[dict], rng: random.Random) -> dict | None:
     """Change one operator inside a non-test function so that some test fails."""
     L = ev.LANG[repo["lang"]]
-    funcs = [s for s in syms if s["kind"] in ("function", "method") and not s.get("test") and 4 <= s["end_line"] - s["start_line"] <= 40]
+    funcs = [s for s in syms if s["kind"] in ("function", "method") and not s.get("test") and 4 <= s["end_line"] - s["start_line"] <= 40
+             and not s["file"].startswith(("examples/", "example/", "docs/", "benches/", "bench/"))]  # rarely under test
     rng.shuffle(funcs)
-    for s in funcs[:25]:
+    runs = 0
+    for s in funcs:
+        if runs >= MAX_SEED_RUNS:
+            break
         p = root / s["file"]
         lines = p.read_text(errors="replace").split("\n")
+        tried = 0
         for ln in range(s["start_line"], s["end_line"]):
             text = lines[ln]
-            if text.lstrip().startswith(("//", "#", "*")):
+            if text.lstrip().startswith(("//", "#", "*")) or tried >= 2:
                 continue
             for pat, rep in MUTATIONS:
                 if re.search(pat, text):
+                    tried += 1
+                    runs += 1
                     lines2 = list(lines)
                     lines2[ln] = re.sub(pat, rep, text, count=1)
                     p.write_text("\n".join(lines2))
@@ -295,14 +341,14 @@ def main() -> None:
                     Path(args.out).write_text(json.dumps(rows, ensure_ascii=False, indent=1))
         ev.restore(root)
     # summary per mode
-    md = ["| mode | passed | median steps | tokens in (sum) | gitnext tool calls |", "|---|---:|---:|---:|---:|"]
+    md = ["| mode | passed | median steps | tokens in (sum) | gitnext tool calls | calls written as text |", "|---|---:|---:|---:|---:|---:|"]
     for mode in modes:
         rs = [r for r in rows if r["mode"] == mode]
         if not rs:
             continue
         steps = sorted(r.get("steps") or 0 for r in rs)
         gcalls = sum(sum(v for k, v in (r.get("tools") or {}).items() if k in ("look", "rename", "replace_symbol")) for r in rs)
-        md.append(f"| {mode} | {sum(r['passed'] for r in rs)}/{len(rs)} | {steps[len(steps)//2]} | {sum(r.get('tokens_in') or 0 for r in rs)} | {gcalls} |")
+        md.append(f"| {mode} | {sum(r['passed'] for r in rs)}/{len(rs)} | {steps[len(steps)//2]} | {sum(r.get('tokens_in') or 0 for r in rs)} | {gcalls} | {sum(r.get('text_calls') or 0 for r in rs)} |")
     Path(args.out).with_suffix(".md").write_text("\n".join(md) + "\n")
     print("\n".join(md))
 

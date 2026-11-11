@@ -3,7 +3,7 @@
   "repo": "cobra",
   "lang": "go",
   "commit": "adbc8813901b",
-  "index_seconds": 0.2,
+  "index_seconds": 0.0,
   "symbols": 288,
   "files": 19,
   "edges": 5106,
@@ -145,6 +145,25 @@
     "recall_with_maybe": 1.0
    }
   ],
+  "sample_common": [
+   "main::Command::MarkFlagRequired"
+  ],
+  "callers_common": [
+   {
+    "symbol": "main::Command::MarkFlagRequired",
+    "truth": [
+     "main::Command::enforceFlagGroupsForCompletion"
+    ],
+    "found": [
+     "main::Command::enforceFlagGroupsForCompletion"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   }
+  ],
   "rename": [
    {
     "symbol": "main::Command::NamePadding",
@@ -223,99 +242,150 @@
    {
     "symbol": "main::Command::NamePadding",
     "level": "name",
-    "truth": 1,
+    "truth": 24,
     "predicted": 125,
-    "recall": 1.0,
-    "precision": 0.008,
-    "missed": [],
+    "recall": 0.875,
+    "precision": 0.168,
+    "top_hits": 1,
+    "top_n": 10,
+    "top_precision": 0.1,
+    "top_best": 1.0,
+    "caught": 1.0,
+    "missed": [
+     "TestDefaultCompletionCmd",
+     "TestNoArgs",
+     "TestValidateFlagGroups"
+    ],
     "recall_graph_only": 0.0
    },
    {
     "symbol": "main::CheckErr",
     "level": "name",
-    "truth": 2,
-    "predicted": 244,
-    "recall": 1.0,
-    "precision": 0.00819672131147541,
-    "missed": [],
-    "recall_graph_only": 1.0
+    "truth": 112,
+    "predicted": 232,
+    "recall": 0.9196428571428571,
+    "precision": 0.44396551724137934,
+    "top_hits": 8,
+    "top_n": 10,
+    "top_precision": 0.8,
+    "top_best": 1.0,
+    "caught": 1.0,
+    "missed": [
+     "TestBashCompletionV2WithActiveHelp",
+     "TestCalledAs",
+     "TestCompleteCmdInZshScript",
+     "TestCompleteNoDesCmdInZshScript",
+     "TestGenFishCompletionFile",
+     "TestGenManTree",
+     "TestHelpFuncExecuted",
+     "TestPwshCompletionNoActiveHelp"
+    ],
+    "recall_graph_only": 0.9196428571428571
    },
    {
     "symbol": "main::Command::CommandPathPadding",
     "level": "name",
-    "truth": 1,
+    "truth": 8,
     "predicted": 125,
-    "recall": 1.0,
-    "precision": 0.008,
-    "missed": [],
+    "recall": 0.625,
+    "precision": 0.04,
+    "top_hits": 1,
+    "top_n": 10,
+    "top_precision": 0.1,
+    "top_best": 0.5,
+    "caught": 1.0,
+    "missed": [
+     "TestDefaultCompletionCmd",
+     "TestNoArgs",
+     "TestValidateFlagGroups"
+    ],
     "recall_graph_only": 0.0
    },
    {
     "symbol": "main::Command::GenPowerShellCompletionWithDesc",
-    "skipped": "no test fails when it throws",
-    "predicted": 208
+    "level": "name",
+    "truth": 7,
+    "predicted": 203,
+    "recall": 0.8571428571428571,
+    "precision": 0.029556650246305417,
+    "top_hits": 2,
+    "top_n": 10,
+    "top_precision": 0.2,
+    "top_best": 0.6,
+    "caught": 1.0,
+    "missed": [
+     "TestCalledAs"
+    ],
+    "recall_graph_only": 0.8571428571428571
    }
   ],
   "look": [
    {
     "symbol": "main::Command::NamePadding",
-    "look_tokens": 167,
+    "look_tokens": 241,
     "file_tokens": 15286
    },
    {
     "symbol": "main::CheckErr",
-    "look_tokens": 277,
+    "look_tokens": 301,
     "file_tokens": 1871
    },
    {
     "symbol": "main::Command::CommandPathPadding",
-    "look_tokens": 187,
+    "look_tokens": 265,
     "file_tokens": 15286
    },
    {
     "symbol": "main::Command::GenPowerShellCompletionWithDesc",
-    "look_tokens": 207,
+    "look_tokens": 289,
     "file_tokens": 3403
    },
    {
     "symbol": "main::Command::Print",
-    "look_tokens": 206,
+    "look_tokens": 270,
     "file_tokens": 15286
    },
    {
     "symbol": "main::Command::OutOrStderr",
-    "look_tokens": 146,
+    "look_tokens": 236,
     "file_tokens": 15286
    },
    {
     "symbol": "main::Command::PrintErrf",
-    "look_tokens": 171,
+    "look_tokens": 245,
     "file_tokens": 15286
    },
    {
     "symbol": "main::MinimumNArgs",
-    "look_tokens": 226,
+    "look_tokens": 332,
     "file_tokens": 1120
    }
   ],
-  "seconds": 21,
+  "seconds": 12,
   "summary": {
    "callers_recall": 1.0,
    "callers_precision": 0.969,
    "callers_checked": 8,
+   "common_recall": 1.0,
+   "common_precision": 1.0,
+   "common_recall_with_maybe": 1.0,
+   "common_checked": 1,
    "rename_ok": 1.0,
    "rename_checked": 8,
-   "tests_recall": 1.0,
-   "tests_precision": 0.008,
-   "tests_checked": 3,
-   "look_vs_file": 0.059
+   "tests_recall": 0.819,
+   "tests_precision": 0.17,
+   "tests_top10_precision": 0.3,
+   "tests_top10_best": 0.775,
+   "tests_caught": 1.0,
+   "tests_checked": 4,
+   "look_vs_file": 0.078
   }
  },
  {
   "repo": "click",
   "lang": "python",
   "commit": "8abb77a8432e",
-  "index_seconds": 0.4,
+  "index_seconds": 0.1,
   "symbols": 761,
   "files": 32,
   "edges": 9055,
@@ -331,6 +401,8 @@
   ],
   "baseline_failing_tests": [],
   "callers": [],
+  "sample_common": [],
+  "callers_common": [],
   "rename": [
    {
     "symbol": "click::types::Path::coerce_path_result",
@@ -413,6 +485,11 @@
     "predicted": 0,
     "recall": 0.0,
     "precision": 0.0,
+    "top_hits": 0,
+    "top_n": 0,
+    "top_precision": 0.0,
+    "top_best": 0.0,
+    "caught": 0.0,
     "missed": [
      "test_dual_options_custom_type_sentinel_flag_value",
      "test_envvar_container_type",
@@ -432,6 +509,11 @@
     "predicted": 11,
     "recall": 0.12359550561797752,
     "precision": 1.0,
+    "top_hits": 10,
+    "top_n": 10,
+    "top_precision": 1.0,
+    "top_best": 1.0,
+    "caught": 1.0,
     "missed": [
      "test_aliased_command_canonical_name",
      "test_argument_help",
@@ -448,9 +530,14 @@
     "symbol": "click::formatting::HelpFormatter::write_heading",
     "level": "name",
     "truth": 76,
-    "predicted": 24,
+    "predicted": 23,
     "recall": 0.13157894736842105,
-    "precision": 0.4166666666666667,
+    "precision": 0.43478260869565216,
+    "top_hits": 5,
+    "top_n": 10,
+    "top_precision": 0.5,
+    "top_best": 1.0,
+    "caught": 1.0,
     "missed": [
      "test_aliased_command_canonical_name",
      "test_argument_help",
@@ -467,9 +554,14 @@
     "symbol": "click::formatting::HelpFormatter::indentation",
     "level": "name",
     "truth": 10,
-    "predicted": 24,
+    "predicted": 23,
     "recall": 0.5,
-    "precision": 0.20833333333333334,
+    "precision": 0.21739130434782608,
+    "top_hits": 4,
+    "top_n": 10,
+    "top_precision": 0.4,
+    "top_best": 0.5,
+    "caught": 1.0,
     "missed": [
      "test_basic_group",
      "test_chaining_help",
@@ -488,17 +580,17 @@
    },
    {
     "symbol": "click::core::Option::get_help_extra",
-    "look_tokens": 958,
+    "look_tokens": 1104,
     "file_tokens": 39086
    },
    {
     "symbol": "click::formatting::HelpFormatter::write_heading",
-    "look_tokens": 153,
+    "look_tokens": 385,
     "file_tokens": 2611
    },
    {
     "symbol": "click::formatting::HelpFormatter::indentation",
-    "look_tokens": 156,
+    "look_tokens": 378,
     "file_tokens": 2611
    },
    {
@@ -508,38 +600,45 @@
    },
    {
     "symbol": "click::_textwrap::TextWrapper::extra_indent",
-    "look_tokens": 289,
+    "look_tokens": 452,
     "file_tokens": 1568
    },
    {
     "symbol": "click::termui::confirm",
-    "look_tokens": 591,
+    "look_tokens": 766,
     "file_tokens": 8971
    },
    {
     "symbol": "click::core::Command::format_usage",
-    "look_tokens": 189,
+    "look_tokens": 175,
     "file_tokens": 39086
    }
   ],
-  "seconds": 113,
+  "seconds": 71,
   "summary": {
    "callers_recall": null,
    "callers_precision": null,
    "callers_checked": 0,
+   "common_recall": null,
+   "common_precision": null,
+   "common_recall_with_maybe": null,
+   "common_checked": 0,
    "rename_ok": 1.0,
    "rename_checked": 8,
    "tests_recall": 0.189,
-   "tests_precision": 0.406,
+   "tests_precision": 0.413,
+   "tests_top10_precision": 0.475,
+   "tests_top10_best": 0.625,
+   "tests_caught": 0.75,
    "tests_checked": 4,
-   "look_vs_file": 0.08
+   "look_vs_file": 0.118
   }
  },
  {
   "repo": "zustand",
   "lang": "typescript",
   "commit": "9fed2eb2f3af",
-  "index_seconds": 0.2,
+  "index_seconds": 0.1,
   "symbols": 175,
   "files": 36,
   "edges": 5251,
@@ -551,7 +650,6 @@
    {
     "symbol": "src::middleware::persist::createJSONStorage",
     "truth": [
-     "src::middleware::persist::hydrate",
      "src::middleware::persist::persistImpl"
     ],
     "found": [
@@ -561,11 +659,13 @@
     "import_files": [
      "src/middleware.ts"
     ],
-    "recall": 0.5,
+    "recall": 1.0,
     "precision": 1.0,
-    "recall_with_maybe": 0.5
+    "recall_with_maybe": 1.0
    }
   ],
+  "sample_common": [],
+  "callers_common": [],
   "rename": [
    {
     "symbol": "src::middleware::persist::createJSONStorage",
@@ -580,7 +680,22 @@
   "tests": [
    {
     "symbol": "src::middleware::persist::createJSONStorage",
-    "skipped": "mutant does not compile"
+    "level": "file",
+    "truth": 6,
+    "predicted": 2,
+    "recall": 0.3333333333333333,
+    "precision": 1.0,
+    "top_hits": 2,
+    "top_n": 2,
+    "top_precision": 1.0,
+    "top_best": 1.0,
+    "caught": 1.0,
+    "missed": [
+     "tests/devtools.test.tsx",
+     "tests/middlewareTypes.test.tsx",
+     "tests/persistPromiseLike.test.ts",
+     "tests/types.test.tsx"
+    ]
    }
   ],
   "look": [
@@ -590,16 +705,23 @@
     "file_tokens": 3010
    }
   ],
-  "seconds": 39,
+  "seconds": 26,
   "summary": {
-   "callers_recall": 0.5,
+   "callers_recall": 1.0,
    "callers_precision": 1.0,
    "callers_checked": 1,
+   "common_recall": null,
+   "common_precision": null,
+   "common_recall_with_maybe": null,
+   "common_checked": 0,
    "rename_ok": 1.0,
    "rename_checked": 1,
-   "tests_recall": null,
-   "tests_precision": null,
-   "tests_checked": 0,
+   "tests_recall": 0.333,
+   "tests_precision": 1.0,
+   "tests_top10_precision": 1.0,
+   "tests_top10_best": 1.0,
+   "tests_caught": 1.0,
+   "tests_checked": 1,
    "look_vs_file": 0.116
   }
  },
@@ -607,7 +729,7 @@
   "repo": "jsoup",
   "lang": "java",
   "commit": "d90d57521d93",
-  "index_seconds": 2.8,
+  "index_seconds": 2.6,
   "symbols": 2663,
   "files": 105,
   "edges": 42271,
@@ -625,12 +747,35 @@
   "callers": [
    {
     "symbol": "org::jsoup::internal::SoftPool::release",
-    "skipped": "compiler reported no uses"
+    "truth": [
+     "org::jsoup::internal::ControllableInputStream::readToByteBuffer",
+     "org::jsoup::internal::ControllableInputStream::skip",
+     "org::jsoup::internal::SimpleBufferedInput::close",
+     "org::jsoup::internal::SimpleStreamReader::close",
+     "org::jsoup::internal::StringUtil::releaseBuilderVoid",
+     "org::jsoup::parser::CharacterReader::close",
+     "org::jsoup::select::HasEvaluator::Traversal::matchesAny"
+    ],
+    "found": [
+     "org::jsoup::internal::ControllableInputStream::readToByteBuffer",
+     "org::jsoup::internal::ControllableInputStream::skip",
+     "org::jsoup::internal::SimpleBufferedInput::close",
+     "org::jsoup::internal::SimpleStreamReader::close",
+     "org::jsoup::internal::StringUtil::releaseBuilderVoid",
+     "org::jsoup::parser::CharacterReader::close",
+     "org::jsoup::select::HasEvaluator::Traversal::matchesAny"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
    },
    {
     "symbol": "org::jsoup::internal::StringUtil::appendNormalisedWhitespace",
     "truth": [
-     "org::jsoup::internal::StringUtil::normaliseWhitespace"
+     "org::jsoup::internal::StringUtil::normaliseWhitespace",
+     "org::jsoup::nodes::Element::appendNormalisedText"
     ],
     "found": [
      "org::jsoup::internal::StringUtil::normaliseWhitespace",
@@ -639,21 +784,42 @@
     "maybe": [],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.5,
+    "precision": 1.0,
     "recall_with_maybe": 1.0
    },
    {
     "symbol": "org::jsoup::internal::LegacyMatching::cssAttributeMatches",
-    "skipped": "compiler reported no uses"
+    "truth": [
+     "org::jsoup::select::Evaluator::AttributeKeyPair::matchesValue"
+    ],
+    "found": [
+     "org::jsoup::select::Evaluator::AttributeKeyPair::matchesValue"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
    },
    {
     "symbol": "org::jsoup::select::Evaluator::asPredicate",
-    "skipped": "compiler reported no uses"
+    "truth": [
+     "org::jsoup::select::EvaluatorInternals::stream"
+    ],
+    "found": [
+     "org::jsoup::select::EvaluatorInternals::stream"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
    },
    {
     "symbol": "org::jsoup::parser::TokenQueue::matchesWord",
     "truth": [
-     "org::jsoup::parser::TokenQueue::matchesCssIdentifier"
+     "org::jsoup::parser::TokenQueue::matchesCssIdentifier",
+     "org::jsoup::select::QueryParser::parseSimpleSequence"
     ],
     "found": [
      "org::jsoup::parser::TokenQueue::matchesCssIdentifier",
@@ -662,12 +828,16 @@
     "maybe": [],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.5,
+    "precision": 1.0,
     "recall_with_maybe": 1.0
    },
    {
     "symbol": "org::jsoup::internal::StringUtil::isAsciiLetter",
     "truth": [
+     "org::jsoup::parser::CharacterReader::consumeLetterSequence",
+     "org::jsoup::parser::CharacterReader::consumeLetterThenDigitSequence",
+     "org::jsoup::parser::CharacterReader::matchesAsciiAlpha",
+     "org::jsoup::parser::Tag::validateTextTagName",
      "org::jsoup::parser::TokenQueue::isIdentStart"
     ],
     "found": [
@@ -680,14 +850,15 @@
     "maybe": [],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.2,
+    "precision": 1.0,
     "recall_with_maybe": 1.0
    },
    {
     "symbol": "org::jsoup::parser::TokenQueue::matchesWhitespace",
     "truth": [
      "org::jsoup::parser::TokenQueue::consumeCssValue",
-     "org::jsoup::parser::TokenQueue::consumeWhitespace"
+     "org::jsoup::parser::TokenQueue::consumeWhitespace",
+     "org::jsoup::select::QueryParser::consumeAttributeValue"
     ],
     "found": [
      "org::jsoup::parser::TokenQueue::consumeCssValue",
@@ -697,12 +868,203 @@
     "maybe": [],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.6666666666666666,
+    "precision": 1.0,
     "recall_with_maybe": 1.0
    },
    {
     "symbol": "org::jsoup::nodes::DocumentType::publicId",
+    "truth": [
+     "org::jsoup::helper::W3CDom::W3CBuilder::appendDocumentType",
+     "org::jsoup::parser::HtmlTreeBuilderState::process"
+    ],
+    "found": [
+     "org::jsoup::helper::W3CDom::W3CBuilder::appendDocumentType",
+     "org::jsoup::parser::HtmlTreeBuilderState::process"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   }
+  ],
+  "sample_common": [
+   "org::jsoup::parser::Tag::isSelfClosing",
+   "org::jsoup::nodes::Document::shallowClone",
+   "org::jsoup::internal::StringUtil::isWhitespace",
+   "org::jsoup::internal::ControllableInputStream::onProgress",
+   "org::jsoup::helper::Regex::compile",
+   "org::jsoup::nodes::Node::normalName",
+   "org::jsoup::nodes::LeafNode::attributes",
+   "org::jsoup::parser::Tag::getName"
+  ],
+  "callers_common": [
+   {
+    "symbol": "org::jsoup::parser::Tag::isSelfClosing",
+    "truth": [
+     "org::jsoup::nodes::Element::outerHtmlHead",
+     "org::jsoup::parser::HtmlTreeBuilder::insertElementFor",
+     "org::jsoup::parser::TreeBuilder::trackNodePosition"
+    ],
+    "found": [
+     "org::jsoup::nodes::Element::outerHtmlHead",
+     "org::jsoup::parser::HtmlTreeBuilder::insertElementFor"
+    ],
+    "maybe": [
+     "org::jsoup::parser::TreeBuilder::trackNodePosition"
+    ],
+    "import_files": [],
+    "recall": 0.6666666666666666,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "org::jsoup::nodes::Document::shallowClone",
+    "truth": [
+     "org::jsoup::nodes::Node::doClone"
+    ],
+    "found": [
+     "org::jsoup::nodes::Node::doClone"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "org::jsoup::internal::StringUtil::isWhitespace",
+    "truth": [
+     "org::jsoup::internal::CssMatching::matchesToken",
+     "org::jsoup::internal::LegacyMatching::hasAttributeFlag",
+     "org::jsoup::internal::StringUtil::isBlank",
+     "org::jsoup::internal::StringUtil::trimAsciiWhitespace",
+     "org::jsoup::nodes::Element::nextClassEnd",
+     "org::jsoup::nodes::Element::nextClassStart",
+     "org::jsoup::nodes::Entities::doEscape",
+     "org::jsoup::nodes::Printer::Pretty::textTrim",
+     "org::jsoup::parser::CharacterReader::consumeWhitespace",
+     "org::jsoup::parser::Tag::validateTextTagName",
+     "org::jsoup::parser::TokenQueue::matchesWhitespace",
+     "org::jsoup::parser::Tokeniser::isWhitespaceReference",
+     "org::jsoup::parser::TokeniserState::isCustomEndTagNameChar",
+     "org::jsoup::parser::TokeniserState::read",
+     "org::jsoup::parser::TokeniserState::readDoctypeInternalSubset",
+     "org::jsoup::select::Evaluator::AttributeWithValueMatching::toString"
+    ],
+    "found": [
+     "org::jsoup::internal::CssMatching::matchesToken",
+     "org::jsoup::internal::LegacyMatching::hasAttributeFlag",
+     "org::jsoup::internal::StringUtil::isBlank",
+     "org::jsoup::internal::StringUtil::trimAsciiWhitespace",
+     "org::jsoup::nodes::Element::nextClassEnd",
+     "org::jsoup::nodes::Element::nextClassStart",
+     "org::jsoup::nodes::Entities::doEscape",
+     "org::jsoup::nodes::Printer::Pretty::textTrim",
+     "org::jsoup::parser::CharacterReader::consumeWhitespace",
+     "org::jsoup::parser::Tag::validateTextTagName",
+     "org::jsoup::parser::TokenQueue::matchesWhitespace",
+     "org::jsoup::parser::Tokeniser::isWhitespaceReference",
+     "org::jsoup::parser::TokeniserState::isCustomEndTagNameChar",
+     "org::jsoup::parser::TokeniserState::read",
+     "org::jsoup::parser::TokeniserState::readDoctypeInternalSubset",
+     "org::jsoup::select::Evaluator::AttributeWithValueMatching::toString"
+    ],
+    "maybe": [],
+    "import_files": [
+     "src/main/java/org/jsoup/select/Evaluator.java"
+    ],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "org::jsoup::internal::ControllableInputStream::onProgress",
+    "truth": [
+     "org::jsoup::helper::HttpConnection::Response::execute"
+    ],
+    "found": [],
+    "maybe": [
+     "org::jsoup::helper::HttpConnection::Response::execute"
+    ],
+    "import_files": [],
+    "recall": 0.0,
+    "precision": null,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "org::jsoup::helper::Regex::compile",
+    "truth": [
+     "org::jsoup::nodes::Element::getElementsByAttributeValueMatching",
+     "org::jsoup::nodes::Element::getElementsMatchingOwnText",
+     "org::jsoup::nodes::Element::getElementsMatchingText",
+     "org::jsoup::select::LegacyQueryParser::rawAttribute",
+     "org::jsoup::select::QueryParser::consumeRegex",
+     "org::jsoup::select::QueryParser::matchesAttr"
+    ],
+    "found": [
+     "org::jsoup::nodes::Element::getElementsByAttributeValueMatching",
+     "org::jsoup::nodes::Element::getElementsMatchingOwnText",
+     "org::jsoup::nodes::Element::getElementsMatchingText",
+     "org::jsoup::select::LegacyQueryParser::rawAttribute",
+     "org::jsoup::select::QueryParser::consumeRegex",
+     "org::jsoup::select::QueryParser::matchesAttr"
+    ],
+    "maybe": [
+     "org::jsoup::helper",
+     "org::jsoup::helper::Re2jRegex::compile",
+     "org::jsoup::helper::W3CDom::selectXpath"
+    ],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
+   },
+   {
+    "symbol": "org::jsoup::nodes::Node::normalName",
+    "truth": [
+     "org::jsoup::nodes::Node::nameIs",
+     "org::jsoup::safety::Cleaner::CleaningVisitor::head",
+     "org::jsoup::safety::Cleaner::CleaningVisitor::tail",
+     "org::jsoup::select::Evaluator::sameType"
+    ],
+    "found": [
+     "org::jsoup::safety::Cleaner::CleaningVisitor::head",
+     "org::jsoup::safety::Cleaner::CleaningVisitor::tail",
+     "org::jsoup::select::Evaluator::sameType"
+    ],
+    "maybe": [
+     "org::jsoup::parser::HtmlTreeBuilder::onStackNot"
+    ],
+    "import_files": [],
+    "recall": 0.75,
+    "precision": 1.0,
+    "recall_with_maybe": 0.75
+   },
+   {
+    "symbol": "org::jsoup::nodes::LeafNode::attributes",
     "skipped": "compiler reported no uses"
+   },
+   {
+    "symbol": "org::jsoup::parser::Tag::getName",
+    "truth": [
+     "org::jsoup::nodes::Element::nodeName",
+     "org::jsoup::nodes::Element::tagName"
+    ],
+    "found": [
+     "org::jsoup::nodes::Element::nodeName",
+     "org::jsoup::nodes::Element::tagName"
+    ],
+    "maybe": [
+     "org::jsoup::helper",
+     "org::jsoup::helper::RequestAuthHandler::enable",
+     "org::jsoup::helper::W3CDom::asString",
+     "org::jsoup::select::QueryCompat::isInternalFrame"
+    ],
+    "import_files": [],
+    "recall": 1.0,
+    "precision": 1.0,
+    "recall_with_maybe": 1.0
    }
   ],
   "rename": [
@@ -782,34 +1144,109 @@
   "tests": [
    {
     "symbol": "org::jsoup::internal::SoftPool::release",
-    "skipped": "no test fails when it throws",
-    "predicted": 515
+    "level": "name",
+    "truth": 1755,
+    "predicted": 834,
+    "recall": 0.46495726495726497,
+    "precision": 0.9784172661870504,
+    "top_hits": 6,
+    "top_n": 10,
+    "top_precision": 0.6,
+    "top_best": 1.0,
+    "caught": 1.0,
+    "missed": [
+     "DocumentsWithSameContentAreEqual",
+     "DocumentsWithSameContentAreVerifiable",
+     "NoErrorOnEofIfBodyOpen",
+     "aLoneOperandIsNotAnExplicitFlag",
+     "absAttr",
+     "absHandlesDotFromIndex",
+     "absHandlesRelativeQuery",
+     "absoluteAttributeLookupIgnoresKeyCase"
+    ],
+    "recall_graph_only": 0.46438746438746437
    },
    {
     "symbol": "org::jsoup::internal::StringUtil::appendNormalisedWhitespace",
-    "skipped": "no test fails when it throws",
-    "predicted": 124
+    "level": "name",
+    "truth": 446,
+    "predicted": 141,
+    "recall": 0.289237668161435,
+    "precision": 0.9148936170212766,
+    "top_hits": 10,
+    "top_n": 10,
+    "top_precision": 1.0,
+    "top_best": 1.0,
+    "caught": 1.0,
+    "missed": [
+     "adjacentSiblings",
+     "adjacentSiblingsWithId",
+     "adoption",
+     "adoptionFallbackAtCapacityRetainsRecentEntries",
+     "adoptionReportsFormattingElementMissingFromStack",
+     "adoptionReportsFormattingElementOutsideScope",
+     "adoptionReportsNonCurrentFormattingElementAndContinues",
+     "after"
+    ],
+    "recall_graph_only": 0.289237668161435
    },
    {
     "symbol": "org::jsoup::internal::LegacyMatching::cssAttributeMatches",
-    "skipped": "no test fails when it throws",
-    "predicted": 0
+    "level": "name",
+    "truth": 7,
+    "predicted": 0,
+    "recall": 0.0,
+    "precision": 0.0,
+    "top_hits": 0,
+    "top_n": 0,
+    "top_precision": 0.0,
+    "top_best": 0.0,
+    "caught": 0.0,
+    "missed": [
+     "aLoneOperandIsNotAnExplicitFlag",
+     "absoluteAttributeLookupIgnoresKeyCase",
+     "explicitCompilationCapturesTheWholeQuery",
+     "explicitFlagsOverrideDefaultsInBothModes",
+     "hyphenatedAttributeValueAtBufferBoundary",
+     "parsedAttributeValuesRoundTrip",
+     "qualifiedAttributeNamesUseTheSameLiteralAndRegexParsing"
+    ],
+    "recall_graph_only": 0.0
    },
    {
     "symbol": "org::jsoup::select::Evaluator::asPredicate",
-    "skipped": "no test fails when it throws",
-    "predicted": 26
+    "level": "name",
+    "truth": 957,
+    "predicted": 26,
+    "recall": 0.022988505747126436,
+    "precision": 0.8461538461538461,
+    "top_hits": 9,
+    "top_n": 10,
+    "top_precision": 0.9,
+    "top_best": 1.0,
+    "caught": 1.0,
+    "missed": [
+     "aLoneOperandIsNotAnExplicitFlag",
+     "absAttr",
+     "absHandlesDotFromIndex",
+     "absHandlesRelativeQuery",
+     "absoluteAttributeLookupIgnoresKeyCase",
+     "absoluteAttributesRespectAttributeNameCase",
+     "accessorsAreCaseInsensitive",
+     "accessorsDoNotVivifyAttributes"
+    ],
+    "recall_graph_only": 0.022988505747126436
    }
   ],
   "look": [
    {
     "symbol": "org::jsoup::internal::SoftPool::release",
-    "look_tokens": 442,
+    "look_tokens": 372,
     "file_tokens": 600
    },
    {
     "symbol": "org::jsoup::internal::StringUtil::appendNormalisedWhitespace",
-    "look_tokens": 606,
+    "look_tokens": 479,
     "file_tokens": 4377
    },
    {
@@ -819,48 +1256,55 @@
    },
    {
     "symbol": "org::jsoup::select::Evaluator::asPredicate",
-    "look_tokens": 401,
+    "look_tokens": 292,
     "file_tokens": 9555
    },
    {
     "symbol": "org::jsoup::parser::TokenQueue::matchesWord",
-    "look_tokens": 154,
+    "look_tokens": 208,
     "file_tokens": 5312
    },
    {
     "symbol": "org::jsoup::internal::StringUtil::isAsciiLetter",
-    "look_tokens": 367,
+    "look_tokens": 350,
     "file_tokens": 4377
    },
    {
     "symbol": "org::jsoup::parser::TokenQueue::matchesWhitespace",
-    "look_tokens": 390,
+    "look_tokens": 316,
     "file_tokens": 5312
    },
    {
     "symbol": "org::jsoup::nodes::DocumentType::publicId",
-    "look_tokens": 163,
+    "look_tokens": 200,
     "file_tokens": 964
    }
   ],
-  "seconds": 193,
+  "seconds": 314,
   "summary": {
    "callers_recall": 1.0,
-   "callers_precision": 0.467,
-   "callers_checked": 4,
+   "callers_precision": 1.0,
+   "callers_checked": 8,
+   "common_recall": 0.774,
+   "common_precision": 1.0,
+   "common_recall_with_maybe": 0.964,
+   "common_checked": 7,
    "rename_ok": 1.0,
    "rename_checked": 8,
-   "tests_recall": null,
-   "tests_precision": null,
-   "tests_checked": 0,
-   "look_vs_file": 0.188
+   "tests_recall": 0.194,
+   "tests_precision": 0.685,
+   "tests_top10_precision": 0.625,
+   "tests_top10_best": 0.75,
+   "tests_caught": 0.75,
+   "tests_checked": 4,
+   "look_vs_file": 0.172
   }
  },
  {
   "repo": "semver",
   "lang": "rust",
   "commit": "280ebcb6edac",
-  "index_seconds": 0.1,
+  "index_seconds": 0.0,
   "symbols": 113,
   "files": 13,
   "edges": 1192,
@@ -908,7 +1352,6 @@
    {
     "symbol": "semver::identifier::Identifier::new_unchecked",
     "truth": [
-     "semver::identifier::Identifier::empty",
      "semver::parse::build_identifier",
      "semver::parse::prerelease_identifier"
     ],
@@ -918,9 +1361,9 @@
     ],
     "maybe": [],
     "import_files": [],
-    "recall": 0.6666666666666666,
+    "recall": 1.0,
     "precision": 1.0,
-    "recall_with_maybe": 0.6666666666666666
+    "recall_with_maybe": 1.0
    },
    {
     "symbol": "semver::eval::matches_comparator",
@@ -957,6 +1400,49 @@
     "recall": 1.0,
     "precision": 1.0,
     "recall_with_maybe": 1.0
+   }
+  ],
+  "sample_common": [
+   "semver::BuildMetadata::as_str",
+   "semver::identifier::Identifier::is_empty"
+  ],
+  "callers_common": [
+   {
+    "symbol": "semver::BuildMetadata::as_str",
+    "truth": [
+     "semver::display::BuildMetadata::fmt",
+     "semver::impls::BuildMetadata::cmp"
+    ],
+    "found": [],
+    "maybe": [
+     "semver::Prerelease::as_str",
+     "semver::impls::BuildMetadata::cmp",
+     "semver::impls::BuildMetadata::deref",
+     "semver::impls::Prerelease::cmp",
+     "semver::impls::Prerelease::deref"
+    ],
+    "import_files": [],
+    "recall": 0.0,
+    "precision": null,
+    "recall_with_maybe": 0.5
+   },
+   {
+    "symbol": "semver::identifier::Identifier::is_empty",
+    "truth": [
+     "semver::BuildMetadata::is_empty",
+     "semver::Prerelease::is_empty",
+     "semver::identifier::Identifier::as_str",
+     "semver::identifier::Identifier::is_empty_or_inline"
+    ],
+    "found": [
+     "semver::identifier::Identifier::as_str",
+     "semver::identifier::Identifier::is_empty_or_inline"
+    ],
+    "maybe": [],
+    "import_files": [],
+    "recall": 0.5,
+    "precision": 1.0,
+    "recall_with_maybe": 0.5
    }
   ],
   "rename": [
@@ -1014,6 +1500,11 @@
     "predicted": 0,
     "recall": 0.0,
     "precision": 0.0,
+    "top_hits": 0,
+    "top_n": 0,
+    "top_precision": 0.0,
+    "top_best": 0.0,
+    "caught": 0.0,
     "missed": [
      "test_basic",
      "test_caret",
@@ -1030,9 +1521,14 @@
     "symbol": "semver::eval::matches_req",
     "level": "name",
     "truth": 11,
-    "predicted": 13,
+    "predicted": 11,
     "recall": 1.0,
-    "precision": 0.8461538461538461,
+    "precision": 1.0,
+    "top_hits": 10,
+    "top_n": 10,
+    "top_precision": 1.0,
+    "top_best": 1.0,
+    "caught": 1.0,
     "missed": [],
     "recall_graph_only": 1.0
    },
@@ -1040,9 +1536,14 @@
     "symbol": "semver::identifier::Identifier::new_unchecked",
     "level": "name",
     "truth": 24,
-    "predicted": 29,
+    "predicted": 22,
     "recall": 0.8333333333333334,
-    "precision": 0.6896551724137931,
+    "precision": 0.9090909090909091,
+    "top_hits": 10,
+    "top_n": 10,
+    "top_precision": 1.0,
+    "top_best": 1.0,
+    "caught": 1.0,
     "missed": [
      "test_align",
      "test_comparator_parse",
@@ -1070,7 +1571,7 @@
    },
    {
     "symbol": "semver::identifier::Identifier::new_unchecked",
-    "look_tokens": 1070,
+    "look_tokens": 1095,
     "file_tokens": 4536
    },
    {
@@ -1084,17 +1585,24 @@
     "file_tokens": 4536
    }
   ],
-  "seconds": 16,
+  "seconds": 7,
   "summary": {
-   "callers_recall": 0.933,
+   "callers_recall": 1.0,
    "callers_precision": 1.0,
    "callers_checked": 5,
+   "common_recall": 0.25,
+   "common_precision": 1.0,
+   "common_recall_with_maybe": 0.5,
+   "common_checked": 2,
    "rename_ok": 1.0,
    "rename_checked": 5,
    "tests_recall": 0.611,
-   "tests_precision": 0.512,
+   "tests_precision": 0.636,
+   "tests_top10_precision": 0.667,
+   "tests_top10_best": 0.667,
+   "tests_caught": 0.667,
    "tests_checked": 3,
-   "look_vs_file": 0.145
+   "look_vs_file": 0.146
   }
  }
 ]

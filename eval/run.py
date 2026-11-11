@@ -6,13 +6,20 @@ Nothing here trusts gitnext or a human judgement. Each check gets its ground
 truth from the project itself:
 
   callers   rename a function's *definition* only and compile: every error the
-            compiler reports is a real use of it. Compared with `gitnext callers`
+            compiler reports is a real use of it; fix those uses and compile again
+            until it builds (javac and rustc stop at the first failing class /
+            crate, one pass misses the rest). Compared with `gitnext callers`
             → recall (uses gitnext found) and precision (callers that are real).
+            Checked twice: for functions with a unique name, and for methods
+            whose name several types share (`common` — only the receiver's type
+            tells them apart).
   rename    `gitnext rename <f> <f>Gnx --text`, then the project must still
             compile and its tests must still pass.
   tests     make the function fail on entry and run the whole test suite:
             the tests that fail are the ones that exercise it. Compared with
-            `gitnext tests-for` → recall / precision.
+            `gitnext tests-for --all` → recall / precision, and with the 10 tests
+            it puts first → how many of those fail (top-10 precision) and whether
+            any does (caught).
   index     time, size, share of calls resolved inside the repo.
   look      tokens of one `gitnext look` vs reading the files it covers.
 
@@ -22,7 +29,9 @@ truth from the project itself:
     python3 eval/run.py --bless              # accept the current results as the baseline
 
 Repositories are cloned into eval/.work (or $GITNEXT_EVAL_WORK) and set up once
-(`setup` in repos.json). Results: eval/results/latest.json + latest.md.
+(`setup` in repos.json). What the compilers and test suites said is kept in
+eval/.work/truth.json (per repo commit and function; `--no-cache` asks again).
+Results: eval/results/latest.json + latest.md.
 """
 from __future__ import annotations
 
@@ -55,6 +64,26 @@ def sh(cmd: str, cwd: Path, timeout: int = 900, env: dict | None = None) -> tupl
 def gx(args: list[str], cwd: Path, timeout: int = 600) -> tuple[int, str]:
     p = subprocess.run([GITNEXT, *args], cwd=cwd, capture_output=True, text=True, timeout=timeout, errors="replace")
     return p.returncode, p.stdout + p.stderr
+
+
+CACHE_FILE = WORK / "truth.json"
+CACHE: dict = {}
+USE_CACHE = True
+
+
+def cached(key: str, make):
+    """Ground truth of a pinned commit does not change: ask the compiler / tests once."""
+    if not CACHE and CACHE_FILE.exists():
+        try:
+            CACHE.update(json.loads(CACHE_FILE.read_text()))
+        except ValueError:
+            pass
+    if USE_CACHE and key in CACHE:
+        return CACHE[key]
+    CACHE[key] = make()
+    CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    CACHE_FILE.write_text(json.dumps(CACHE, ensure_ascii=False))
+    return CACHE[key]
 
 
 def tokens(s: str) -> int:
@@ -98,6 +127,25 @@ def go_failed(out: str) -> set[str]:
     return names
 
 
+def go_failing_alone(root: Path) -> set[str]:
+    """Go tests that fail, each run on its own. A panic kills the whole test binary, so one
+    `go test` run names only the first test that reached the broken function."""
+    failed = set()
+    _, dirs = sh("go list -f '{{.Dir}}' ./...", root)
+    for d in [Path(x) for x in dirs.split() if x.startswith("/")]:
+        binary = d / ".gnx.test"
+        sh(f"go test -c -o {binary} .", d, timeout=900)
+        if not binary.exists():
+            continue  # no tests in this package
+        _, names = sh(f"{binary} -test.list '^(Test|Example|Fuzz)'", d)
+        for n in [x for x in names.split() if re.match(r"(Test|Example|Fuzz)\w*$", x)]:
+            code, _ = sh(f"{binary} -test.run '^{n}$' -test.count=1", d, timeout=300)
+            if code:
+                failed.add(n)
+        binary.unlink()
+    return failed
+
+
 def py_failed(out: str) -> set[str]:
     return {m.group(1).split("[")[0].rsplit("::", 1)[-1] for m in re.finditer(r"^(?:FAILED|ERROR) [^\s]+::([^\s]+)", out, re.M)}
 
@@ -108,7 +156,10 @@ def rust_failed(out: str) -> set[str]:
 
 def java_failed(out: str) -> set[str]:
     names = set()
-    for m in re.finditer(r"\[ERROR\]\s+(\w+)\.(\w+)(?::\d+)?\s", out):
+    # surefire 3: `[ERROR] org.x.FooTest.parses(boolean)[2] -- Time elapsed: 0.01 s <<< ERROR!`
+    for m in re.finditer(r"^\[ERROR\]\s+[\w.$]+\.(\w+)(?:\([^)]*\))?(?:\[\d+\])?\s+--\s+Time elapsed.*<<< (?:ERROR|FAILURE)!", out, re.M):
+        names.add(m.group(1))
+    for m in re.finditer(r"\[ERROR\]\s+(\w+)\.(\w+)(?::\d+)?\s", out):  # the summary: `FooTest.parses:22 » Runtime`
         names.add(m.group(2))
     for m in re.finditer(r"^\s*(\w+)\(([\w.]+)\)\s", out, re.M):  # junit4 summary lines
         names.add(m.group(1))
@@ -135,14 +186,17 @@ LANG = {
         compile="go test -count=1 -run '^$' -gcflags=-e ./... 2>&1",
         errors=lambda out, root: go_errors(out),
         tests="go test -count=1 -json ./... 2>&1",
+        ran=lambda out, root: '"Action":"pass"' in out or '"Action":"fail"' in out,
         failed=lambda out, root: go_failed(out),
         fail_stmt='panic("gitnext-mutant")',
+        failing_alone=go_failing_alone,
         level="name",
     ),
     "python": dict(
         compile=".venv/bin/python -m compileall -q . >/dev/null && .venv/bin/python -m pytest -q --co -p no:cacheprovider 2>&1 | tail -3",
         errors=None,  # no compiler to name every use
         tests=".venv/bin/python -m pytest -q -rfE -p no:cacheprovider -x --maxfail=10000 2>&1 | tail -400",
+        ran=lambda out, root: bool(re.search(r"\d+ (passed|failed|error)", out)),
         failed=lambda out, root: py_failed(out),
         fail_stmt='raise RuntimeError("gitnext-mutant")',
         level="name",
@@ -150,15 +204,18 @@ LANG = {
     "typescript": dict(
         compile="npx tsc --noEmit -p . --pretty false 2>&1",
         errors=lambda out, root: ts_errors(out),
-        tests="npx vitest run --reporter=json --outputFile=.gnx-vitest.json >/dev/null 2>&1; echo done",
+        tests="rm -f .gnx-vitest.json; npx vitest run --reporter=json --outputFile=.gnx-vitest.json >/dev/null 2>&1; echo done",
+        ran=lambda out, root: (root / ".gnx-vitest.json").exists(),
         failed=lambda out, root: vitest_failed_files(root / ".gnx-vitest.json", root),
-        fail_stmt='throw new Error("gitnext-mutant");',
+        fail_stmt='if (Date.now() > 0) throw new Error("gitnext-mutant");',  # a bare `throw` makes the rest unreachable: tsc rejects it
         level="file",
     ),
     "java": dict(
-        compile="mvn -q -B -o test-compile 2>&1",
+        # every class again: maven recompiles only the changed files, the callers in other files would pass unchecked
+        compile="rm -rf target/classes target/test-classes target/maven-status; mvn -q -B -o test-compile 2>&1",
         errors=lambda out, root: java_errors(out, root),
-        tests="mvn -B -o test -Dsurefire.printSummary=true -DtrimStackTrace=true 2>&1 | grep -E 'ERROR|FAIL|Tests run' | head -400",
+        tests="mvn -B -o test -Dsurefire.printSummary=true -DtrimStackTrace=true 2>&1 | grep -E '<<<|Tests run:|ERROR\\] +[A-Za-z]|BUILD'",
+        ran=lambda out, root: bool(re.search(r"Tests run: [1-9]", out)),
         failed=lambda out, root: java_failed(out),
         fail_stmt='if (true) throw new RuntimeException("gitnext-mutant");',
         level="name",
@@ -167,6 +224,7 @@ LANG = {
         compile="cargo check --tests --message-format human 2>&1",
         errors=lambda out, root: rust_errors(out),
         tests="cargo test --no-fail-fast 2>&1",
+        ran=lambda out, root: "test result:" in out,
         failed=lambda out, root: rust_failed(out),
         fail_stmt='panic!("gitnext-mutant");',
         level="name",
@@ -217,14 +275,18 @@ def callers(root: Path, q: str) -> tuple[set[str], set[str]]:
     return sure, maybe
 
 
-def tests_for(root: Path, q: str) -> tuple[set[str], set[str], set[str]]:
-    """(test names, test files, names found through the call graph only)"""
-    code, out = gx(["tests-for", q], root)
-    names, files, graph = set(), set(), set()
+def tests_for(root: Path, q: str) -> tuple[list[str], list[str], set[str]]:
+    """(test names, test files — both most likely first, names found through the call graph only)"""
+    code, out = gx(["tests-for", q, "--all"], root)
+    if code:  # a gitnext without `--all` lists everything anyway
+        code, out = gx(["tests-for", q], root)
+    names, files, graph = [], [], set()
     for m in re.finditer(r"^(\S+)\s+(\S+?):\d+ \(([^)]*)\)", out, re.M):
         n = m.group(1).rsplit("::", 1)[-1]
-        names.add(n)
-        files.add(m.group(2))
+        if n not in names:
+            names.append(n)
+        if m.group(2) not in files:
+            files.append(m.group(2))
         if "hop" in m.group(3) or "direct" in m.group(3):
             graph.add(n)
     return names, files, graph
@@ -242,25 +304,39 @@ def enclosing(syms: list[dict], file: str, line: int) -> str | None:
     return best["qualified"]
 
 
-def pick(syms: list[dict], root: Path, n: int, seed: int) -> list[dict]:
+def pick(syms: list[dict], root: Path, n: int, seed: int, common: bool = False) -> list[dict]:
+    """Functions to check. Default: names that occur once in the repo. `common`: methods whose
+    name several types share (`release`, `parse`…) — only the receiver's type tells them apart."""
     names: dict[str, int] = {}
     for s in syms:
-        names[s["name"]] = names.get(s["name"], 0) + 1
+        if s["kind"] in ("function", "method") and not s.get("test"):
+            names[s["name"]] = names.get(s["name"], 0) + 1
+    all_names: dict[str, int] = {}
+    owners: dict[str, list] = {}
+    for s in syms:
+        all_names[s["name"]] = all_names.get(s["name"], 0) + 1
+        owners.setdefault(s["name"], []).append(s.get("parent"))
+    overloaded = {n for n, ps in owners.items() if len(set(ps)) < len(ps)}  # same name twice in one type
     cands = [
         s for s in syms
         if s["kind"] in ("function", "method") and not s.get("test") and not s.get("decl") and s.get("visibility")
-        and names[s["name"]] == 1 and len(s["name"]) >= 4 and s["end_line"] - s["start_line"] >= 2
+        and len(s["name"]) >= 4 and s["end_line"] - s["start_line"] >= 2
         and not s["name"].startswith(("_", "Test", "test", "__")) and s["name"] not in ("main", "init", "constructor", "toString", "equals", "hashCode", "fmt", "new", "default")
         and s["name"] != s.get("parent", "").rsplit("::", 1)[-1]  # constructors
+        and ((s["kind"] == "method" and 2 <= names[s["name"]] <= 6 and s["name"] not in overloaded) if common else all_names[s["name"]] == 1)
     ]
     rng = random.Random(seed)
     rng.shuffle(cands)
     out = []
+    used = set()
     for s in cands:
+        if s["name"] in used:  # one method per shared name
+            continue
         sure, maybe = callers(root, s["qualified"])
-        if sure:
+        if sure or (common and maybe):
             s["_callers"], s["_maybe"] = sure, maybe
             out.append(s)
+            used.add(s["name"])
         if len(out) >= n:
             break
     return out
@@ -305,21 +381,44 @@ def indent_of(root: Path, file: str, line: int) -> str:
 
 # ---------------------------------------------------------------- checks
 
+def use_sites(root: Path, repo: dict, s: dict) -> list | None:
+    """Every (file, line) that uses `s`, named by the compiler: rename the definition only, compile,
+    rename the uses it complains about, compile again — until nothing new comes up. One pass is not
+    enough: javac stops at the first class with errors, rustc at the first crate."""
+    L = LANG[repo["lang"]]
+    old, new = s["name"], s["name"] + "Gnxbroken"
+    if not edit_line(root, s["file"], s["start_line"] + _def_offset(root, s), lambda l: _rename_token(l, old, new)):
+        return None
+    sites: list[tuple[str, int]] = []
+    for _ in range(12):
+        _, out = sh(L["compile"], root, timeout=1200)
+        progress = False
+        for f, ln in dict.fromkeys(L["errors"](out, root)):
+            try:
+                fixed = edit_line(root, f, ln, lambda l: re.sub(rf"(?<![\w$]){re.escape(old)}(?![\w$])", new, l))
+            except (OSError, IndexError):
+                continue
+            if fixed:  # the line names the function: a use of it
+                progress = True
+                if (f, ln) not in sites:
+                    sites.append((f, ln))
+        if not progress:
+            break
+    restore(root)
+    return [list(x) for x in sites]
+
+
 def check_callers(root: Path, repo: dict, syms: list[dict], s: dict) -> dict | None:
     L = LANG[repo["lang"]]
     if not L["errors"]:
         return None
-    ok = edit_line(root, s["file"], s["start_line"] + _def_offset(root, s), lambda l: _rename_token(l, s["name"], s["name"] + "Gnxbroken"))
-    if not ok:
+    sites = cached(f"{repo['name']}@{repo['commit'][:12]}:uses:{s['qualified']}", lambda: use_sites(root, repo, s))
+    if sites is None:
         return None
-    _, out = sh(L["compile"], root, timeout=1200)
-    restore(root)
-    sites = L["errors"](out, root)
     modules = {x["qualified"] for x in syms if x["kind"] == "module"}
     file_of = {x["qualified"]: x["file"] for x in syms}
     hits = {(f, q) for f, ln in sites if (q := enclosing(syms, f, ln)) and q != s["qualified"]}
-    # an error on an import line (Java static import, TS re-export) is not a call, and javac then
-    # stops reporting the uses in that file: callers found there are not counted as wrong
+    # a use on an import line (Java static import, TS re-export) is not a call
     import_files = {f for f, q in hits if q in modules}
     truth = {q for f, q in hits if q not in modules}
     found = s["_callers"]
@@ -328,7 +427,7 @@ def check_callers(root: Path, repo: dict, syms: list[dict], s: dict) -> dict | N
     ok_found = {c for c in found if c in truth or file_of.get(c) in import_files}
     return {
         "symbol": s["qualified"], "truth": sorted(truth), "found": sorted(found), "maybe": sorted(s["_maybe"]), "import_files": sorted(import_files),
-        "recall": len(found & truth) / len(truth) if truth else None, "precision": len(ok_found) / len(found) if found else 1.0,
+        "recall": len(found & truth) / len(truth) if truth else None, "precision": len(ok_found) / len(found) if found else None,
         "recall_with_maybe": len((found | s["_maybe"]) & truth) / len(truth) if truth else None,
     }
 
@@ -362,7 +461,7 @@ def check_rename(root: Path, repo: dict, s: dict, run_tests: bool, baseline_fail
     if compiled and run_tests:
         tcode, tout = sh(L["tests"], root, timeout=1800)
         failed = L["failed"](tout, root) - baseline_failed
-        tests_ok = not failed
+        tests_ok = not failed and L["ran"](tout, root)  # a suite that did not start has no failures either
     restore(root)
     gx(["index"], root)
     return {"symbol": s["qualified"], "ok": compiled and tests_ok is not False, "compiled": compiled, "tests_ok": tests_ok,
@@ -370,11 +469,12 @@ def check_rename(root: Path, repo: dict, s: dict, run_tests: bool, baseline_fail
             "old_name_left": left[:300], "detail": "" if compiled else cout[-500:]}
 
 
-def check_tests(root: Path, repo: dict, s: dict, baseline_failed: set[str]) -> dict | None:
+def failing_tests(root: Path, repo: dict, s: dict, baseline_failed: set[str]) -> dict:
+    """Tests that fail when `s` throws on entry (or why that could not be measured)."""
     L = LANG[repo["lang"]]
     at = body_start(root, s, repo["lang"])
     if not at:
-        return None
+        return {"skipped": "no body"}
     ind = indent_of(root, s["file"], at)
     p = root / s["file"]
     lines = p.read_text(errors="replace").split("\n")
@@ -383,17 +483,43 @@ def check_tests(root: Path, repo: dict, s: dict, baseline_failed: set[str]) -> d
     ccode, cout = sh(L["compile"], root, timeout=1500)
     if ccode and repo["lang"] != "python":
         restore(root)
-        return {"symbol": s["qualified"], "skipped": "mutant does not compile"}
-    _, tout = sh(L["tests"], root, timeout=2400)
-    truth = L["failed"](tout, root) - baseline_failed
+        return {"skipped": "mutant does not compile"}
+    if "failing_alone" in L:
+        truth = L["failing_alone"](root) - baseline_failed
+    else:
+        _, tout = sh(L["tests"], root, timeout=2400)
+        if not L["ran"](tout, root):
+            restore(root)
+            return {"skipped": "the test suite did not run"}
+        truth = L["failed"](tout, root) - baseline_failed
     restore(root)
+    return {"failed": sorted(truth)}
+
+
+TOP = 10  # tests-for names this many by default
+
+
+def check_tests(root: Path, repo: dict, s: dict, baseline_failed: set[str]) -> dict | None:
+    L = LANG[repo["lang"]]
+    t = cached(f"{repo['name']}@{repo['commit'][:12]}:tests:{s['qualified']}", lambda: failing_tests(root, repo, s, baseline_failed))
+    if t.get("skipped") == "no body":
+        return None
+    if "skipped" in t:
+        return {"symbol": s["qualified"], "skipped": t["skipped"]}
+    truth = set(t["failed"])
     names, files, graph = tests_for(root, s["qualified"])
-    pred = files if L["level"] == "file" else names
+    order = files if L["level"] == "file" else names
+    pred = set(order)
     if not truth:
         return {"symbol": s["qualified"], "skipped": "no test fails when it throws", "predicted": len(pred)}
     tp = len(pred & truth)
+    top = order[:TOP]
+    top_hits = sum(1 for x in top if x in truth)
     out = {"symbol": s["qualified"], "level": L["level"], "truth": len(truth), "predicted": len(pred),
            "recall": tp / len(truth), "precision": tp / len(pred) if pred else 0.0,
+           # of the 10 tests named first: how many fail, and how many could at best (few tests fail at all)
+           "top_hits": top_hits, "top_n": len(top), "top_precision": top_hits / len(top) if top else 0.0,
+           "top_best": min(tp, len(top)) / len(top) if top else 0.0, "caught": 1.0 if top_hits else 0.0,
            "missed": sorted(truth - pred)[:8]}
     if L["level"] == "name":
         out["recall_graph_only"] = len(graph & truth) / len(truth)
@@ -424,9 +550,14 @@ def run_repo(repo: dict, n: int, mutants: int, seed: int, tests_in_rename: bool)
     res["sample"] = [s["qualified"] for s in sample]
     # baseline: tests already failing before any change are not ours
     _, tout = sh(L["tests"], root, timeout=2400)
+    if not L["ran"](tout, root):  # otherwise "no test failed" would pass every check below
+        raise RuntimeError(f"the test suite of {repo['name']} did not run: {tout[-300:]}")
     baseline_failed = L["failed"](tout, root)
     res["baseline_failing_tests"] = sorted(baseline_failed)[:20]
     res["callers"] = [x for s in sample if (x := check_callers(root, repo, syms, s))]
+    common = pick(syms, root, n, seed, common=True) if L["errors"] else []
+    res["sample_common"] = [s["qualified"] for s in common]
+    res["callers_common"] = [x for s in common if (x := check_callers(root, repo, syms, s))]
     res["rename"] = [check_rename(root, repo, s, tests_in_rename, baseline_failed) for s in sample]
     res["tests"] = [x for s in sample[:mutants] if (x := check_tests(root, repo, s, baseline_failed))]
     res["look"] = [look_cost(root, s) for s in sample]
@@ -441,33 +572,45 @@ def mean(v: list[float]) -> float | None:
 
 def summarize(r: dict) -> dict:
     cal = [c for c in r["callers"] if c.get("recall") is not None]
+    com = [c for c in r.get("callers_common", []) if c.get("recall") is not None]
     tst = [t for t in r["tests"] if "recall" in t]
     looks = r["look"]
     return {
         "callers_recall": mean([c["recall"] for c in cal]),
-        "callers_precision": mean([c["precision"] for c in cal]),
+        "callers_precision": mean([c["precision"] for c in cal if c["precision"] is not None]),
         "callers_checked": len(cal),
+        # methods whose name several types share: sure callers, and sure + "maybe"
+        "common_recall": mean([c["recall"] for c in com]),
+        "common_precision": mean([c["precision"] for c in com if c["precision"] is not None]),
+        "common_recall_with_maybe": mean([c["recall_with_maybe"] for c in com]),
+        "common_checked": len(com),
         "rename_ok": mean([1.0 if x["ok"] else 0.0 for x in r["rename"]]),
         "rename_checked": len(r["rename"]),
         "tests_recall": mean([t["recall"] for t in tst]),
         "tests_precision": mean([t["precision"] for t in tst]),
+        "tests_top10_precision": mean([t["top_precision"] for t in tst]),
+        "tests_top10_best": mean([t["top_best"] for t in tst]),
+        "tests_caught": mean([t["caught"] for t in tst]),
         "tests_checked": len(tst),
         "look_vs_file": mean([l["look_tokens"] / max(1, l["file_tokens"]) for l in looks]),
     }
 
 
 def render_md(results: list[dict]) -> str:
-    rows = ["| repo | lang | symbols | index s | callers recall | callers precision | rename ok | tests recall | tests precision | look / file |",
-            "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    rows = ["| repo | lang | symbols | index s | callers recall | callers precision | shared names: recall (+maybe) | shared names: precision | rename ok "
+            "| tests recall | tests precision | top-10 fail (best possible) | caught by top-10 | look / file |",
+            "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     fmt = lambda v, n=None: "—" if v is None else (f"{v:.0%}" + (f" ({n})" if n is not None else ""))
     for r in results:
         s = r.get("summary") or {}
         if "error" in r:
-            rows.append(f"| {r['repo']} | {r.get('lang','')} | error: {r['error'][:60]} |||||||")
+            rows.append(f"| {r['repo']} | {r.get('lang','')} | error: {r['error'][:60]} |||||||||||")
             continue
+        com = "—" if s.get("common_recall") is None else f"{s['common_recall']:.0%} ({s['common_recall_with_maybe']:.0%}) ({s['common_checked']})"
+        top = "—" if s.get("tests_top10_precision") is None else f"{s['tests_top10_precision']:.0%} ({s['tests_top10_best']:.0%})"
         rows.append(f"| {r['repo']} | {r['lang']} | {r['symbols']} | {r['index_seconds']} | {fmt(s['callers_recall'], s['callers_checked'])} | "
-                    f"{fmt(s['callers_precision'])} | {fmt(s['rename_ok'], s['rename_checked'])} | {fmt(s['tests_recall'], s['tests_checked'])} | "
-                    f"{fmt(s['tests_precision'])} | {fmt(s['look_vs_file'])} |")
+                    f"{fmt(s['callers_precision'])} | {com} | {fmt(s.get('common_precision'))} | {fmt(s['rename_ok'], s['rename_checked'])} | "
+                    f"{fmt(s['tests_recall'], s['tests_checked'])} | {fmt(s['tests_precision'])} | {top} | {fmt(s.get('tests_caught'))} | {fmt(s['look_vs_file'])} |")
     return "\n".join(rows) + "\n"
 
 
@@ -476,7 +619,7 @@ def compare(results: list[dict], baseline: dict) -> list[str]:
     for r in results:
         b = baseline.get(r["repo"], {})
         for k, v in (r.get("summary") or {}).items():
-            if k.endswith(("recall", "precision", "_ok")) and v is not None and b.get(k) is not None and v < b[k] - TOL:
+            if k.endswith(("recall", "precision", "_ok", "caught", "with_maybe")) and v is not None and b.get(k) is not None and v < b[k] - TOL:
                 bad.append(f"{r['repo']}: {k} {b[k]:.0%} → {v:.0%}")
     return bad
 
@@ -489,9 +632,13 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--fast", action="store_true", help="after a rename only compile, skip the test suite (a rename that edits a\n"
                     "string the tests compare against compiles fine and is still wrong)")
+    ap.add_argument("--no-cache", action="store_true", help="ask the compilers and test suites again (eval/.work/truth.json)")
+    ap.add_argument("--out", default="latest", help="name of the result files in eval/results")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--bless", action="store_true")
     args = ap.parse_args()
+    global USE_CACHE
+    USE_CACHE = not args.no_cache
     repos = json.loads((HERE / "repos.json").read_text())
     if args.repos:
         want = set(args.repos.split(","))
@@ -507,9 +654,9 @@ def main() -> None:
         print(json.dumps(r.get("summary") or r, ensure_ascii=False), flush=True)
     out = HERE / "results"
     out.mkdir(exist_ok=True)
-    (out / "latest.json").write_text(json.dumps(results, ensure_ascii=False, indent=1))
+    (out / f"{args.out}.json").write_text(json.dumps(results, ensure_ascii=False, indent=1))
     md = render_md(results)
-    (out / "latest.md").write_text(md)
+    (out / f"{args.out}.md").write_text(md)
     print("\n" + md)
     base_path = HERE / "baseline.json"
     if args.bless:
