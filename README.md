@@ -97,6 +97,20 @@ In the TUI: `s` changes, `space` stages a file or one function, `enter` shows be
 
 Early but used daily on its own code (this repository is indexed by gitnext — see `AGENTS.md`). Name-based resolution is approximate for dynamic code; `gitnext lsp` refines it with rust-analyzer / pyright / clangd. Parser output is pinned by fixtures in `crates/gitnext-parse/tests/fixtures`.
 
+## Similar projects
+
+Each piece exists elsewhere; gitnext puts them in one tool and measures the effect.
+
+| Project | What it does | How gitnext differs |
+|---|---|---|
+| [Aider repo map](https://aider.chat/docs/repomap.html) | tree-sitter map of the repo in the prompt | the map is committed to the repo (`AGENTS.md`, `.gitnext/map`), so any agent — even a small local model without tools — gets it |
+| [Serena](https://oraios.github.io/serena/01-about/035_tools.html) | MCP tools to find, edit and rename by symbol, via language servers | one call `look` returns code + callers + callees + tests + impact; works without a language server (LSP is optional refinement) |
+| [CodeGraph](https://colbymchenry.github.io/codegraph/), [CodeGraphContext](https://mcpservers.org/servers/shashankss1205/codegraphcontext) | code graph over MCP: callers, callees, impact | also injects the code a task needs before the request (`gitnext context`) for agents that do not call tools |
+| [sem](https://docs.rs/sem-cli/0.7.0/sem/) | entity-level diff, blame and impact on top of git | adds plain-language git: stage or commit one function, undo, timeline, commit message from changed functions |
+| [lazygit](https://github.com/jesseduffield/lazygit), [GitButler](https://gitbutler.com) | friendly git UIs | the TUI shows code by function and relation, not only files and hunks |
+
+What we can show that others do not: savings measured on a real agent and a real repository ([integrations/ab](integrations/ab), [integrations/loca](integrations/loca)).
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
