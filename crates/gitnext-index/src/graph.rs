@@ -364,6 +364,15 @@ impl Graph {
         if tc || fc {
             return tc == fc;
         }
+        // languages never call each other by name; TS and JS are one family
+        let (tf, ff) = (gitnext_parse::family_of(&self.syms[i].file), gitnext_parse::family_of(from_file));
+        if tf != ff {
+            return false;
+        }
+        // TS / JS / Go / Java: any module may import any other; imports decide, not crates
+        if gitnext_parse::lang_for(std::path::Path::new(from_file)).is_some_and(gitnext_parse::Lang::is_generic) {
+            return true;
+        }
         // Rust and Python never call each other by name
         let py = |f: &str| f.ends_with(".py") || f.ends_with(".pyi");
         if py(&self.syms[i].file) != py(from_file) {
@@ -383,6 +392,11 @@ impl Graph {
                 !is_aux_target(f) || f == from_file || dir_of(f) == dir_of(from_file)
             })
             .collect()
+    }
+
+    /// A first path segment that names code in this repo (a crate, package or module root).
+    pub fn is_repo_root(&self, first: &str) -> bool {
+        self.crate_roots.contains(first)
     }
 
     /// The symbol an edge originates from (if it is a real symbol in that file).
@@ -530,7 +544,10 @@ impl Graph {
                 .into_iter()
                 .filter(|&i| {
                     let s = &self.syms[i];
-                    is_c_family_path(&s.file) || s.sym.params.first().is_some_and(|p| p.name == "self" || p.name == "cls" || p.name.starts_with("mut self"))
+                    // C++, TS/JS, Go, Java: the receiver is implicit, every method can be called with a dot
+                    is_c_family_path(&s.file)
+                        || gitnext_parse::lang_for(std::path::Path::new(&s.file)).is_some_and(gitnext_parse::Lang::is_generic)
+                        || s.sym.params.first().is_some_and(|p| p.name == "self" || p.name == "cls" || p.name.starts_with("mut self"))
                 })
                 .collect();
             return cands.into_iter().filter(|&i| self.syms[i].sym.kind == Kind::Method).collect();
@@ -581,6 +598,9 @@ impl Graph {
                     .collect();
                 if !via_use.is_empty() {
                     via_use
+                } else if gitnext_parse::lang_for(std::path::Path::new(file)).is_some_and(gitnext_parse::Lang::is_generic) {
+                    // TS/JS/Go/Java: the name came in through an import (often re-exported by an index file)
+                    importable(&self.syms, funcs, file)
                 } else {
                     // Without an import a bare name can only reach its own crate.
                     let root = e.from.split("::").next().unwrap_or("");
@@ -614,6 +634,18 @@ impl Graph {
                 })
                 .collect()
         };
+        if picked.is_empty() && gitnext_parse::lang_for(std::path::Path::new(file)).is_some_and(gitnext_parse::Lang::is_generic) && !qual.is_empty() && qual != "Self" {
+            // `pkg::index::create` where the index file only re-exports `create`: in-repo path → by name
+            let first = e.to.split("::").next().unwrap_or("");
+            if self.is_repo_root(first) {
+                let funcs: Vec<usize> = all
+                    .iter()
+                    .copied()
+                    .filter(|&i| matches!(self.syms[i].sym.kind, Kind::Function | Kind::Class | Kind::Struct))
+                    .collect();
+                return prefer_same_file(&self.syms, importable(&self.syms, self.visible_only(&e.from, file, funcs), file), file);
+            }
+        }
         prefer_same_file(&self.syms, picked, file)
     }
 
@@ -1008,6 +1040,13 @@ fn drop_decls(syms: &[SymbolRow], c: Vec<usize>) -> Vec<usize> {
     }
     let defined: HashSet<&str> = c.iter().filter(|&&i| !syms[i].sym.decl).map(|&i| syms[i].sym.qualified.as_str()).collect();
     c.iter().copied().filter(|&i| !(syms[i].sym.decl && defined.contains(syms[i].sym.qualified.as_str()))).collect()
+}
+
+/// What another file can import: exported, non-test definitions (a test file's
+/// helpers are its own). Keeps everything when nothing qualifies.
+fn importable(syms: &[SymbolRow], c: Vec<usize>, file: &str) -> Vec<usize> {
+    let ok: Vec<usize> = c.iter().copied().filter(|&i| syms[i].file == file || (syms[i].sym.visibility.is_some() && !syms[i].sym.test)).collect();
+    if ok.is_empty() { c } else { ok }
 }
 
 fn prefer_same_file(syms: &[SymbolRow], c: Vec<usize>, file: &str) -> Vec<usize> {

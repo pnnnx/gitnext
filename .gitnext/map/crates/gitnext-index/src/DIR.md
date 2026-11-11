@@ -3,88 +3,72 @@
 
 > Persistent, incremental code index stored in `.gitnext/index.db` (SQLite).
 
-**4 files · 1770 lines · 88 symbols · 2 tests**
+**5 files · 2248 lines · 111 symbols · 5 tests**
 
 ## Files
 
 | File | Lines | Purpose |
 |---|---:|---|
-| `graph.rs` | 1084 | In-memory cross-reference graph: resolves name-based edges to symbols and answers callers / callees / hierarchy / dependency questions. |
-| `lib.rs` | 442 | Persistent, incremental code index stored in `.gitnext/index.db` (SQLite). |
+| `graph.rs` | 1123 | In-memory cross-reference graph: resolves name-based edges to symbols and answers callers / callees / hierarchy / dependency questions. |
+| `lib.rs` | 444 | Persistent, incremental code index stored in `.gitnext/index.db` (SQLite). |
+| `libs.rs` | 437 | External libraries: which ones a symbol calls, and which the project declares. |
 | `notes.rs` | 70 | Inferred summaries ("notes") for symbols and directories without docs. |
 | `semdiff.rs` | 174 | Semantic diff: compares two versions of a file at the symbol level ("signature of `parse` changed", "method `Lexer::peek` added"). |
 
-## API (compact: methods by name; `gitnext outline <file>` for signatures)
+## API (most referenced only; `gitnext outline <file>` for everything)
 
 ### `graph.rs`
 
-- `pub struct Graph` · 83 refs
-  - fields: files, syms, edges, by_name, by_qual, crate_roots, visible, dir_graph, rev, short, dir_notes, links
-  - methods: new, sym_ref, apply_notes, dir_hash, short_name, find, search, counts, in_file, source_of, resolve, has_method_named, inherited, overrides, is_guess, referrers, callers, impact, callees, uses, hierarchy, dir_graph, dir_deps, dirs
-- `pub struct ImpactNode` — One node of an impact (reverse dependency) walk.
-  - fields: depth, symbol, via, how, test, certain
-- `pub struct SymRef` — Compact reference to a symbol, for listings and JSON output. · 3 refs
-  - fields: qualified, short, kind, file, line, signature, summary
-- `pub struct Hierarchy`
-  - fields: symbol, implements, extends, implementors, subtypes, methods
-- `pub struct Callees` — Outgoing calls of a function, split by how confidently they resolved.
-  - fields: resolved, ambiguous, external
-- `pub struct Counts`
-  - fields: code_files, symbols, tests, languages
-  - methods: line
-- `pub struct DirDeps`
-  - fields: dir, depends_on, used_by
-- `pub fn flatten_use(tree: &str) -> Vec<String>` — Expand a Rust use-tree into flat paths: `a::b::{c, d::{e, f as g}, self}` → `a::b::c`, `a::b::d::e`, `a::b::d::f`, `a::b`.
-- _internal:_ 7 items
+- `pub struct Graph` · 92 refs
+- `pub fn Graph::short_name(&self, i: usize) -> &str` — Shortest `::`-suffix of the qualified name that identifies this symbol uniquely (overloads share a name).
+- `pub fn Graph::find(&self, q: &str) -> Vec<usize>` — Find symbols by exact qualified name, `::`-suffix, or bare name.
+- `pub fn Graph::in_file(&self, path: &str) -> Vec<usize>`
+- `pub fn Graph::callees(&self, src: usize) -> Callees`
+- `pub fn Graph::dirs(&self) -> Vec<String>` — All directories that contain indexed files, including ancestors ("" = root).
+- … +28 more
 
 ### `lib.rs`
 
-- `pub const GITNEXT_DIR: &str`
-- `pub const DEFAULT_SKIP: &[&str]` — Build output, caches and virtualenvs: copies of the code, never the code itself.
-- `pub fn dir_matches(pattern: &str, name: &str) -> bool`
-- `pub fn skipped_dirs(root: &Path) -> Vec<String>` — Folder names the walker skips for this repository.
-- `pub type Link = ((String, u32, u32), (String, u32))` — LSP answer: (file, line, col) → (target file, target line).
 - `pub struct Index` · 3 refs
-  - fields: conn, root, skip
-  - methods: open, root, refresh, files, symbols, edges, store_links, links, graph
-- `pub struct FileRow` · 3 refs
-  - fields: path, file_type, lines, parsed, module_doc
-- `pub struct RefreshStats` · 2 refs
-  - fields: files_total, files_reparsed, files_removed, symbols_total, edges_total
-- `pub struct SymbolRow` — A symbol together with the file it lives in. · 6 refs
-  - fields: file, sym
+- `pub struct SymbolRow` — A symbol together with the file it lives in. · 7 refs
+- `pub fn Index::open(root: &Path) -> Result<Self>` — Open (or create) the index for a repository root.
+- `pub fn Index::refresh(&mut self) -> Result<RefreshStats>` — Bring the index up to date with the working tree.
 - `pub fn to_slash(p: &Path) -> String` · 4 refs
 - `pub fn dir_of(path: &str) -> &str` — Directory part of a slash path ("" for the root). · 23 refs
-- `pub fn is_parsed_lang(path: &str) -> bool` — Whether the path has a semantic parser (re-exported for callers).
-- _internal:_ 5 items
+- … +13 more
+
+### `libs.rs`
+
+- `pub struct LibUse` · 2 refs
+- `pub struct Dep` — A dependency declared in a manifest. · 4 refs
+- `pub fn Graph::libraries(&self, src: usize) -> Vec<LibUse>` — Libraries a symbol calls into, most-used first.
+- `pub fn Graph::library_usage(&self) -> Vec<(LibUse, usize)>` — Every library the code calls into, with the number of call sites.
+- `pub fn match_dep<'a>(lib: &str, deps: &'a [Dep]) -> Option<&'a Dep>` — The declared dependency a library name stands for (version, dev or not). · 2 refs
+- `pub fn manifest_deps(files: &[(String, String)]) -> Vec<Dep>` — Dependencies declared in the manifests among `files` (path, content).
+- … +2 more
 
 ### `notes.rs`
 
 - `pub struct Note` · 3 refs
-  - fields: hash, source, summary
 - `pub type Notes = BTreeMap<String, Note>`
 - `pub fn path(root: &Path) -> PathBuf`
 - `pub fn load(root: &Path) -> Notes`
 - `pub fn save(root: &Path, notes: &Notes) -> Result<()>`
 - `pub fn upsert(root: &Path, items: impl IntoIterator<Item = (String, Note)>) -> Result<usize>` — Insert / replace notes and persist. · 4 refs
-- _internal:_ 1 items
 
 ### `semdiff.rs`
 
 - `pub enum Change`
-  - variants: Added, Removed, Signature, Body, Doc, Renamed
 - `pub struct SymChange` · 9 refs
-  - fields: change, kind, qualified, trait_impl, old_signature, new_signature, test, old_lines, new_lines
-  - methods: line
+- `pub fn SymChange::line(&self) -> String` — Compact one-line form used in commit trailers and terminal output.
 - `pub struct FileChange` · 8 refs
-  - fields: path, status, semantic, changes
 - `pub fn diff_sources(path: &str, old: Option<&str>, new: Option<&str>) -> FileChange`
 - `pub fn diff_sources_in(path: &str, old: Option<&str>, new: Option<&str>, krate: Option<&CrateHint>) -> FileChange` — [`diff_sources`] with the owning package known, so names match the index. · 9 refs
 
 ## Dependencies
 
-- **Depends on:** `crates/gitnext-parse/src` (73)
-- **Used by:** `crates/gitnext-ops/src` (258), `crates/gitnext-cli/src` (86), `crates/gitnext-tui/src` (44), `crates/gitnext-docs/src` (27), `crates/gitnext-index/tests` (8), `crates/gitnext-ops/tests` (8)
+- **Depends on:** `crates/gitnext-parse/src` (94)
+- **Used by:** `crates/gitnext-ops/src` (296), `crates/gitnext-cli/src` (87), `crates/gitnext-tui/src` (45), `crates/gitnext-docs/src` (27), `crates/gitnext-ops/tests` (10), `crates/gitnext-index/tests` (8)
 <!-- gitnext:auto:end -->
 
 ## Notes

@@ -380,10 +380,23 @@ impl App<'_> {
             for (name, cands) in &c.ambiguous {
                 l.push(Line::from(vec![Span::raw(format!("  {name}")), Span::styled(format!("  one of {} with this name", cands.len()), Style::new().fg(DIM))]));
             }
-            if !c.external.is_empty() {
-                let shown: Vec<&str> = c.external.iter().take(10).map(String::as_str).collect();
-                let more = c.external.len().saturating_sub(10);
-                l.push(Line::from(Span::styled(format!("  outside this repo: {}{}", shown.join(", "), if more > 0 { format!(" +{more}") } else { String::new() }), Style::new().fg(DIM))));
+            let libs = g.libraries(i);
+            if !libs.is_empty() {
+                let deps = gitnext_ops::libs::deps(&self.ws.root, g);
+                l.push(Line::raw(""));
+                l.push(Line::from(Span::styled(format!("→ libraries {}", libs.len()), Style::new().fg(RELATION))));
+                for lib in libs.iter().take(8) {
+                    let m: Vec<&str> = lib.members.iter().take(5).map(String::as_str).collect();
+                    l.push(Line::from(vec![Span::raw(format!("  {}", gitnext_ops::libs::label(lib, &deps))), Span::styled(format!("  {}", m.join(", ")), Style::new().fg(DIM))]));
+                }
+            }
+            // what is left outside the repo: builtins and methods on values of unknown type
+            let in_libs: std::collections::HashSet<&str> = libs.iter().flat_map(|x| x.members.iter().map(String::as_str)).collect();
+            let rest: Vec<&str> = c.external.iter().map(String::as_str).filter(|x| !in_libs.contains(x.rsplit("::").next().unwrap_or(x))).collect();
+            if !rest.is_empty() {
+                let shown: Vec<&str> = rest.iter().take(10).copied().collect();
+                let more = rest.len().saturating_sub(10);
+                l.push(Line::from(Span::styled(format!("  other outside calls: {}{}", shown.join(", "), if more > 0 { format!(" +{more}") } else { String::new() }), Style::new().fg(DIM))));
             }
         }
         let uses = g.uses(i);

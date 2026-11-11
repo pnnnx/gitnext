@@ -8,7 +8,7 @@
 ## Subdirectories
 
 - [`src/`](src/DIR.md) — High-level workflows shared by the CLI and the TUI: open a workspace, refresh the index, regenerate the map, semantic diff, smart commit, context packs.
-- [`tests/`](tests/DIR.md) — Regressions from a real agent session on loca (Python): - `rename` missed `__all__`, function-level imports in tests and `module.func` access; - `impact` fol…
+- [`tests/`](tests/DIR.md)
 
 ## Files
 

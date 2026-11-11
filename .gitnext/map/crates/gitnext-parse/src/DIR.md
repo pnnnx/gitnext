@@ -3,16 +3,18 @@
 
 > Language-agnostic code model plus per-language extractors built on tree-sitter.
 
-**4 files · 3005 lines · 129 symbols · 13 tests**
+**6 files · 3998 lines · 178 symbols · 13 tests**
 
 ## Files
 
 | File | Lines | Purpose |
 |---|---:|---|
 | `cfamily.rs` | 964 | C / C++ extractor (one grammar: tree-sitter-cpp also parses C). |
-| `lib.rs` | 583 | Language-agnostic code model plus per-language extractors built on tree-sitter. |
+| `generic.rs` | 577 | One extractor for every language described by a [`Spec`]. |
+| `lib.rs` | 688 | Language-agnostic code model plus per-language extractors built on tree-sitter. |
 | `python.rs` | 699 | Python extractor: modules, classes (with base classes → `inherits` edges and fields from annotations / `self.x = …` in `__init__`), functions and methods (ty… |
 | `rust.rs` | 759 | Rust extractor: walks the tree-sitter CST and emits symbols and edges. |
+| `specs.rs` | 311 | Language tables for the generic extractor (`generic.rs`): TypeScript / JavaScript, Go, Java. |
 
 ## API (most referenced only; `gitnext outline <file>` for everything)
 
@@ -21,15 +23,25 @@
 - `pub fn analyze(rel: &Path, src: &str) -> anyhow::Result<FileAnalysis>`
 - `pub(crate) fn sanitize(src: &str) -> String` — Blank export macros: `class FOO_API X`, `FOO_PUBLIC(T) f(...)`, `__declspec(x)`, `__attribute__((x))`.
 
+### `generic.rs`
+
+- `pub(crate) struct Def<'t>` — What a definition node declares. · 3 refs
+- `pub(crate) struct Imports` — Imports of one file: local name → path it stands for, plus the paths themselves. · 4 refs
+- `pub(crate) struct Spec` · 6 refs
+- `pub(crate) struct Ctx`
+- `pub(crate) fn analyze(spec: &Spec, rel: &Path, src: &str, pkg: Option<&CrateHint>) -> anyhow::Result<FileAnalysis>` · 5 refs
+- `pub(crate) fn join_relative(rel_file: &str, spec: &str) -> String` — `a/b/c.ts` relative import resolved against the importing file → `a::b::c`.
+- … +1 more
+
 ### `lib.rs`
 
-- `pub enum Kind` — What kind of code entity a symbol is. · 14 refs
+- `pub enum Kind` — What kind of code entity a symbol is. · 16 refs
 - `pub fn Kind::is_callable(self) -> bool`
 - `pub fn Kind::is_type(self) -> bool`
-- `pub struct Symbol` · 15 refs
-- `pub fn Symbol::is_public(&self) -> bool`
-- `pub struct Edge` — A directed, *unresolved* reference: `to` is the name as written in source. · 20 refs
-- … +28 more
+- `pub struct Param` — A named input. · 16 refs
+- `pub struct Symbol` · 17 refs
+- `pub struct Edge` — A directed, *unresolved* reference: `to` is the name as written in source. · 24 refs
+- … +32 more
 
 ### `python.rs`
 
@@ -41,11 +53,11 @@
 - `pub fn analyze(rel: &Path, src: &str, krate: Option<&CrateHint>) -> anyhow::Result<FileAnalysis>`
 - `pub fn module_path(rel: &Path) -> String` — Derive a Rust module path from a repo-relative file path.
 - `pub fn module_path_in(rel: &Path, k: &CrateHint) -> String` — Module path when the owning crate is known (nearest `Cargo.toml`): `<crate name>::<path inside the crate, without src/>`.
-- `pub fn collapse(s: &str) -> String` · 30 refs
+- `pub fn collapse(s: &str) -> String` · 33 refs
 
 ## Dependencies
 
-- **Used by:** `crates/gitnext-ops/src` (147), `crates/gitnext-index/src` (73), `crates/gitnext-cli/src` (46), `crates/gitnext-tui/src` (46), `crates/gitnext-docs/src` (36), `crates/gitnext-parse/tests` (5), `crates/gitnext-ops/tests` (2), `crates/gitnext-index/tests` (1)
+- **Used by:** `crates/gitnext-ops/src` (168), `crates/gitnext-index/src` (94), `crates/gitnext-cli/src` (47), `crates/gitnext-tui/src` (46), `crates/gitnext-docs/src` (36), `crates/gitnext-parse/tests` (5), `crates/gitnext-ops/tests` (3), `crates/gitnext-index/tests` (1)
 <!-- gitnext:auto:end -->
 
 ## Notes

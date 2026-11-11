@@ -19,6 +19,9 @@ pub enum Family {
     Rust,
     Python,
     C,
+    Js,
+    Go,
+    Java,
 }
 
 impl Family {
@@ -27,6 +30,9 @@ impl Family {
             Lang::Rust => Some(Family::Rust),
             Lang::Python => Some(Family::Python),
             Lang::C | Lang::Cpp => Some(Family::C),
+            Lang::TypeScript | Lang::Tsx | Lang::JavaScript => Some(Family::Js),
+            Lang::Go => Some(Family::Go),
+            Lang::Java => Some(Family::Java),
         }
     }
     pub fn parse(s: &str) -> Option<Family> {
@@ -34,6 +40,9 @@ impl Family {
             "rust" | "rs" => Some(Family::Rust),
             "python" | "py" => Some(Family::Python),
             "c" | "cpp" | "c++" => Some(Family::C),
+            "ts" | "typescript" | "js" | "javascript" => Some(Family::Js),
+            "go" => Some(Family::Go),
+            "java" => Some(Family::Java),
             _ => None,
         }
     }
@@ -42,6 +51,9 @@ impl Family {
             Family::Rust => ("GITNEXT_LSP_RUST", "rust-analyzer"),
             Family::Python => ("GITNEXT_LSP_PYTHON", "pyright-langserver --stdio"),
             Family::C => ("GITNEXT_LSP_C", "clangd"),
+            Family::Js => ("GITNEXT_LSP_TS", "typescript-language-server --stdio"),
+            Family::Go => ("GITNEXT_LSP_GO", "gopls"),
+            Family::Java => ("GITNEXT_LSP_JAVA", "jdtls"),
         };
         std::env::var(env).unwrap_or_else(|_| default.into()).split_whitespace().map(str::to_string).collect()
     }
@@ -49,6 +61,19 @@ impl Family {
         match self {
             Family::Rust => "rust",
             Family::Python => "python",
+            Family::Js => {
+                if path.ends_with(".tsx") {
+                    "typescriptreact"
+                } else if path.ends_with(".jsx") {
+                    "javascriptreact"
+                } else if path.ends_with(".ts") || path.ends_with(".mts") || path.ends_with(".cts") {
+                    "typescript"
+                } else {
+                    "javascript"
+                }
+            }
+            Family::Go => "go",
+            Family::Java => "java",
             Family::C => {
                 if path.ends_with(".c") || path.ends_with(".h") {
                     "c"

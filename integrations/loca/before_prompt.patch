@@ -1,0 +1,121 @@
+diff --git a/loca/agent.py b/loca/agent.py
+index 774f4ba..3856d6b 100644
+--- a/loca/agent.py
++++ b/loca/agent.py
+@@ -430,6 +430,11 @@ class Agent:
+         return resp
+ 
+     def run(self, user_text: str) -> str:
++        if not self.sub:
++            # hooks.before_prompt: e.g. `gitnext context` — the code the task is about
++            extra = hooks.before_prompt(self.ctx, user_text)
++            if extra:
++                user_text = f"{user_text}\n\n{extra}"
+         self.messages.append({"role": "user", "content": user_text})
+         recent_calls: list[str] = []
+         recent_failures: list[str] = []
+diff --git a/loca/hooks.py b/loca/hooks.py
+index 7f6a881..2eda06c 100644
+--- a/loca/hooks.py
++++ b/loca/hooks.py
+@@ -5,10 +5,14 @@
+     "hooks": {
+       "after_edit":  ["ruff format {file}", "ruff check --quiet {file}"],
+       "after_tests": ["git --no-pager diff --stat"],
+-      "stop":        ["python3 -m pytest -q"]
++      "stop":        ["python3 -m pytest -q"],
++      "before_prompt": ["gitnext context"]
+     }
+ 
+ `{file}` подставляется путём изменённого файла (только для after_edit).
++before_prompt получает текст запроса на stdin; то, что команда напечатала
++(stdout, при коде 0), добавляется к запросу. Так код по задаче подбирается
++до первого шага — маленькой модели не нужно самой вызывать инструменты.
+ Вывод команд возвращается модели: форматтер и линтер дают ей обратную связь
+ сразу после правки, а не через пять шагов.
+ """
+@@ -18,7 +22,8 @@ import os
+ import shlex
+ import subprocess
+ 
+-EVENTS = ("after_edit", "after_tests", "stop")
++EVENTS = ("before_prompt", "after_edit", "after_tests", "stop")
++MAX_PROMPT_CONTEXT = 12000
+ MAX_HOOK_OUTPUT = 800
+ 
+ 
+@@ -34,23 +39,42 @@ def enabled(cfg: dict) -> bool:
+     return any(commands(cfg, event) for event in EVENTS)
+ 
+ 
+-def _run_one(command: str, cwd, timeout: int) -> tuple[int, str]:
++def _run_one(command: str, cwd, timeout: int, stdin_text: str | None = None,
++             max_out: int = MAX_HOOK_OUTPUT) -> tuple[int, str]:
+     env = {**os.environ, "PAGER": "cat", "GIT_PAGER": "cat", "TERM": "dumb",
+            "CI": "1", "NO_COLOR": "1"}
+     try:
+         proc = subprocess.run(["/bin/bash", "-c", command], cwd=cwd, env=env, text=True,
+-                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+-                              stdin=subprocess.DEVNULL, timeout=timeout, errors="replace")
++                              stdout=subprocess.PIPE,
++                              # before_prompt: only stdout goes to the model
++                              stderr=subprocess.DEVNULL if stdin_text is not None else subprocess.STDOUT,
++                              input=stdin_text, stdin=None if stdin_text is not None else subprocess.DEVNULL,
++                              timeout=timeout, errors="replace")
+     except subprocess.TimeoutExpired:
+         return 124, f"[хук прерван: таймаут {timeout}s]"
+     except OSError as e:
+         return 127, f"[хук не запустился: {e}]"
+     out = (proc.stdout or "").strip()
+-    if len(out) > MAX_HOOK_OUTPUT:
+-        out = out[:MAX_HOOK_OUTPUT] + "\n… (вывод хука обрезан)"
++    if len(out) > max_out:
++        out = out[:max_out] + "\n… (вывод хука обрезан)"
+     return proc.returncode, out
+ 
+ 
++def before_prompt(ctx, prompt: str) -> str:
++    """Команды before_prompt: их вывод (при коде 0) добавляется к запросу пользователя."""
++    cmds = commands(ctx.cfg, "before_prompt")
++    if not cmds:
++        return ""
++    timeout = int(ctx.cfg.get("hook_timeout", 120))
++    limit = int(ctx.cfg.get("before_prompt_max_chars", MAX_PROMPT_CONTEXT))
++    parts = []
++    for cmd in cmds:
++        code, out = _run_one(cmd, ctx.cwd, min(timeout, 30), stdin_text=prompt, max_out=limit)
++        if code == 0 and out:
++            parts.append(out)
++    return "\n\n".join(parts)
++
++
+ def run(event: str, ctx, file=None) -> str:
+     """Выполняет команды события. Возвращает текст для модели ('' — если молчать)."""
+     cmds = commands(ctx.cfg, event)
+diff --git a/tests/test_loca.py b/tests/test_loca.py
+index c6ed962..128b463 100644
+--- a/tests/test_loca.py
++++ b/tests/test_loca.py
+@@ -542,6 +542,22 @@ def test_hook_output_reaches_model(tmp_path):
+     assert any("LINTED" in c for c in tool_msgs)
+ 
+ 
++def test_before_prompt_hook_adds_context(tmp_path):
++    fake = FakeOllama([{"content": "Готово."}])
++    cfg_dir = tmp_path / ".loca"
++    cfg_dir.mkdir()
++    # stdin is the request; stdout (code 0) is appended, stderr and failures are not
++    (cfg_dir / "config.json").write_text(
++        '{"hooks": {"before_prompt": ["tr a-z A-Z; echo noise >&2", "echo nope; exit 1"]}}',
++        encoding="utf-8")
++    from loca.cli import main
++    main(["-p", "--yolo", "--host", fake.url, "-m", "fake:1b", "--cwd", str(tmp_path), "fix brief"])
++    fake.close()
++    users = [m["content"] for m in fake.requests[0]["messages"] if m["role"] == "user"]
++    assert users[0].startswith("fix brief") and "FIX BRIEF" in users[0]
++    assert "noise" not in users[0] and "nope" not in users[0]
++
++
+ def test_stop_hook_nudges_once(tmp_path):
+     (tmp_path / "app.py").write_text("x = 1\n")
+     fake = FakeOllama([

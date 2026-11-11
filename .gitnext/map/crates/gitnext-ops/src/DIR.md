@@ -3,24 +3,26 @@
 
 > High-level workflows shared by the CLI and the TUI: open a workspace, refresh the index, regenerate the map, semantic diff, smart commit, context packs.
 
-**13 files · 4902 lines · 232 symbols · 7 tests**
+**15 files · 5600 lines · 251 symbols · 8 tests**
 
 ## Files
 
 | File | Lines | Purpose |
 |---|---:|---|
-| `agents.rs` | 687 | Agent integrations. |
+| `agents.rs` | 718 | Agent integrations. |
 | `bench.rs` | 189 | `gitnext bench`: token cost of typical agent tasks on *this* repository, naive (grep + read whole files + rewrite files) vs gitnext. |
 | `changes.rs` | 544 | Human-friendly git: the working tree described in words and symbols, shared by the TUI and the desktop app. |
-| `edit.rs` | 349 | Symbol-level edits: the agent sends only the new code of one symbol (or a new name), gitnext finds the exact range from the index, re-indents, checks that th… |
+| `context.rs` | 379 | `context`: pick the code a task is about and hand it over in one block. |
+| `edit.rs` | 405 | Symbol-level edits: the agent sends only the new code of one symbol (or a new name), gitnext finds the exact range from the index, re-indents, checks that th… |
 | `explain.rs` | 357 | `gitnext explain`: one-line summaries for code without docs, written once by an LLM (or by the agent itself via MCP `annotate`) and cached in `.gitnext/notes… |
 | `history.rs` | 287 | Symbol-aware history: when did this function appear and how did it change? And a semantic changelog between two revisions with breaking-change detection. |
-| `insight.rs` | 573 | Understanding a repository at a glance: activity, hotspots, dead code, dependency cycles, entry points, architecture diagram and a one-screen overview. |
+| `insight.rs` | 577 | Understanding a repository at a glance: activity, hotspots, dead code, dependency cycles, entry points, architecture diagram and a one-screen overview. |
 | `journal.rs` | 140 | Agent journal: every MCP tool call is appended to `.gitnext/journal.jsonl` (local, git-ignored) so a human can see what the agent looked at and changed, and … |
-| `lib.rs` | 479 | High-level workflows shared by the CLI and the TUI: open a workspace, refresh the index, regenerate the map, semantic diff, smart commit, context packs. |
-| `locate.rs` | 228 | Error / trace → code. |
-| `look.rs` | 211 | `look`: one call that answers whatever the agent needs next, decided by the shape of the target — a file or folder (outline), a symbol (everything about it a… |
-| `lsp.rs` | 355 | `gitnext lsp`: ask a real language server (rust-analyzer, pyright, clangd) where *ambiguous* calls actually go, and cache the answers in the index. |
+| `lib.rs` | 481 | High-level workflows shared by the CLI and the TUI: open a workspace, refresh the index, regenerate the map, semantic diff, smart commit, context packs. |
+| `libs.rs` | 113 | Libraries in words: what a function calls outside the repo, by package, with the version the project declares (`react 18.2 (useState, useEffect)`), and the p… |
+| `locate.rs` | 313 | Error / trace → code. |
+| `look.rs` | 214 | `look`: one call that answers whatever the agent needs next, decided by the shape of the target — a file or folder (outline), a symbol (everything about it a… |
+| `lsp.rs` | 380 | `gitnext lsp`: ask a real language server (rust-analyzer, pyright, clangd) where *ambiguous* calls actually go, and cache the answers in the index. |
 | `render.rs` | 503 | Compact plain-text renderers, shared by the CLI and the MCP server. |
 
 ## API (most referenced only; `gitnext outline <file>` for everything)
@@ -32,7 +34,7 @@
 - `pub fn Agent::name(self) -> &'static str`
 - `pub fn brief(ws: &Workspace, g: &Graph) -> String` — "Where were we": branch, uncommitted symbol changes, the last agent session, recent commits. · 3 refs
 - `pub fn human_ago(secs: i64) -> String` · 4 refs
-- `pub fn cap_tokens(text: &str, max: usize) -> String` — Cut text to about `max` tokens at a line boundary. · 2 refs
+- `pub fn cap_tokens(text: &str, max: usize) -> String` — Cut text to about `max` tokens at a line boundary. · 4 refs
 - … +17 more
 
 ### `bench.rs`
@@ -52,15 +54,19 @@
 - `pub fn humanize(e: &anyhow::Error) -> String` — Rephrase common git failures in plain words with the next step. · 3 refs
 - … +14 more
 
+### `context.rs`
+
+- `pub fn context(ws: &Workspace, g: &Graph, task: &str, budget: usize) -> String` — Picked code for `task`, at most ~`budget` tokens. · 2 refs
+
 ### `edit.rs`
 
 - `pub struct EditResult`
-- `pub enum EditKind`
 - `pub fn edit_symbol(root: &Path, g: &Graph, i: usize, kind: EditKind, code: &str, force: bool) -> Result<EditResult>` — Replace / insert after / delete one symbol. · 3 refs
+- `pub fn rename_leftover_text(root: &Path, r: &mut RenameReport) -> Result<()>` — `rename --text`: also rewrite the old name where it is only text (comments, strings, docs) — on the lines the rename reported as leftover. · 2 refs
 - `pub fn rename(root: &Path, g: &Graph, i: usize, new_name: &str, dry_run: bool) -> Result<RenameReport>` — Rename a symbol at its definition(s) and every unambiguous reference (calls, type uses, base classes, imports). · 2 refs
 - `pub fn render_edit(r: &EditResult) -> String` · 3 refs
 - `pub fn render_rename(r: &RenameReport) -> String` · 2 refs
-- … +2 more
+- … +3 more
 
 ### `explain.rs`
 
@@ -104,7 +110,7 @@
 
 ### `lib.rs`
 
-- `pub struct Workspace` · 15 refs
+- `pub struct Workspace` · 16 refs
 - `pub fn Workspace::open(cwd: &Path) -> Result<Self>` — Discover the git repository around `cwd`; fall back to `cwd` itself so read-only commands (map, symbols…) work in any folder.
 - `pub fn Workspace::repo(&self) -> Result<&Repo>`
 - `pub fn Workspace::write_map(&self, g: &Graph) -> Result<MapOutput>`
@@ -112,13 +118,20 @@
 - `pub fn render_diff(d: &[FileChange], full: bool) -> String` — Plain-text semantic diff (`+ added`, `- removed`, `~ signature`, `* body/docs`). · 4 refs
 - … +18 more
 
+### `libs.rs`
+
+- `pub fn deps(root: &Path, g: &Graph) -> Vec<Dep>` — Dependencies declared in the repo's manifests (cached per repo for 10 s: the TUI asks on every move).
+- `pub fn label(l: &LibUse, deps: &[Dep]) -> String` — `react 18.2.0`, `json (std)`, `left-pad (not declared)`.
+- `pub fn describe(root: &Path, g: &Graph, i: usize) -> Option<String>` — One line: the libraries a symbol calls, e.g. `react 18.2.0: useState, useEffect · node:fs (std): readFile`. · 2 refs
+- `pub fn render_libraries(root: &Path, g: &Graph, limit: usize) -> String` — The project's libraries: declared ones with versions, and how much the code uses each. · 2 refs
+
 ### `locate.rs`
 
 - `pub struct Frame` · 14 refs
-- `pub fn render_locate(g: &Graph, root: &Path, text: &str, with_code: bool) -> String` · 3 refs
+- `pub fn render_locate(g: &Graph, root: &Path, text: &str, with_code: bool) -> String` · 4 refs
 - `pub struct TestRef`
-- `pub fn tests_for(g: &Graph, i: usize, depth: usize) -> Vec<TestRef>` — Tests that reach `i` through calls / type uses (up to `depth` hops).
-- `pub fn run_commands(g: &Graph, root: &Path, tests: &[TestRef]) -> Vec<String>` — Ready-to-run commands per language/package.
+- `pub fn tests_for(g: &Graph, i: usize, depth: usize) -> Vec<TestRef>` — Tests that reach `i` through calls / type uses (up to `depth` hops). · 2 refs
+- `pub fn run_commands(g: &Graph, root: &Path, tests: &[TestRef]) -> Vec<String>` — Ready-to-run commands per language/package. · 2 refs
 - `pub fn render_tests_for(g: &Graph, root: &Path, i: usize, depth: usize) -> String` · 2 refs
 - … +2 more
 
@@ -140,16 +153,16 @@
 
 - `pub struct Opts` — Rendering options. · 4 refs
 - `pub fn candidates(g: &Graph, q: &str, ids: &[usize]) -> String` — Ambiguous lookups: list the candidates instead of guessing. · 6 refs
-- `pub fn outline(g: &Graph, root: &Path, path: &str, o: Opts) -> String` — Signatures + one-line docs of a file (or every file under a directory), no bodies. · 5 refs
-- `pub fn read(g: &Graph, root: &Path, ids: &[usize]) -> String` — Exact source of the given symbols (doc comments included), with line numbers. · 6 refs
+- `pub fn outline(g: &Graph, root: &Path, path: &str, o: Opts) -> String` — Signatures + one-line docs of a file (or every file under a directory), no bodies. · 6 refs
+- `pub fn read(g: &Graph, root: &Path, ids: &[usize]) -> String` — Exact source of the given symbols (doc comments included), with line numbers. · 7 refs
 - `pub fn show(g: &Graph, i: usize, o: Opts) -> String` · 3 refs
 - `pub fn dir_for(g: &Graph, p: &str) -> String` — Directory of a path, for callers that accept a file where a dir is expected. · 4 refs
 - … +7 more
 
 ## Dependencies
 
-- **Depends on:** `crates/gitnext-index/src` (258), `crates/gitnext-parse/src` (147), `crates/gitnext-core/src` (60), `crates/gitnext-docs/src` (23)
-- **Used by:** `crates/gitnext-cli/src` (242), `crates/gitnext-tui/src` (53), `crates/gitnext-ops/tests` (3)
+- **Depends on:** `crates/gitnext-index/src` (296), `crates/gitnext-parse/src` (168), `crates/gitnext-core/src` (60), `crates/gitnext-docs/src` (23)
+- **Used by:** `crates/gitnext-cli/src` (245), `crates/gitnext-tui/src` (55), `crates/gitnext-ops/tests` (9)
 <!-- gitnext:auto:end -->
 
 ## Notes

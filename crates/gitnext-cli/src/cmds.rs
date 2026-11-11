@@ -163,6 +163,8 @@ pub enum More {
     },
     /// Where were we: branch, uncommitted symbol changes, last agent session, recent commits
     Brief,
+    /// External libraries: which the code calls (by package, with declared versions) and which are only declared
+    Libs,
     /// One call for any target: symbol → code + callers + callees + tests + impact; file/folder → outline;
     /// error text → where; words → where they appear. Several targets at once.
     Look {
@@ -444,6 +446,10 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             if v.iter().any(|c| c.status == gitnext_ops::agents::Health::Fail) {
                 std::process::exit(1);
             }
+        }
+        More::Libs => {
+            let g = ws.graph()?;
+            out.text(&gitnext_ops::libs::render_libraries(&ws.root, &g, 40));
         }
         More::Brief => {
             let g = ws.graph()?;

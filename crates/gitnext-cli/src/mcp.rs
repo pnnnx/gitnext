@@ -89,8 +89,8 @@ fn tools() -> Value {
              json!({ "symbol": sym }), &["symbol"]),
         tool("deps", "Directory-level dependencies: what this directory uses and what uses it.",
              json!({ "dir": { "type": "string" } }), &[]),
-        tool("context", "Relevant code for a task description, packed into a token budget (bodies of the best matches plus their direct callers/callees).",
-             json!({ "task": { "type": "string" }, "tokens": { "type": "integer", "description": "default 6000" } }), &["task"]),
+        tool("context", "The code a task is about, in one block: definitions of the names and files the task mentions, where they are used, the tests that reach them.",
+             json!({ "task": { "type": "string" }, "tokens": { "type": "integer", "description": "default 2000" } }), &["task"]),
         tool("replace_symbol", "Replace one symbol's source with new code. Send only the new code of that symbol (start with its doc comment to replace the doc too); indentation is fixed automatically; the edit is rejected if the file would not parse. Use Name@LINE to pick an overload.",
              json!({ "symbol": sym, "code": { "type": "string" } }), &["symbol", "code"]),
         tool("insert_after", "Insert new code (e.g. a new function or method) right after an existing symbol.",
@@ -98,7 +98,7 @@ fn tools() -> Value {
         tool("delete_symbol", "Delete a symbol together with its doc comment.",
              json!({ "symbol": sym }), &["symbol"]),
         tool("rename_symbol", "Rename a symbol at its definition and every unambiguous reference (calls, type uses, imports). Ambiguous references are listed, not changed. dry_run to preview.",
-             json!({ "symbol": sym, "new_name": { "type": "string" }, "dry_run": { "type": "boolean" } }), &["symbol", "new_name"]),
+             json!({ "symbol": sym, "new_name": { "type": "string" }, "dry_run": { "type": "boolean" }, "text": { "type": "boolean", "description": "also rename it in comments and strings" } }), &["symbol", "new_name"]),
         tool("annotate", "Store one-line summaries for symbols (or `dir:<path>`) you understood that have no docs. They are cached against the code hash and shown in map/outline/show for every future session, so you never pay to re-read that code to learn what it does.",
              json!({ "items": { "type": "array", "items": { "type": "object", "properties": { "symbol": { "type": "string" }, "summary": { "type": "string" } }, "required": ["symbol", "summary"] } } }), &["items"]),
         tool("locate", "Paste a compiler error, panic, test failure or traceback: returns the repo symbols at those file:line locations (innermost function/method) and the code of the top one.",
@@ -234,8 +234,9 @@ impl Server {
             "deps" => render::deps(g, &render::dir_for(g, &path("dir"))),
             "context" => {
                 let t = s_arg(a, "task").ok_or("missing `task`")?;
-                let n = a.get("tokens").and_then(Value::as_u64).unwrap_or(6000) as usize;
-                gitnext_ops::render_context_md(&gitnext_ops::context(&self.ws, g, t, n))
+                let n = a.get("tokens").and_then(Value::as_u64).map_or(gitnext_ops::context::DEFAULT_BUDGET, |n| n as usize);
+                let s = gitnext_ops::context::context(&self.ws, g, t, n);
+                if s.is_empty() { "nothing in the index matches this task; try `look` with a name or a file".into() } else { s }
             }
             "diff" => {
                 let repo = self.ws.repo().map_err(|e| e.to_string())?;
@@ -321,7 +322,11 @@ impl Server {
                 let i = find_one(g, s_arg(a, "symbol").ok_or("missing `symbol`")?)?;
                 let new = s_arg(a, "new_name").ok_or("missing `new_name`")?;
                 let dry = a.get("dry_run").and_then(Value::as_bool).unwrap_or(false);
-                edit::render_rename(&edit::rename(&root, g, i, new, dry).map_err(|e| format!("{e:#}"))?)
+                let mut r = edit::rename(&root, g, i, new, dry).map_err(|e| format!("{e:#}"))?;
+                if a.get("text").and_then(Value::as_bool).unwrap_or(false) {
+                    edit::rename_leftover_text(&root, &mut r).map_err(|e| format!("{e:#}"))?;
+                }
+                edit::render_rename(&r)
             }
             other => return Err(format!("unknown tool `{other}`")),
         })

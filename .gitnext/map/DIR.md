@@ -3,7 +3,7 @@
 
 > _Purpose not documented. Add a `//!` module doc or describe it in Notes below._
 
-**7 files · 2624 lines · 0 symbols**
+**7 files · 2595 lines · 0 symbols**
 
 ## Subdirectories
 
@@ -16,13 +16,13 @@
 
 | File | Lines | Purpose |
 |---|---:|---|
-| `AGENTS.md` | 102 | markdown |
+| `AGENTS.md` | 25 | markdown |
 | `CLAUDE.md` | 13 | markdown |
-| `Cargo.lock` | 2250 | text |
+| `Cargo.lock` | 2294 | text |
 | `Cargo.toml` | 13 | toml |
 | `LICENSE` | 21 | text |
-| `README.md` | 101 | markdown |
-| `README.ru.md` | 124 | markdown |
+| `README.md` | 102 | markdown |
+| `README.ru.md` | 127 | markdown |
 <!-- gitnext:auto:end -->
 
 ## Notes

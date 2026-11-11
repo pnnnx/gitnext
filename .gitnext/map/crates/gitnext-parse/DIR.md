@@ -3,7 +3,7 @@
 
 > Language-agnostic code model plus per-language extractors built on tree-sitter.
 
-**1 files · 13 lines · 0 symbols**
+**1 files · 17 lines · 0 symbols**
 
 ## Subdirectories
 
@@ -14,7 +14,7 @@
 
 | File | Lines | Purpose |
 |---|---:|---|
-| `Cargo.toml` | 13 | toml |
+| `Cargo.toml` | 17 | toml |
 <!-- gitnext:auto:end -->
 
 ## Notes

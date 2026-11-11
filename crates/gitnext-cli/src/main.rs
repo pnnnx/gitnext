@@ -130,10 +130,13 @@ enum Cmd {
     Hierarchy { symbol: String },
     /// What a directory depends on and what depends on it
     Deps { dir: Option<String> },
-    /// Pack the code relevant to a task into a token budget (for agents)
+    /// The code a task is about, in one block — for agents that do not call tools
+    /// (small local models): run it before the request and add the output to the
+    /// prompt. Task text from the arguments or stdin; prints nothing when nothing matches.
     Context {
         query: Vec<String>,
-        #[arg(short, long, default_value_t = 6000)]
+        /// size of the block in tokens
+        #[arg(short, long, visible_alias = "budget", default_value_t = gitnext_ops::context::DEFAULT_BUDGET)]
         tokens: usize,
     },
     /// Edit one symbol without reading its file: replace, insert after, delete
@@ -148,6 +151,9 @@ enum Cmd {
         /// Only report what would change
         #[arg(long)]
         dry_run: bool,
+        /// Also rename the old name where it is only text: comments, strings, docs
+        #[arg(long)]
+        text: bool,
     },
     #[command(flatten)]
     More(cmds::More),
@@ -518,15 +524,20 @@ fn run() -> Result<()> {
         Cmd::Context { query, tokens } => {
             let ws = Workspace::open(&cwd)?;
             let g = ws.graph()?;
-            let q = query.join(" ");
+            let mut q = query.join(" ");
             if q.trim().is_empty() {
-                bail!("describe the task, e.g. `gitnext context \"fix lexer error handling\"`");
+                use std::io::{IsTerminal as _, Read as _};
+                if !std::io::stdin().is_terminal() {
+                    let _ = std::io::stdin().read_to_string(&mut q);
+                }
             }
-            let pack = gitnext_ops::context(&ws, &g, &q, tokens);
+            if q.trim().is_empty() {
+                bail!("describe the task, e.g. `gitnext context \"fix lexer error handling\"` (or pipe it in)");
+            }
             if out.json {
-                return out.json(&pack);
+                return out.json(&gitnext_ops::context(&ws, &g, &q, tokens));
             }
-            print!("{}", gitnext_ops::render_context_md(&pack));
+            print!("{}", gitnext_ops::context::context(&ws, &g, &q, tokens));
         }
         Cmd::Mcp { install, profile } => {
             let ws = Workspace::open(&cwd)?;
@@ -544,11 +555,14 @@ fn run() -> Result<()> {
             let ws = Workspace::open(&cwd)?;
             cmds::edit(&ws, op, out.json)?;
         }
-        Cmd::Rename { symbol, new_name, dry_run } => {
+        Cmd::Rename { symbol, new_name, dry_run, text } => {
             let ws = Workspace::open(&cwd)?;
             let g = ws.graph()?;
             let i = one(&g, &symbol)?;
-            let r = gitnext_ops::edit::rename(&ws.root, &g, i, &new_name, dry_run)?;
+            let mut r = gitnext_ops::edit::rename(&ws.root, &g, i, &new_name, dry_run)?;
+            if text {
+                gitnext_ops::edit::rename_leftover_text(&ws.root, &mut r)?;
+            }
             if out.json {
                 return out.json(&r);
             }

@@ -8,8 +8,10 @@
 
 Modes (each task runs in every mode, interleaved, in a fresh temp copy):
   off  plain loca
-  map  `gitnext init` + `gitnext setup loca`: compact code map in AGENTS.md, no tools
-       (what `setup loca` does by default)
+  map  `gitnext init` + the compact code map in AGENTS.md only (no hook, no tools)
+  ctx  map + loca's before_prompt hook runs `gitnext context` on each request: the code
+       the task is about is in the prompt before the first step (what `setup loca` does;
+       needs loca with the hook, integrations/loca/before_prompt.patch)
   mcp  map + `gitnext setup loca --tools`: gitnext MCP server (lite profile: look,
        replace, add_after) and the LOCA.md instruction block
   mcp-core  as mcp, and look/replace are always in the model's tool list
@@ -109,8 +111,13 @@ def prepare(mode: str, root: Path) -> None:
         return
     env = {**os.environ, "GITNEXT_NO_OVERVIEW": "1"}
     subprocess.run(["gitnext", "init"], cwd=root, env=env, check=True, capture_output=True)
-    if mode == "map":
+    if mode in ("map", "ctx"):
         subprocess.run(["gitnext", "setup", "loca"], cwd=root, env=env, check=True, capture_output=True)
+    if mode == "map":
+        cfg_path = root / ".loca" / "config.json"
+        cfg = json.loads(cfg_path.read_text())
+        cfg.get("hooks", {}).pop("before_prompt", None)
+        cfg_path.write_text(json.dumps(cfg, ensure_ascii=False, indent=2))
     if mode in ("mcp", "mcp-core"):
         subprocess.run(["gitnext", "setup", "loca", "--tools"], cwd=root, env=env, check=True, capture_output=True)
     if mode == "mcp-core":
@@ -158,7 +165,7 @@ def summarize(rows: list[dict], modes: list[str]) -> str:
         gx = sum(gitnext_calls(r) for r in rs)
         out.append(f"{m:5} passed {passed}/{len(rs)} · tokens in {tin} / out {tout} · "
                    f"median steps {steps} · time {sum(r['seconds'] for r in rs):.0f}s"
-                   + (f" · gitnext tool calls {gx}" if m == "mcp" else ""))
+                   + (f" · gitnext tool calls {gx}" if m.startswith("mcp") else ""))
     return "\n".join(out)
 
 

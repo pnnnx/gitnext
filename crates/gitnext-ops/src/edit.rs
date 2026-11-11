@@ -146,8 +146,61 @@ pub struct RenameReport {
     /// Lines that still contain the old name as a word after the rename (strings,
     /// comments, dynamic access): to check by hand.
     pub leftover: Vec<String>,
+    /// `--text`: leftover lines that were rewritten too.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub text_changed: Vec<String>,
     pub files: usize,
     pub dry_run: bool,
+}
+
+/// `rename --text`: also rewrite the old name where it is only text (comments,
+/// strings, docs) — on the lines the rename reported as leftover. Whole words only.
+pub fn rename_leftover_text(root: &Path, r: &mut RenameReport) -> Result<()> {
+    let old = r.old.rsplit("::").next().unwrap_or(&r.old).rsplit('.').next().unwrap_or(&r.old).to_string();
+    let new = r.new.rsplit("::").next().unwrap_or(&r.new).to_string();
+    let mut by_file: std::collections::BTreeMap<String, Vec<usize>> = Default::default();
+    for x in &r.leftover {
+        let mut it = x.splitn(3, ':');
+        if let (Some(f), Some(Ok(l))) = (it.next(), it.next().map(str::parse::<usize>)) {
+            by_file.entry(f.to_string()).or_default().push(l);
+        }
+    }
+    let word = |c: Option<char>| c.is_some_and(|c| c.is_alphanumeric() || c == '_');
+    let mut done = Vec::new();
+    for (f, lines) in by_file {
+        let path = root.join(&f);
+        let text = std::fs::read_to_string(&path)?;
+        let mut out: Vec<String> = text.split('\n').map(str::to_string).collect();
+        for l in lines {
+            let Some(line) = out.get_mut(l - 1) else { continue };
+            let mut res = String::with_capacity(line.len());
+            let mut rest = line.as_str();
+            let mut changed = false;
+            while let Some(k) = rest.find(&old) {
+                let before = if k > 0 { rest[..k].chars().next_back() } else { res.chars().next_back() };
+                let after = rest[k + old.len()..].chars().next();
+                res.push_str(&rest[..k]);
+                if !word(before) && !word(after) {
+                    res.push_str(&new);
+                    changed = true;
+                } else {
+                    res.push_str(&old);
+                }
+                rest = &rest[k + old.len()..];
+            }
+            res.push_str(rest);
+            if changed {
+                *line = res;
+                done.push(format!("{f}:{l}"));
+            }
+        }
+        if !r.dry_run {
+            std::fs::write(&path, out.join("\n"))?;
+        }
+    }
+    r.leftover.retain(|x| !done.iter().any(|d| x.starts_with(&format!("{d}:"))));
+    r.text_changed = done;
+    Ok(())
 }
 
 fn is_ident(c: u8) -> bool {
@@ -328,6 +381,9 @@ pub fn render_rename(r: &RenameReport) -> String {
     if !r.changed.is_empty() {
         s.push_str(&r.changed.join(", "));
         s.push('\n');
+    }
+    if !r.text_changed.is_empty() {
+        s.push_str(&format!("also as text ({}): {}\n", r.text_changed.len(), r.text_changed.join(", ")));
     }
     if !r.leftover.is_empty() {
         s.push_str(&format!("the old name still appears as text ({}) — strings, comments or dynamic access; change by hand if they mean this symbol:\n", r.leftover.len()));

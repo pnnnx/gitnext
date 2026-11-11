@@ -13,7 +13,7 @@
 
 <p align="center"><img src="docs/images/tui-symbol.svg" width="900" alt="gitnext TUI: files, symbols and a function with its inputs, output, callers and code"></p>
 
-gitnext is a drop-in companion to git (`gitnext` = `git` + a code index). It parses Rust, Python, C and C++ into functions, types and the calls between them, and puts that graph to work:
+gitnext is a drop-in companion to git (`gitnext` = `git` + a code index). It parses Rust, Python, C, C++, TypeScript, JavaScript, Go and Java into functions, types and the calls between them, knows which libraries each function calls (with the versions from `package.json`, `go.mod`, `pom.xml`, `Cargo.toml`, `pyproject.toml`), and puts that graph to work:
 
 - **agents** read one function instead of a whole file, see who calls it and which tests cover it in **one call**, and rename or edit by symbol;
 - **people** browse code as a map, see changes as "function X changed" instead of line noise, stage a single function and undo a commit without fear.
@@ -56,6 +56,7 @@ gitnext             # open the TUI
 | what breaks, which tests to run | `gitnext impact <Sym>` · `gitnext tests-for <Sym>` |
 | error or traceback → code | `gitnext locate` (stdin) / `locate` |
 | where were we | `gitnext brief` · `gitnext journal` |
+| which libraries the code calls, with versions | `gitnext libs` (and `look` shows them per function) |
 
 `gitnext setup` writes the MCP config and a short instruction block for each agent; `--hooks` makes Claude Code see an outline before reading a big file whole.
 
@@ -83,7 +84,7 @@ In the TUI: `s` changes, `space` stages a file or one function, `enter` shows be
 
 | Folder | What it does |
 |---|---|
-| `crates/gitnext-parse` | tree-sitter parsers: Rust, Python, C, C++ → symbols (kind, signature, inputs, output, docs) and references |
+| `crates/gitnext-parse` | tree-sitter parsers → symbols (kind, signature, inputs, output, docs) and references. Rust, Python, C, C++ have their own extractors; TypeScript, JavaScript, Go and Java go through one table-driven engine (`generic.rs` + a table per language in `specs.rs`) |
 | `crates/gitnext-index` | incremental SQLite index, code graph (callers, impact, inheritance, layers), semantic diff |
 | `crates/gitnext-core` | git plumbing on libgit2: status, commit, stage by line range, undo, branches, reflog |
 | `crates/gitnext-docs` | the map: `.gitnext/map/**/DIR.md` and the block in `AGENTS.md` |

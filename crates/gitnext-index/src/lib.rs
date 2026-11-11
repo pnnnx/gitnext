@@ -4,10 +4,12 @@
 //! [`Index::graph`] loads everything into a [`Graph`] for cross-reference queries.
 
 mod graph;
+pub mod libs;
 pub mod notes;
 pub mod semdiff;
 
-pub use graph::{Callees, DirDeps, Graph, Hierarchy, ImpactNode, SymRef};
+pub use graph::{flatten_use, Callees, DirDeps, Graph, Hierarchy, ImpactNode, SymRef};
+pub use libs::{Dep, LibUse};
 
 use anyhow::{Context, Result};
 use gitnext_parse::{analyze_in, find_crate, file_type_label, hash_hex, lang_for, Edge, EdgeKind, FileAnalysis, Kind, Param, Symbol};
@@ -216,7 +218,7 @@ impl Index {
         };
         let hints: HashMap<&str, gitnext_parse::CrateHint> = found
             .iter()
-            .filter(|f| matches!(lang_for(Path::new(&f.0)), Some(gitnext_parse::Lang::Rust | gitnext_parse::Lang::Python)))
+            .filter(|f| lang_for(Path::new(&f.0)).is_some_and(|l| !l.is_c_family()))
             .filter_map(|f| find_crate(&f.0, &mut read).map(|h| (f.0.as_str(), h)))
             .collect();
 

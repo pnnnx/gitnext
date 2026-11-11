@@ -1,0 +1,52 @@
+symbols:
+L1-19 module com::acme::app [pub]
+    sig: module java/Store.java
+L8-16 class com::acme::app::Store [pub]
+    sig: public class Store extends Base implements Saver
+    parent: com::acme::app
+    in: items: List<Task>
+    doc: Keeps tasks.
+L11-11 method com::acme::app::Store::Store [pub]
+    sig: public Store(String path)
+    parent: com::acme::app::Store
+    in: path: String
+    doc: Make one.
+L12-13 method com::acme::app::Store::save [pub]
+    sig: @Override public int save(boolean force) throws IOException
+    parent: com::acme::app::Store
+    in: force: boolean
+    out: int
+L14-14 trait com::acme::app::Store::Inner
+    sig: interface Inner
+    parent: com::acme::app::Store
+L14-14 method com::acme::app::Store::Inner::run (decl)
+    sig: void run();
+    parent: com::acme::app::Store::Inner
+L15-15 enum com::acme::app::Store::Color
+    sig: enum Color
+    parent: com::acme::app::Store
+    in: RED, GREEN
+L17-17 class com::acme::app::Point
+    sig: record Point(int x, int y)
+    parent: com::acme::app
+    in: x: int, y: int
+L18-18 class com::acme::app::StoreTest (test)
+    sig: class StoreTest
+    parent: com::acme::app
+L18-18 method com::acme::app::StoreTest::saves (test)
+    sig: @Test void saves()
+    parent: com::acme::app::StoreTest
+edges:
+  L3 imports com::acme::app -> java::util::List
+  L4 imports com::acme::app -> org::springframework::web::bind::annotation::GetMapping
+  L5 imports com::acme::app -> org::junit::Assert::assertTrue
+  L8 implements com::acme::app::Store -> Saver
+  L8 inherits com::acme::app::Store -> Base
+  L9 uses com::acme::app::Store -> Task
+  L13 calls com::acme::app::Store::save -> .size
+  L13 calls com::acme::app::Store::save -> Self::flush
+  L13 calls com::acme::app::Store::save -> Self::helper
+  L13 calls com::acme::app::Store::save -> Util::fmt
+  L18 calls com::acme::app::StoreTest::saves -> .save
+  L18 calls com::acme::app::StoreTest::saves -> Store
+  L18 calls com::acme::app::StoreTest::saves -> org::junit::Assert::assertTrue

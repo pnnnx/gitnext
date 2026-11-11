@@ -121,6 +121,9 @@ fn symbol(ws: &Workspace, g: &Graph, ids: &[usize], lite: bool) -> String {
             let list: Vec<String> = c.resolved.iter().take(12).map(|(t, _)| g.short_name(*t).to_string()).collect();
             let _ = writeln!(s, "calls: {}{}", list.join(", "), if c.resolved.len() > 12 { format!(" +{}", c.resolved.len() - 12) } else { String::new() });
         }
+        if let Some(l) = crate::libs::describe(root, g, ids[0]) {
+            let _ = writeln!(s, "libraries: {l}");
+        }
     }
     if r.sym.kind.is_type() {
         let h = g.hierarchy(ids[0]);

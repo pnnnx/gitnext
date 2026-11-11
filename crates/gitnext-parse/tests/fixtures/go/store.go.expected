@@ -1,0 +1,51 @@
+module doc: Package store keeps tasks.
+symbols:
+L1-37 module go [pub]
+    sig: module go/store.go
+    doc: Package store keeps tasks.
+L12-15 struct go::Store [pub]
+    sig: Store struct
+    parent: go
+    in: items: []model.Task, path: string
+L18-20 trait go::Saver [pub]
+    sig: Saver interface
+    parent: go
+L19-19 method go::Saver::Save [pub] (decl)
+    sig: Save(force bool) error
+    parent: go::Saver
+    in: force: bool
+    out: error
+L22-22 type go::ID [pub]
+    sig: ID = string
+    parent: go
+L25-25 function go::New [pub]
+    sig: func New(path string) *Store
+    parent: go
+    in: path: string
+    out: *Store
+    doc: New makes a store.
+L28-34 method go::Store::Save [pub]
+    sig: func (s *Store) Save(force bool) (int, error)
+    parent: go::Store
+    in: force: bool
+    out: (int, error)
+    doc: Save writes all tasks.
+L36-36 function go::TestSave [pub] (test)
+    sig: func TestSave(t *testing.T)
+    parent: go
+    in: t: *testing.T
+edges:
+  L5 imports go -> fmt
+  L6 imports go -> strings
+  L7 imports go -> github.com/acme/app/internal/model
+  L8 imports go -> github.com/gin-gonic/gin
+  L13 uses go::Store -> github.com/acme/app/internal/model::Task
+  L25 uses go::New -> Store
+  L29 calls go::Store::Save -> Self::flush
+  L30 calls go::Store::Save -> fmt::Println
+  L30 calls go::Store::Save -> strings::ToUpper
+  L31 calls go::Store::Save -> github.com/gin-gonic/gin::Default
+  L33 calls go::Store::Save -> len
+  L36 calls go::TestSave -> .Save
+  L36 calls go::TestSave -> New
+  L36 uses go::TestSave -> testing::T

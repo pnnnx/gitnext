@@ -1,0 +1,14 @@
+diff --git a/bench/run.py b/bench/run.py
+index 55fd159..2f036a0 100644
+--- a/bench/run.py
++++ b/bench/run.py
+@@ -117,7 +117,8 @@ def run_task(task: dict, args) -> dict:
+     try:
+         materialize(task, workspace)
+         before = snapshot(workspace)
+-        stats_path = workspace / ".loca_stats.json"
++        # outside the workspace: an agent grepping the project must not find its own trace
++        stats_path = loca_home / "stats.json"
+         env = {**os.environ, "PYTHONPATH": str(REPO) + os.pathsep + os.environ.get("PYTHONPATH", ""),
+                "LOCA_HOME": str(loca_home)}
+         scale = float(getattr(args, "time_scale", 1.0) or 1.0)

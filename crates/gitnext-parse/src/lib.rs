@@ -4,14 +4,18 @@
 //! types, classes, traits…) with their signatures, inputs, outputs and docs, and
 //! the edges leaving it (calls, imports, implementations, inheritance, type uses).
 //!
-//! Languages: Rust, Python, C and C++ (C is parsed with the C++ grammar).
+//! Languages: Rust, Python, C and C++ (hand-written extractors; C is parsed with
+//! the C++ grammar) and, through one table-driven engine (`generic`, `specs`),
+//! TypeScript, JavaScript, Go and Java.
 
 /// Bump when extractor output changes; the index re-parses everything on mismatch.
-pub const PARSER_VERSION: u32 = 16;
+pub const PARSER_VERSION: u32 = 20;
 
 mod cfamily;
+mod generic;
 mod python;
 mod rust;
+mod specs;
 
 use serde::{Deserialize, Serialize};
 use std::path::Path;
@@ -250,9 +254,9 @@ pub(crate) fn local_bindings(func: tree_sitter::Node, src: &[u8]) -> std::collec
     out
 }
 
-fn pattern_idents(n: tree_sitter::Node, src: &[u8], out: &mut std::collections::HashSet<String>) {
+pub(crate) fn pattern_idents(n: tree_sitter::Node, src: &[u8], out: &mut std::collections::HashSet<String>) {
     match n.kind() {
-        "identifier" | "shorthand_field_identifier" => {
+        "identifier" | "shorthand_field_identifier" | "shorthand_property_identifier_pattern" => {
             if let Ok(t) = n.utf8_text(src) {
                 out.insert(t.to_string());
             }
@@ -282,7 +286,7 @@ pub(crate) fn name_pos(n: tree_sitter::Node) -> (u32, u32) {
         if let Some(f) = n.child_by_field_name("function").or_else(|| n.child_by_field_name("name")).filter(|_| matches!(n.kind(), "generic_function" | "template_function" | "template_type")) {
             return last_ident(f);
         }
-        for field in ["name", "field", "attribute"] {
+        for field in ["name", "field", "attribute", "property"] {
             if let Some(c) = n.child_by_field_name(field) {
                 if let Some(x) = last_ident(c) {
                     return Some(x);
@@ -311,6 +315,11 @@ pub enum Lang {
     Python,
     C,
     Cpp,
+    TypeScript,
+    Tsx,
+    JavaScript,
+    Go,
+    Java,
 }
 
 impl Lang {
@@ -320,6 +329,38 @@ impl Lang {
             Lang::Python => "python",
             Lang::C => "c",
             Lang::Cpp => "cpp",
+            Lang::TypeScript => "typescript",
+            Lang::Tsx => "tsx",
+            Lang::JavaScript => "javascript",
+            Lang::Go => "go",
+            Lang::Java => "java",
+        }
+    }
+
+    /// Languages whose code can call each other by name (C with C++, TS with JS).
+    pub fn family(self) -> &'static str {
+        match self {
+            Lang::C | Lang::Cpp => "c",
+            Lang::TypeScript | Lang::Tsx | Lang::JavaScript => "js",
+            other => other.as_str(),
+        }
+    }
+
+    /// Extracted by the table-driven engine (module paths come from files, not crates).
+    pub fn is_generic(self) -> bool {
+        matches!(self, Lang::TypeScript | Lang::Tsx | Lang::JavaScript | Lang::Go | Lang::Java)
+    }
+
+    fn grammar(self) -> tree_sitter::Language {
+        match self {
+            Lang::Rust => tree_sitter_rust::LANGUAGE.into(),
+            Lang::Python => tree_sitter_python::LANGUAGE.into(),
+            Lang::C | Lang::Cpp => tree_sitter_cpp::LANGUAGE.into(),
+            Lang::TypeScript => tree_sitter_typescript::LANGUAGE_TYPESCRIPT.into(),
+            Lang::Tsx => tree_sitter_typescript::LANGUAGE_TSX.into(),
+            Lang::JavaScript => tree_sitter_javascript::LANGUAGE.into(),
+            Lang::Go => tree_sitter_go::LANGUAGE.into(),
+            Lang::Java => tree_sitter_java::LANGUAGE.into(),
         }
     }
 
@@ -335,13 +376,28 @@ impl Lang {
 
 /// Language with a semantic parser for this path, if any.
 pub fn lang_for(path: &Path) -> Option<Lang> {
+    let file = path.file_name()?.to_str()?;
+    // bundles and minified files are build output, not code anyone edits
+    if file.ends_with(".min.js") || file.ends_with(".bundle.js") || file.ends_with(".min.mjs") {
+        return None;
+    }
     match path.extension()?.to_str()? {
+        "ts" | "mts" | "cts" => Some(Lang::TypeScript),
+        "tsx" => Some(Lang::Tsx),
+        "js" | "jsx" | "mjs" | "cjs" => Some(Lang::JavaScript),
+        "go" => Some(Lang::Go),
+        "java" => Some(Lang::Java),
         "rs" => Some(Lang::Rust),
         "py" | "pyi" => Some(Lang::Python),
         "c" | "h" => Some(Lang::C),
         "cpp" | "cc" | "cxx" | "c++" | "hpp" | "hh" | "hxx" | "h++" | "ipp" | "tpp" | "inl" => Some(Lang::Cpp),
         _ => None,
     }
+}
+
+/// Language family of a repo-relative path (see [`Lang::family`]).
+pub fn family_of(path: &str) -> Option<&'static str> {
+    lang_for(Path::new(path)).map(Lang::family)
 }
 
 /// Whether a repo-relative path is C or C++ source.
@@ -361,6 +417,10 @@ pub fn is_test_path(path: &str) -> bool {
         || stem.ends_with("_test")
         || stem.ends_with("_tests")
         || stem == "conftest"
+        || file.contains(".test.")
+        || file.contains(".spec.")
+        || path.contains("__tests__/")
+        || path.contains("src/test/")
 }
 
 /// Human label for any file type (used in listings, even without a parser).
@@ -368,8 +428,8 @@ pub fn file_type_label(path: &Path) -> &'static str {
     match path.extension().and_then(|e| e.to_str()).unwrap_or("") {
         "rs" => "rust",
         "py" => "python",
-        "ts" | "tsx" => "typescript",
-        "js" | "jsx" | "mjs" => "javascript",
+        "ts" | "tsx" | "mts" | "cts" => "typescript",
+        "js" | "jsx" | "mjs" | "cjs" => "javascript",
         "go" => "go",
         "java" => "java",
         "c" | "h" => "c",
@@ -407,6 +467,11 @@ pub fn analyze_in(rel: &Path, src: &str, krate: Option<&CrateHint>) -> anyhow::R
         Some(Lang::Rust) => rust::analyze(rel, src, krate).map(Some),
         Some(Lang::Python) => python::analyze(rel, src, krate).map(Some),
         Some(Lang::C | Lang::Cpp) => cfamily::analyze(rel, src).map(Some),
+        Some(Lang::TypeScript) => generic::analyze(&specs::TYPESCRIPT, rel, src, krate).map(Some),
+        Some(Lang::Tsx) => generic::analyze(&specs::TSX, rel, src, krate).map(Some),
+        Some(Lang::JavaScript) => generic::analyze(&specs::JAVASCRIPT, rel, src, krate).map(Some),
+        Some(Lang::Go) => generic::analyze(&specs::GO, rel, src, krate).map(Some),
+        Some(Lang::Java) => generic::analyze(&specs::JAVA, rel, src, krate).map(Some),
         None => Ok(None),
     }
 }
@@ -417,6 +482,15 @@ pub fn find_crate(rel: &str, read: &mut dyn FnMut(&str) -> Option<String>) -> Op
     if rel.ends_with(".py") || rel.ends_with(".pyi") {
         return find_python_root(rel, read);
     }
+    if rel.ends_with(".go") {
+        return find_go_module(rel, read);
+    }
+    if lang_for(Path::new(rel)).is_some_and(|l| l.family() == "js") {
+        return find_js_package(rel, read);
+    }
+    if lang_for(Path::new(rel)).is_some_and(Lang::is_generic) {
+        return None;
+    }
     let mut dir = rel.rsplit_once('/').map(|(d, _)| d).unwrap_or("");
     loop {
         let manifest = if dir.is_empty() { "Cargo.toml".to_string() } else { format!("{dir}/Cargo.toml") };
@@ -425,6 +499,41 @@ pub fn find_crate(rel: &str, read: &mut dyn FnMut(&str) -> Option<String>) -> Op
                 let src_dir = cargo_src_dir(&toml, rel.strip_prefix(&format!("{dir}/")).unwrap_or(rel));
                 return Some(CrateHint { dir: dir.to_string(), name, src_dir });
             }
+        }
+        if dir.is_empty() {
+            return None;
+        }
+        dir = dir.rsplit_once('/').map(|(d, _)| d).unwrap_or("");
+    }
+}
+
+/// JS/TS: the nearest `package.json` with a name — imports of that name are this repo's code.
+fn find_js_package(rel: &str, read: &mut dyn FnMut(&str) -> Option<String>) -> Option<CrateHint> {
+    let mut dir = rel.rsplit_once('/').map(|(d, _)| d).unwrap_or("");
+    loop {
+        let manifest = if dir.is_empty() { "package.json".to_string() } else { format!("{dir}/package.json") };
+        if let Some(m) = read(&manifest) {
+            // "name": "…" — the first one is the package's own (no JSON parser needed for this)
+            let name = m.split("\"name\"").nth(1).and_then(|r| r.split('"').nth(1)).map(str::to_string);
+            if let Some(name) = name.filter(|n| !n.is_empty()) {
+                return Some(CrateHint { dir: dir.to_string(), name, src_dir: String::new() });
+            }
+        }
+        if dir.is_empty() {
+            return None;
+        }
+        dir = dir.rsplit_once('/').map(|(d, _)| d).unwrap_or("");
+    }
+}
+
+/// Go: the nearest `go.mod`; `name` is its module path (imports start with it).
+fn find_go_module(rel: &str, read: &mut dyn FnMut(&str) -> Option<String>) -> Option<CrateHint> {
+    let mut dir = rel.rsplit_once('/').map(|(d, _)| d).unwrap_or("");
+    loop {
+        let manifest = if dir.is_empty() { "go.mod".to_string() } else { format!("{dir}/go.mod") };
+        if let Some(m) = read(&manifest) {
+            let name = m.lines().find_map(|l| l.trim().strip_prefix("module ")).map(|s| s.trim().trim_matches('"').to_string())?;
+            return Some(CrateHint { dir: dir.to_string(), name, src_dir: String::new() });
         }
         if dir.is_empty() {
             return None;
@@ -494,11 +603,7 @@ pub fn cargo_package_name(toml: &str) -> Option<String> {
 pub fn syntax_errors(rel: &Path, src: &str) -> Vec<(u32, u32)> {
     let Some(lang) = lang_for(rel) else { return vec![] };
     let mut parser = tree_sitter::Parser::new();
-    let language: tree_sitter::Language = match lang {
-        Lang::Rust => tree_sitter_rust::LANGUAGE.into(),
-        Lang::Python => tree_sitter_python::LANGUAGE.into(),
-        Lang::C | Lang::Cpp => tree_sitter_cpp::LANGUAGE.into(),
-    };
+    let language = lang.grammar();
     if parser.set_language(&language).is_err() {
         return vec![];
     }

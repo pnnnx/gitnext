@@ -1,0 +1,20 @@
+symbols:
+L1-14 module js::app [pub]
+    sig: module js/app.jsx
+L6-9 function js::app::Header [pub]
+    sig: function Header({ title, onClose })
+    parent: js::app
+    in: onClose, title
+    doc: Render the header.
+edges:
+  L1 calls js::app -> require
+  L1 imports js::app -> express
+  L2 calls js::app -> require
+  L2 imports js::app -> fs/promises
+  L3 imports js::app -> js::ui::button
+  L7 calls js::app::Header -> useState
+  L8 calls js::app::Header -> js::ui::button::Button
+  L11 calls js::app -> express
+  L12 calls js::app -> .get
+  L12 calls js::app -> .send
+  L12 calls js::app -> fs/promises::readFile

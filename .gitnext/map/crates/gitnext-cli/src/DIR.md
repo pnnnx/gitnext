@@ -3,15 +3,15 @@
 
 > `gitnext` — a git built for AI agents: semantic code map, symbol graph, semantic diffs and a minimal TUI, on top of a 100% git-compatible repo.
 
-**3 files · 1861 lines · 46 symbols · 2 tests**
+**3 files · 1886 lines · 46 symbols · 2 tests**
 
 ## Files
 
 | File | Lines | Purpose |
 |---|---:|---|
-| `cmds.rs` | 488 | Extra commands (edits, history, insight, explain, LSP, bench…), kept out of main.rs. |
-| `main.rs` | 802 | `gitnext` — a git built for AI agents: semantic code map, symbol graph, semantic diffs and a minimal TUI, on top of a 100% git-compatible repo. |
-| `mcp.rs` | 571 | MCP server over stdio (JSON-RPC 2.0, one message per line). |
+| `cmds.rs` | 494 | Extra commands (edits, history, insight, explain, LSP, bench…), kept out of main.rs. |
+| `main.rs` | 816 | `gitnext` — a git built for AI agents: semantic code map, symbol graph, semantic diffs and a minimal TUI, on top of a 100% git-compatible repo. |
+| `mcp.rs` | 576 | MCP server over stdio (JSON-RPC 2.0, one message per line). |
 
 ## API
 
@@ -49,7 +49,7 @@
 
 ## Dependencies
 
-- **Depends on:** `crates/gitnext-ops/src` (242), `crates/gitnext-index/src` (86), `crates/gitnext-parse/src` (46), `crates/gitnext-core/src` (11), `crates/gitnext-tui/src` (5), `crates/gitnext-docs/src` (4)
+- **Depends on:** `crates/gitnext-ops/src` (245), `crates/gitnext-index/src` (87), `crates/gitnext-parse/src` (47), `crates/gitnext-core/src` (11), `crates/gitnext-tui/src` (5), `crates/gitnext-docs/src` (4)
 <!-- gitnext:auto:end -->
 
 ## Notes

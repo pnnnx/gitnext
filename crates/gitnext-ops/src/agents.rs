@@ -131,6 +131,26 @@ fn merge_server(path: &Path, key: &str, server: Value) -> Result<bool> {
     save_json(path, &cfg)
 }
 
+/// loca's `before_prompt` hook: `gitnext context` adds the code a task is about
+/// to each request (small models rarely call tools; they read what is in the prompt).
+fn merge_loca_context(path: &Path, cmd: &str) -> Result<bool> {
+    let mut cfg = load_json(path);
+    if !cfg.get("hooks").is_some_and(Value::is_object) {
+        cfg["hooks"] = json!({});
+    }
+    let want = format!("{cmd} context");
+    let mut list: Vec<Value> = match &cfg["hooks"]["before_prompt"] {
+        Value::Array(v) => v.clone(),
+        Value::String(s) => vec![Value::String(s.clone())],
+        _ => vec![],
+    };
+    // replace an older gitnext entry (other command path / flags), keep the user's own
+    list.retain(|v| !v.as_str().is_some_and(|s| s.contains("gitnext") && s.contains(" context")));
+    list.push(Value::String(want));
+    cfg["hooks"]["before_prompt"] = Value::Array(list);
+    save_json(path, &cfg)
+}
+
 /// Agents `setup` can configure.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Agent {
@@ -249,8 +269,10 @@ pub fn setup(root: &Path, o: &SetupOpts) -> Result<SetupReport> {
                     let c = splice(&root.join("LOCA.md"), &instructions_lite())?;
                     track("LOCA.md", c, &mut r);
                 } else {
-                    r.manual.push("loca: the code map goes into AGENTS.md (loca reads it into the prompt). MCP tools not added — small models use loca's own repo_map/read_symbol instead; add them with `gitnext setup loca --tools`".into());
+                    r.manual.push("loca: before each request `gitnext context` adds the code the task is about (hook before_prompt, needs a loca with that hook) and the code map goes into AGENTS.md. MCP tools are not added — small models rarely call them; add with `gitnext setup loca --tools`".into());
                 }
+                let c = merge_loca_context(&root.join(".loca/config.json"), cmd)?;
+                track(".loca/config.json", c, &mut r);
                 // loca also reads AGENTS.md into a small context: keep gitnext's block there short
                 let c = gitnext_docs::set_config_value(root, "agents_md", "compact")?;
                 track(".gitnext/config", c, &mut r);
@@ -298,7 +320,7 @@ pub fn render_setup(r: &SetupReport) -> String {
     for m in &r.manual {
         let _ = writeln!(s, "→ {m}");
     }
-    let mcp = r.configured.iter().flat_map(|(_, f)| f).any(|f| f.ends_with("mcp.json") || f == ".loca/config.json");
+    let mcp = r.configured.iter().flat_map(|(_, f)| f).any(|f| f.ends_with("mcp.json") || f == "LOCA.md");
     if mcp {
         let _ = writeln!(s, "next: gitnext doctor · then restart the agent so it starts the gitnext MCP server");
     } else if !r.configured.is_empty() {
@@ -575,6 +597,15 @@ pub fn doctor(ws: &Workspace, version: &str) -> Vec<Check> {
     if loca_map && !loca.as_ref().is_some_and(|c| c["mcp_servers"]["gitnext"].is_object()) {
         any = true;
         v.push(check(Health::Ok, "loca: compact code map in AGENTS.md (no MCP tools; `gitnext setup loca --tools` adds them)", None));
+    }
+    if loca_map || loca.is_some() {
+        let hooked = loca.as_ref().and_then(|c| c["hooks"]["before_prompt"].as_array()).is_some_and(|v| v.iter().any(|x| x.as_str().is_some_and(|s| s.contains("gitnext") && s.contains(" context"))));
+        if hooked {
+            any = true;
+            v.push(check(Health::Ok, "loca: `gitnext context` adds the code for each request (hook before_prompt; needs a loca that has it)", None));
+        } else {
+            v.push(check(Health::Warn, "loca: no before_prompt hook — small models get only the map, not the code of the task", Some("gitnext setup loca")));
+        }
     }
     if let Some(cfg) = loca.as_ref().filter(|c| c["mcp_servers"]["gitnext"].is_object()) {
         any = true;

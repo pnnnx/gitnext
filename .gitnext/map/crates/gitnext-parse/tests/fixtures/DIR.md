@@ -9,8 +9,12 @@
 
 - [`c/`](c/DIR.md) — Growable byte buffer.
 - [`cpp/`](cpp/DIR.md) — Animals and an enclosure, to exercise C++ parsing.
+- [`go/`](go/DIR.md) — Package store keeps tasks.
+- [`java/`](java/DIR.md)
+- [`js/`](js/DIR.md)
 - [`python/`](python/DIR.md) — Task storage with pluggable backends.
 - [`rust/`](rust/DIR.md) — Geometry primitives used by the renderer.
+- [`ts/`](ts/DIR.md)
 <!-- gitnext:auto:end -->
 
 ## Notes

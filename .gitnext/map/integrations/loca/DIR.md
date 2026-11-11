@@ -3,13 +3,15 @@
 
 > Eval: does gitnext help a small local agent? Runs loca's own benchmark (bench/run.py) in several modes and compares pass rate, steps and tokens.
 
-**2 files · 263 lines · 8 symbols**
+**4 files · 405 lines · 8 symbols**
 
 ## Files
 
 | File | Lines | Purpose |
 |---|---:|---|
-| `bench_gitnext.py` | 249 | Eval: does gitnext help a small local agent? Runs loca's own benchmark (bench/run.py) in several modes and compares pass rate, steps and tokens. |
+| `before_prompt.patch` | 121 | text |
+| `bench_gitnext.py` | 256 | Eval: does gitnext help a small local agent? Runs loca's own benchmark (bench/run.py) in several modes and compares pass rate, steps and tokens. |
+| `bench_stats_outside.patch` | 14 | text |
 | `core_tools.patch` | 14 | text |
 
 ## API

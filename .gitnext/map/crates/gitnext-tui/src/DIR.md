@@ -3,15 +3,15 @@
 
 > Minimal interactive UI: file tree · symbols · detail, with search, staging, commit and semantic diff.
 
-**3 files · 2353 lines · 101 symbols · 4 tests**
+**3 files · 2385 lines · 104 symbols · 4 tests**
 
 ## Files
 
 | File | Lines | Purpose |
 |---|---:|---|
 | `git.rs` | 628 | The human side of git in the TUI: changes in words and functions, staging a single function, commit with a drafted message, side-by-side diffs, branch cards,… |
-| `lib.rs` | 1302 | Minimal interactive UI: file tree · symbols · detail, with search, staging, commit and semantic diff. |
-| `views.rs` | 423 | Detail views written for people: aligned columns instead of markdown tables, words and arrows instead of glyphs, inputs and outputs highlighted. |
+| `lib.rs` | 1321 | Minimal interactive UI: file tree · symbols · detail, with search, staging, commit and semantic diff. |
+| `views.rs` | 436 | Detail views written for people: aligned columns instead of markdown tables, words and arrows instead of glyphs, inputs and outputs highlighted. |
 
 ## API
 
@@ -51,7 +51,7 @@
 - `struct App<'w>`
   - fields: `ws: &'w Workspace`, `index: Index`, `g: Graph`, `last_refresh: Instant`, `link_sel: usize`, `history: Vec<usize>`, `detail_height: u16`, `detail_width: u16`, `agent_marks: HashMap<String, char>`, `status: Vec<StatusEntry>`, `changed: HashSet<String>`, `branch: String`, …
   - _private:_ `new`, `reload_status`, `reload_graph`, `rebuild_rows`, `selected_row`, `select_path`, `on_file_change`, `dir_changed`, `flash`, `error`, `event_loop`, `tick`, `on_key`, `key_normal`, `move_sel`, `go_in`, `goto_symbol`, `back`, `ref_index`, `go_out`, `key_search`, `search`, `jump`, `open_commit`, `key_commit`, `open_overview`, `open_journal`, `open_diff`, `draw`, `draw_top`, `draw_bottom`, `draw_files`, `draw_symbols`, `draw_detail`, `current_symbol`, `symbol_detail`, `file_detail`, `dir_detail`, `draw_search`, `draw_commit`
-- _internal:_ const `ACCENT`, const `DIM`, enum `Pane`, enum `Mode`, enum `Hit`, struct `Row`, struct `HlState`, const `KW_RUST`, const `KW_PY`, const `KW_C`, function `highlight`, function `style_page`, function `short_q`, function `draw_help`, function `pane_block`, function `hl`, function `popup`
+- _internal:_ const `ACCENT`, const `DIM`, enum `Pane`, enum `Mode`, enum `Hit`, struct `Row`, struct `HlState`, const `KW_RUST`, const `KW_PY`, const `KW_JS`, const `KW_GO`, const `KW_JAVA`, const `KW_C`, function `highlight`, function `style_page`, function `short_q`, function `draw_help`, function `pane_block`, function `hl`, function `popup`
 
 ### `views.rs`
 
@@ -69,7 +69,7 @@
 
 ## Dependencies
 
-- **Depends on:** `crates/gitnext-ops/src` (53), `crates/gitnext-parse/src` (46), `crates/gitnext-index/src` (44), `crates/gitnext-core/src` (23), `crates/gitnext-docs/src` (4)
+- **Depends on:** `crates/gitnext-ops/src` (55), `crates/gitnext-parse/src` (46), `crates/gitnext-index/src` (45), `crates/gitnext-core/src` (23), `crates/gitnext-docs/src` (4)
 - **Used by:** `crates/gitnext-cli/src` (5)
 <!-- gitnext:auto:end -->
 

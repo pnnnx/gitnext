@@ -74,3 +74,23 @@ fn impact_does_not_follow_unknown_receivers() {
     assert!(!sure.iter().any(|s| *s == "ask" || *s == "shell"), "{sure:?}");
     std::fs::remove_dir_all(&dir).ok();
 }
+
+#[test]
+fn rename_text_also_fixes_comments_and_strings_but_not_longer_words() {
+    let dir = project(
+        "rename-text",
+        &[
+            ("app/__init__.py", ""),
+            ("app/core.py", "# detect is used by run; detector is another thing\ndef detect(x):\n    return x\n\n\ndef run():\n    return detect(1), 'detect', 'detector'\n"),
+        ],
+    );
+    let g = graph(&dir);
+    let i = g.find("detect")[0];
+    let mut r = edit::rename(&dir, &g, i, "find", false).unwrap();
+    assert!(!r.leftover.is_empty());
+    edit::rename_leftover_text(&dir, &mut r).unwrap();
+    let text = std::fs::read_to_string(dir.join("app/core.py")).unwrap();
+    assert_eq!(text, "# find is used by run; detector is another thing\ndef find(x):\n    return x\n\n\ndef run():\n    return find(1), 'find', 'detector'\n");
+    assert!(r.leftover.is_empty(), "{:?}", r.leftover);
+    std::fs::remove_dir_all(&dir).ok();
+}

@@ -516,6 +516,10 @@ pub fn overview(repo: Option<&Repo>, g: &Graph, root: &Path) -> String {
             let _ = writeln!(s, "  {} {}{d}  {}", e.kind, e.name, e.location);
         }
     }
+    let libs = crate::libs::render_libraries(root, g, 10);
+    if !libs.starts_with("no external") {
+        let _ = writeln!(s, "\n{}", libs.trim_end());
+    }
     let ly = gitnext_docs::layers(g);
     if !ly.uses.is_empty() {
         let _ = writeln!(s, "\nlayers (each uses only the ones below it):");

@@ -958,6 +958,22 @@ struct HlState {
 
 const KW_RUST: &[&str] = &["fn", "let", "mut", "pub", "struct", "enum", "impl", "trait", "for", "in", "if", "else", "match", "return", "use", "mod", "self", "Self", "where", "as", "const", "static", "ref", "move", "async", "await", "loop", "while", "break", "continue", "type", "dyn", "crate", "super", "unsafe", "true", "false"];
 const KW_PY: &[&str] = &["def", "class", "return", "if", "elif", "else", "for", "while", "in", "import", "from", "as", "with", "try", "except", "finally", "raise", "pass", "yield", "lambda", "not", "and", "or", "is", "None", "True", "False", "self", "async", "await", "global", "nonlocal", "break", "continue", "assert", "del"];
+const KW_JS: &[&str] = &[
+    "abstract", "as", "async", "await", "break", "case", "catch", "class", "const", "continue", "default", "delete", "do", "else", "enum",
+    "export", "extends", "false", "finally", "for", "from", "function", "get", "if", "implements", "import", "in", "instanceof",
+    "interface", "let", "new", "null", "of", "private", "protected", "public", "readonly", "return", "set", "static", "super", "switch",
+    "this", "throw", "true", "try", "type", "typeof", "undefined", "var", "void", "while", "yield",
+];
+const KW_GO: &[&str] = &[
+    "break", "case", "chan", "const", "continue", "default", "defer", "else", "fallthrough", "for", "func", "go", "goto", "if", "import",
+    "interface", "map", "nil", "package", "range", "return", "select", "struct", "switch", "type", "var", "true", "false",
+];
+const KW_JAVA: &[&str] = &[
+    "abstract", "boolean", "break", "case", "catch", "class", "continue", "default", "do", "double", "else", "enum", "extends", "false",
+    "final", "finally", "float", "for", "if", "implements", "import", "instanceof", "int", "interface", "long", "new", "null", "package",
+    "private", "protected", "public", "record", "return", "static", "super", "switch", "this", "throw", "throws", "true", "try", "var",
+    "void", "while",
+];
 const KW_C: &[&str] = &["int", "char", "void", "return", "if", "else", "for", "while", "do", "switch", "case", "default", "break", "continue", "struct", "union", "enum", "typedef", "static", "const", "unsigned", "signed", "long", "short", "float", "double", "sizeof", "class", "public", "private", "protected", "virtual", "template", "typename", "namespace", "using", "new", "delete", "this", "auto", "bool", "true", "false", "nullptr", "override", "inline", "extern", "goto", "volatile", "explicit", "friend", "operator", "constexpr", "noexcept"];
 
 /// Tiny line highlighter: comments, strings, numbers, keywords, types, calls.
@@ -973,6 +989,9 @@ fn highlight(line: &str, lang: Option<Lang>, st: &mut HlState) -> Vec<Span<'stat
         Some(Lang::Rust) => KW_RUST,
         Some(Lang::Python) => KW_PY,
         Some(Lang::C | Lang::Cpp) => KW_C,
+        Some(Lang::TypeScript | Lang::Tsx | Lang::JavaScript) => KW_JS,
+        Some(Lang::Go) => KW_GO,
+        Some(Lang::Java) => KW_JAVA,
         None => &[],
     };
     let chars: Vec<char> = line.chars().collect();

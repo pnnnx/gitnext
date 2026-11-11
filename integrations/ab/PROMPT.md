@@ -23,13 +23,13 @@ bash integrations/ab/setup.sh                  # ~/Developer/ab/without и ~/Dev
 **Чат 2 — с gitnext.**
 1. Откройте `~/Library/Application Support/Claude/claude_desktop_config.json`
    (Claude → Settings → Developer → Edit Config) и добавьте сервер
-   (путь к gitnext — полный: приложение не видит PATH из терминала):
+   (путь к gitnext — полный, его покажет `which gitnext`: приложение не видит PATH из терминала):
    ```json
    {
      "mcpServers": {
        "gitnext": {
-         "command": "/Users/pnnnx/.cargo/bin/gitnext",
-         "args": ["-C", "/Users/pnnnx/Developer/ab/with", "mcp"]
+         "command": "/Users/ВАШ_ПОЛЬЗОВАТЕЛЬ/.cargo/bin/gitnext",
+         "args": ["-C", "/Users/ВАШ_ПОЛЬЗОВАТЕЛЬ/Developer/ab/with", "mcp"]
        }
      }
    }

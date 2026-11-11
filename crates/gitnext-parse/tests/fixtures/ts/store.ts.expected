@@ -1,0 +1,69 @@
+symbols:
+L1-20 module ts::store [pub]
+    sig: module ts/store.ts
+L6-12 class ts::store::Store [pub]
+    sig: class Store extends Base implements IStore
+    parent: ts::store
+    in: items: Task[]
+    doc: A store of tasks.
+L8-8 method ts::store::Store::constructor [pub]
+    sig: constructor(private path: string)
+    parent: ts::store::Store
+    in: path: string
+L10-10 method ts::store::Store::save [pub]
+    sig: async save(force = false): Promise<void>
+    parent: ts::store::Store
+    in: force
+    out: Promise<void>
+    doc: Save all.
+L11-11 method ts::store::Store::size [pub]
+    sig: get size(): number
+    parent: ts::store::Store
+    out: number
+L13-13 trait ts::store::IStore [pub]
+    sig: interface IStore
+    parent: ts::store
+L13-13 method ts::store::IStore::save (decl)
+    sig: save(force?: boolean): Promise<void>
+    parent: ts::store::IStore
+    in: force: boolean
+    out: Promise<void>
+L14-14 type ts::store::Id [pub]
+    sig: type Id = string | number;
+    parent: ts::store
+L15-15 enum ts::store::Color [pub]
+    sig: enum Color
+    parent: ts::store
+    in: Red, Green
+L16-16 function ts::store::load [pub]
+    sig: function load(path: string, opts?: Opts): Store
+    parent: ts::store
+    in: path: string, opts: Opts
+    out: Store
+L17-17 function ts::store::helper [pub]
+    sig: helper = (x: number): number
+    parent: ts::store
+    in: x: number
+    out: number
+edges:
+  L1 imports ts::store -> react
+  L2 imports ts::store -> node:fs
+  L3 imports ts::store -> axios
+  L4 imports ts::store -> ts::util::fmt
+  L6 implements ts::store::Store -> IStore
+  L6 inherits ts::store::Store -> Base
+  L7 uses ts::store::Store -> Task
+  L10 calls ts::store::Store::save -> Self::flush
+  L10 calls ts::store::Store::save -> node:fs::writeFileSync
+  L10 calls ts::store::Store::save -> ts::util::fmt::fmt
+  L16 calls ts::store::load -> .save
+  L16 calls ts::store::load -> Store
+  L16 uses ts::store::load -> Opts
+  L16 uses ts::store::load -> Store
+  L18 calls ts::store -> .then
+  L18 calls ts::store -> axios::get
+  L19 calls ts::store -> .toBeTruthy
+  L19 calls ts::store -> describe
+  L19 calls ts::store -> expect
+  L19 calls ts::store -> it
+  L19 calls ts::store -> load

@@ -167,6 +167,9 @@ pub fn run_commands(g: &Graph, root: &Path, tests: &[TestRef]) -> Vec<String> {
     let mut cargo: BTreeMap<(String, Option<String>), Vec<String>> = BTreeMap::new();
     let mut pytest: Vec<String> = Vec::new();
     let mut other: Vec<String> = Vec::new();
+    let mut go: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut js: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut java: BTreeMap<String, Vec<String>> = BTreeMap::new();
     let mut read = |p: &str| std::fs::read_to_string(root.join(p)).ok();
     for t in tests {
         let r = &g.syms[t.symbol];
@@ -181,11 +184,32 @@ pub fn run_commands(g: &Graph, root: &Path, tests: &[TestRef]) -> Vec<String> {
             };
             cargo.entry((pkg.unwrap_or_default(), integ)).or_default().push(filter);
         } else if r.file.ends_with(".py") {
-            let class = r.sym.parent.as_deref().filter(|p| p.rsplit("::").next().is_some_and(|c| c.starts_with("Test"))).map(|p| p.rsplit("::").next().unwrap().to_string());
+            // a test method needs its class in the node id (unittest.TestCase classes need not start with "Test")
+            let class = r.sym.parent.as_deref().filter(|_| r.sym.kind == gitnext_parse::Kind::Method).and_then(|p| p.rsplit("::").next()).map(str::to_string);
             pytest.push(match class {
                 Some(c) => format!("{}::{c}::{}", r.file, r.sym.name),
                 None => format!("{}::{}", r.file, r.sym.name),
             });
+        } else if r.file.ends_with(".go") {
+            // only `func TestX(t *testing.T)` runs; helpers in _test.go files are reached through them
+            if r.sym.name.starts_with("Test") || r.sym.name.starts_with("Fuzz") {
+                let dir = r.file.rsplit_once('/').map(|(d, _)| format!("./{d}")).unwrap_or_else(|| ".".into());
+                go.entry(dir).or_default().push(r.sym.name.clone());
+            }
+        } else if r.file.ends_with(".java") {
+            // `Class#method` for a @Test method, the class otherwise
+            let class = r.sym.parent.as_deref().and_then(|p| p.rsplit("::").next()).unwrap_or(&r.sym.name);
+            let class = if r.sym.kind == gitnext_parse::Kind::Method { class } else { r.sym.name.as_str() };
+            let entry = java.entry(class.to_string()).or_default();
+            if r.sym.kind == gitnext_parse::Kind::Method {
+                entry.push(r.sym.name.clone());
+            }
+        } else if gitnext_parse::family_of(&r.file) == Some("js") {
+            let runner = js_runner(&r.file, &mut read);
+            let files = js.entry(runner).or_default();
+            if !files.contains(&r.file) {
+                files.push(r.file.clone());
+            }
         } else {
             other.push(format!("{}:{}", r.file, r.sym.start_line));
         }
@@ -205,10 +229,71 @@ pub fn run_commands(g: &Graph, root: &Path, tests: &[TestRef]) -> Vec<String> {
     if !pytest.is_empty() {
         cmds.push(format!("pytest {}", pytest.join(" ")));
     }
+    for (dir, names) in go {
+        let mut names = names;
+        names.sort();
+        names.dedup();
+        cmds.push(if names.len() > 15 { format!("go test {dir}") } else { format!("go test {dir} -run '^({})$'", names.join("|")) });
+    }
+    for (runner, files) in js {
+        let shown: Vec<&str> = files.iter().take(10).map(String::as_str).collect();
+        cmds.push(format!("{runner} {}", shown.join(" ")));
+    }
+    if !java.is_empty() {
+        let gradle = ["build.gradle", "build.gradle.kts"].iter().any(|f| root.join(f).exists());
+        let parts: Vec<String> = java
+            .iter()
+            .take(12)
+            .map(|(class, ms)| {
+                let mut ms = ms.clone();
+                ms.sort();
+                ms.dedup();
+                match (gradle, ms.len()) {
+                    (true, 0) | (true, 6..) => format!("--tests '*{class}'"),
+                    (true, _) => ms.iter().map(|m| format!("--tests '*{class}.{m}'")).collect::<Vec<_>>().join(" "),
+                    (false, 0) | (false, 6..) => class.clone(),
+                    (false, _) => format!("{class}#{}", ms.join("+")),
+                }
+            })
+            .collect();
+        cmds.push(if gradle { format!("./gradlew test {}", parts.join(" ")) } else { format!("mvn -q test -Dtest='{}'", parts.join(",")) });
+    }
     if !other.is_empty() {
         cmds.push(format!("# C/C++ tests: {}", other.join(", ")));
     }
     cmds
+}
+
+/// The test runner of the nearest package.json: `npx vitest run`, `npx jest`, `node --test`…
+fn js_runner(file: &str, read: &mut dyn FnMut(&str) -> Option<String>) -> String {
+    let mut dir = file.rsplit_once('/').map(|(d, _)| d).unwrap_or("");
+    loop {
+        let manifest = if dir.is_empty() { "package.json".to_string() } else { format!("{dir}/package.json") };
+        if let Some(text) = read(&manifest) {
+            let has = |w: &str| text.contains(&format!("\"{w}\"")) || text.contains(&format!("{w} "));
+            let prefix = if dir.is_empty() { String::new() } else { format!("cd {dir} && ") };
+            let r = if has("vitest") {
+                "npx vitest run"
+            } else if has("jest") {
+                "npx jest"
+            } else if has("ava") {
+                "npx ava"
+            } else if has("mocha") {
+                "npx mocha"
+            } else if has("@playwright/test") {
+                "npx playwright test"
+            } else if text.contains("node --test") {
+                "node --test"
+            } else {
+                "npm test --"
+            };
+            return format!("{prefix}{r}");
+        }
+        if dir.is_empty() {
+            return "npm test --".into();
+        }
+        dir = dir.rsplit_once('/').map(|(d, _)| d).unwrap_or("");
+    }
 }
 
 pub fn render_tests_for(g: &Graph, root: &Path, i: usize, depth: usize) -> String {
