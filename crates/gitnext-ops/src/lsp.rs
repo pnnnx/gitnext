@@ -275,7 +275,8 @@ pub fn refine(root: &Path, g: &Graph, fam: Family, limit: usize, all: bool) -> R
         }
         let n = g.resolve(file, e).len();
         // `.get()` & co are skipped by name-based resolution; ask the server when the repo has such methods
-        let common = n == 0 && e.to.starts_with('.') && g.has_method_named(gitnext_parse::last_segment(&e.to));
+        // (a receiver known only as "what `f` returns", `f()::get`, is such a call when `f` did not say)
+        let common = n == 0 && (e.to.starts_with('.') || e.to.contains("()::")) && g.has_method_named(gitnext_parse::last_segment(&e.to));
         if ((all && n >= 1) || n > 1 || common) && seen.insert((file.clone(), e.line, e.col)) {
             sites.push((file.clone(), e.line, e.col));
         }

@@ -530,6 +530,20 @@ impl Graph {
     }
 
     fn resolve_call_raw(&self, file: &str, e: &Edge) -> Vec<usize> {
+        // `getPool()::release`: a method of whatever `getPool` returns
+        if let Some((callee, method)) = e.to.rsplit_once("()::") {
+            let mut out: Vec<usize> = Vec::new();
+            for ty in self.returned_types(file, e, callee) {
+                out.extend(self.resolve_call_raw(file, &Edge { to: format!("{ty}::{method}"), ..e.clone() }));
+            }
+            if !out.is_empty() {
+                out.sort_unstable();
+                out.dedup();
+                return out;
+            }
+            // result type unknown (not declared, generic, from a library): an unknown receiver
+            return self.resolve_call_raw(file, &Edge { to: format!(".{method}"), ..e.clone() });
+        }
         let name = last_segment(&e.to);
         let Some(all) = self.by_name.get(name) else { return vec![] };
         let cands: Vec<usize> = all.iter().copied().filter(|&i| self.syms[i].sym.kind.is_callable()).collect();
@@ -692,6 +706,32 @@ impl Graph {
         prefer_same_file(&self.syms, picked, file)
     }
 
+    /// Names of the repo types a call returns, from the declared result type of what it
+    /// resolves to: `Self::pool` → `SoftPool` for `SoftPool<char[]> pool()`. Empty when the
+    /// callee is ambiguous, declares no result, or returns a built-in / library / generic type.
+    fn returned_types(&self, file: &str, e: &Edge, callee: &str) -> Vec<String> {
+        let targets = drop_decls(&self.syms, self.resolve_call_raw(file, &Edge { to: callee.to_string(), ..e.clone() }));
+        let mut out: Vec<String> = Vec::new();
+        for &t in &targets {
+            let s = &self.syms[t].sym;
+            // `Circle(…)`, `new Circle(…)`: the call made an instance of the type itself
+            let name = if s.kind.is_type() { Some(s.name.as_str()) } else { s.returns.as_deref().and_then(result_type_name) };
+            let Some(name) = name else { return vec![] };
+            if !self.by_name.get(name).is_some_and(|v| v.iter().any(|&i| self.syms[i].sym.kind.is_type())) {
+                return vec![];
+            }
+            if !out.iter().any(|n| n == name) {
+                out.push(name.to_string());
+            }
+        }
+        // overloads and implementations of one interface method agree on the type; if the
+        // candidates return different things, the callee itself was a guess
+        if out.len() > 1 {
+            return vec![];
+        }
+        out
+    }
+
     /// Whether the repo defines a method with this name (for LSP site selection).
     pub fn has_method_named(&self, name: &str) -> bool {
         self.by_name.get(name).is_some_and(|v| v.iter().any(|&i| self.syms[i].sym.kind == Kind::Method))
@@ -781,7 +821,8 @@ impl Graph {
                 let targets = self.resolve(file, e);
                 // `Type::m` with the type named: same-named types in other modules (cfg variants,
                 // test doubles) all count as sure; only an unknown receiver (`.m`) is a guess
-                let typed = !e.to.starts_with('.') && e.to.contains("::");
+                // (`f()::m` — the receiver is what `f` returns — may have ended as such a guess)
+                let typed = !e.to.starts_with('.') && e.to.contains("::") && !e.to.contains("()::");
                 let distinct: HashSet<&str> = targets
                     .iter()
                     .map(|&t| {
@@ -894,9 +935,14 @@ impl Graph {
             if e.kind != EdgeKind::Calls || e.from != s.sym.qualified || *file != s.file {
                 continue;
             }
+            // `f()::m` that stayed unresolved reads as a call on an unknown receiver
+            let written = match e.to.rsplit_once("()::") {
+                Some((_, m)) => format!(".{m}"),
+                None => e.to.clone(),
+            };
             match self.resolve(file, e)[..] {
                 [] => {
-                    external.insert(e.to.clone());
+                    external.insert(written);
                 }
                 [i] => {
                     if seen.insert(i) {
@@ -904,8 +950,8 @@ impl Graph {
                     }
                 }
                 ref many => {
-                    if !out.ambiguous.iter().any(|(n, _)| *n == e.to) {
-                        out.ambiguous.push((e.to.clone(), many.to_vec()));
+                    if !out.ambiguous.iter().any(|(n, _)| *n == written) {
+                        out.ambiguous.push((written, many.to_vec()));
                     }
                 }
             }
@@ -1083,6 +1129,29 @@ fn param_key(ps: &[gitnext_parse::Param]) -> String {
         .map(|p| p.ty.split('=').next().unwrap_or("").replace(' ', ""))
         .collect::<Vec<_>>()
         .join(",")
+}
+
+/// The named type of a declared result: `*Command` → `Command`, `(*Store, error)` → `Store`,
+/// `[]*Command` → `Command` (what a loop over it yields), `Promise<Store>` → `Store`,
+/// `pkg.Type` → `Type`. Type parameters and containers of other things give their own name
+/// (`List<Element>` → `List`), which is then simply not a repo type.
+fn result_type_name(ret: &str) -> Option<&str> {
+    let mut t = ret.trim().trim_start_matches('(').trim();
+    t = t.split(',').next().unwrap_or(t).trim();
+    loop {
+        let before = t;
+        t = t.trim_start_matches(['*', '&', ' ']);
+        t = t.strip_prefix("[]").unwrap_or(t);
+        for wrap in ["Promise<", "Awaited<", "Optional<", "readonly "] {
+            t = t.strip_prefix(wrap).unwrap_or(t);
+        }
+        if t == before {
+            break;
+        }
+    }
+    let t = t.split(['<', '[', ' ', '|', '?', ')', '>', '{']).next().unwrap_or("");
+    let t = t.rsplit(['.', ':']).next().unwrap_or(t);
+    t.chars().next().is_some_and(|c| c.is_alphabetic() || c == '_').then_some(t)
 }
 
 /// If both a prototype and its definition matched, keep only the definition.

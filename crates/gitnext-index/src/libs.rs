@@ -58,7 +58,7 @@ impl Graph {
         let mut by: BTreeMap<String, (bool, Vec<String>, usize)> = BTreeMap::new();
         let mut resolved_cache: HashMap<(&str, &str), bool> = HashMap::new();
         for (file, e) in &self.edges {
-            if e.kind != EdgeKind::Calls || e.to.starts_with('.') {
+            if e.kind != EdgeKind::Calls || e.to.starts_with('.') || e.to.contains("()::") {
                 continue;
             }
             let imports = imports_by_file.entry(file.as_str()).or_insert_with(|| self.external_imports(file));

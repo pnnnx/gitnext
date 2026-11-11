@@ -47,6 +47,6 @@ edges:
   L13 calls com::acme::app::Store::save -> Self::flush
   L13 calls com::acme::app::Store::save -> Self::helper
   L13 calls com::acme::app::Store::save -> Util::fmt
-  L18 calls com::acme::app::StoreTest::saves -> .save
   L18 calls com::acme::app::StoreTest::saves -> Store
+  L18 calls com::acme::app::StoreTest::saves -> Store::save
   L18 calls com::acme::app::StoreTest::saves -> org::junit::Assert::assertTrue
