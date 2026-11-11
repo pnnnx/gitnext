@@ -617,7 +617,7 @@ dependencies = [
 
 [[package]]
 name = "gitnext-cli"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -634,7 +634,7 @@ dependencies = [
 
 [[package]]
 name = "gitnext-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "git2",
@@ -643,7 +643,7 @@ dependencies = [
 
 [[package]]
 name = "gitnext-docs"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "gitnext-index",
@@ -652,7 +652,7 @@ dependencies = [
 
 [[package]]
 name = "gitnext-index"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "gitnext-parse",
@@ -665,7 +665,7 @@ dependencies = [
 
 [[package]]
 name = "gitnext-ops"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "git2",
@@ -679,7 +679,7 @@ dependencies = [
 
 [[package]]
 name = "gitnext-parse"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "serde",
@@ -695,7 +695,7 @@ dependencies = [
 
 [[package]]
 name = "gitnext-tui"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "gitnext-core",

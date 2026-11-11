@@ -6,5 +6,5 @@ license.workspace = true
 
 [dependencies]
 anyhow = "1.0.104"
-gitnext-index = { version = "0.1.0", path = "../gitnext-index" }
-gitnext-parse = { version = "0.1.0", path = "../gitnext-parse" }
+gitnext-index = { version = "0.2.0", path = "../gitnext-index" }
+gitnext-parse = { version = "0.2.0", path = "../gitnext-parse" }
