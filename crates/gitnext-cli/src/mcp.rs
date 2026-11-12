@@ -58,7 +58,7 @@ fn tools() -> Value {
                 "inputSchema": { "type": "object", "properties": props, "required": req } })
     };
     json!([
-        tool("look", "Use this first. One call answers whatever you need next. what = a function/class/method name → its code, who calls it, what it calls, the tests that reach it with the command to run them, and what a change would affect; a file or folder → every signature with line numbers; an error/traceback → the code where it happened; words → where they appear. Pass several targets at once to save steps.",
+        tool("look", "Use this first. One call answers whatever you need next. what = a function/class/method name → its code, who calls it, what it calls, the tests that reach it with the command to run them, and what a change would affect; a file or folder → every signature with line numbers; `file:120-160` → those lines, `file:62` or `file::name` → the function there; an error/traceback → the code where it happened; words → where they appear. Pass several targets at once to save steps.",
              json!({ "what": { "type": "string" }, "targets": { "type": "array", "items": { "type": "string" }, "description": "several targets in one call" } }), &[]),
         tool("overview", "Start here in an unfamiliar repo: languages, areas with purposes, entry points (main, routes, CLI commands), area dependencies, recent activity, hotspots, health — one screen.",
              json!({}), &[]),
@@ -125,8 +125,8 @@ fn lite_tools() -> Value {
     let str_ = |d: &str| json!({ "type": "string", "description": d });
     json!([
         { "name": "look",
-          "description": "Look at code without reading whole files. what = a file or folder (lists functions/classes with lines), a function or class name (shows its code), an error message (shows where it happened), or words (finds them).",
-          "inputSchema": { "type": "object", "properties": { "what": str_("file, folder, name, error text or words") }, "required": ["what"] } },
+          "description": "Look at code without reading whole files. what = a file or folder (lists functions/classes with lines), a function or class name (shows its code), lines of a file (`src/app.py:120-160`), an error message (shows where it happened), or words (finds them).",
+          "inputSchema": { "type": "object", "properties": { "what": str_("file, folder, name, file:lines, error text or words") }, "required": ["what"] } },
         { "name": "replace",
           "description": "Replace one whole function or class with new code. No need to read the file first; indentation is fixed for you.",
           "inputSchema": { "type": "object", "properties": { "symbol": str_("function or class name, e.g. parse_date or Task.reopen"), "code": str_("the complete new definition") }, "required": ["symbol", "code"] } },

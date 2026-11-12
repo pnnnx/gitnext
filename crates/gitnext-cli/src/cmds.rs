@@ -166,6 +166,7 @@ pub enum More {
     /// External libraries: which the code calls (by package, with declared versions) and which are only declared
     Libs,
     /// One call for any target: symbol → code + callers + callees + tests + impact; file/folder → outline;
+    /// `file:120-160` → those lines, `file:62` / `file::name` → the function there;
     /// error text → where; words → where they appear. Several targets at once.
     Look {
         #[arg(required = true)]
