@@ -88,6 +88,16 @@ impl TestMap {
         run().unwrap_or_default()
     }
 
+    /// A fact about the learning run (`commit`: what was checked out then; `source`, `learned_at`).
+    pub fn meta(&self, key: &str) -> Option<String> {
+        self.conn.query_row("SELECT value FROM meta WHERE key = ?1", [key], |r| r.get(0)).ok()
+    }
+
+    pub fn set_meta(&self, key: &str, value: &str) -> Result<()> {
+        self.conn.execute("INSERT OR REPLACE INTO meta(key, value) VALUES (?1, ?2)", params![key, value])?;
+        Ok(())
+    }
+
     /// What a test ran when the map was learned: (function, its code hash then, how many tests ran it).
     /// `name` is `test_b` or `TestA::test_b`; a bare name matches the test of any class in the file.
     pub fn ran_by(&self, file: &str, name: &str) -> Vec<(String, String, u32)> {

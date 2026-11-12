@@ -203,3 +203,34 @@ fn of_several_tests_with_one_name_the_failing_one_is_explained() {
     assert_eq!(w.tests.len(), 1);
     let _ = std::fs::remove_dir_all(&dir);
 }
+
+#[test]
+fn only_the_hunks_inside_the_function_are_shown() {
+    let diff = "diff --git a/src/eval.rs b/src/eval.rs\n--- a/src/eval.rs\n+++ b/src/eval.rs\n@@ -2 +2 @@ pub fn matches\n-    old_first()\n+    new_first()\n@@ -10 +10 @@ fn matches_greater\n-    v > req\n+    v < req\n@@ -20,2 +19,0 @@ fn gone\n-    a\n-    b\n";
+    assert_eq!(why::hunks_within(diff, 9, 11), ["- v > req", "+ v < req"]);
+    assert_eq!(why::hunks_within(diff, 1, 3), ["- old_first()", "+ new_first()"]);
+    // lines removed with nothing put in their place belong to the function around that place
+    assert_eq!(why::hunks_within(diff, 18, 25), ["- a", "- b"]);
+    assert!(why::hunks_within(diff, 12, 17).is_empty());
+}
+
+#[test]
+fn what_changed_in_the_culprit_since_the_map_was_learned_is_shown() {
+    let dir = rust_project("since");
+    let git = |args: &[&str]| assert!(std::process::Command::new("git").args(args).current_dir(&dir).output().unwrap().status.success(), "git {args:?}");
+    git(&["init", "-q"]);
+    git(&["add", "-A"]);
+    git(&["-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "commit.gpgsign=false", "commit", "-q", "-m", "as it was"]);
+    let g = graph(&dir);
+    learn(&dir, &g, "");
+    let commit = String::from_utf8(std::process::Command::new("git").args(["rev-parse", "HEAD"]).current_dir(&dir).output().unwrap().stdout).unwrap();
+    gitnext_ops::gitnext_index::TestMap::open_existing(&dir).unwrap().set_meta("commit", commit.trim()).unwrap();
+    // the bug: one operator, not committed
+    std::fs::write(dir.join("src/eval.rs"), EVAL.replace("v < req", "v <= req")).unwrap();
+    let g = graph(&dir);
+    let t = why::find_tests(&g, "test_greater_than");
+    let w = why::explain(&dir, &g, &t, vec![failed(&g, &dir, "test test_greater_than ... FAILED\n")]);
+    let text = why::render(&g, &dir, &w);
+    assert!(text.contains("changed in matches_greater since `learn-tests` (- as it was, + as it is now):\n  - v < req\n  + v <= req\n"), "{text}");
+    let _ = std::fs::remove_dir_all(&dir);
+}

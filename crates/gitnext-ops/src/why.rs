@@ -47,6 +47,8 @@ pub struct Why {
     pub suspects: Vec<Suspect>,
     /// the suspects are what the test ran in the learned coverage run, not what the call graph reaches
     pub learned: bool,
+    /// the commit the map was learned on, when it is known
+    pub since: Option<String>,
 }
 
 impl Why {
@@ -151,7 +153,7 @@ pub fn why(root: &Path, g: &Graph, tests: &[usize], timeout: Duration) -> Why {
 
 /// The same from runs already made: which code to look at, given how the tests failed.
 pub fn explain(root: &Path, g: &Graph, tests: &[usize], steps: Vec<Step>) -> Why {
-    let mut w = Why { tests: tests.to_vec(), steps, suspects: Vec::new(), learned: false };
+    let mut w = Why { tests: tests.to_vec(), steps, suspects: Vec::new(), learned: false, since: None };
     if !w.failed() {
         return w;
     }
@@ -206,6 +208,7 @@ pub fn explain(root: &Path, g: &Graph, tests: &[usize], steps: Vec<Step>) -> Why
     // CLI runner, a decorator or a trait is in it, and code on a branch the test never takes is not
     if rank != "static" {
         if let Some(map) = gitnext_index::TestMap::open_existing(root) {
+            w.since = map.meta("commit");
             let by_qual: HashMap<&str, usize> =
                 g.syms.iter().enumerate().filter(|(_, r)| !r.sym.test && r.sym.kind.is_callable() && !r.sym.decl).map(|(i, r)| (r.sym.qualified.as_str(), i)).collect();
             for &t in tests {
@@ -264,6 +267,36 @@ fn source_line(g: &Graph, root: &Path, file: &str, line: u32) -> Option<(String,
     let text = std::fs::read_to_string(root.join(&f)).ok()?;
     let l = text.lines().nth(line.checked_sub(1)? as usize)?.trim().to_string();
     (!l.is_empty()).then_some((f, l))
+}
+
+/// Lines shown of what changed in a function since the map was learned.
+const CHANGED_LINES: usize = 10;
+
+/// What changed inside lines `a..=b` of `file` since `commit`: the removed and the added lines.
+fn changed_since(root: &Path, commit: &str, file: &str, a: u32, b: u32) -> Vec<String> {
+    let Ok(out) = std::process::Command::new("git").args(["diff", "-U0", "--no-color", "--no-ext-diff", commit, "--", file]).current_dir(root).output() else { return vec![] };
+    if !out.status.success() {
+        return vec![];
+    }
+    hunks_within(&String::from_utf8_lossy(&out.stdout), a, b)
+}
+
+/// The `-` / `+` lines of the hunks of a `git diff -U0` that touch lines `a..=b` of the new file.
+pub fn hunks_within(diff: &str, a: u32, b: u32) -> Vec<String> {
+    let (mut out, mut inside) = (Vec::new(), false);
+    for l in diff.lines() {
+        if let Some(rest) = l.strip_prefix("@@ ") {
+            // `-12,2 +12,3 @@ …`: the new side; a count of 0 is a pure removal at that line
+            let new = rest.split(' ').find(|x| x.starts_with('+')).unwrap_or("+0");
+            let mut it = new[1..].split(',');
+            let start: u32 = it.next().and_then(|x| x.parse().ok()).unwrap_or(0);
+            let count: u32 = it.next().and_then(|x| x.parse().ok()).unwrap_or(1);
+            inside = start <= b && start + count.max(1) > a;
+        } else if inside && (l.starts_with('-') || l.starts_with('+')) && !l.starts_with("---") && !l.starts_with("+++") {
+            out.push(format!("{} {}", &l[..1], l[1..].trim()));
+        }
+    }
+    out
 }
 
 /// Everything the ranking knows, for scripts (`gitnext why <test> --json`).
@@ -338,6 +371,20 @@ pub fn render(g: &Graph, root: &Path, w: &Why) -> String {
             None => format!("{} from the test", crate::changes::plural(x.depth, "call")),
         };
         let _ = writeln!(s, "{:>2}. {}  {}:{}  ({how})", k + 1, g.short_name(x.symbol), r.file, r.sym.start_line);
+    }
+    // what was changed in the first of them since the tests ran under coverage: usually the bug itself
+    if let (Some(commit), Some(x)) = (&w.since, w.suspects.iter().take(SHOWN).find(|x| x.changed)) {
+        let r = &g.syms[x.symbol];
+        let lines = changed_since(root, commit, &r.file, r.sym.start_line, r.sym.end_line);
+        if !lines.is_empty() {
+            let _ = writeln!(s, "\nchanged in {} since `learn-tests` (- as it was, + as it is now):", g.short_name(x.symbol));
+            for l in lines.iter().take(CHANGED_LINES) {
+                let _ = writeln!(s, "  {l}");
+            }
+            if lines.len() > CHANGED_LINES {
+                let _ = writeln!(s, "  … {} more changed lines: `git diff {} -- {}`", lines.len() - CHANGED_LINES, &commit[..commit.len().min(8)], r.file);
+            }
+        }
     }
     let _ = writeln!(s);
     // the code of the first; of the second only when something points at it too

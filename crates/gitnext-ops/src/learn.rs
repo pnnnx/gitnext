@@ -95,6 +95,13 @@ pub fn learn(root: &Path, g: &Graph) -> Result<Learned> {
     let rows: Vec<(String, String, String, String)> =
         runs.iter().flat_map(|r| r.pairs.iter()).map(|(i, f, n)| (g.syms[*i].sym.qualified.clone(), g.syms[*i].sym.body_hash.clone(), f.clone(), n.clone())).collect();
     let map = TestMap::write(root, &runs.iter().map(|r| r.source).collect::<Vec<_>>().join("+"), &rows)?;
+    // the commit the tests ran on: `why` shows what changed in a function since then
+    if let Ok(out) = std::process::Command::new("git").args(["rev-parse", "HEAD"]).current_dir(root).output() {
+        let commit = String::from_utf8_lossy(&out.stdout).trim().to_string();
+        if out.status.success() && !commit.is_empty() {
+            map.set_meta("commit", &commit)?;
+        }
+    }
     let (functions, tests, n) = map.size();
     let with_body = owners(g).values().flat_map(|lines| lines.iter().flatten()).collect::<std::collections::HashSet<_>>().len();
     Ok(Learned {
