@@ -214,7 +214,7 @@ class Case(unittest.TestCase):
     def fake_gitnext(self) -> str:
         """`gitnext check` passes once calc.py subtracts; every other command says nothing."""
         g = self.root.parent / f"gitnext-{self.root.name}.sh"
-        g.write_text("#!/bin/sh\nif [ \"$1\" = check ]; then grep -q 'a - b' calc.py && echo 'verdict: ok' || { echo 'calc.py: test_add failed'; echo 'verdict: failed'; }; fi\n")
+        g.write_text("#!/bin/sh\nif [ \"$1\" = check ]; then grep -q 'a - b' calc.py && echo 'verdict: ok — builds, 1 test pass' || { grep -q 'a / b' calc.py && echo 'verdict: builds, but no test reaches the changed code' || { echo 'calc.py: test_add failed'; echo 'verdict: FAILED — tests (see the output above)'; }; }; fi\n")
         g.chmod(0o755)
         self.addCleanup(g.unlink)
         self.addCleanup(setattr, agent.ev, "GITNEXT", agent.ev.GITNEXT)
@@ -238,6 +238,19 @@ class Case(unittest.TestCase):
         self.assertIn("The check of your change failed", s.seen())
         self.assertIn("test_add failed", s.seen())
         self.assertIn("look", [t["function"]["name"] for t in s.requests[0]["tools"]])  # the gitnext tools are there
+
+    def test_verify_lets_a_change_no_test_reaches_through(self):
+        self.fake_gitnext()
+        res, s = self.run_agent([call("edit_file", path="calc.py", old="a + b", new="a / b"), call("finish", answer="changed")], mode="verify")
+        self.assertNotIn("gate", res)
+        self.assertEqual(res["answer"], "changed")
+
+    def test_run_uses_the_projects_own_environment(self):
+        (self.root / ".venv" / "bin").mkdir(parents=True)
+        tool = self.root / ".venv" / "bin" / "projtool"
+        tool.write_text("#!/bin/sh\necho from-venv\n")
+        tool.chmod(0o755)
+        self.assertIn("from-venv", agent.call_tool("run", {"command": "projtool"}, self.root, "python"))
 
     def test_other_modes_have_no_gate(self):
         res, _ = self.run_agent([say("it is in calc.py")], mode="gitnext")

@@ -184,7 +184,8 @@ class Guard:
                             "Neither version works — try a different change.")
         self.calls[key] = (step, before, out)
         if name in VERDICT:  # `gitnext check`: its verdict is the tests' word
-            out = ("exit 0\n" if "verdict: ok" in out else "exit 1\n") + out if "verdict:" in out else out
+            # "builds, but no test reaches the changed code" is neither a pass nor an error
+            out = ("exit 0\n" if "verdict: ok" in out else "exit 1\n" if "verdict: FAILED" in out else "") + out
         if name in RUNNING or name in VERDICT:
             code = re.match(r"exit (-?\d+)", out)
             if code and code.group(1) == "0":

@@ -110,7 +110,9 @@ def call_tool(name: str, a: dict, root: Path, lang: str) -> str:
             return "ok"
         if name in ("run", "sh"):
             # `gitnext` on PATH: in `cmd` mode the model calls it like any other command
-            code, out = ev.sh(f'PATH="{Path(ev.GITNEXT).resolve().parent}:$PATH"; ' + a["command"], root, timeout=600)
+            # the project's own environment first (`pytest` of its .venv, `vitest` of its node_modules), as a developer has it
+            env = "".join(f"{root / d}:" for d in (".venv/bin", "node_modules/.bin") if (root / d).is_dir())
+            code, out = ev.sh(f'PATH="{env}{Path(ev.GITNEXT).resolve().parent}:$PATH"; ' + a["command"], root, timeout=600)
             return f"exit {code}\n{out[-MAX_OUT:]}"
         if name == "look":
             return ev.gx(["look", a["what"]], root)[1][:MAX_OUT]
@@ -203,7 +205,8 @@ class Gate:
                     "if it only asks a question, repeat your answer.")
         if changed and self.said.get("check", 0) < self.CHECKS:
             out = self.check()
-            if "verdict: ok" not in out:
+            # only a build or a test that fails; "builds, but no test reaches the changed code" is not a failure
+            if "verdict: FAILED" in out:
                 self.said["check"] = self.said.get("check", 0) + 1
                 return "The check of your change failed:\n" + out[-1500:] + "\nFix it, then finish."
         return None
