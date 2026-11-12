@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- **`gitnext look` takes a place in a file**, written the way tracebacks, test runners and models write it:
+  `src/eval.rs:62` (the function around the line), `tests/test_x.py:120-160` (those lines),
+  `src/eval.rs::matches_greater`, `tests/test_x.py::TestA::test_b[case]`, `eval.rs matches_greater`.
+  Words of which only some are names list those names instead of "nothing found". In a trial with
+  Qwen 3.5 4B and 27B, 37 of 89 `look` calls were written one of these ways and found nothing; all are answered now.
+- eval: a tool call cut by the token limit (a long `replace`) is asked for again instead of ending the run.
+
 ## 0.3.0 — 2026-11-12
 
 Measured on ten open-source projects in five languages; the numbers and how they are obtained are in
