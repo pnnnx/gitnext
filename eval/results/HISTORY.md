@@ -5,6 +5,41 @@ Runs 1–5: five repos (one per language), one sample (seed 7, 8 functions, 4 mu
 From run 6 on: ten repos, 20 functions and 8 mutants per repo, three seeds, and a threshold next to every number.
 Since the run after run 4, a rename only counts as ok if the project's tests still pass too.
 
+## Run 7 · the renames that broke the code
+
+Run 6 showed that 58 of 337 renames left a project that does not build or pass its tests. This run fixes the
+causes that are gitnext's own; same functions as run 6 (click picked one more), `a → b` is run 6 → now.
+
+| rename ok (tests pass) | all | go | python | typescript | java | rust |
+|---|---:|---:|---:|---:|---:|---:|
+| run 6 | 83% ±4 | 90% ±6 | 73% ±8 | 70% ±13 | 96% ±3 | 74% ±12 |
+| now | **91% ±3** (338) | 90% ±6 | **90% ±5** | 85% ±10 | 96% ±3 | 87% ±10 |
+
+25 renames fixed, none broken (click 66% → 86%, sqlparse 81% → 90%, yaml 69% → 85%, indexmap 70% → 85%).
+The difference is real for all repos and for Python (larger than the threshold); TypeScript and Rust moved by
+about their threshold. Python tests-for moved with it: tests recall 30% → 36% ±10, caught by the top 10
+74% → 81% (click: recall 21% → 31%, top-10 that fail 40% → 53%) — inside the threshold for the language.
+
+What was wrong:
+- **Python, calls inside nested functions were not seen at all** (decorators, closures: `def decorator(f): def
+  new_func(): ctx.find_object(…)`). They now belong to the function they are written in.
+- **Python, a call through the package** — `click.style(…)` in tests and examples, where `click/__init__.py`
+  re-exports `style` from `click.termui` — was not resolved. Also `click._compat.f(…)` (a dotted module path),
+  `@ctx.call_on_close` (a decorator through a receiver), a bare name used as a value
+  (`f = hidden_prompt_func if hide else visible_prompt_func`), and a loop variable that has the name of an
+  imported function (`for name, command in …: command.get_short_help_str()`) read as that function.
+- **Rust, a name inside a `use` group** (`use crate::util::{third, slice_eq};`) kept the old name.
+- **TypeScript, a `#private` member** was refused with the `#` and became public without it.
+
+What is left (31 of 338), by cause: a method whose name is unique in the repo takes the calls of a library
+method through a receiver of unknown type and is renamed there (`t.Execute`, `ctx.Value`, `resp.Body.Close`,
+`re.Match.start`, `number[].unshift`, `Stream.findFirst`) — 8; a method that implements a library interface
+cannot be renamed at all (`error.Error`, `Map.Entry.getValue`, `Iterator.hasNext`) — 3; a use through a receiver
+whose type gitnext does not know, inside a macro or as a value in an object literal is left behind
+(`bar.update(1)`, `map.contains_key(k)` in `assert!`, `resolve: resolvePairs`) — 7; `--text` renames a string
+that is data (`'warn'` in a union type) — 2; TypeScript `YAML.parseDocument(…)` through a namespace import — 2;
+tests fail and the cause is not looked at yet (cobra 3, click 2, sqlparse 4) — 9.
+
 ## Run 6 · a sample large enough to tell a change from noise
 
 The measurement changed, so these numbers are a new starting point. `a → b` below: the code of run 5

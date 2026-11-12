@@ -2964,7 +2964,7 @@
     "file_tokens": 15286
    }
   ],
-  "seconds": 12,
+  "seconds": 13,
   "summary": {
    "callers_recall": 1.0,
    "callers_precision": 0.96,
@@ -3236,7 +3236,7 @@
   "repo": "chi",
   "lang": "go",
   "commit": "c64ed7d6635f",
-  "index_seconds": 0.0,
+  "index_seconds": 0.1,
   "symbols": 351,
   "files": 55,
   "seeds": [
@@ -5316,7 +5316,7 @@
     "file_tokens": 1260
    }
   ],
-  "seconds": 7,
+  "seconds": 8,
   "summary": {
    "callers_recall": 1.0,
    "callers_precision": 0.967,
@@ -5596,7 +5596,7 @@
    8,
    9
   ],
-  "edges": 9055,
+  "edges": 9744,
   "sample": [
    "click::types::Path::coerce_path_result",
    "click::core::Option::get_help_extra",
@@ -5605,6 +5605,7 @@
    "click::globals::push_context",
    "click::_textwrap::TextWrapper::extra_indent",
    "click::termui::confirm",
+   "click::decorators::argument",
    "click::core::Command::format_usage",
    "click::decorators::option",
    "click::_compat::should_strip_ansi",
@@ -5617,7 +5618,6 @@
    "click::core::Context::ensure_object",
    "click::_compat::get_best_encoding",
    "click::_termui_impl::ProgressBar::format_bar",
-   "examples::aliases::aliases::Config::write_config",
    "click::testing::make_input_stream",
    "click::utils::format_filename",
    "click::formatting::HelpFormatter::indent",
@@ -5626,6 +5626,7 @@
    "click::types::Choice::get_invalid_choice_message",
    "click::testing::_NamedTextIOWrapper::fileno",
    "click::core::Command::get_short_help_str",
+   "click::decorators::confirmation_option",
    "click::_termui_impl::ProgressBar::render_progress",
    "examples::repo::repo::Repo::set_config",
    "click::termui::hidden_prompt_func",
@@ -5634,20 +5635,20 @@
    "click::utils::make_str",
    "click::core::Context::find_object",
    "click::core::Command::format_help_text",
+   "click::core::Context::abort",
    "click::formatting::iter_rows",
-   "click::testing::CliRunner::get_default_prog_name",
    "click::_compat::open_stream",
+   "click::_compat::get_binary_stderr",
    "examples::validation::validation::validate_count",
    "click::_termui_impl::ProgressBar::format_progress_line",
    "click::core::Parameter::value_is_missing",
    "click::testing::_FDCapture::start",
    "click::testing::_FDCapture::stop",
    "click::_termui_impl::ProgressBar::make_step",
+   "click::termui::echo_via_pager",
    "click::_termui_impl::ProgressBar::update",
    "click::termui::style",
-   "click::parser::_OptionParser::add_argument",
-   "click::formatting::HelpFormatter::write_usage",
-   "click::_compat::get_text_stderr"
+   "click::parser::_OptionParser::add_argument"
   ],
   "sample_common": [],
   "samples": {
@@ -5659,6 +5660,7 @@
     "click::globals::push_context",
     "click::_textwrap::TextWrapper::extra_indent",
     "click::termui::confirm",
+    "click::decorators::argument",
     "click::core::Command::format_usage",
     "click::decorators::option",
     "click::_compat::should_strip_ansi",
@@ -5670,8 +5672,7 @@
     "click::core::Group::result_callback",
     "click::core::Context::ensure_object",
     "click::_compat::get_best_encoding",
-    "click::_termui_impl::ProgressBar::format_bar",
-    "examples::aliases::aliases::Config::write_config"
+    "click::_termui_impl::ProgressBar::format_bar"
    ],
    "8": [
     "click::testing::make_input_stream",
@@ -5683,6 +5684,7 @@
     "click::testing::_NamedTextIOWrapper::fileno",
     "click::core::Command::get_short_help_str",
     "click::_compat::get_best_encoding",
+    "click::decorators::confirmation_option",
     "click::_termui_impl::ProgressBar::render_progress",
     "examples::repo::repo::Repo::set_config",
     "click::termui::hidden_prompt_func",
@@ -5691,13 +5693,13 @@
     "click::utils::make_str",
     "click::core::Context::find_object",
     "click::core::Command::format_help_text",
-    "click::formatting::iter_rows",
-    "click::core::Option::get_help_extra",
-    "click::testing::CliRunner::get_default_prog_name"
+    "click::core::Context::abort",
+    "click::formatting::iter_rows"
    ],
    "9": [
     "click::core::Context::get_parameter_source",
     "click::_compat::open_stream",
+    "click::_compat::get_binary_stderr",
     "examples::validation::validation::validate_count",
     "click::_termui_impl::ProgressBar::format_bar",
     "click::_termui_impl::ProgressBar::format_progress_line",
@@ -5707,15 +5709,14 @@
     "click::testing::_FDCapture::start",
     "click::testing::_FDCapture::stop",
     "click::_termui_impl::ProgressBar::make_step",
+    "click::termui::echo_via_pager",
     "click::formatting::HelpFormatter::indent",
     "click::_termui_impl::ProgressBar::update",
     "click::_compat::get_best_encoding",
     "click::shell_completion::split_arg_string",
     "click::termui::style",
     "click::core::Context::call_on_close",
-    "click::parser::_OptionParser::add_argument",
-    "click::formatting::HelpFormatter::write_usage",
-    "click::_compat::get_text_stderr"
+    "click::parser::_OptionParser::add_argument"
    ]
   },
   "samples_common": {
@@ -5789,20 +5790,22 @@
    },
    {
     "symbol": "click::termui::confirm",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "src/click/core.py:227:    \"\"\"Used a prompt to confirm a default or provide a value.\"\"\"\nsrc/click/core.py:3063:    :param confirmation_prompt: Prompt a second time to confirm the\nsrc/click/termui.py:191:    :param confirmation_prompt: Prompt a second time to confirm the\ntests/test_utils/test_prompt.p",
+    "detail": ""
+   },
+   {
+    "symbol": "click::decorators::argument",
     "ok": false,
     "compiled": true,
     "tests_ok": false,
     "tests_failed": [
-     "tests/test_termui.py::test_choices_list_in_prompt",
-     "tests/test_termui.py::test_confirmation_prompt",
-     "tests/test_termui.py::test_echo_via_pager_real_pager_handles_ansi",
-     "tests/test_termui.py::test_echo_via_pager_streams_each_write",
-     "tests/test_termui.py::test_echo_via_pager_tty_pager_missing",
-     "tests/test_termui.py::test_edit",
-     "tests/test_termui.py::test_edit_pathlib",
-     "tests/test_termui.py::test_editor_env_passed_through"
+     "tests/test_arguments.py::test_deprecated_warning"
     ],
-    "old_name_left": "src/click/core.py:227:    \"\"\"Used a prompt to confirm a default or provide a value.\"\"\"\nsrc/click/core.py:3063:    :param confirmation_prompt: Prompt a second time to confirm the\nsrc/click/termui.py:191:    :param confirmation_prompt: Prompt a second time to confirm the\ntests/test_termui.py:1413:    ",
+    "old_name_left": "examples/repo/repo.py:122:    \" argument gets converted into a new line.\",\nsrc/click/core.py:892:        1.  the first argument can be a callback and all other arguments and\nsrc/click/core.py:894:        2.  the first argument is a click command object.  In that case all\nsrc/click/core.py:1005:     ",
     "detail": ""
    },
    {
@@ -5820,34 +5823,19 @@
     "compiled": true,
     "tests_ok": false,
     "tests_failed": [
-     "tests/test_abort_interrupt.py::test_interrupt_while_reporting_abort",
-     "tests/test_arguments.py::test_argument_custom_class_can_override_type_cast_value_and_never_sees_unset",
-     "tests/test_arguments.py::test_argument_explicit_envvar_case_sensitivity",
-     "tests/test_arguments.py::test_argument_get_help_record_never_none",
-     "tests/test_arguments.py::test_argument_has_no_auto_envvar",
-     "tests/test_arguments.py::test_argument_help",
-     "tests/test_arguments.py::test_argument_help_deprecated_without_help_lists_all",
-     "tests/test_arguments.py::test_argument_help_empty_string_lists_all"
+     "tests/test_context.py::test_parameter_source",
+     "tests/test_options.py::test_deprecated_warning"
     ],
-    "old_name_left": "examples/aliases/aliases.py:57:        # Alternative option: if we did not find an explicit alias we\nexamples/aliases/aliases.py:90:@click.option(\nexamples/aliases/aliases.py:136:@click.option(\nexamples/completion/completion.py:13:@click.option(\"--dir\", type=click.Path(file_okay=False))\nexamples/com",
+    "old_name_left": "examples/aliases/aliases.py:57:        # Alternative option: if we did not find an explicit alias we\nsrc/click/_termui_impl.py:522:    line: only short-option clusters (``-R``, ``-rX``, ``-XrY``) and the\nsrc/click/_termui_impl.py:523:    ``--raw-control-chars`` long option request raw mode. Filename",
     "detail": ""
    },
    {
     "symbol": "click::_compat::should_strip_ansi",
-    "ok": false,
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_arguments.py::test_argument_custom_class_can_override_type_cast_value_and_never_sees_unset",
-     "tests/test_arguments.py::test_argument_explicit_envvar_case_sensitivity",
-     "tests/test_arguments.py::test_argument_has_no_auto_envvar",
-     "tests/test_arguments.py::test_argument_help",
-     "tests/test_arguments.py::test_argument_help_deprecated_without_help_lists_all",
-     "tests/test_arguments.py::test_argument_help_empty_string_lists_all",
-     "tests/test_arguments.py::test_argument_help_lists_undocumented_arguments",
-     "tests/test_arguments.py::test_argument_help_optional_metavar"
-    ],
-    "old_name_left": "src/click/testing.py:535:        def should_strip_ansi(\nsrc/click/testing.py:545:        old_should_strip_ansi = utils.should_strip_ansi  # type: ignore\nsrc/click/testing.py:551:        utils.should_strip_ansi = should_strip_ansi  # type: ignore\nsrc/click/testing.py:552:        _compat.should_strip_",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "src/click/testing.py:535:        def should_strip_ansi(\nsrc/click/testing.py:551:        utils.should_strip_ansi_gnx = should_strip_ansi  # type: ignore\nsrc/click/testing.py:552:        _compat.should_strip_ansi_gnx = should_strip_ansi",
     "detail": ""
    },
    {
@@ -5870,32 +5858,20 @@
    },
    {
     "symbol": "click::core::Context::get_parameter_source",
-    "ok": false,
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_context.py::test_parameter_source",
-     "tests/test_defaults.py::test_default_map_source",
-     "tests/test_defaults.py::test_flask_debug_env_not_stomped_by_default_flag",
-     "tests/test_defaults.py::test_parameter_source_during_eager_callback",
-     "tests/test_defaults.py::test_parameter_source_on_parse_result_bypass",
-     "tests/test_options.py::test_bool_flag_group_parameter_source"
-    ],
-    "old_name_left": "tests/test_context.py:769:        return ctx.get_parameter_source(\"option\")\ntests/test_defaults.py:262:        source = ctx.get_parameter_source(\"name\")\ntests/test_defaults.py:318:        source = ctx.get_parameter_source(param.name)\ntests/test_defaults.py:330:        source = click.get_current_cont",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
     "detail": ""
    },
    {
     "symbol": "click::core::Context::call_on_close",
-    "ok": false,
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_context.py::test_close_before_exit",
-     "tests/test_context.py::test_close_before_pop",
-     "tests/test_context.py::test_context_pushing",
-     "tests/test_context.py::test_multi_enter"
-    ],
-    "old_name_left": "tests/test_context.py:119:        ctx.call_on_close(callback)\ntests/test_context.py:301:    @ctx.call_on_close\ntests/test_context.py:342:        @ctx.call_on_close\ntests/test_context.py:363:        @ctx.call_on_close",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
     "detail": ""
    },
    {
@@ -5918,14 +5894,11 @@
    },
    {
     "symbol": "click::core::Context::ensure_object",
-    "ok": false,
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_context.py::test_ensure_context_objects",
-     "tests/test_context.py::test_get_context_objects"
-    ],
-    "old_name_left": "src/click/decorators.py:82:                obj = ctx.ensure_object(object_type)",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
     "detail": ""
    },
    {
@@ -5947,15 +5920,6 @@
     "detail": ""
    },
    {
-    "symbol": "examples::aliases::aliases::Config::write_config",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": true,
-    "tests_failed": [],
-    "old_name_left": "",
-    "detail": ""
-   },
-   {
     "symbol": "click::testing::make_input_stream",
     "ok": true,
     "compiled": true,
@@ -5966,13 +5930,11 @@
    },
    {
     "symbol": "click::utils::format_filename",
-    "ok": false,
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_utils/test_format_filename.py::test_filename_formatting"
-    ],
-    "old_name_left": "tests/test_utils/test_format_filename.py:5:    assert click.format_filename(b\"foo.txt\") == \"foo.txt\"\ntests/test_utils/test_format_filename.py:6:    assert click.format_filename(b\"/x/foo.txt\") == \"/x/foo.txt\"\ntests/test_utils/test_format_filename.py:7:    assert click.format_filename(\"/x/foo.txt\") ==",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
     "detail": ""
    },
    {
@@ -5986,12 +5948,12 @@
    },
    {
     "symbol": "click::_compat::get_text_stdout",
-    "ok": false,
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
+    "tests_ok": true,
     "tests_failed": [],
-    "old_name_left": "src/click/_compat.py:588:    \"stdout\": get_text_stdout,",
-    "detail": "the test suite did not run"
+    "old_name_left": "",
+    "detail": ""
    },
    {
     "symbol": "click::_termui_impl::Editor::get_editor",
@@ -6026,23 +5988,25 @@
      "tests/test_testing.py::test_capture_pytest_matrix",
      "tests/test_types/test_convert_type.py::test_type_inferred_from_default"
     ],
-    "old_name_left": "src/click/_winconsole.py:264:        fileno = f.fileno_gnx()\nsrc/click/_winconsole.py:268:    handle = msvcrt.get_osfhandle(fileno)\ntests/test_testing.py:877:            sys.stdout.fileno()\ntests/test_testing.py:879:            sys.stderr.fileno()",
+    "old_name_left": "src/click/_termui_impl.py:944:            fd = sys.stdin.fileno()\nsrc/click/_winconsole.py:264:        fileno = f.fileno_gnx()\nsrc/click/_winconsole.py:268:    handle = msvcrt.get_osfhandle(fileno)\ntests/test_testing.py:877:            sys.stdout.fileno()\ntests/test_testing.py:879:            sys.st",
     "detail": ""
    },
    {
     "symbol": "click::core::Command::get_short_help_str",
-    "ok": false,
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_shell_completion.py::test_add_different_name",
-     "tests/test_shell_completion.py::test_chained",
-     "tests/test_shell_completion.py::test_full_complete",
-     "tests/test_shell_completion.py::test_group",
-     "tests/test_shell_completion.py::test_nested_group",
-     "tests/test_shell_completion.py::test_zsh_full_complete_with_colons"
-    ],
-    "old_name_left": "src/click/core.py:1481:                    CompletionItem(name, help=command.get_short_help_str())\nsrc/click/core.py:2152:            CompletionItem(name, help=command.get_short_help_str())",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "click::decorators::confirmation_option",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
     "detail": ""
    },
    {
@@ -6065,37 +6029,20 @@
    },
    {
     "symbol": "click::termui::hidden_prompt_func",
-    "ok": false,
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_termui.py::test_confirmation_prompt",
-     "tests/test_termui.py::test_hide_input_confirmation_prompt_mismatch_unaffected",
-     "tests/test_termui.py::test_hide_input_error_message",
-     "tests/test_testing.py::test_echo_stdin_prompts",
-     "tests/test_testing.py::test_prompts",
-     "tests/test_utils/test_prompt.py::test_full_prompt_passed_to_readline",
-     "tests/test_utils/test_prompt.py::test_prompts_abort"
-    ],
-    "old_name_left": "src/click/termui.py:236:        f = hidden_prompt_func if hide_input else visible_prompt_func",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
     "detail": ""
    },
    {
     "symbol": "click::shell_completion::split_arg_string",
-    "ok": false,
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_deprecations.py::test_attr_deprecated",
-     "tests/test_deprecations.py::test_context_protected_args_deprecated",
-     "tests/test_deprecations.py::test_isolated_filesystem_deprecated",
-     "tests/test_deprecations.py::test_normalized_explicit_name_not_deprecated",
-     "tests/test_deprecations.py::test_parameter_human_readable_name_deprecated",
-     "tests/test_deprecations.py::test_parameter_human_readable_name_override_deprecated",
-     "tests/test_deprecations.py::test_parameter_subclass_without_override_is_silent",
-     "tests/test_deprecations.py::test_unknown_attribute_raises"
-    ],
-    "old_name_left": "src/click/parser.py:531:        return split_arg_string\ntests/test_deprecations.py:35:        (click.parser, \"split_arg_string_gnx\", click.shell_completion.split_arg_string),",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
     "detail": ""
    },
    {
@@ -6118,15 +6065,11 @@
    },
    {
     "symbol": "click::core::Context::find_object",
-    "ok": false,
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_context.py::test_get_context_objects_missing",
-     "tests/test_context.py::test_get_context_objects_no_ensuring",
-     "tests/test_context.py::test_make_pass_decorator_args"
-    ],
-    "old_name_left": "src/click/decorators.py:84:                obj = ctx.find_object(object_type)",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
     "detail": ""
    },
    {
@@ -6139,6 +6082,15 @@
     "detail": ""
    },
    {
+    "symbol": "click::core::Context::abort",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "src/click/core.py:104:    \"\"\"Write the final abort message to standard error.\"\"\"\nsrc/click/exceptions.py:363:    \"\"\"An internal signalling exception that signals Click to abort.\"\"\"\nsrc/click/termui.py:292:    abort: bool = False,\nsrc/click/termui.py:305:    :param abort: if this is set to `True` a n",
+    "detail": ""
+   },
+   {
     "symbol": "click::formatting::iter_rows",
     "ok": true,
     "compiled": true,
@@ -6148,7 +6100,7 @@
     "detail": ""
    },
    {
-    "symbol": "click::testing::CliRunner::get_default_prog_name",
+    "symbol": "click::_compat::open_stream",
     "ok": true,
     "compiled": true,
     "tests_ok": true,
@@ -6157,7 +6109,7 @@
     "detail": ""
    },
    {
-    "symbol": "click::_compat::open_stream",
+    "symbol": "click::_compat::get_binary_stderr",
     "ok": true,
     "compiled": true,
     "tests_ok": true,
@@ -6199,6 +6151,7 @@
     "tests_ok": false,
     "tests_failed": [
      "tests/test_compat.py::test_ansi_re_matches_whole_sequence",
+     "tests/test_stream_lifecycle.py::test_invoke_with_threads_writing_to_streams",
      "tests/test_testing.py::test_tempdir_isolation_is_thread_safe"
     ],
     "old_name_left": "pyproject.toml:207:description = \"continuously rebuild docs and start a local server\"\nsrc/click/_termui_impl.py:105:        self.start: float\nsrc/click/_termui_impl.py:106:        self.start = self.last_eta = time.time()\nsrc/click/_termui_impl.py:310:            step = (time.time() - self.start) / s",
@@ -6223,6 +6176,15 @@
     "detail": ""
    },
    {
+    "symbol": "click::termui::echo_via_pager",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
     "symbol": "click::_termui_impl::ProgressBar::update",
     "ok": false,
     "compiled": true,
@@ -6237,19 +6199,10 @@
    },
    {
     "symbol": "click::termui::style",
-    "ok": false,
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_custom_classes.py::test_context_formatter_class",
-     "tests/test_termui.py::test_choices_list_in_prompt",
-     "tests/test_termui.py::test_confirmation_prompt",
-     "tests/test_termui.py::test_echo_via_pager_real_pager_handles_ansi",
-     "tests/test_termui.py::test_echo_via_pager_streams_each_write",
-     "tests/test_termui.py::test_echo_via_pager_tty_pager_missing",
-     "tests/test_termui.py::test_edit",
-     "tests/test_termui.py::test_edit_pathlib"
-    ],
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "docs/_static/click-icon.svg:3:<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 500 500\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xml:space=\"preserve\" xmlns:serif=\"http://www.serif.com/\" style=\"fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;st",
     "detail": ""
    },
@@ -6261,24 +6214,6 @@
     "tests_failed": [],
     "old_name_left": "",
     "detail": ""
-   },
-   {
-    "symbol": "click::formatting::HelpFormatter::write_usage",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": true,
-    "tests_failed": [],
-    "old_name_left": "",
-    "detail": ""
-   },
-   {
-    "symbol": "click::_compat::get_text_stderr",
-    "ok": false,
-    "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [],
-    "old_name_left": "src/click/_compat.py:589:    \"stderr\": get_text_stderr,",
-    "detail": "the test suite did not run"
    }
   ],
   "mutants": {
@@ -6290,7 +6225,7 @@
     "click::globals::push_context",
     "click::_textwrap::TextWrapper::extra_indent",
     "click::termui::confirm",
-    "click::core::Command::format_usage"
+    "click::decorators::argument"
    ],
    "8": [
     "click::testing::make_input_stream",
@@ -6305,6 +6240,7 @@
    "9": [
     "click::core::Context::get_parameter_source",
     "click::_compat::open_stream",
+    "click::_compat::get_binary_stderr",
     "examples::validation::validation::validate_count",
     "click::_termui_impl::ProgressBar::format_bar",
     "click::_termui_impl::ProgressBar::format_progress_line",
@@ -6437,9 +6373,9 @@
     "symbol": "click::_textwrap::TextWrapper::extra_indent",
     "level": "id",
     "truth": 79,
-    "predicted": 11,
+    "predicted": 12,
     "recall": 0.012658227848101266,
-    "precision": 0.09090909090909091,
+    "precision": 0.08333333333333333,
     "top_hits": 1,
     "top_n": 10,
     "top_precision": 0.1,
@@ -6461,44 +6397,35 @@
     "symbol": "click::termui::confirm",
     "level": "id",
     "truth": 6,
-    "predicted": 66,
-    "recall": 0.5,
-    "precision": 0.045454545454545456,
-    "top_hits": 2,
+    "predicted": 68,
+    "recall": 0.8333333333333334,
+    "precision": 0.07352941176470588,
+    "top_hits": 4,
     "top_n": 10,
-    "top_precision": 0.2,
-    "top_best": 0.3,
+    "top_precision": 0.4,
+    "top_best": 0.5,
     "caught": 1.0,
     "missed": [
-     "tests/test_utils/test_confirm.py::test_prompts",
-     "tests/test_utils/test_echo.py::test_echo_writing_to_standard_error",
      "tests/test_utils/test_prompt.py::test_full_prompt_passed_to_readline"
     ],
-    "recall_graph_only": 0.0
+    "recall_graph_only": 0.3333333333333333
    },
    {
-    "symbol": "click::core::Command::format_usage",
+    "symbol": "click::decorators::argument",
     "level": "id",
-    "truth": 111,
-    "predicted": 0,
-    "recall": 0.0,
-    "precision": 0.0,
-    "top_hits": 0,
-    "top_n": 0,
-    "top_precision": 0.0,
-    "top_best": 0.0,
-    "caught": 0.0,
+    "truth": 86,
+    "predicted": 96,
+    "recall": 0.9883720930232558,
+    "precision": 0.8854166666666666,
+    "top_hits": 10,
+    "top_n": 10,
+    "top_precision": 1.0,
+    "top_best": 1.0,
+    "caught": 1.0,
     "missed": [
-     "tests/test_arguments.py::test_argument_help",
-     "tests/test_arguments.py::test_argument_help_deprecated_without_help_lists_all",
-     "tests/test_arguments.py::test_argument_help_empty_string_lists_all",
-     "tests/test_arguments.py::test_argument_help_lists_undocumented_arguments",
-     "tests/test_arguments.py::test_argument_help_optional_metavar",
-     "tests/test_arguments.py::test_argument_help_options_only_no_arguments_section",
-     "tests/test_arguments.py::test_argument_help_undocumented_arguments_only_no_section",
-     "tests/test_arguments.py::test_argument_metavar_marks_optional"
+     "tests/test_arguments.py::test_parameter_name_is_not_nfkc_normalized"
     ],
-    "recall_graph_only": 0.0
+    "recall_graph_only": 0.9883720930232558
    },
    {
     "symbol": "click::testing::make_input_stream",
@@ -6528,14 +6455,14 @@
     "symbol": "click::utils::format_filename",
     "level": "id",
     "truth": 8,
-    "predicted": 0,
-    "recall": 0.0,
-    "precision": 0.0,
-    "top_hits": 0,
-    "top_n": 0,
-    "top_precision": 0.0,
-    "top_best": 0.0,
-    "caught": 0.0,
+    "predicted": 1,
+    "recall": 0.125,
+    "precision": 1.0,
+    "top_hits": 1,
+    "top_n": 1,
+    "top_precision": 1.0,
+    "top_best": 1.0,
+    "caught": 1.0,
     "missed": [
      "tests/test_basic.py::test_file_lazy_mode",
      "tests/test_basic.py::test_path_option",
@@ -6543,10 +6470,9 @@
      "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value",
      "tests/test_types/test_File.py::test_file_surrogates",
      "tests/test_types/test_Path.py::test_invalid_path_with_esc_sequence",
-     "tests/test_types/test_Path.py::test_path_surrogates",
-     "tests/test_utils/test_format_filename.py::test_filename_formatting"
+     "tests/test_types/test_Path.py::test_path_surrogates"
     ],
-    "recall_graph_only": 0.0
+    "recall_graph_only": 0.125
    },
    {
     "symbol": "click::formatting::HelpFormatter::indent",
@@ -6576,13 +6502,13 @@
     "symbol": "click::_compat::get_text_stdout",
     "level": "id",
     "truth": 292,
-    "predicted": 8,
-    "recall": 0.00684931506849315,
+    "predicted": 16,
+    "recall": 0.0136986301369863,
     "precision": 0.25,
-    "top_hits": 2,
-    "top_n": 8,
-    "top_precision": 0.25,
-    "top_best": 0.25,
+    "top_hits": 3,
+    "top_n": 10,
+    "top_precision": 0.3,
+    "top_best": 0.4,
     "caught": 1.0,
     "missed": [
      "tests/test_abort_interrupt.py::test_interrupt_while_exiting_after_success",
@@ -6594,26 +6520,22 @@
      "tests/test_arguments.py::test_argument_help_empty_string_lists_all",
      "tests/test_arguments.py::test_argument_help_lists_undocumented_arguments"
     ],
-    "recall_graph_only": 0.00684931506849315
+    "recall_graph_only": 0.0136986301369863
    },
    {
     "symbol": "click::_termui_impl::Editor::get_editor",
     "level": "id",
     "truth": 8,
-    "predicted": 6,
-    "recall": 0.625,
-    "precision": 0.8333333333333334,
-    "top_hits": 5,
-    "top_n": 6,
-    "top_precision": 0.8333333333333334,
-    "top_best": 0.8333333333333334,
+    "predicted": 9,
+    "recall": 1.0,
+    "precision": 0.8888888888888888,
+    "top_hits": 8,
+    "top_n": 9,
+    "top_precision": 0.8888888888888888,
+    "top_best": 0.8888888888888888,
     "caught": 1.0,
-    "missed": [
-     "tests/test_termui.py::test_edit",
-     "tests/test_termui.py::test_edit_pathlib",
-     "tests/test_termui.py::test_fast_edit"
-    ],
-    "recall_graph_only": 0.625
+    "missed": [],
+    "recall_graph_only": 1.0
    },
    {
     "symbol": "click::types::Choice::get_invalid_choice_message",
@@ -6642,9 +6564,9 @@
     "symbol": "click::testing::_NamedTextIOWrapper::fileno",
     "level": "id",
     "truth": 2,
-    "predicted": 44,
+    "predicted": 45,
     "recall": 1.0,
-    "precision": 0.045454545454545456,
+    "precision": 0.044444444444444446,
     "top_hits": 1,
     "top_n": 10,
     "top_precision": 0.1,
@@ -6681,11 +6603,11 @@
     "symbol": "click::core::Context::get_parameter_source",
     "level": "id",
     "truth": 370,
-    "predicted": 2,
-    "recall": 0.005405405405405406,
+    "predicted": 8,
+    "recall": 0.021621621621621623,
     "precision": 1.0,
-    "top_hits": 2,
-    "top_n": 2,
+    "top_hits": 8,
+    "top_n": 8,
     "top_precision": 1.0,
     "top_best": 1.0,
     "caught": 1.0,
@@ -6699,19 +6621,19 @@
      "tests/test_arguments.py::test_argument_has_no_auto_envvar",
      "tests/test_arguments.py::test_argument_help"
     ],
-    "recall_graph_only": 0.005405405405405406
+    "recall_graph_only": 0.021621621621621623
    },
    {
     "symbol": "click::_compat::open_stream",
     "level": "id",
     "truth": 17,
-    "predicted": 8,
-    "recall": 0.058823529411764705,
-    "precision": 0.125,
-    "top_hits": 1,
-    "top_n": 8,
-    "top_precision": 0.125,
-    "top_best": 0.125,
+    "predicted": 16,
+    "recall": 0.47058823529411764,
+    "precision": 0.5,
+    "top_hits": 7,
+    "top_n": 10,
+    "top_precision": 0.7,
+    "top_best": 0.8,
     "caught": 1.0,
     "missed": [
      "tests/test_arguments.py::test_file_args",
@@ -6723,7 +6645,12 @@
      "tests/test_termui.py::test_file_prompt_default_format",
      "tests/test_testing.py::test_file_stdin_attrs"
     ],
-    "recall_graph_only": 0.058823529411764705
+    "recall_graph_only": 0.47058823529411764
+   },
+   {
+    "symbol": "click::_compat::get_binary_stderr",
+    "skipped": "no test fails when it throws",
+    "predicted": 0
    },
    {
     "symbol": "examples::validation::validation::validate_count",
@@ -6826,9 +6753,9 @@
     "symbol": "click::testing::_FDCapture::start",
     "level": "id",
     "truth": 7,
-    "predicted": 44,
+    "predicted": 45,
     "recall": 1.0,
-    "precision": 0.1590909090909091,
+    "precision": 0.15555555555555556,
     "top_hits": 0,
     "top_n": 10,
     "top_precision": 0.0,
@@ -6866,13 +6793,18 @@
    },
    {
     "symbol": "click::_textwrap::TextWrapper::extra_indent",
-    "look_tokens": 463,
+    "look_tokens": 461,
     "file_tokens": 1568
    },
    {
     "symbol": "click::termui::confirm",
-    "look_tokens": 778,
+    "look_tokens": 787,
     "file_tokens": 8971
+   },
+   {
+    "symbol": "click::decorators::argument",
+    "look_tokens": 625,
+    "file_tokens": 5436
    },
    {
     "symbol": "click::core::Command::format_usage",
@@ -6881,12 +6813,12 @@
    },
    {
     "symbol": "click::decorators::option",
-    "look_tokens": 597,
+    "look_tokens": 574,
     "file_tokens": 5436
    },
    {
     "symbol": "click::_compat::should_strip_ansi",
-    "look_tokens": 470,
+    "look_tokens": 435,
     "file_tokens": 4485
    },
    {
@@ -6901,12 +6833,12 @@
    },
    {
     "symbol": "click::core::Context::get_parameter_source",
-    "look_tokens": 332,
+    "look_tokens": 480,
     "file_tokens": 39086
    },
    {
     "symbol": "click::core::Context::call_on_close",
-    "look_tokens": 208,
+    "look_tokens": 280,
     "file_tokens": 39086
    },
    {
@@ -6916,12 +6848,12 @@
    },
    {
     "symbol": "click::core::Group::result_callback",
-    "look_tokens": 513,
+    "look_tokens": 530,
     "file_tokens": 39086
    },
    {
     "symbol": "click::core::Context::ensure_object",
-    "look_tokens": 172,
+    "look_tokens": 294,
     "file_tokens": 39086
    },
    {
@@ -6935,18 +6867,13 @@
     "file_tokens": 8175
    },
    {
-    "symbol": "examples::aliases::aliases::Config::write_config",
-    "look_tokens": 156,
-    "file_tokens": 1016
-   },
-   {
     "symbol": "click::testing::make_input_stream",
     "look_tokens": 337,
     "file_tokens": 7365
    },
    {
     "symbol": "click::utils::format_filename",
-    "look_tokens": 549,
+    "look_tokens": 588,
     "file_tokens": 5355
    },
    {
@@ -6956,12 +6883,12 @@
    },
    {
     "symbol": "click::_compat::get_text_stdout",
-    "look_tokens": 416,
+    "look_tokens": 493,
     "file_tokens": 4485
    },
    {
     "symbol": "click::_termui_impl::Editor::get_editor",
-    "look_tokens": 333,
+    "look_tokens": 369,
     "file_tokens": 8175
    },
    {
@@ -6971,13 +6898,18 @@
    },
    {
     "symbol": "click::testing::_NamedTextIOWrapper::fileno",
-    "look_tokens": 418,
+    "look_tokens": 436,
     "file_tokens": 7365
    },
    {
     "symbol": "click::core::Command::get_short_help_str",
-    "look_tokens": 227,
+    "look_tokens": 249,
     "file_tokens": 39086
+   },
+   {
+    "symbol": "click::decorators::confirmation_option",
+    "look_tokens": 302,
+    "file_tokens": 5436
    },
    {
     "symbol": "click::_termui_impl::ProgressBar::render_progress",
@@ -6986,17 +6918,17 @@
    },
    {
     "symbol": "examples::repo::repo::Repo::set_config",
-    "look_tokens": 122,
+    "look_tokens": 125,
     "file_tokens": 1179
    },
    {
     "symbol": "click::termui::hidden_prompt_func",
-    "look_tokens": 228,
+    "look_tokens": 364,
     "file_tokens": 8971
    },
    {
     "symbol": "click::shell_completion::split_arg_string",
-    "look_tokens": 577,
+    "look_tokens": 585,
     "file_tokens": 6515
    },
    {
@@ -7011,7 +6943,7 @@
    },
    {
     "symbol": "click::core::Context::find_object",
-    "look_tokens": 150,
+    "look_tokens": 272,
     "file_tokens": 39086
    },
    {
@@ -7020,23 +6952,28 @@
     "file_tokens": 39086
    },
    {
+    "symbol": "click::core::Context::abort",
+    "look_tokens": 175,
+    "file_tokens": 39086
+   },
+   {
     "symbol": "click::formatting::iter_rows",
     "look_tokens": 365,
     "file_tokens": 2611
    },
    {
-    "symbol": "click::testing::CliRunner::get_default_prog_name",
-    "look_tokens": 343,
-    "file_tokens": 7365
+    "symbol": "click::_compat::open_stream",
+    "look_tokens": 1165,
+    "file_tokens": 4485
    },
    {
-    "symbol": "click::_compat::open_stream",
-    "look_tokens": 1095,
+    "symbol": "click::_compat::get_binary_stderr",
+    "look_tokens": 142,
     "file_tokens": 4485
    },
    {
     "symbol": "examples::validation::validation::validate_count",
-    "look_tokens": 117,
+    "look_tokens": 122,
     "file_tokens": 364
    },
    {
@@ -7051,7 +6988,7 @@
    },
    {
     "symbol": "click::testing::_FDCapture::start",
-    "look_tokens": 341,
+    "look_tokens": 364,
     "file_tokens": 7365
    },
    {
@@ -7065,32 +7002,27 @@
     "file_tokens": 8175
    },
    {
+    "symbol": "click::termui::echo_via_pager",
+    "look_tokens": 668,
+    "file_tokens": 8971
+   },
+   {
     "symbol": "click::_termui_impl::ProgressBar::update",
     "look_tokens": 393,
     "file_tokens": 8175
    },
    {
     "symbol": "click::termui::style",
-    "look_tokens": 1354,
+    "look_tokens": 1491,
     "file_tokens": 8971
    },
    {
     "symbol": "click::parser::_OptionParser::add_argument",
     "look_tokens": 228,
     "file_tokens": 4763
-   },
-   {
-    "symbol": "click::formatting::HelpFormatter::write_usage",
-    "look_tokens": 635,
-    "file_tokens": 2611
-   },
-   {
-    "symbol": "click::_compat::get_text_stderr",
-    "look_tokens": 192,
-    "file_tokens": 4485
    }
   ],
-  "seconds": 15,
+  "seconds": 53,
   "summary": {
    "callers_recall": null,
    "callers_precision": null,
@@ -7101,15 +7033,15 @@
    "common_precision": null,
    "common_recall_with_maybe": null,
    "common_checked": 0,
-   "rename_ok": 0.66,
-   "rename_checked": 50,
-   "tests_recall": 0.212,
-   "tests_precision": 0.384,
-   "tests_top10_precision": 0.405,
-   "tests_top10_best": 0.5,
-   "tests_caught": 0.696,
+   "rename_ok": 0.902,
+   "rename_checked": 51,
+   "tests_recall": 0.31,
+   "tests_precision": 0.485,
+   "tests_top10_precision": 0.53,
+   "tests_top10_best": 0.634,
+   "tests_caught": 0.783,
    "tests_checked": 23,
-   "look_vs_file": 0.084
+   "look_vs_file": 0.08
   },
   "summary_seeds": {
    "7": {
@@ -7122,15 +7054,15 @@
     "common_precision": null,
     "common_recall_with_maybe": null,
     "common_checked": 0,
-    "rename_ok": 0.7,
+    "rename_ok": 0.9,
     "rename_checked": 20,
-    "tests_recall": 0.152,
-    "tests_precision": 0.224,
-    "tests_top10_precision": 0.275,
-    "tests_top10_best": 0.362,
-    "tests_caught": 0.625,
+    "tests_recall": 0.317,
+    "tests_precision": 0.337,
+    "tests_top10_precision": 0.425,
+    "tests_top10_best": 0.512,
+    "tests_caught": 0.75,
     "tests_checked": 8,
-    "look_vs_file": 0.093
+    "look_vs_file": 0.091
    },
    "8": {
     "callers_recall": null,
@@ -7142,15 +7074,15 @@
     "common_precision": null,
     "common_recall_with_maybe": null,
     "common_checked": 0,
-    "rename_ok": 0.65,
+    "rename_ok": 0.95,
     "rename_checked": 20,
-    "tests_recall": 0.238,
-    "tests_precision": 0.445,
-    "tests_top10_precision": 0.448,
-    "tests_top10_best": 0.535,
-    "tests_caught": 0.75,
+    "tests_recall": 0.301,
+    "tests_precision": 0.577,
+    "tests_top10_precision": 0.586,
+    "tests_top10_best": 0.686,
+    "tests_caught": 0.875,
     "tests_checked": 8,
-    "look_vs_file": 0.057
+    "look_vs_file": 0.059
    },
    "9": {
     "callers_recall": null,
@@ -7162,15 +7094,15 @@
     "common_precision": null,
     "common_recall_with_maybe": null,
     "common_checked": 0,
-    "rename_ok": 0.65,
+    "rename_ok": 0.9,
     "rename_checked": 20,
-    "tests_recall": 0.298,
-    "tests_precision": 0.539,
-    "tests_top10_precision": 0.545,
-    "tests_top10_best": 0.645,
+    "tests_recall": 0.398,
+    "tests_precision": 0.592,
+    "tests_top10_precision": 0.624,
+    "tests_top10_best": 0.736,
     "tests_caught": 0.75,
     "tests_checked": 8,
-    "look_vs_file": 0.085
+    "look_vs_file": 0.079
    }
   },
   "noise": {
@@ -7181,101 +7113,101 @@
    "common_recall_with_maybe": null,
    "common_precision": null,
    "rename_ok": {
-    "mean": 0.66,
-    "functions": 50,
-    "boot_lo": 0.54,
-    "boot_hi": 0.76,
-    "boot_half": 0.11,
+    "mean": 0.902,
+    "functions": 51,
+    "boot_lo": 0.824,
+    "boot_hi": 0.961,
+    "boot_half": 0.069,
     "seeds": [
-     0.7,
-     0.65,
-     0.65
+     0.9,
+     0.95,
+     0.9
     ],
     "seed_sd": 0.029,
-    "threshold": 0.11
+    "threshold": 0.07
    },
    "tests_recall": {
-    "mean": 0.212,
+    "mean": 0.31,
     "functions": 23,
-    "boot_lo": 0.117,
-    "boot_hi": 0.321,
-    "boot_half": 0.102,
+    "boot_lo": 0.192,
+    "boot_hi": 0.438,
+    "boot_half": 0.123,
     "seeds": [
-     0.152,
-     0.238,
-     0.298
+     0.317,
+     0.301,
+     0.398
     ],
-    "seed_sd": 0.073,
-    "threshold": 0.11
+    "seed_sd": 0.052,
+    "threshold": 0.13
    },
    "tests_precision": {
-    "mean": 0.384,
+    "mean": 0.485,
     "functions": 23,
-    "boot_lo": 0.247,
-    "boot_hi": 0.525,
-    "boot_half": 0.139,
+    "boot_lo": 0.341,
+    "boot_hi": 0.629,
+    "boot_half": 0.144,
     "seeds": [
-     0.224,
-     0.445,
-     0.539
+     0.337,
+     0.577,
+     0.592
     ],
-    "seed_sd": 0.162,
-    "threshold": 0.14
-   },
-   "tests_top10_precision": {
-    "mean": 0.405,
-    "functions": 23,
-    "boot_lo": 0.267,
-    "boot_hi": 0.547,
-    "boot_half": 0.14,
-    "seeds": [
-     0.275,
-     0.448,
-     0.545
-    ],
-    "seed_sd": 0.137,
-    "threshold": 0.14
-   },
-   "tests_top10_best": {
-    "mean": 0.5,
-    "functions": 23,
-    "boot_lo": 0.355,
-    "boot_hi": 0.651,
-    "boot_half": 0.148,
-    "seeds": [
-     0.362,
-     0.535,
-     0.645
-    ],
-    "seed_sd": 0.142,
+    "seed_sd": 0.143,
     "threshold": 0.15
    },
-   "tests_caught": {
-    "mean": 0.696,
+   "tests_top10_precision": {
+    "mean": 0.53,
     "functions": 23,
-    "boot_lo": 0.522,
-    "boot_hi": 0.87,
-    "boot_half": 0.174,
+    "boot_lo": 0.386,
+    "boot_hi": 0.67,
+    "boot_half": 0.142,
     "seeds": [
-     0.625,
+     0.425,
+     0.586,
+     0.624
+    ],
+    "seed_sd": 0.106,
+    "threshold": 0.15
+   },
+   "tests_top10_best": {
+    "mean": 0.634,
+    "functions": 23,
+    "boot_lo": 0.5,
+    "boot_hi": 0.765,
+    "boot_half": 0.133,
+    "seeds": [
+     0.512,
+     0.686,
+     0.736
+    ],
+    "seed_sd": 0.117,
+    "threshold": 0.14
+   },
+   "tests_caught": {
+    "mean": 0.783,
+    "functions": 23,
+    "boot_lo": 0.652,
+    "boot_hi": 0.913,
+    "boot_half": 0.13,
+    "seeds": [
      0.75,
+     0.875,
      0.75
     ],
     "seed_sd": 0.072,
-    "threshold": 0.18
+    "threshold": 0.14
    },
    "look_vs_file": {
-    "mean": 0.084,
-    "functions": 50,
-    "boot_lo": 0.066,
-    "boot_hi": 0.103,
-    "boot_half": 0.019,
+    "mean": 0.08,
+    "functions": 51,
+    "boot_lo": 0.063,
+    "boot_hi": 0.099,
+    "boot_half": 0.018,
     "seeds": [
-     0.093,
-     0.057,
-     0.085
+     0.091,
+     0.059,
+     0.079
     ],
-    "seed_sd": 0.019,
+    "seed_sd": 0.017,
     "threshold": 0.02
    }
   }
@@ -7292,96 +7224,96 @@
    8,
    9
   ],
-  "edges": 3928,
+  "edges": 3993,
   "sample": [
+   "sqlparse::engine::grouping::group_values",
    "sqlparse::lexer::Lexer::default_initialization",
    "benchmarks::_harness::measure",
    "sqlparse::parsestream",
    "sqlparse::sql::TokenList::insert_before",
+   "sqlparse::engine::grouping::group_comments",
+   "sqlparse::engine::grouping::group_typed_literal",
    "benchmarks::_harness::run_vector",
+   "sqlparse::engine::grouping::group_where",
+   "sqlparse::engine::grouping::group_arrays",
    "sqlparse::utils::indent",
+   "sqlparse::engine::grouping::group_over",
    "sqlparse::lexer::Lexer::is_keyword",
+   "sqlparse::engine::grouping::group_typecasts",
    "sqlparse::lexer::tokenize",
    "sqlparse::keywords::DelimitedSpans::resolve",
    "benchmarks::bench_lexer_delimiters::unclosed_comments",
    "sqlparse::lexer::Lexer::get_default_instance",
    "sqlparse::sql::TokenList::token_next_by",
    "sqlparse::lexer::Lexer::set_SQL_REGEX",
-   "sqlparse::lexer::Lexer::add_keywords",
-   "sqlparse::sql::Token::match",
-   "examples::column_defs_lowlevel::extract_definitions",
-   "sqlparse::format",
-   "sqlparse::sql::TokenList::token_index",
-   "examples::extract_table_names::extract_table_identifiers",
-   "sqlparse::engine::grouping::group",
    "sqlparse::sql::TokenList::token_not_matching",
+   "sqlparse::engine::grouping::group_assignment",
    "sqlparse::formatter::validate_options",
+   "sqlparse::engine::grouping::align_comments",
    "sqlparse::cli::create_parser",
    "benchmarks::bench_split_newlines::unclosed_double_quotes",
+   "sqlparse::sql::Token::match",
    "sqlparse::lexer::Lexer::get_tokens",
    "sqlparse::formatter::build_filter_stack",
    "sqlparse::keywords::find_delimited_spans",
    "sqlparse::sql::Token::within",
+   "sqlparse::engine::grouping::group_order",
    "sqlparse::sql::IdentifierList::get_identifiers",
-   "examples::extract_table_names::extract_from_part",
-   "benchmarks::bench_grouping::nested_case_when",
-   "sqlparse::sql::TokenList::token_prev",
-   "benchmarks::bench_split_newlines::unclosed_single_quotes",
-   "sqlparse::sql::TokenList::get_sublists",
+   "sqlparse::engine::grouping::group_functions",
    "sqlparse::parse",
    "examples::extract_table_names::is_subselect",
    "sqlparse::sql::TokenList::token_first",
    "sqlparse::sql::TokenList::insert_after",
+   "sqlparse::engine::grouping::group_identifier",
+   "benchmarks::bench_split_newlines::unclosed_single_quotes",
    "sqlparse::sql::TokenList::get_name",
-   "sqlparse::sql::Case::get_cases",
-   "sqlparse::utils::recurse",
-   "sqlparse::utils::split_unquoted_newlines"
+   "sqlparse::engine::grouping::group"
   ],
   "sample_common": [],
   "samples": {
    "7": [
+    "sqlparse::engine::grouping::group_values",
     "sqlparse::lexer::Lexer::default_initialization",
     "benchmarks::_harness::measure",
     "sqlparse::parsestream",
     "sqlparse::sql::TokenList::insert_before",
+    "sqlparse::engine::grouping::group_comments",
+    "sqlparse::engine::grouping::group_typed_literal",
     "benchmarks::_harness::run_vector",
+    "sqlparse::engine::grouping::group_where",
+    "sqlparse::engine::grouping::group_arrays",
     "sqlparse::utils::indent",
+    "sqlparse::engine::grouping::group_over",
     "sqlparse::lexer::Lexer::is_keyword",
+    "sqlparse::engine::grouping::group_typecasts",
     "sqlparse::lexer::tokenize",
     "sqlparse::keywords::DelimitedSpans::resolve",
     "benchmarks::bench_lexer_delimiters::unclosed_comments",
     "sqlparse::lexer::Lexer::get_default_instance",
     "sqlparse::sql::TokenList::token_next_by",
-    "sqlparse::lexer::Lexer::set_SQL_REGEX",
-    "sqlparse::lexer::Lexer::add_keywords",
-    "sqlparse::sql::Token::match",
-    "examples::column_defs_lowlevel::extract_definitions",
-    "sqlparse::format",
-    "sqlparse::sql::TokenList::token_index",
-    "examples::extract_table_names::extract_table_identifiers",
-    "sqlparse::engine::grouping::group"
+    "sqlparse::lexer::Lexer::set_SQL_REGEX"
    ],
    "8": [
     "sqlparse::sql::TokenList::token_not_matching",
     "sqlparse::lexer::Lexer::default_initialization",
+    "sqlparse::engine::grouping::group_assignment",
     "benchmarks::_harness::measure",
     "sqlparse::sql::TokenList::token_next_by",
     "sqlparse::formatter::validate_options",
+    "sqlparse::engine::grouping::group_comments",
+    "sqlparse::engine::grouping::align_comments",
     "sqlparse::cli::create_parser",
+    "sqlparse::engine::grouping::group_typed_literal",
     "benchmarks::bench_split_newlines::unclosed_double_quotes",
     "sqlparse::sql::Token::match",
+    "sqlparse::engine::grouping::group_typecasts",
     "sqlparse::lexer::Lexer::get_tokens",
     "sqlparse::formatter::build_filter_stack",
     "sqlparse::keywords::find_delimited_spans",
     "sqlparse::sql::Token::within",
+    "sqlparse::engine::grouping::group_order",
     "sqlparse::sql::IdentifierList::get_identifiers",
-    "sqlparse::utils::indent",
-    "examples::extract_table_names::extract_from_part",
-    "benchmarks::bench_grouping::nested_case_when",
-    "sqlparse::sql::TokenList::token_prev",
-    "benchmarks::bench_split_newlines::unclosed_single_quotes",
-    "examples::extract_table_names::extract_table_identifiers",
-    "sqlparse::sql::TokenList::get_sublists"
+    "sqlparse::engine::grouping::group_functions"
    ],
    "9": [
     "sqlparse::formatter::build_filter_stack",
@@ -7391,19 +7323,19 @@
     "sqlparse::parse",
     "examples::extract_table_names::is_subselect",
     "sqlparse::sql::TokenList::token_first",
+    "sqlparse::engine::grouping::group_over",
     "sqlparse::sql::TokenList::insert_after",
+    "sqlparse::engine::grouping::group_identifier",
     "sqlparse::sql::Token::match",
+    "sqlparse::engine::grouping::group_arrays",
     "benchmarks::bench_split_newlines::unclosed_single_quotes",
     "benchmarks::_harness::run_vector",
     "sqlparse::sql::TokenList::token_not_matching",
+    "sqlparse::engine::grouping::group_typed_literal",
     "sqlparse::sql::TokenList::get_name",
-    "sqlparse::engine::grouping::group",
-    "sqlparse::lexer::tokenize",
-    "sqlparse::sql::Token::within",
-    "sqlparse::sql::Case::get_cases",
-    "sqlparse::cli::create_parser",
-    "sqlparse::utils::recurse",
-    "sqlparse::utils::split_unquoted_newlines"
+    "sqlparse::engine::grouping::group_values",
+    "sqlparse::engine::grouping::group_where",
+    "sqlparse::engine::grouping::group"
    ]
   },
   "samples_common": {
@@ -7421,6 +7353,15 @@
   "callers_common": [],
   "callers_blind": [],
   "rename": [
+   {
+    "symbol": "sqlparse::engine::grouping::group_values",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
    {
     "symbol": "sqlparse::lexer::Lexer::default_initialization",
     "ok": true,
@@ -7458,7 +7399,43 @@
     "detail": ""
    },
    {
+    "symbol": "sqlparse::engine::grouping::group_comments",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "sqlparse::engine::grouping::group_typed_literal",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
     "symbol": "benchmarks::_harness::run_vector",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "sqlparse::engine::grouping::group_where",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "sqlparse::engine::grouping::group_arrays",
     "ok": true,
     "compiled": true,
     "tests_ok": true,
@@ -7473,6 +7450,15 @@
     "tests_ok": true,
     "tests_failed": [],
     "old_name_left": "docs/sqlformat.1:48:Set indent width to\nsqlparse/cli.py:115:        help='indent after first line of statement (e.g. SELECT)')\nsqlparse/cli.py:122:        help='indent all columns by indent_width instead of keyword length')\nsqlparse/filters/aligned_indent.py:28:        self.indent = 0\nsqlparse/filte",
+    "detail": ""
+   },
+   {
+    "symbol": "sqlparse::engine::grouping::group_over",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
     "detail": ""
    },
    {
@@ -7494,14 +7480,21 @@
     "detail": ""
    },
    {
-    "symbol": "sqlparse::lexer::tokenize",
-    "ok": false,
+    "symbol": "sqlparse::engine::grouping::group_typecasts",
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_parse.py::test_parse_modulo_not_placeholder"
-    ],
-    "old_name_left": "tests/test_parse.py:82:    tokens = list(sqlparse.lexer.tokenize('x %3'))",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "sqlparse::lexer::tokenize",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
     "detail": ""
    },
    {
@@ -7537,16 +7530,16 @@
     "compiled": true,
     "tests_ok": false,
     "tests_failed": [
-     "tests/test_format.py::test_duplicate_linebreaks",
-     "tests/test_format.py::test_strip_comments_multi",
-     "tests/test_format.py::test_strip_comments_preserves_hint",
-     "tests/test_format.py::test_strip_comments_preserves_linebreak",
-     "tests/test_format.py::test_strip_comments_preserves_whitespace",
-     "tests/test_format.py::test_strip_comments_single",
      "tests/test_grouping.py::test_aliased_column_without_as",
-     "tests/test_grouping.py::test_aliased_function_without_as"
+     "tests/test_grouping.py::test_aliased_function_without_as",
+     "tests/test_grouping.py::test_aliased_literal_without_as",
+     "tests/test_grouping.py::test_grouping_alias",
+     "tests/test_grouping.py::test_grouping_alias_case",
+     "tests/test_grouping.py::test_grouping_alias_ctas",
+     "tests/test_grouping.py::test_grouping_alias_ctas_lowercase_as",
+     "tests/test_grouping.py::test_grouping_alias_returns_none"
     ],
-    "old_name_left": "sqlparse/engine/grouping.py:224:        snidx, _ = tlist.token_next_by(m=m_semicolon, idx=nidx)\nsqlparse/filters/others.py:21:            return tlist.token_next_by(i=sql.Comment, t=T.Comment, idx=idx)\nsqlparse/sql.py:32:        kw_idx, kw = self.token_next_by(m=(T.Keyword, 'AS'))\nsqlparse/sql.py:37",
+    "old_name_left": "sqlparse/sql.py:32:        kw_idx, kw = self.token_next_by(m=(T.Keyword, 'AS'))\nsqlparse/sql.py:37:        _, ws = self.token_next_by(t=T.Whitespace)",
     "detail": ""
    },
    {
@@ -7559,78 +7552,6 @@
     "detail": ""
    },
    {
-    "symbol": "sqlparse::lexer::Lexer::add_keywords",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": true,
-    "tests_failed": [],
-    "old_name_left": "docs/source/extending.rst:28:``.set_SQL_REGEX(SQL_REGEX)``, and apply keyword lists with ``.add_keywords(KEYWORDS)``.\ndocs/source/extending.rst:72:    lex.add_keywords(keywords.KEYWORDS_COMMON)\ndocs/source/extending.rst:73:    lex.add_keywords(keywords.KEYWORDS_ORACLE)\ndocs/source/extending.rst:74: ",
-    "detail": ""
-   },
-   {
-    "symbol": "sqlparse::sql::Token::match",
-    "ok": false,
-    "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_cli.py::test_cli_error_handling_continues",
-     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
-     "tests/test_cli.py::test_cli_single_file_inplace",
-     "tests/test_cli.py::test_encoding",
-     "tests/test_cli.py::test_encoding_output_file",
-     "tests/test_cli.py::test_encoding_stdin",
-     "tests/test_cli.py::test_encoding_stdout",
-     "tests/test_cli.py::test_invalid_outfile"
-    ],
-    "old_name_left": "benchmarks/bench_lexer_delimiters.py:36:    backreference cannot short-circuit on an earlier match.\"\"\"\nsqlparse/engine/grouping.py:105:    def match(token):\nsqlparse/engine/grouping.py:106:        return token.match(T.Punctuation, '::')\nsqlparse/engine/grouping.py:115:    _group(tlist, sql.Identifie",
-    "detail": ""
-   },
-   {
-    "symbol": "examples::column_defs_lowlevel::extract_definitions",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": true,
-    "tests_failed": [],
-    "old_name_left": "",
-    "detail": ""
-   },
-   {
-    "symbol": "sqlparse::format",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": true,
-    "tests_failed": [],
-    "old_name_left": "CHANGELOG:21:* IMPORTANT: Dollar signs are now escaped in the `php` output format. PHP\nCHANGELOG:29:* IMPORTANT: Fixes a potential denial of service attack (DOS) in `format()`,\nCHANGELOG:31:  that are never closed. This affected `format()` with default options and\nCHANGELOG:39:* Fix `IndexError` and",
-    "detail": ""
-   },
-   {
-    "symbol": "sqlparse::sql::TokenList::token_index",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": true,
-    "tests_failed": [],
-    "old_name_left": "",
-    "detail": ""
-   },
-   {
-    "symbol": "examples::extract_table_names::extract_table_identifiers",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": true,
-    "tests_failed": [],
-    "old_name_left": "",
-    "detail": ""
-   },
-   {
-    "symbol": "sqlparse::engine::grouping::group",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": true,
-    "tests_failed": [],
-    "old_name_left": ".github/workflows/python-app.yml:48:      run: uv run --group dev pytest tests/\n.github/workflows/python-app.yml:52:      run: uv run --group dev ruff check sqlparse/\n.github/workflows/python-app.yml:57:        uv run --group dev coverage run -m pytest tests/\n.github/workflows/python-app.yml:58:    ",
-    "detail": ""
-   },
-   {
     "symbol": "sqlparse::sql::TokenList::token_not_matching",
     "ok": true,
     "compiled": true,
@@ -7640,21 +7561,30 @@
     "detail": ""
    },
    {
-    "symbol": "sqlparse::formatter::validate_options",
-    "ok": false,
+    "symbol": "sqlparse::engine::grouping::group_assignment",
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_cli.py::test_cli_error_handling_continues",
-     "tests/test_cli.py::test_cli_inplace_keeps_file_on_format_error",
-     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
-     "tests/test_cli.py::test_cli_outfile_keeps_file_on_format_error",
-     "tests/test_cli.py::test_cli_single_file_inplace",
-     "tests/test_cli.py::test_encoding",
-     "tests/test_cli.py::test_encoding_output_file",
-     "tests/test_cli.py::test_encoding_stdin"
-    ],
-    "old_name_left": "sqlparse/cli.py:199:        formatter_opts = sqlparse.formatter.validate_options(formatter_opts)",
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "sqlparse::formatter::validate_options",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "sqlparse::engine::grouping::align_comments",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
     "detail": ""
    },
    {
@@ -7675,6 +7605,24 @@
     "tests_ok": true,
     "tests_failed": [],
     "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "sqlparse::sql::Token::match",
+    "ok": false,
+    "compiled": true,
+    "tests_ok": false,
+    "tests_failed": [
+     "tests/test_cli.py::test_cli_error_handling_continues",
+     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
+     "tests/test_cli.py::test_cli_single_file_inplace",
+     "tests/test_cli.py::test_encoding",
+     "tests/test_cli.py::test_encoding_output_file",
+     "tests/test_cli.py::test_encoding_stdin",
+     "tests/test_cli.py::test_encoding_stdout",
+     "tests/test_cli.py::test_invalid_outfile"
+    ],
+    "old_name_left": "benchmarks/bench_lexer_delimiters.py:36:    backreference cannot short-circuit on an earlier match.\"\"\"\nsqlparse/engine/grouping.py:105:    def match(token):\nsqlparse/engine/grouping.py:115:    _group(tlist, sql.Identifier, match, valid_prev, valid_next, post)\nsqlparse/engine/grouping.py:119:    def ",
     "detail": ""
    },
    {
@@ -7714,6 +7662,15 @@
     "detail": ""
    },
    {
+    "symbol": "sqlparse::engine::grouping::group_order",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
     "symbol": "sqlparse::sql::IdentifierList::get_identifiers",
     "ok": true,
     "compiled": true,
@@ -7723,67 +7680,20 @@
     "detail": ""
    },
    {
-    "symbol": "examples::extract_table_names::extract_from_part",
+    "symbol": "sqlparse::engine::grouping::group_functions",
     "ok": true,
     "compiled": true,
     "tests_ok": true,
     "tests_failed": [],
     "old_name_left": "",
-    "detail": ""
-   },
-   {
-    "symbol": "benchmarks::bench_grouping::nested_case_when",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": true,
-    "tests_failed": [],
-    "old_name_left": "",
-    "detail": ""
-   },
-   {
-    "symbol": "sqlparse::sql::TokenList::token_prev",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": true,
-    "tests_failed": [],
-    "old_name_left": "",
-    "detail": ""
-   },
-   {
-    "symbol": "benchmarks::bench_split_newlines::unclosed_single_quotes",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": true,
-    "tests_failed": [],
-    "old_name_left": "",
-    "detail": ""
-   },
-   {
-    "symbol": "sqlparse::sql::TokenList::get_sublists",
-    "ok": false,
-    "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_cli.py::test_cli_inplace_keeps_file_on_format_error",
-     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
-     "tests/test_cli.py::test_cli_outfile_keeps_file_on_format_error",
-     "tests/test_cli.py::test_invalid_outfile",
-     "tests/test_cli.py::test_valid_args",
-     "tests/test_dos_prevention.py::test_deeply_nested_groups_limited",
-     "tests/test_dos_prevention.py::test_large_tuple_list_performance",
-     "tests/test_dos_prevention.py::test_nested_case_within_cap_under_1s"
-    ],
-    "old_name_left": "sqlparse/utils.py:75:            for sgroup in tlist.get_sublists():",
     "detail": ""
    },
    {
     "symbol": "sqlparse::parse",
-    "ok": false,
+    "ok": true,
     "compiled": true,
-    "tests_ok": false,
-    "tests_failed": [
-     "tests/test_grouping.py::test_statement_get_type"
-    ],
+    "tests_ok": true,
+    "tests_failed": [],
     "old_name_left": "CHANGELOG:484:* Fix a regression to parse streams again (issue273, reported and\nCHANGELOG:733:* Top-level API functions now accept encoding keyword to parse\nbenchmarks/_harness.py:64:    run: Callable[[str], object] = sqlparse.parse\nbenchmarks/bench_grouping.py:3:Measures parse time for SQL patterns",
     "detail": ""
    },
@@ -7815,6 +7725,24 @@
     "detail": ""
    },
    {
+    "symbol": "sqlparse::engine::grouping::group_identifier",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
+    "symbol": "benchmarks::bench_split_newlines::unclosed_single_quotes",
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "",
+    "detail": ""
+   },
+   {
     "symbol": "sqlparse::sql::TokenList::get_name",
     "ok": true,
     "compiled": true,
@@ -7824,58 +7752,38 @@
     "detail": ""
    },
    {
-    "symbol": "sqlparse::sql::Case::get_cases",
+    "symbol": "sqlparse::engine::grouping::group",
     "ok": true,
     "compiled": true,
     "tests_ok": true,
     "tests_failed": [],
-    "old_name_left": "",
-    "detail": ""
-   },
-   {
-    "symbol": "sqlparse::utils::recurse",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": true,
-    "tests_failed": [],
-    "old_name_left": "sqlparse/engine/grouping.py:288:           valid_prev, valid_next, post, extend=True, recurse=False)\nsqlparse/engine/grouping.py:500:           recurse=True,\nsqlparse/engine/grouping.py:528:        if recurse and token.is_group and not isinstance(token, cls):\nsqlparse/utils.py:70:    :param cls: Cla",
-    "detail": ""
-   },
-   {
-    "symbol": "sqlparse::utils::split_unquoted_newlines",
-    "ok": true,
-    "compiled": true,
-    "tests_ok": true,
-    "tests_failed": [],
-    "old_name_left": "",
+    "old_name_left": ".github/workflows/python-app.yml:48:      run: uv run --group dev pytest tests/\n.github/workflows/python-app.yml:52:      run: uv run --group dev ruff check sqlparse/\n.github/workflows/python-app.yml:57:        uv run --group dev coverage run -m pytest tests/\n.github/workflows/python-app.yml:58:    ",
     "detail": ""
    }
   ],
   "mutants": {
    "7": [
+    "sqlparse::engine::grouping::group_values",
     "sqlparse::lexer::Lexer::default_initialization",
     "benchmarks::_harness::measure",
     "sqlparse::parsestream",
     "sqlparse::sql::TokenList::insert_before",
+    "sqlparse::engine::grouping::group_comments",
+    "sqlparse::engine::grouping::group_typed_literal",
     "benchmarks::_harness::run_vector",
-    "sqlparse::utils::indent",
-    "sqlparse::lexer::Lexer::is_keyword",
-    "sqlparse::lexer::tokenize",
-    "sqlparse::keywords::DelimitedSpans::resolve",
-    "benchmarks::bench_lexer_delimiters::unclosed_comments",
-    "sqlparse::lexer::Lexer::get_default_instance"
+    "sqlparse::engine::grouping::group_where",
+    "sqlparse::engine::grouping::group_arrays"
    ],
    "8": [
     "sqlparse::sql::TokenList::token_not_matching",
     "sqlparse::lexer::Lexer::default_initialization",
+    "sqlparse::engine::grouping::group_assignment",
     "benchmarks::_harness::measure",
     "sqlparse::sql::TokenList::token_next_by",
     "sqlparse::formatter::validate_options",
-    "sqlparse::cli::create_parser",
-    "benchmarks::bench_split_newlines::unclosed_double_quotes",
-    "sqlparse::sql::Token::match",
-    "sqlparse::lexer::Lexer::get_tokens",
-    "sqlparse::formatter::build_filter_stack"
+    "sqlparse::engine::grouping::group_comments",
+    "sqlparse::engine::grouping::align_comments",
+    "sqlparse::cli::create_parser"
    ],
    "9": [
     "sqlparse::formatter::build_filter_stack",
@@ -7885,22 +7793,46 @@
     "sqlparse::parse",
     "examples::extract_table_names::is_subselect",
     "sqlparse::sql::TokenList::token_first",
-    "sqlparse::sql::TokenList::insert_after",
-    "sqlparse::sql::Token::match"
+    "sqlparse::engine::grouping::group_over",
+    "sqlparse::sql::TokenList::insert_after"
    ]
   },
   "tests": [
    {
-    "symbol": "sqlparse::lexer::Lexer::default_initialization",
+    "symbol": "sqlparse::engine::grouping::group_values",
     "level": "id",
-    "truth": 190,
-    "predicted": 11,
-    "recall": 0.015789473684210527,
-    "precision": 0.2727272727272727,
+    "truth": 226,
+    "predicted": 124,
+    "recall": 0.28761061946902655,
+    "precision": 0.5241935483870968,
     "top_hits": 3,
     "top_n": 10,
     "top_precision": 0.3,
-    "top_best": 0.3,
+    "top_best": 1.0,
+    "caught": 1.0,
+    "missed": [
+     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
+     "tests/test_cli.py::test_invalid_outfile",
+     "tests/test_cli.py::test_valid_args",
+     "tests/test_grouping.py::test_aliased_column_without_as",
+     "tests/test_grouping.py::test_aliased_function_without_as",
+     "tests/test_grouping.py::test_aliased_literal_without_as",
+     "tests/test_grouping.py::test_begin",
+     "tests/test_grouping.py::test_compare_expr"
+    ],
+    "recall_graph_only": 0.28761061946902655
+   },
+   {
+    "symbol": "sqlparse::lexer::Lexer::default_initialization",
+    "level": "id",
+    "truth": 190,
+    "predicted": 12,
+    "recall": 0.021052631578947368,
+    "precision": 0.3333333333333333,
+    "top_hits": 4,
+    "top_n": 10,
+    "top_precision": 0.4,
+    "top_best": 0.4,
     "caught": 1.0,
     "missed": [
      "tests/test_cli.py::test_cli_error_handling_continues",
@@ -7912,7 +7844,7 @@
      "tests/test_cli.py::test_encoding_output_file",
      "tests/test_cli.py::test_encoding_stdin"
     ],
-    "recall_graph_only": 0.015789473684210527
+    "recall_graph_only": 0.021052631578947368
    },
    {
     "symbol": "benchmarks::_harness::measure",
@@ -7923,18 +7855,16 @@
     "symbol": "sqlparse::parsestream",
     "level": "id",
     "truth": 167,
-    "predicted": 166,
-    "recall": 0.9940119760479041,
+    "predicted": 167,
+    "recall": 1.0,
     "precision": 1.0,
     "top_hits": 10,
     "top_n": 10,
     "top_precision": 1.0,
     "top_best": 1.0,
     "caught": 1.0,
-    "missed": [
-     "tests/test_grouping.py::test_statement_get_type"
-    ],
-    "recall_graph_only": 0.9940119760479041
+    "missed": [],
+    "recall_graph_only": 1.0
    },
    {
     "symbol": "sqlparse::sql::TokenList::insert_before",
@@ -7961,134 +7891,105 @@
     "recall_graph_only": 0.0
    },
    {
+    "symbol": "sqlparse::engine::grouping::group_comments",
+    "level": "id",
+    "truth": 234,
+    "predicted": 124,
+    "recall": 0.2905982905982906,
+    "precision": 0.5483870967741935,
+    "top_hits": 8,
+    "top_n": 10,
+    "top_precision": 0.8,
+    "top_best": 1.0,
+    "caught": 1.0,
+    "missed": [
+     "tests/test_cli.py::test_cli_inplace_keeps_file_on_format_error",
+     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
+     "tests/test_cli.py::test_cli_outfile_keeps_file_on_format_error",
+     "tests/test_cli.py::test_invalid_outfile",
+     "tests/test_cli.py::test_valid_args",
+     "tests/test_dos_prevention.py::test_nested_case_within_cap_under_1s",
+     "tests/test_dos_prevention.py::test_nested_paren_within_cap_under_1s",
+     "tests/test_grouping.py::test_aliased_column_without_as"
+    ],
+    "recall_graph_only": 0.2905982905982906
+   },
+   {
+    "symbol": "sqlparse::engine::grouping::group_typed_literal",
+    "level": "id",
+    "truth": 226,
+    "predicted": 124,
+    "recall": 0.28761061946902655,
+    "precision": 0.5241935483870968,
+    "top_hits": 2,
+    "top_n": 10,
+    "top_precision": 0.2,
+    "top_best": 1.0,
+    "caught": 1.0,
+    "missed": [
+     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
+     "tests/test_cli.py::test_invalid_outfile",
+     "tests/test_cli.py::test_valid_args",
+     "tests/test_grouping.py::test_aliased_column_without_as",
+     "tests/test_grouping.py::test_aliased_function_without_as",
+     "tests/test_grouping.py::test_aliased_literal_without_as",
+     "tests/test_grouping.py::test_begin",
+     "tests/test_grouping.py::test_compare_expr"
+    ],
+    "recall_graph_only": 0.28761061946902655
+   },
+   {
     "symbol": "benchmarks::_harness::run_vector",
     "skipped": "no test fails when it throws",
     "predicted": 0
    },
    {
-    "symbol": "sqlparse::utils::indent",
+    "symbol": "sqlparse::engine::grouping::group_where",
     "level": "id",
-    "truth": 29,
-    "predicted": 2,
-    "recall": 0.0,
-    "precision": 0.0,
-    "top_hits": 0,
-    "top_n": 2,
-    "top_precision": 0.0,
-    "top_best": 0.0,
-    "caught": 0.0,
+    "truth": 226,
+    "predicted": 124,
+    "recall": 0.28761061946902655,
+    "precision": 0.5241935483870968,
+    "top_hits": 4,
+    "top_n": 10,
+    "top_precision": 0.4,
+    "top_best": 1.0,
+    "caught": 1.0,
     "missed": [
+     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
      "tests/test_cli.py::test_invalid_outfile",
      "tests/test_cli.py::test_valid_args",
-     "tests/test_dos_prevention.py::test_normal_sql_still_works",
-     "tests/test_dos_prevention.py::test_reasonable_tuple_list_works",
-     "tests/test_format.py::test_basic",
-     "tests/test_format.py::test_case2",
-     "tests/test_format.py::test_duplicate_linebreaks",
-     "tests/test_format.py::test_group_by_subquery"
+     "tests/test_grouping.py::test_aliased_column_without_as",
+     "tests/test_grouping.py::test_aliased_function_without_as",
+     "tests/test_grouping.py::test_aliased_literal_without_as",
+     "tests/test_grouping.py::test_begin",
+     "tests/test_grouping.py::test_compare_expr"
     ],
-    "recall_graph_only": 0.0
+    "recall_graph_only": 0.28761061946902655
    },
    {
-    "symbol": "sqlparse::lexer::Lexer::is_keyword",
+    "symbol": "sqlparse::engine::grouping::group_arrays",
     "level": "id",
-    "truth": 256,
-    "predicted": 9,
-    "recall": 0.02734375,
-    "precision": 0.7777777777777778,
-    "top_hits": 7,
-    "top_n": 9,
-    "top_precision": 0.7777777777777778,
-    "top_best": 0.7777777777777778,
-    "caught": 1.0,
-    "missed": [
-     "tests/test_cli.py::test_cli_error_handling_continues",
-     "tests/test_cli.py::test_cli_inplace_keeps_file_on_format_error",
-     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
-     "tests/test_cli.py::test_cli_outfile_keeps_file_on_format_error",
-     "tests/test_cli.py::test_cli_single_file_inplace",
-     "tests/test_cli.py::test_encoding",
-     "tests/test_cli.py::test_encoding_output_file",
-     "tests/test_cli.py::test_encoding_stdin"
-    ],
-    "recall_graph_only": 0.0234375
-   },
-   {
-    "symbol": "sqlparse::lexer::tokenize",
-    "level": "id",
-    "truth": 295,
-    "predicted": 292,
-    "recall": 0.9525423728813559,
-    "precision": 0.9623287671232876,
-    "top_hits": 10,
+    "truth": 226,
+    "predicted": 124,
+    "recall": 0.28761061946902655,
+    "precision": 0.5241935483870968,
+    "top_hits": 2,
     "top_n": 10,
-    "top_precision": 1.0,
+    "top_precision": 0.2,
     "top_best": 1.0,
     "caught": 1.0,
     "missed": [
-     "tests/test_cli.py::test_cli_error_handling_continues",
-     "tests/test_cli.py::test_cli_inplace_keeps_file_on_format_error",
      "tests/test_cli.py::test_cli_multiple_files_with_inplace",
-     "tests/test_cli.py::test_cli_outfile_keeps_file_on_format_error",
-     "tests/test_cli.py::test_cli_single_file_inplace",
-     "tests/test_cli.py::test_encoding",
-     "tests/test_cli.py::test_encoding_output_file",
-     "tests/test_cli.py::test_encoding_stdin"
+     "tests/test_cli.py::test_invalid_outfile",
+     "tests/test_cli.py::test_valid_args",
+     "tests/test_grouping.py::test_aliased_column_without_as",
+     "tests/test_grouping.py::test_aliased_function_without_as",
+     "tests/test_grouping.py::test_aliased_literal_without_as",
+     "tests/test_grouping.py::test_begin",
+     "tests/test_grouping.py::test_compare_expr"
     ],
-    "recall_graph_only": 0.9525423728813559
-   },
-   {
-    "symbol": "sqlparse::keywords::DelimitedSpans::resolve",
-    "level": "id",
-    "truth": 14,
-    "predicted": 8,
-    "recall": 0.07142857142857142,
-    "precision": 0.125,
-    "top_hits": 1,
-    "top_n": 8,
-    "top_precision": 0.125,
-    "top_best": 0.125,
-    "caught": 1.0,
-    "missed": [
-     "tests/test_format.py::test_php_dollar_escape_multiline",
-     "tests/test_format.py::test_php_escapes_dollar_signs",
-     "tests/test_format.py::test_preserve_ws",
-     "tests/test_format.py::test_python_dollar_signs_unchanged",
-     "tests/test_format.py::test_strip_comments_multi",
-     "tests/test_format.py::test_strip_comments_preserves_hint",
-     "tests/test_format.py::test_strip_comments_preserves_whitespace",
-     "tests/test_grouping.py::test_grouping_identifier_list_with_inline_comments"
-    ],
-    "recall_graph_only": 0.07142857142857142
-   },
-   {
-    "symbol": "benchmarks::bench_lexer_delimiters::unclosed_comments",
-    "skipped": "no test fails when it throws",
-    "predicted": 0
-   },
-   {
-    "symbol": "sqlparse::lexer::Lexer::get_default_instance",
-    "level": "id",
-    "truth": 296,
-    "predicted": 135,
-    "recall": 0.4189189189189189,
-    "precision": 0.9185185185185185,
-    "top_hits": 10,
-    "top_n": 10,
-    "top_precision": 1.0,
-    "top_best": 1.0,
-    "caught": 1.0,
-    "missed": [
-     "tests/test_cli.py::test_cli_error_handling_continues",
-     "tests/test_cli.py::test_cli_inplace_keeps_file_on_format_error",
-     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
-     "tests/test_cli.py::test_cli_outfile_keeps_file_on_format_error",
-     "tests/test_cli.py::test_cli_single_file_inplace",
-     "tests/test_cli.py::test_encoding",
-     "tests/test_cli.py::test_encoding_output_file",
-     "tests/test_cli.py::test_encoding_stdin"
-    ],
-    "recall_graph_only": 0.4189189189189189
+    "recall_graph_only": 0.28761061946902655
    },
    {
     "symbol": "sqlparse::sql::TokenList::token_not_matching",
@@ -8113,6 +8014,30 @@
      "tests/test_format.py::test_strip_comments_single"
     ],
     "recall_graph_only": 0.0
+   },
+   {
+    "symbol": "sqlparse::engine::grouping::group_assignment",
+    "level": "id",
+    "truth": 226,
+    "predicted": 124,
+    "recall": 0.28761061946902655,
+    "precision": 0.5241935483870968,
+    "top_hits": 2,
+    "top_n": 10,
+    "top_precision": 0.2,
+    "top_best": 1.0,
+    "caught": 1.0,
+    "missed": [
+     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
+     "tests/test_cli.py::test_invalid_outfile",
+     "tests/test_cli.py::test_valid_args",
+     "tests/test_grouping.py::test_aliased_column_without_as",
+     "tests/test_grouping.py::test_aliased_function_without_as",
+     "tests/test_grouping.py::test_aliased_literal_without_as",
+     "tests/test_grouping.py::test_begin",
+     "tests/test_grouping.py::test_compare_expr"
+    ],
+    "recall_graph_only": 0.28761061946902655
    },
    {
     "symbol": "sqlparse::sql::TokenList::token_next_by",
@@ -8163,6 +8088,30 @@
     "recall_graph_only": 0.8725490196078431
    },
    {
+    "symbol": "sqlparse::engine::grouping::align_comments",
+    "level": "id",
+    "truth": 226,
+    "predicted": 124,
+    "recall": 0.28761061946902655,
+    "precision": 0.5241935483870968,
+    "top_hits": 5,
+    "top_n": 10,
+    "top_precision": 0.5,
+    "top_best": 1.0,
+    "caught": 1.0,
+    "missed": [
+     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
+     "tests/test_cli.py::test_invalid_outfile",
+     "tests/test_cli.py::test_valid_args",
+     "tests/test_grouping.py::test_aliased_column_without_as",
+     "tests/test_grouping.py::test_aliased_function_without_as",
+     "tests/test_grouping.py::test_aliased_literal_without_as",
+     "tests/test_grouping.py::test_begin",
+     "tests/test_grouping.py::test_compare_expr"
+    ],
+    "recall_graph_only": 0.28761061946902655
+   },
+   {
     "symbol": "sqlparse::cli::create_parser",
     "level": "id",
     "truth": 21,
@@ -8176,59 +8125,6 @@
     "caught": 1.0,
     "missed": [],
     "recall_graph_only": 0.0
-   },
-   {
-    "symbol": "benchmarks::bench_split_newlines::unclosed_double_quotes",
-    "skipped": "no test fails when it throws",
-    "predicted": 0
-   },
-   {
-    "symbol": "sqlparse::sql::Token::match",
-    "level": "id",
-    "truth": 230,
-    "predicted": 25,
-    "recall": 0.06956521739130435,
-    "precision": 0.64,
-    "top_hits": 9,
-    "top_n": 10,
-    "top_precision": 0.9,
-    "top_best": 1.0,
-    "caught": 1.0,
-    "missed": [
-     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
-     "tests/test_cli.py::test_invalid_outfile",
-     "tests/test_cli.py::test_valid_args",
-     "tests/test_dos_prevention.py::test_deeply_nested_groups_limited",
-     "tests/test_dos_prevention.py::test_nested_case_within_cap_under_1s",
-     "tests/test_dos_prevention.py::test_nested_paren_within_cap_under_1s",
-     "tests/test_dos_prevention.py::test_normal_sql_still_works",
-     "tests/test_dos_prevention.py::test_reasonable_tuple_list_works"
-    ],
-    "recall_graph_only": 0.06956521739130435
-   },
-   {
-    "symbol": "sqlparse::lexer::Lexer::get_tokens",
-    "level": "id",
-    "truth": 295,
-    "predicted": 132,
-    "recall": 0.4101694915254237,
-    "precision": 0.9166666666666666,
-    "top_hits": 10,
-    "top_n": 10,
-    "top_precision": 1.0,
-    "top_best": 1.0,
-    "caught": 1.0,
-    "missed": [
-     "tests/test_cli.py::test_cli_error_handling_continues",
-     "tests/test_cli.py::test_cli_inplace_keeps_file_on_format_error",
-     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
-     "tests/test_cli.py::test_cli_outfile_keeps_file_on_format_error",
-     "tests/test_cli.py::test_cli_single_file_inplace",
-     "tests/test_cli.py::test_encoding",
-     "tests/test_cli.py::test_encoding_output_file",
-     "tests/test_cli.py::test_encoding_stdin"
-    ],
-    "recall_graph_only": 0.4101694915254237
    },
    {
     "symbol": "sqlparse::formatter::build_filter_stack",
@@ -8282,18 +8178,16 @@
     "symbol": "sqlparse::parse",
     "level": "id",
     "truth": 164,
-    "predicted": 165,
-    "recall": 0.9939024390243902,
-    "precision": 0.9878787878787879,
+    "predicted": 166,
+    "recall": 1.0,
+    "precision": 0.9879518072289156,
     "top_hits": 10,
     "top_n": 10,
     "top_precision": 1.0,
     "top_best": 1.0,
     "caught": 1.0,
-    "missed": [
-     "tests/test_grouping.py::test_statement_get_type"
-    ],
-    "recall_graph_only": 0.9939024390243902
+    "missed": [],
+    "recall_graph_only": 1.0
    },
    {
     "symbol": "examples::extract_table_names::is_subselect",
@@ -8314,6 +8208,30 @@
     "caught": 1.0,
     "missed": [],
     "recall_graph_only": 1.0
+   },
+   {
+    "symbol": "sqlparse::engine::grouping::group_over",
+    "level": "id",
+    "truth": 226,
+    "predicted": 124,
+    "recall": 0.28761061946902655,
+    "precision": 0.5241935483870968,
+    "top_hits": 2,
+    "top_n": 10,
+    "top_precision": 0.2,
+    "top_best": 1.0,
+    "caught": 1.0,
+    "missed": [
+     "tests/test_cli.py::test_cli_multiple_files_with_inplace",
+     "tests/test_cli.py::test_invalid_outfile",
+     "tests/test_cli.py::test_valid_args",
+     "tests/test_grouping.py::test_aliased_column_without_as",
+     "tests/test_grouping.py::test_aliased_function_without_as",
+     "tests/test_grouping.py::test_aliased_literal_without_as",
+     "tests/test_grouping.py::test_begin",
+     "tests/test_grouping.py::test_compare_expr"
+    ],
+    "recall_graph_only": 0.28761061946902655
    },
    {
     "symbol": "sqlparse::sql::TokenList::insert_after",
@@ -8342,8 +8260,13 @@
   ],
   "look": [
    {
+    "symbol": "sqlparse::engine::grouping::group_values",
+    "look_tokens": 455,
+    "file_tokens": 4264
+   },
+   {
     "symbol": "sqlparse::lexer::Lexer::default_initialization",
-    "look_tokens": 468,
+    "look_tokens": 472,
     "file_tokens": 1662
    },
    {
@@ -8353,7 +8276,7 @@
    },
    {
     "symbol": "sqlparse::parsestream",
-    "look_tokens": 438,
+    "look_tokens": 442,
     "file_tokens": 624
    },
    {
@@ -8362,9 +8285,29 @@
     "file_tokens": 5263
    },
    {
+    "symbol": "sqlparse::engine::grouping::group_comments",
+    "look_tokens": 569,
+    "file_tokens": 4264
+   },
+   {
+    "symbol": "sqlparse::engine::grouping::group_typed_literal",
+    "look_tokens": 644,
+    "file_tokens": 4264
+   },
+   {
     "symbol": "benchmarks::_harness::run_vector",
     "look_tokens": 342,
     "file_tokens": 1825
+   },
+   {
+    "symbol": "sqlparse::engine::grouping::group_where",
+    "look_tokens": 514,
+    "file_tokens": 4264
+   },
+   {
+    "symbol": "sqlparse::engine::grouping::group_arrays",
+    "look_tokens": 489,
+    "file_tokens": 4264
    },
    {
     "symbol": "sqlparse::utils::indent",
@@ -8372,18 +8315,28 @@
     "file_tokens": 926
    },
    {
+    "symbol": "sqlparse::engine::grouping::group_over",
+    "look_tokens": 454,
+    "file_tokens": 4264
+   },
+   {
     "symbol": "sqlparse::lexer::Lexer::is_keyword",
-    "look_tokens": 346,
+    "look_tokens": 364,
     "file_tokens": 1662
    },
    {
+    "symbol": "sqlparse::engine::grouping::group_typecasts",
+    "look_tokens": 449,
+    "file_tokens": 4264
+   },
+   {
     "symbol": "sqlparse::lexer::tokenize",
-    "look_tokens": 384,
+    "look_tokens": 376,
     "file_tokens": 1662
    },
    {
     "symbol": "sqlparse::keywords::DelimitedSpans::resolve",
-    "look_tokens": 354,
+    "look_tokens": 367,
     "file_tokens": 8754
    },
    {
@@ -8393,53 +8346,18 @@
    },
    {
     "symbol": "sqlparse::lexer::Lexer::get_default_instance",
-    "look_tokens": 403,
+    "look_tokens": 407,
     "file_tokens": 1662
    },
    {
     "symbol": "sqlparse::sql::TokenList::token_next_by",
-    "look_tokens": 481,
+    "look_tokens": 471,
     "file_tokens": 5263
    },
    {
     "symbol": "sqlparse::lexer::Lexer::set_SQL_REGEX",
-    "look_tokens": 354,
+    "look_tokens": 358,
     "file_tokens": 1662
-   },
-   {
-    "symbol": "sqlparse::lexer::Lexer::add_keywords",
-    "look_tokens": 324,
-    "file_tokens": 1662
-   },
-   {
-    "symbol": "sqlparse::sql::Token::match",
-    "look_tokens": 724,
-    "file_tokens": 5263
-   },
-   {
-    "symbol": "examples::column_defs_lowlevel::extract_definitions",
-    "look_tokens": 276,
-    "file_tokens": 414
-   },
-   {
-    "symbol": "sqlparse::format",
-    "look_tokens": 521,
-    "file_tokens": 624
-   },
-   {
-    "symbol": "sqlparse::sql::TokenList::token_index",
-    "look_tokens": 299,
-    "file_tokens": 5263
-   },
-   {
-    "symbol": "examples::extract_table_names::extract_table_identifiers",
-    "look_tokens": 228,
-    "file_tokens": 515
-   },
-   {
-    "symbol": "sqlparse::engine::grouping::group",
-    "look_tokens": 536,
-    "file_tokens": 4264
    },
    {
     "symbol": "sqlparse::sql::TokenList::token_not_matching",
@@ -8447,9 +8365,19 @@
     "file_tokens": 5263
    },
    {
+    "symbol": "sqlparse::engine::grouping::group_assignment",
+    "look_tokens": 497,
+    "file_tokens": 4264
+   },
+   {
     "symbol": "sqlparse::formatter::validate_options",
-    "look_tokens": 1590,
+    "look_tokens": 1596,
     "file_tokens": 1922
+   },
+   {
+    "symbol": "sqlparse::engine::grouping::align_comments",
+    "look_tokens": 468,
+    "file_tokens": 4264
    },
    {
     "symbol": "sqlparse::cli::create_parser",
@@ -8462,18 +8390,23 @@
     "file_tokens": 323
    },
    {
+    "symbol": "sqlparse::sql::Token::match",
+    "look_tokens": 729,
+    "file_tokens": 5263
+   },
+   {
     "symbol": "sqlparse::lexer::Lexer::get_tokens",
-    "look_tokens": 904,
+    "look_tokens": 895,
     "file_tokens": 1662
    },
    {
     "symbol": "sqlparse::formatter::build_filter_stack",
-    "look_tokens": 968,
+    "look_tokens": 1025,
     "file_tokens": 1922
    },
    {
     "symbol": "sqlparse::keywords::find_delimited_spans",
-    "look_tokens": 667,
+    "look_tokens": 680,
     "file_tokens": 8754
    },
    {
@@ -8482,34 +8415,19 @@
     "file_tokens": 5263
    },
    {
+    "symbol": "sqlparse::engine::grouping::group_order",
+    "look_tokens": 479,
+    "file_tokens": 4264
+   },
+   {
     "symbol": "sqlparse::sql::IdentifierList::get_identifiers",
     "look_tokens": 361,
     "file_tokens": 5263
    },
    {
-    "symbol": "examples::extract_table_names::extract_from_part",
-    "look_tokens": 191,
-    "file_tokens": 515
-   },
-   {
-    "symbol": "benchmarks::bench_grouping::nested_case_when",
-    "look_tokens": 119,
-    "file_tokens": 390
-   },
-   {
-    "symbol": "sqlparse::sql::TokenList::token_prev",
-    "look_tokens": 428,
-    "file_tokens": 5263
-   },
-   {
-    "symbol": "benchmarks::bench_split_newlines::unclosed_single_quotes",
-    "look_tokens": 120,
-    "file_tokens": 323
-   },
-   {
-    "symbol": "sqlparse::sql::TokenList::get_sublists",
-    "look_tokens": 186,
-    "file_tokens": 5263
+    "symbol": "sqlparse::engine::grouping::group_functions",
+    "look_tokens": 613,
+    "file_tokens": 4264
    },
    {
     "symbol": "sqlparse::parse",
@@ -8523,7 +8441,7 @@
    },
    {
     "symbol": "sqlparse::sql::TokenList::token_first",
-    "look_tokens": 367,
+    "look_tokens": 371,
     "file_tokens": 5263
    },
    {
@@ -8532,27 +8450,27 @@
     "file_tokens": 5263
    },
    {
+    "symbol": "sqlparse::engine::grouping::group_identifier",
+    "look_tokens": 452,
+    "file_tokens": 4264
+   },
+   {
+    "symbol": "benchmarks::bench_split_newlines::unclosed_single_quotes",
+    "look_tokens": 120,
+    "file_tokens": 323
+   },
+   {
     "symbol": "sqlparse::sql::TokenList::get_name",
     "look_tokens": 401,
     "file_tokens": 5263
    },
    {
-    "symbol": "sqlparse::sql::Case::get_cases",
-    "look_tokens": 393,
-    "file_tokens": 5263
-   },
-   {
-    "symbol": "sqlparse::utils::recurse",
-    "look_tokens": 203,
-    "file_tokens": 926
-   },
-   {
-    "symbol": "sqlparse::utils::split_unquoted_newlines",
-    "look_tokens": 468,
-    "file_tokens": 926
+    "symbol": "sqlparse::engine::grouping::group",
+    "look_tokens": 580,
+    "file_tokens": 4264
    }
   ],
-  "seconds": 6,
+  "seconds": 49,
   "summary": {
    "callers_recall": null,
    "callers_precision": null,
@@ -8563,15 +8481,15 @@
    "common_precision": null,
    "common_recall_with_maybe": null,
    "common_checked": 0,
-   "rename_ok": 0.81,
+   "rename_ok": 0.905,
    "rename_checked": 42,
-   "tests_recall": 0.417,
-   "tests_precision": 0.626,
-   "tests_top10_precision": 0.648,
-   "tests_top10_best": 0.669,
-   "tests_caught": 0.789,
-   "tests_checked": 19,
-   "look_vs_file": 0.273
+   "tests_recall": 0.415,
+   "tests_precision": 0.592,
+   "tests_top10_precision": 0.52,
+   "tests_top10_best": 0.795,
+   "tests_caught": 0.85,
+   "tests_checked": 20,
+   "look_vs_file": 0.218
   },
   "summary_seeds": {
    "7": {
@@ -8584,15 +8502,15 @@
     "common_precision": null,
     "common_recall_with_maybe": null,
     "common_checked": 0,
-    "rename_ok": 0.8,
+    "rename_ok": 0.9,
     "rename_checked": 20,
-    "tests_recall": 0.31,
-    "tests_precision": 0.507,
-    "tests_top10_precision": 0.525,
-    "tests_top10_best": 0.525,
-    "tests_caught": 0.75,
+    "tests_recall": 0.308,
+    "tests_precision": 0.497,
+    "tests_top10_precision": 0.413,
+    "tests_top10_best": 0.8,
+    "tests_caught": 0.875,
     "tests_checked": 8,
-    "look_vs_file": 0.266
+    "look_vs_file": 0.186
    },
    "8": {
     "callers_recall": null,
@@ -8604,15 +8522,15 @@
     "common_precision": null,
     "common_recall_with_maybe": null,
     "common_checked": 0,
-    "rename_ok": 0.75,
+    "rename_ok": 0.85,
     "rename_checked": 20,
-    "tests_recall": 0.415,
-    "tests_precision": 0.704,
-    "tests_top10_precision": 0.738,
-    "tests_top10_best": 0.787,
+    "tests_recall": 0.355,
+    "tests_precision": 0.607,
+    "tests_top10_precision": 0.6,
+    "tests_top10_best": 0.8,
     "tests_caught": 0.875,
     "tests_checked": 8,
-    "look_vs_file": 0.277
+    "look_vs_file": 0.232
    },
    "9": {
     "callers_recall": null,
@@ -8624,15 +8542,15 @@
     "common_precision": null,
     "common_recall_with_maybe": null,
     "common_checked": 0,
-    "rename_ok": 0.75,
+    "rename_ok": 0.95,
     "rename_checked": 20,
-    "tests_recall": 0.618,
-    "tests_precision": 0.747,
-    "tests_top10_precision": 0.775,
+    "tests_recall": 0.647,
+    "tests_precision": 0.732,
+    "tests_top10_precision": 0.688,
     "tests_top10_best": 0.812,
     "tests_caught": 0.875,
     "tests_checked": 8,
-    "look_vs_file": 0.287
+    "look_vs_file": 0.239
    }
   },
   "noise": {
@@ -8643,102 +8561,102 @@
    "common_recall_with_maybe": null,
    "common_precision": null,
    "rename_ok": {
-    "mean": 0.81,
+    "mean": 0.905,
     "functions": 42,
-    "boot_lo": 0.714,
-    "boot_hi": 0.905,
-    "boot_half": 0.095,
+    "boot_lo": 0.833,
+    "boot_hi": 0.976,
+    "boot_half": 0.071,
     "seeds": [
-     0.8,
-     0.75,
-     0.75
+     0.9,
+     0.85,
+     0.95
     ],
-    "seed_sd": 0.029,
-    "threshold": 0.1
+    "seed_sd": 0.05,
+    "threshold": 0.08
    },
    "tests_recall": {
-    "mean": 0.417,
-    "functions": 19,
-    "boot_lo": 0.264,
-    "boot_hi": 0.575,
-    "boot_half": 0.156,
+    "mean": 0.415,
+    "functions": 20,
+    "boot_lo": 0.284,
+    "boot_hi": 0.56,
+    "boot_half": 0.138,
     "seeds": [
-     0.31,
-     0.415,
-     0.618
+     0.308,
+     0.355,
+     0.647
     ],
-    "seed_sd": 0.157,
-    "threshold": 0.16
+    "seed_sd": 0.184,
+    "threshold": 0.14
    },
    "tests_precision": {
-    "mean": 0.626,
-    "functions": 19,
-    "boot_lo": 0.474,
-    "boot_hi": 0.767,
-    "boot_half": 0.147,
+    "mean": 0.592,
+    "functions": 20,
+    "boot_lo": 0.475,
+    "boot_hi": 0.714,
+    "boot_half": 0.12,
     "seeds": [
-     0.507,
-     0.704,
-     0.747
+     0.497,
+     0.607,
+     0.732
     ],
-    "seed_sd": 0.128,
-    "threshold": 0.15
+    "seed_sd": 0.118,
+    "threshold": 0.12
    },
    "tests_top10_precision": {
-    "mean": 0.648,
-    "functions": 19,
-    "boot_lo": 0.489,
-    "boot_hi": 0.791,
-    "boot_half": 0.151,
+    "mean": 0.52,
+    "functions": 20,
+    "boot_lo": 0.38,
+    "boot_hi": 0.66,
+    "boot_half": 0.14,
     "seeds": [
-     0.525,
-     0.738,
-     0.775
+     0.413,
+     0.6,
+     0.688
     ],
-    "seed_sd": 0.135,
-    "threshold": 0.16
+    "seed_sd": 0.14,
+    "threshold": 0.14
    },
    "tests_top10_best": {
-    "mean": 0.669,
-    "functions": 19,
-    "boot_lo": 0.507,
-    "boot_hi": 0.821,
-    "boot_half": 0.157,
+    "mean": 0.795,
+    "functions": 20,
+    "boot_lo": 0.645,
+    "boot_hi": 0.92,
+    "boot_half": 0.137,
     "seeds": [
-     0.525,
-     0.787,
+     0.8,
+     0.8,
      0.812
     ],
-    "seed_sd": 0.159,
-    "threshold": 0.16
+    "seed_sd": 0.007,
+    "threshold": 0.14
    },
    "tests_caught": {
-    "mean": 0.789,
-    "functions": 19,
-    "boot_lo": 0.632,
-    "boot_hi": 0.947,
-    "boot_half": 0.158,
+    "mean": 0.85,
+    "functions": 20,
+    "boot_lo": 0.7,
+    "boot_hi": 0.95,
+    "boot_half": 0.125,
     "seeds": [
-     0.75,
+     0.875,
      0.875,
      0.875
     ],
-    "seed_sd": 0.072,
-    "threshold": 0.16
+    "seed_sd": 0.0,
+    "threshold": 0.13
    },
    "look_vs_file": {
-    "mean": 0.273,
+    "mean": 0.218,
     "functions": 42,
-    "boot_lo": 0.215,
-    "boot_hi": 0.333,
-    "boot_half": 0.059,
+    "boot_lo": 0.171,
+    "boot_hi": 0.269,
+    "boot_half": 0.049,
     "seeds": [
-     0.266,
-     0.277,
-     0.287
+     0.186,
+     0.232,
+     0.239
     ],
-    "seed_sd": 0.01,
-    "threshold": 0.06
+    "seed_sd": 0.029,
+    "threshold": 0.05
    }
   }
  },
@@ -10911,9 +10829,12 @@
    },
    {
     "symbol": "src::nodes::YAMLMap::YAMLMap::#stringifyFlowMap",
-    "ok": false,
-    "stage": "rename",
-    "detail": "error: `#stringifyFlowMapGnx` is not a valid identifier\n"
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "fatal: no pattern given",
+    "detail": ""
    },
    {
     "symbol": "src::compose::util_flow_indent_check::flowIndentCheck",
@@ -10971,9 +10892,12 @@
    },
    {
     "symbol": "src::nodes::YAMLMap::YAMLMap::#stringifyBlockMap",
-    "ok": false,
-    "stage": "rename",
-    "detail": "error: `#stringifyBlockMapGnx` is not a valid identifier\n"
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "fatal: no pattern given",
+    "detail": ""
    },
    {
     "symbol": "src::public_api::parseDocument",
@@ -11056,9 +10980,12 @@
    },
    {
     "symbol": "src::nodes::YAMLSeq::YAMLSeq::#stringifyBlockSeq",
-    "ok": false,
-    "stage": "rename",
-    "detail": "error: `#stringifyBlockSeqGnx` is not a valid identifier\n"
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "fatal: no pattern given",
+    "detail": ""
    },
    {
     "symbol": "src::compose::composer::Composer::compose",
@@ -11134,15 +11061,21 @@
    },
    {
     "symbol": "src::nodes::YAMLSet::YAMLSet::#stringifyFlowSet",
-    "ok": false,
-    "stage": "rename",
-    "detail": "error: `#stringifyFlowSetGnx` is not a valid identifier\n"
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "fatal: no pattern given",
+    "detail": ""
    },
    {
     "symbol": "src::nodes::YAMLSeq::YAMLSeq::#stringifyFlowSeq",
-    "ok": false,
-    "stage": "rename",
-    "detail": "error: `#stringifyFlowSeqGnx` is not a valid identifier\n"
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "fatal: no pattern given",
+    "detail": ""
    },
    {
     "symbol": "src::compose::util_contains_newline::containsNewline",
@@ -11155,9 +11088,12 @@
    },
    {
     "symbol": "src::nodes::YAMLSet::YAMLSet::#stringifyBlockSet",
-    "ok": false,
-    "stage": "rename",
-    "detail": "error: `#stringifyBlockSetGnx` is not a valid identifier\n"
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
+    "tests_failed": [],
+    "old_name_left": "fatal: no pattern given",
+    "detail": ""
    },
    {
     "symbol": "src::compose::compose_doc::composeDoc",
@@ -11782,7 +11718,7 @@
    },
    {
     "symbol": "src::doc::anchors::anchorNames",
-    "look_tokens": 173,
+    "look_tokens": 172,
     "file_tokens": 248
    },
    {
@@ -11832,7 +11768,7 @@
    },
    {
     "symbol": "src::parse::cst::tokenType",
-    "look_tokens": 421,
+    "look_tokens": 420,
     "file_tokens": 1265
    },
    {
@@ -11847,7 +11783,7 @@
    },
    {
     "symbol": "src::nodes::YAMLSeq::YAMLSeq::unshift",
-    "look_tokens": 198,
+    "look_tokens": 197,
     "file_tokens": 2805
    },
    {
@@ -11882,7 +11818,7 @@
    },
    {
     "symbol": "src::stringify::stringify::createStringifyContext",
-    "look_tokens": 367,
+    "look_tokens": 366,
     "file_tokens": 1463
    },
    {
@@ -11897,11 +11833,11 @@
    },
    {
     "symbol": "src::compose::resolve_props::resolveProps",
-    "look_tokens": 1442,
+    "look_tokens": 1441,
     "file_tokens": 1417
    }
   ],
-  "seconds": 7,
+  "seconds": 8,
   "summary": {
    "callers_recall": 1.0,
    "callers_precision": 1.0,
@@ -11912,7 +11848,7 @@
    "common_precision": 1.0,
    "common_recall_with_maybe": 0.9,
    "common_checked": 10,
-   "rename_ok": 0.692,
+   "rename_ok": 0.846,
    "rename_checked": 39,
    "tests_recall": 0.019,
    "tests_precision": 0.159,
@@ -11933,7 +11869,7 @@
     "common_precision": 1.0,
     "common_recall_with_maybe": 0.938,
     "common_checked": 8,
-    "rename_ok": 0.75,
+    "rename_ok": 0.85,
     "rename_checked": 20,
     "tests_recall": 0.007,
     "tests_precision": 0.062,
@@ -11953,7 +11889,7 @@
     "common_precision": 1.0,
     "common_recall_with_maybe": 0.938,
     "common_checked": 8,
-    "rename_ok": 0.7,
+    "rename_ok": 0.9,
     "rename_checked": 20,
     "tests_recall": 0.019,
     "tests_precision": 0.208,
@@ -11961,7 +11897,7 @@
     "tests_top10_best": 0.208,
     "tests_caught": 0.25,
     "tests_checked": 8,
-    "look_vs_file": 0.502
+    "look_vs_file": 0.501
    },
    "9": {
     "callers_recall": 1.0,
@@ -11973,7 +11909,7 @@
     "common_precision": 1.0,
     "common_recall_with_maybe": 0.875,
     "common_checked": 8,
-    "rename_ok": 0.65,
+    "rename_ok": 0.85,
     "rename_checked": 20,
     "tests_recall": 0.024,
     "tests_precision": 0.146,
@@ -12070,18 +12006,18 @@
     "threshold": 0.15
    },
    "rename_ok": {
-    "mean": 0.692,
+    "mean": 0.846,
     "functions": 39,
-    "boot_lo": 0.564,
-    "boot_hi": 0.821,
-    "boot_half": 0.128,
+    "boot_lo": 0.744,
+    "boot_hi": 0.923,
+    "boot_half": 0.09,
     "seeds": [
-     0.75,
-     0.7,
-     0.65
+     0.85,
+     0.9,
+     0.85
     ],
-    "seed_sd": 0.05,
-    "threshold": 0.13
+    "seed_sd": 0.029,
+    "threshold": 0.09
    },
    "tests_recall": {
     "mean": 0.019,
@@ -12161,7 +12097,7 @@
     "boot_half": 0.112,
     "seeds": [
      0.581,
-     0.502,
+     0.501,
      0.494
     ],
     "seed_sd": 0.049,
@@ -12173,7 +12109,7 @@
   "repo": "jsoup",
   "lang": "java",
   "commit": "d90d57521d93",
-  "index_seconds": 2.5,
+  "index_seconds": 2.4,
   "symbols": 2663,
   "files": 105,
   "seeds": [
@@ -16188,7 +16124,7 @@
    },
    {
     "symbol": "org::jsoup::parser::TokenQueue::matchesWhitespace",
-    "look_tokens": 331,
+    "look_tokens": 330,
     "file_tokens": 5312
    },
    {
@@ -16198,12 +16134,12 @@
    },
    {
     "symbol": "org::jsoup::parser::ParseErrorList::tracking",
-    "look_tokens": 322,
+    "look_tokens": 321,
     "file_tokens": 311
    },
    {
     "symbol": "org::jsoup::nodes::Node::ownerDocument",
-    "look_tokens": 422,
+    "look_tokens": 421,
     "file_tokens": 9713
    },
    {
@@ -16218,7 +16154,7 @@
    },
    {
     "symbol": "org::jsoup::nodes::Attributes::hasKey",
-    "look_tokens": 334,
+    "look_tokens": 333,
     "file_tokens": 6790
    },
    {
@@ -16228,7 +16164,7 @@
    },
    {
     "symbol": "org::jsoup::select::Collector::streamNodes",
-    "look_tokens": 393,
+    "look_tokens": 392,
     "file_tokens": 1055
    },
    {
@@ -16248,7 +16184,7 @@
    },
    {
     "symbol": "org::jsoup::nodes::Attribute::getValue",
-    "look_tokens": 352,
+    "look_tokens": 351,
     "file_tokens": 3027
    },
    {
@@ -16258,7 +16194,7 @@
    },
    {
     "symbol": "org::jsoup::safety::Safelist::addTags",
-    "look_tokens": 381,
+    "look_tokens": 380,
     "file_tokens": 6936
    },
    {
@@ -16293,7 +16229,7 @@
    },
    {
     "symbol": "org::jsoup::internal::Normalizer::lowerCase",
-    "look_tokens": 439,
+    "look_tokens": 438,
     "file_tokens": 448
    },
    {
@@ -16313,12 +16249,12 @@
    },
    {
     "symbol": "org::jsoup::nodes::TextNode::getWholeText",
-    "look_tokens": 341,
+    "look_tokens": 340,
     "file_tokens": 896
    },
    {
     "symbol": "org::jsoup::internal::LineMap::addLineStart",
-    "look_tokens": 250,
+    "look_tokens": 249,
     "file_tokens": 595
    },
    {
@@ -16328,17 +16264,17 @@
    },
    {
     "symbol": "org::jsoup::nodes::Element::lastElementChild",
-    "look_tokens": 288,
+    "look_tokens": 287,
     "file_tokens": 21092
    },
    {
     "symbol": "org::jsoup::parser::Parser::isTrackErrors",
-    "look_tokens": 236,
+    "look_tokens": 235,
     "file_tokens": 3857
    },
    {
     "symbol": "org::jsoup::internal::LegacyMatching::attributeMatches",
-    "look_tokens": 344,
+    "look_tokens": 343,
     "file_tokens": 1068
    },
    {
@@ -16378,7 +16314,7 @@
    },
    {
     "symbol": "org::jsoup::nodes::Attribute::getValidKey",
-    "look_tokens": 480,
+    "look_tokens": 479,
     "file_tokens": 3027
    },
    {
@@ -16402,7 +16338,7 @@
     "file_tokens": 4377
    }
   ],
-  "seconds": 117,
+  "seconds": 121,
   "summary": {
    "callers_recall": 0.996,
    "callers_precision": 0.988,
@@ -16442,7 +16378,7 @@
     "tests_top10_best": 0.741,
     "tests_caught": 0.875,
     "tests_checked": 8,
-    "look_vs_file": 0.199
+    "look_vs_file": 0.198
    },
    "8": {
     "callers_recall": 0.99,
@@ -16657,11 +16593,11 @@
    "look_vs_file": {
     "mean": 0.166,
     "functions": 49,
-    "boot_lo": 0.12,
+    "boot_lo": 0.119,
     "boot_hi": 0.22,
     "boot_half": 0.05,
     "seeds": [
-     0.199,
+     0.198,
      0.152,
      0.127
     ],
@@ -16674,7 +16610,7 @@
   "repo": "json-java",
   "lang": "java",
   "commit": "2cd0a8c2112a",
-  "index_seconds": 0.2,
+  "index_seconds": 0.3,
   "symbols": 542,
   "files": 26,
   "seeds": [
@@ -19241,7 +19177,7 @@
    },
    {
     "symbol": "org::json::XMLParserConfiguration::withKeepBooleanAsString",
-    "look_tokens": 424,
+    "look_tokens": 423,
     "file_tokens": 4976
    },
    {
@@ -19276,7 +19212,7 @@
    },
    {
     "symbol": "org::json::XMLTokener::nextMeta",
-    "look_tokens": 671,
+    "look_tokens": 670,
     "file_tokens": 3760
    },
    {
@@ -19301,7 +19237,7 @@
    },
    {
     "symbol": "org::json::JSONTokener::nextString",
-    "look_tokens": 838,
+    "look_tokens": 837,
     "file_tokens": 5435
    },
    {
@@ -19326,7 +19262,7 @@
    },
    {
     "symbol": "org::json::XMLParserConfiguration::getForceList",
-    "look_tokens": 269,
+    "look_tokens": 268,
     "file_tokens": 4976
    },
    {
@@ -19346,7 +19282,7 @@
    },
    {
     "symbol": "org::json::JSONTokener::dehexchar",
-    "look_tokens": 316,
+    "look_tokens": 315,
     "file_tokens": 5435
    },
    {
@@ -19361,7 +19297,7 @@
    },
    {
     "symbol": "org::json::JSONObject::accumulate",
-    "look_tokens": 597,
+    "look_tokens": 596,
     "file_tokens": 34912
    },
    {
@@ -19400,7 +19336,7 @@
     "file_tokens": 3760
    }
   ],
-  "seconds": 16,
+  "seconds": 20,
   "summary": {
    "callers_recall": 1.0,
    "callers_precision": 1.0,
@@ -22689,12 +22625,12 @@
    },
    {
     "symbol": "indexmap::util::simplify_range",
-    "ok": false,
-    "compiled": false,
-    "tests_ok": null,
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
     "tests_failed": [],
-    "old_name_left": "src/inner.rs:18:use crate::util::{assert_index_le, assert_index_lt, simplify_range};",
-    "detail": "elf.len());\n    |                     ^^^^^^^^^^^^^^^^^^ not found in this scope\n    |\nhelp: consider importing this function\n    |\n 13 + use crate::util::simplify_range_gnx;\n    |\n\nSome errors have detailed explanations: E0425, E0432.\nFor more information about an error, try `rustc --explain E0425`.\nerror: could not compile `indexmap` (lib) due to 4 previous errors\nwarning: build failed, waiting for other jobs to finish...\nerror: could not compile `indexmap` (lib test) due to 4 previous errors\n"
+    "old_name_left": "",
+    "detail": ""
    },
    {
     "symbol": "indexmap::rayon::set::IndexSet::par_is_subset",
@@ -22725,21 +22661,21 @@
    },
    {
     "symbol": "indexmap::util::assert_index_lt",
-    "ok": false,
-    "compiled": false,
-    "tests_ok": null,
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
     "tests_failed": [],
-    "old_name_left": "src/inner.rs:18:use crate::util::{assert_index_le, assert_index_lt, simplify_range};\nsrc/map.rs:46:use crate::util::{assert_index_le, assert_index_lt, third, try_simplify_range};\nsrc/set.rs:23:use crate::util::{assert_index_lt, try_simplify_range};",
-    "detail": ", self.len());\n     |         ^^^^^^^^^^^^^^^^^^^ not found in this scope\n     |\nhelp: consider importing this function\n     |\n  10 + use crate::util::assert_index_lt_gnx;\n     |\n\nSome errors have detailed explanations: E0425, E0432.\nFor more information about an error, try `rustc --explain E0425`.\nerror: could not compile `indexmap` (lib) due to 12 previous errors\nwarning: build failed, waiting for other jobs to finish...\nerror: could not compile `indexmap` (lib test) due to 12 previous errors\n"
+    "old_name_left": "",
+    "detail": ""
    },
    {
     "symbol": "indexmap::util::try_simplify_range",
-    "ok": false,
-    "compiled": false,
-    "tests_ok": null,
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
     "tests_failed": [],
-    "old_name_left": "src/map.rs:46:use crate::util::{assert_index_le, assert_index_lt, third, try_simplify_range};\nsrc/map/slice.rs:5:use crate::util::{slice_eq, try_simplify_range};\nsrc/set.rs:23:use crate::util::{assert_index_lt, try_simplify_range};\nsrc/set/slice.rs:2:use crate::util::{slice_eq, try_simplify_range};",
-    "detail": "  |                     ^^^^^^^^^^^^^^^^^^^^^^ not found in this scope\n     |\nhelp: consider importing this function\n     |\n  10 + use crate::util::try_simplify_range_gnx;\n     |\n\nSome errors have detailed explanations: E0425, E0432.\nFor more information about an error, try `rustc --explain E0425`.\nerror: could not compile `indexmap` (lib) due to 10 previous errors\nwarning: build failed, waiting for other jobs to finish...\nerror: could not compile `indexmap` (lib test) due to 10 previous errors\n"
+    "old_name_left": "",
+    "detail": ""
    },
    {
     "symbol": "indexmap::inner::Core::shift_insert_unique",
@@ -22824,21 +22760,21 @@
    },
    {
     "symbol": "indexmap::util::third",
-    "ok": false,
-    "compiled": false,
-    "tests_ok": null,
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
     "tests_failed": [],
-    "old_name_left": "LICENSE-APACHE:115:       wherever such third-party notices normally appear. The contents\nLICENSE-APACHE:187:   identification within third-party archives.\nsrc/map.rs:46:use crate::util::{assert_index_le, assert_index_lt, third, try_simplify_range};",
-    "detail": "gnx)\n     |                                         ^^^^^^^^^ not found in this scope\n     |\nhelp: consider importing this function\n     |\n  19 + use crate::util::third_gnx;\n     |\n\nSome errors have detailed explanations: E0425, E0432.\nFor more information about an error, try `rustc --explain E0425`.\nerror: could not compile `indexmap` (lib) due to 3 previous errors\nwarning: build failed, waiting for other jobs to finish...\nerror: could not compile `indexmap` (lib test) due to 3 previous errors\n"
+    "old_name_left": "LICENSE-APACHE:115:       wherever such third-party notices normally appear. The contents\nLICENSE-APACHE:187:   identification within third-party archives.",
+    "detail": ""
    },
    {
     "symbol": "indexmap::util::assert_index_le",
-    "ok": false,
-    "compiled": false,
-    "tests_ok": null,
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
     "tests_failed": [],
-    "old_name_left": "src/inner.rs:18:use crate::util::{assert_index_le, assert_index_lt, simplify_range};\nsrc/map.rs:46:use crate::util::{assert_index_le, assert_index_lt, third, try_simplify_range};",
-    "detail": "rt_index_le_gnx(index, len);\n687 +                 assert_index_lt(index, len);\n    |\nhelp: consider importing this function\n    |\n 19 + use crate::util::assert_index_le_gnx;\n    |\n\nSome errors have detailed explanations: E0425, E0432.\nFor more information about an error, try `rustc --explain E0425`.\nerror: could not compile `indexmap` (lib) due to 5 previous errors\nwarning: build failed, waiting for other jobs to finish...\nerror: could not compile `indexmap` (lib test) due to 5 previous errors\n"
+    "old_name_left": "",
+    "detail": ""
    },
    {
     "symbol": "indexmap::map::raw_entry_v1::RawVacantEntryMut::shift_insert_hashed_nocheck",
@@ -22873,8 +22809,8 @@
     "compiled": false,
     "tests_ok": null,
     "tests_failed": [],
-    "old_name_left": "src/map/slice.rs:5:use crate::util::{slice_eq, try_simplify_range};\nsrc/map/slice.rs:450:        slice_eq(self, &other.entries, |t, b| t.0 == b.key && t.1 == b.value)\nsrc/set/slice.rs:2:use crate::util::{slice_eq, try_simplify_range};\nsrc/set/slice.rs:297:        slice_eq(self, &other.entries, |o, b",
-    "detail": "entries, other, |b, o| b.key == *o)\n    |         ^^^^^^^^^^^^ not found in this scope\n    |\nhelp: consider importing this function\n    |\n  1 + use crate::util::slice_eq_gnx;\n    |\n\nSome errors have detailed explanations: E0425, E0432.\nFor more information about an error, try `rustc --explain E0425`.\nerror: could not compile `indexmap` (lib) due to 6 previous errors\nwarning: build failed, waiting for other jobs to finish...\nerror: could not compile `indexmap` (lib test) due to 6 previous errors\n"
+    "old_name_left": "src/map/slice.rs:450:        slice_eq(self, &other.entries, |t, b| t.0 == b.key && t.1 == b.value)\nsrc/set/slice.rs:297:        slice_eq(self, &other.entries, |o, b| *o == b.key)",
+    "detail": "q(self, &other.entries, |o, b| *o == b.key)\n    |         ^^^^^^^^------------------------------------------\n    |         |\n    |         help: try calling `slice_eq` as a method: `self.slice_eq(&other.entries, |o, b| *o == b.key)`\n\nFor more information about this error, try `rustc --explain E0425`.\nerror: could not compile `indexmap` (lib) due to 2 previous errors\nwarning: build failed, waiting for other jobs to finish...\nerror: could not compile `indexmap` (lib test) due to 2 previous errors\n"
    }
   ],
   "mutants": {
@@ -23487,7 +23423,7 @@
     "file_tokens": 684
    }
   ],
-  "seconds": 9,
+  "seconds": 11,
   "summary": {
    "callers_recall": 0.991,
    "callers_precision": 1.0,
@@ -23498,7 +23434,7 @@
    "common_precision": 0.992,
    "common_recall_with_maybe": 1.0,
    "common_checked": 29,
-   "rename_ok": 0.697,
+   "rename_ok": 0.848,
    "rename_checked": 33,
    "tests_recall": 0.515,
    "tests_precision": 0.402,
@@ -23519,7 +23455,7 @@
     "common_precision": 1.0,
     "common_recall_with_maybe": 1.0,
     "common_checked": 16,
-    "rename_ok": 0.8,
+    "rename_ok": 0.95,
     "rename_checked": 20,
     "tests_recall": 0.512,
     "tests_precision": 0.304,
@@ -23539,7 +23475,7 @@
     "common_precision": 0.978,
     "common_recall_with_maybe": 1.0,
     "common_checked": 10,
-    "rename_ok": 0.75,
+    "rename_ok": 0.85,
     "rename_checked": 20,
     "tests_recall": 0.524,
     "tests_precision": 0.575,
@@ -23559,7 +23495,7 @@
     "common_precision": 1.0,
     "common_recall_with_maybe": 1.0,
     "common_checked": 11,
-    "rename_ok": 0.6,
+    "rename_ok": 0.75,
     "rename_checked": 20,
     "tests_recall": 0.615,
     "tests_precision": 0.318,
@@ -23656,18 +23592,18 @@
     "threshold": 0.05
    },
    "rename_ok": {
-    "mean": 0.697,
+    "mean": 0.848,
     "functions": 33,
-    "boot_lo": 0.576,
-    "boot_hi": 0.818,
-    "boot_half": 0.121,
+    "boot_lo": 0.727,
+    "boot_hi": 0.939,
+    "boot_half": 0.106,
     "seeds": [
-     0.8,
-     0.75,
-     0.6
+     0.95,
+     0.85,
+     0.75
     ],
-    "seed_sd": 0.104,
-    "threshold": 0.13
+    "seed_sd": 0.1,
+    "threshold": 0.11
    },
    "tests_recall": {
     "mean": 0.515,

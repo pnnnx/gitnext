@@ -14,7 +14,7 @@ const MEASURED: &[(&str, Option<u8>, Option<u8>)] = &[
     ("java", Some(99), Some(49)),
     ("js", Some(100), Some(3)),
     ("rust", Some(100), Some(53)),
-    ("python", None, Some(30)),
+    ("python", None, Some(36)),
 ];
 
 fn row(file: &str) -> Option<&'static (&'static str, Option<u8>, Option<u8>)> {

@@ -23,6 +23,9 @@ pub struct Graph {
     /// target symbol → (referring symbol, edge kind, line); built lazily from all edges.
     rev: OnceLock<(RevIndex, Guesses)>,
     short: OnceLock<Vec<String>>,
+    /// Python module → name it imports → where from: packages re-export through `__init__`
+    /// (`from .termui import style`), and callers write `click.style(...)`.
+    reexports: OnceLock<HashMap<String, HashMap<String, Vec<String>>>>,
     /// Inferred purposes of directories (`dir:<path>` notes).
     pub dir_notes: HashMap<String, String>,
     /// Language-server answers: (file, line, col) → (target file, target line); "" = external.
@@ -182,7 +185,7 @@ impl Graph {
                 break;
             }
         }
-        Graph { files, syms, edges, by_name, by_qual, crate_roots, visible, dir_graph: OnceLock::new(), rev: OnceLock::new(), short: OnceLock::new(), dir_notes: HashMap::new(), links: HashMap::new() }
+        Graph { files, syms, edges, by_name, by_qual, crate_roots, visible, dir_graph: OnceLock::new(), rev: OnceLock::new(), short: OnceLock::new(), reexports: OnceLock::new(), dir_notes: HashMap::new(), links: HashMap::new() }
     }
 
     pub fn sym_ref(&self, i: usize) -> SymRef {
@@ -665,6 +668,13 @@ impl Graph {
                 })
                 .collect()
         };
+        if picked.is_empty() && file.ends_with(".py") && !qual.is_empty() && qual != "Self" {
+            // `click.style(...)`: `click` is a package of the repo and its `__init__` imports `style`
+            let via = self.py_reexported(e.to.rsplit_once("::").map_or("", |x| x.0), name, 0);
+            if !via.is_empty() {
+                return via;
+            }
+        }
         let rust = file.ends_with(".rs");
         if picked.is_empty() && (rust || gitnext_parse::lang_for(std::path::Path::new(file)).is_some_and(gitnext_parse::Lang::is_generic)) && !qual.is_empty() && qual != "Self" {
             // `Type::method` with Type a repo type but the method defined above it (base class,
@@ -714,6 +724,44 @@ impl Graph {
             }
         }
         prefer_same_file(&self.syms, picked, file)
+    }
+
+    /// What a Python module hands on under `name`: the function or class its own imports bring in
+    /// (followed through a chain of re-exporting modules).
+    fn py_reexported(&self, module: &str, name: &str, depth: usize) -> Vec<usize> {
+        let table = self.reexports.get_or_init(|| {
+            let mut m: HashMap<String, HashMap<String, Vec<String>>> = HashMap::new();
+            for (file, e) in &self.edges {
+                if e.kind != EdgeKind::Imports || !file.ends_with(".py") {
+                    continue;
+                }
+                for path in flatten_use(&e.to) {
+                    m.entry(e.from.clone()).or_default().entry(last_segment(&path).to_string()).or_default().push(path);
+                }
+            }
+            m
+        });
+        let is_module = |i: &usize| self.syms[*i].sym.kind == Kind::Module && self.syms[*i].file.ends_with(".py");
+        let mut modules: Vec<usize> = self.by_qual.get(module).into_iter().flatten().copied().filter(|i| is_module(i)).collect();
+        if modules.is_empty() {
+            modules = self.by_name.get(last_segment(module)).into_iter().flatten().copied().filter(|i| is_module(i)).collect();
+        }
+        let mut out = Vec::new();
+        for m in modules {
+            for path in table.get(&self.syms[m].sym.qualified).and_then(|t| t.get(name)).into_iter().flatten() {
+                let direct: Vec<usize> = self.by_qual.get(path).into_iter().flatten().copied().filter(|&i| self.syms[i].sym.kind != Kind::Module).collect();
+                if !direct.is_empty() {
+                    out.extend(direct);
+                } else if depth < 3 {
+                    if let Some((inner, _)) = path.rsplit_once("::") {
+                        out.extend(self.py_reexported(inner, name, depth + 1));
+                    }
+                }
+            }
+        }
+        out.sort_unstable();
+        out.dedup();
+        out
     }
 
     /// Rust `self.as_str()` in `impl Display for BuildMetadata` (display.rs): the owner is

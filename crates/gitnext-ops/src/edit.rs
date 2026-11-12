@@ -273,9 +273,13 @@ fn dunder_all_lines(lines: &[String]) -> std::collections::HashSet<usize> {
 pub fn rename(root: &Path, g: &Graph, i: usize, new_name: &str, dry_run: bool) -> Result<RenameReport> {
     let target = &g.syms[i];
     let old = target.sym.name.clone();
-    if new_name.is_empty() || !new_name.bytes().all(is_ident) || new_name.as_bytes()[0].is_ascii_digit() {
+    // a JS / TS private member (`#count`) stays private: the `#` is part of the name on both sides
+    let private = old.starts_with('#');
+    let bare = if private { new_name.strip_prefix('#').unwrap_or(new_name) } else { new_name };
+    if bare.is_empty() || !bare.bytes().all(is_ident) || bare.as_bytes()[0].is_ascii_digit() {
         bail!("`{new_name}` is not a valid identifier");
     }
+    let new_name = &if private { format!("#{bare}") } else { bare.to_string() };
     // the symbol and its prototype / definition twins (C/C++ header + source); a method's
     // overrides in subclasses / implementations are renamed with it (dispatch must keep working)
     let mut twins: Vec<usize> = (0..g.syms.len()).filter(|&j| g.syms[j].sym.qualified == target.sym.qualified).collect();
@@ -347,7 +351,16 @@ pub fn rename(root: &Path, g: &Graph, i: usize, new_name: &str, dry_run: bool) -
         let import_spans = if ours_alone && gitnext_parse::family_of(&f.path) == family && lines.iter().any(|t| !word_hits(t, &old).is_empty()) {
             let text = lines.join("\n");
             let starts: Vec<usize> = std::iter::once(0).chain(text.match_indices('\n').map(|(i, _)| i + 1)).collect();
-            let spans = gitnext_parse::import_name_spans(Path::new(&f.path), &text);
+            let mut spans = gitnext_parse::import_name_spans(Path::new(&f.path), &text);
+            if f.path.ends_with(".rs") {
+                // `use crate::util::{third, slice_eq};` — a name inside a group, from this repository
+                spans.extend(
+                    gitnext_parse::rust_use_names(&text)
+                        .into_iter()
+                        .filter(|(_, _, first)| matches!(first.as_str(), "crate" | "self" | "super") || g.is_repo_root(first))
+                        .map(|(a, b, _)| (a, b)),
+                );
+            }
             Some((starts, spans))
         } else {
             None

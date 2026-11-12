@@ -95,6 +95,7 @@ edges:
   L6 imports python::store -> typing::Optional
   L8 imports python::store -> python::model::Task
   L9 imports python::store -> python::events
+  L15 calls python::store -> dataclass
   L26 uses python::store::Backend::load -> Record
   L29 uses python::store::Backend::save -> Record
   L33 inherits python::store::JsonBackend -> Backend

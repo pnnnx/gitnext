@@ -26,7 +26,7 @@ pub fn analyze(rel: &Path, src: &str, pkg: Option<&CrateHint>) -> anyhow::Result
     let is_pkg = rel_s.ends_with("__init__.py");
     let in_test = is_test_path(&rel_s);
 
-    let mut ex = Ex { src: src.as_bytes(), out: FileAnalysis::default(), imported: HashSet::new(), aliases: std::collections::HashMap::new() };
+    let mut ex = Ex { src: src.as_bytes(), out: FileAnalysis::default(), imported: HashSet::new(), aliases: std::collections::HashMap::new(), toplevel: HashSet::new() };
     ex.out.module_doc = docstring(root, ex.src);
     ex.out.symbols.push(Symbol {
         kind: Kind::Module,
@@ -50,6 +50,13 @@ pub fn analyze(rel: &Path, src: &str, pkg: Option<&CrateHint>) -> anyhow::Result
     // Pass 1: imports (names bound by imports decide how `x.f()` calls are read).
     let package = if is_pkg { module.clone() } else { module.rsplit_once("::").map(|(p, _)| p.to_string()).unwrap_or_default() };
     ex.imports(root, &module, &package);
+    let mut cur = root.walk();
+    for c in root.named_children(&mut cur) {
+        let def = if c.kind() == "decorated_definition" { c.child_by_field_name("definition") } else { Some(c) };
+        if let Some(name) = def.filter(|d| matches!(d.kind(), "function_definition" | "class_definition")).and_then(|d| d.child_by_field_name("name")) {
+            ex.toplevel.insert(ex.text(name).to_string());
+        }
+    }
     // Pass 2: definitions.
     let ctx = Ctx { module: module.clone(), owner: None, in_test };
     ex.block(root, &ctx);
@@ -85,6 +92,8 @@ struct Ex<'a> {
     imported: HashSet<String>,
     /// local name → module path it stands for (`tt` → `loca::tools::tests`)
     aliases: std::collections::HashMap<String, String>,
+    /// Functions and classes defined at module level: a bare mention of one is a reference to it.
+    toplevel: HashSet<String>,
 }
 
 const BUILTIN_TYPES: &[&str] = &[
@@ -202,7 +211,7 @@ impl<'a> Ex<'a> {
                 let mut cur = n.walk();
                 let ds: Vec<Node> = n.named_children(&mut cur).filter(|c| c.kind() == "decorator").collect();
                 for d in ds {
-                    self.collect_calls(d, &mut calls);
+                    self.collect_calls(d, &HashSet::new(), &mut calls);
                 }
                 for (to, l, col) in calls {
                     self.out.edges.push(Edge { from: ctx.module.clone(), to, kind: EdgeKind::Calls, line: l, col });
@@ -214,7 +223,7 @@ impl<'a> Ex<'a> {
                 self.module_const(n, ctx);
                 // module-level code runs at import / as a script: `app = Flask(...)`, `main()`
                 let mut calls = Vec::new();
-                self.collect_calls(n, &mut calls);
+                self.collect_calls(n, &HashSet::new(), &mut calls);
                 for (to, l, col) in calls {
                     self.out.edges.push(Edge { from: ctx.module.clone(), to, kind: EdgeKind::Calls, line: l, col });
                 }
@@ -331,8 +340,8 @@ impl<'a> Ex<'a> {
         }
         if let Some(b) = body {
             let mut calls = Vec::new();
-            self.collect_calls(b, &mut calls);
             let locals = crate::local_bindings(n, self.src);
+            self.collect_calls(b, &locals, &mut calls);
             calls.retain(|(to, _, _)| to.contains("::") || to.starts_with('.') || !locals.contains(to.as_str()));
             for (to, l, col) in calls {
                 self.out.edges.push(Edge { from: sym.qualified.clone(), to, kind: EdgeKind::Calls, line: l, col });
@@ -485,65 +494,146 @@ impl<'a> Ex<'a> {
         }
     }
 
-    fn collect_calls(&self, n: Node, out: &mut Vec<(String, u32, u32)>) {
-        if n.kind() == "call" {
-            if let Some(f) = n.child_by_field_name("function") {
-                let name = match f.kind() {
-                    "identifier" => Some(self.text(f).to_string()),
-                    "attribute" => {
-                        let attr = f.child_by_field_name("attribute").map(|a| self.text(a)).unwrap_or("");
-                        let obj = f.child_by_field_name("object");
-                        match obj.map(|o| (o.kind(), self.text(o))) {
-                            Some((_, "self" | "cls")) => Some(format!("Self::{attr}")),
-                            // `Class.method()` or `module.func()` for imported / capitalised names
-                            // `tt.run()` where `tt` is an imported module: the module's function
-                            Some(("identifier", o)) if self.aliases.contains_key(o) && !self.aliases[o].is_empty() => {
-                                Some(format!("{}::{attr}", self.aliases[o]))
-                            }
-                            Some(("identifier", o)) if self.imported.contains(o) || o.chars().next().is_some_and(|c| c.is_ascii_uppercase()) => {
-                                Some(format!("{o}::{attr}"))
-                            }
-                            _ => Some(format!(".{attr}")),
-                        }
-                    }
-                    _ => None,
-                };
-                if let Some(nm) = name {
-                    let (l, c) = name_pos(f);
-                    out.push((nm, l, c));
+    /// `click._compat` → `click::_compat`: a dotted chain that starts at an imported module.
+    /// A local value of the same name (`for command in …` next to `from .decorators import command`)
+    /// is not that module.
+    fn module_chain(&self, obj: Node, locals: &HashSet<String>) -> Option<String> {
+        let mut parts: Vec<&str> = Vec::new();
+        let mut cur = obj;
+        loop {
+            match cur.kind() {
+                "identifier" => {
+                    parts.push(self.text(cur));
+                    break;
                 }
+                "attribute" => {
+                    parts.push(self.text(cur.child_by_field_name("attribute")?));
+                    cur = cur.child_by_field_name("object")?;
+                }
+                _ => return None,
             }
         }
-        // `real = tt.detect_test_command`, `tt.detect_test_command = fake`: a module function
-        // referenced (or patched) without being called
-        if n.kind() == "attribute" {
-            let is_callee = n.parent().is_some_and(|p| p.kind() == "call" && p.child_by_field_name("function").map(|f| f.id()) == Some(n.id()));
-            if !is_callee {
-                if let (Some(o), Some(attr)) = (n.child_by_field_name("object"), n.child_by_field_name("attribute")) {
-                    if o.kind() == "identifier" {
-                        if let Some(path) = self.aliases.get(self.text(o)).filter(|p| !p.is_empty()) {
+        parts.reverse();
+        let root = parts[0];
+        if locals.contains(root) {
+            return None;
+        }
+        let head = match self.aliases.get(root) {
+            Some(p) if !p.is_empty() => p.as_str(),
+            _ if self.imported.contains(root) => root,
+            _ => return None,
+        };
+        Some(std::iter::once(head).chain(parts[1..].iter().copied()).collect::<Vec<_>>().join("::"))
+    }
+
+    /// What `f` names when it is called or used as a decorator, in edge notation.
+    fn callee(&self, f: Node, locals: &HashSet<String>) -> Option<String> {
+        match f.kind() {
+            "identifier" => Some(self.text(f).to_string()),
+            "attribute" => {
+                let attr = f.child_by_field_name("attribute").map(|a| self.text(a)).unwrap_or("");
+                let obj = f.child_by_field_name("object")?;
+                let o = self.text(obj);
+                Some(if matches!(o, "self" | "cls") {
+                    format!("Self::{attr}")
+                } else if let Some(path) = self.module_chain(obj, locals) {
+                    // `module.func()`, `tt.run()` where `tt` is an imported module, `click._compat.f()`
+                    format!("{path}::{attr}")
+                } else if obj.kind() == "identifier" && o.chars().next().is_some_and(|c| c.is_ascii_uppercase()) {
+                    // `Class.method()`
+                    format!("{o}::{attr}")
+                } else {
+                    format!(".{attr}")
+                })
+            }
+            _ => None,
+        }
+    }
+
+    /// A bare name used as a value (`f = hidden if hide else visible`, `{"k": parse}`): a reference
+    /// when it is a function / class of this module or an imported name, and not a local value.
+    fn value_ref(&self, v: Node, locals: &HashSet<String>, out: &mut Vec<(String, u32, u32)>) {
+        if v.kind() != "identifier" {
+            return;
+        }
+        let name = self.text(v);
+        if (self.toplevel.contains(name) || self.imported.contains(name)) && !locals.contains(name) {
+            let (l, c) = name_pos(v);
+            out.push((name.to_string(), l, c));
+        }
+    }
+
+    fn collect_calls(&self, n: Node, locals: &HashSet<String>, out: &mut Vec<(String, u32, u32)>) {
+        match n.kind() {
+            "call" => {
+                if let Some(f) = n.child_by_field_name("function") {
+                    if let Some(nm) = self.callee(f, locals) {
+                        let (l, c) = name_pos(f);
+                        out.push((nm, l, c));
+                    }
+                }
+            }
+            // `@ctx.call_on_close`, `@pass_context` on a nested function: the decorator is used
+            "decorator" => match n.named_child(0) {
+                Some(f) if f.kind() == "attribute" => {
+                    if let Some(nm) = self.callee(f, locals) {
+                        let (l, c) = name_pos(f);
+                        out.push((nm, l, c));
+                    }
+                }
+                // `@property`, `@staticmethod` are builtins; a function of this project is a reference
+                Some(f) => self.value_ref(f, locals, out),
+                None => {}
+            },
+            // `real = tt.detect_test_command`, `tt.detect_test_command = fake`, `click.parser.split`:
+            // a module function referenced (or patched) without being called
+            "attribute" => {
+                let outer = n.parent().is_some_and(|p| match p.kind() {
+                    "call" => p.child_by_field_name("function").map(|f| f.id()) == Some(n.id()),
+                    "attribute" => p.child_by_field_name("object").map(|o| o.id()) == Some(n.id()),
+                    "decorator" => true,
+                    _ => false,
+                });
+                if !outer {
+                    if let (Some(o), Some(attr)) = (n.child_by_field_name("object"), n.child_by_field_name("attribute")) {
+                        if let Some(path) = self.module_chain(o, locals) {
                             let (l, c) = name_pos(n);
                             out.push((format!("{path}::{}", self.text(attr)), l, c));
                         }
                     }
                 }
             }
-        }
-        // functions / classes passed as values: `map(parse_line, xs)`, `key=sort_key`
-        if n.kind() == "argument_list" {
-            let mut cur = n.walk();
-            for a in n.named_children(&mut cur) {
-                let v = if a.kind() == "keyword_argument" { a.child_by_field_name("value") } else { Some(a) };
-                if let Some(v) = v.filter(|v| v.kind() == "identifier") {
-                    let (l, c) = name_pos(v);
-                    out.push((self.text(v).to_string(), l, c));
+            // functions / classes passed as values: `map(parse_line, xs)`, `key=sort_key`
+            "argument_list" => {
+                let mut cur = n.walk();
+                for a in n.named_children(&mut cur) {
+                    let v = if a.kind() == "keyword_argument" { a.child_by_field_name("value") } else { Some(a) };
+                    if let Some(v) = v.filter(|v| v.kind() == "identifier") {
+                        let (l, c) = name_pos(v);
+                        out.push((self.text(v).to_string(), l, c));
+                    }
                 }
             }
+            "assignment" | "pair" | "default_parameter" | "typed_default_parameter" => {
+                let field = if n.kind() == "assignment" { "right" } else { "value" };
+                if let Some(v) = n.child_by_field_name(field) {
+                    self.value_ref(v, locals, out);
+                }
+            }
+            "conditional_expression" | "return_statement" | "list" | "tuple" | "set" | "expression_list" => {
+                let mut cur = n.walk();
+                for v in n.named_children(&mut cur) {
+                    self.value_ref(v, locals, out);
+                }
+            }
+            _ => {}
         }
+        // nested functions (decorators, closures, callbacks) have no symbol of their own: what they
+        // call belongs to the function they are written in. Nested classes do have symbols.
         let mut cur = n.walk();
         for c in n.named_children(&mut cur) {
-            if !matches!(c.kind(), "function_definition" | "class_definition") {
-                self.collect_calls(c, out);
+            if c.kind() != "class_definition" {
+                self.collect_calls(c, locals, out);
             }
         }
     }

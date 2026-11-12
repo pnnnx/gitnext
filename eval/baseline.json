@@ -51,15 +51,15 @@
     "common_precision": null,
     "common_recall_with_maybe": null,
     "common_checked": 0,
-    "rename_ok": 0.66,
-    "rename_checked": 50,
-    "tests_recall": 0.212,
-    "tests_precision": 0.384,
-    "tests_top10_precision": 0.405,
-    "tests_top10_best": 0.5,
-    "tests_caught": 0.696,
+    "rename_ok": 0.902,
+    "rename_checked": 51,
+    "tests_recall": 0.31,
+    "tests_precision": 0.485,
+    "tests_top10_precision": 0.53,
+    "tests_top10_best": 0.634,
+    "tests_caught": 0.783,
     "tests_checked": 23,
-    "look_vs_file": 0.084
+    "look_vs_file": 0.08
    },
    "sqlparse": {
     "callers_recall": null,
@@ -71,15 +71,15 @@
     "common_precision": null,
     "common_recall_with_maybe": null,
     "common_checked": 0,
-    "rename_ok": 0.81,
+    "rename_ok": 0.905,
     "rename_checked": 42,
-    "tests_recall": 0.417,
-    "tests_precision": 0.626,
-    "tests_top10_precision": 0.648,
-    "tests_top10_best": 0.669,
-    "tests_caught": 0.789,
-    "tests_checked": 19,
-    "look_vs_file": 0.273
+    "tests_recall": 0.415,
+    "tests_precision": 0.592,
+    "tests_top10_precision": 0.52,
+    "tests_top10_best": 0.795,
+    "tests_caught": 0.85,
+    "tests_checked": 20,
+    "look_vs_file": 0.218
    },
    "zustand": {
     "callers_recall": 1.0,
@@ -111,7 +111,7 @@
     "common_precision": 1.0,
     "common_recall_with_maybe": 0.9,
     "common_checked": 10,
-    "rename_ok": 0.692,
+    "rename_ok": 0.846,
     "rename_checked": 39,
     "tests_recall": 0.019,
     "tests_precision": 0.159,
@@ -191,7 +191,7 @@
     "common_precision": 0.992,
     "common_recall_with_maybe": 1.0,
     "common_checked": 29,
-    "rename_ok": 0.697,
+    "rename_ok": 0.848,
     "rename_checked": 33,
     "tests_recall": 0.515,
     "tests_precision": 0.402,
@@ -230,18 +230,18 @@
     "tests_caught": 0.13
    },
    "click": {
-    "rename_ok": 0.11,
-    "tests_recall": 0.11,
-    "tests_precision": 0.14,
-    "tests_top10_precision": 0.14,
-    "tests_caught": 0.18
+    "rename_ok": 0.07,
+    "tests_recall": 0.13,
+    "tests_precision": 0.15,
+    "tests_top10_precision": 0.15,
+    "tests_caught": 0.14
    },
    "sqlparse": {
-    "rename_ok": 0.1,
-    "tests_recall": 0.16,
-    "tests_precision": 0.15,
-    "tests_top10_precision": 0.16,
-    "tests_caught": 0.16
+    "rename_ok": 0.08,
+    "tests_recall": 0.14,
+    "tests_precision": 0.12,
+    "tests_top10_precision": 0.14,
+    "tests_caught": 0.13
    },
    "zustand": {
     "callers_recall": 1.0,
@@ -260,7 +260,7 @@
     "common_recall": 0.25,
     "common_recall_with_maybe": 0.1,
     "common_precision": 0.15,
-    "rename_ok": 0.13,
+    "rename_ok": 0.09,
     "tests_recall": 0.05,
     "tests_precision": 0.11,
     "tests_top10_precision": 0.11,
@@ -312,7 +312,7 @@
     "common_recall": 0.12,
     "common_recall_with_maybe": 0.04,
     "common_precision": 0.05,
-    "rename_ok": 0.13,
+    "rename_ok": 0.11,
     "tests_recall": 0.14,
     "tests_precision": 0.14,
     "tests_top10_precision": 0.14,
@@ -380,7 +380,7 @@
     "tests_top10_best": 0.625,
     "tests_caught": 0.75,
     "tests_checked": 4,
-    "look_vs_file": 0.12
+    "look_vs_file": 0.134
    },
    "sqlparse": {
     "callers_recall": null,
@@ -392,15 +392,15 @@
     "common_precision": null,
     "common_recall_with_maybe": null,
     "common_checked": 0,
-    "rename_ok": 0.75,
+    "rename_ok": 1.0,
     "rename_checked": 8,
-    "tests_recall": 0.252,
-    "tests_precision": 0.318,
-    "tests_top10_precision": 0.325,
-    "tests_top10_best": 0.325,
-    "tests_caught": 0.5,
+    "tests_recall": 0.327,
+    "tests_precision": 0.464,
+    "tests_top10_precision": 0.425,
+    "tests_top10_best": 0.6,
+    "tests_caught": 0.75,
     "tests_checked": 4,
-    "look_vs_file": 0.248
+    "look_vs_file": 0.219
    },
    "zustand": {
     "callers_recall": 1.0,
@@ -432,7 +432,7 @@
     "common_precision": 1.0,
     "common_recall_with_maybe": 1.0,
     "common_checked": 7,
-    "rename_ok": 0.75,
+    "rename_ok": 0.875,
     "rename_checked": 8,
     "tests_recall": 0.013,
     "tests_precision": 0.125,
@@ -558,11 +558,11 @@
     "tests_caught": 0.25
    },
    "sqlparse": {
-    "rename_ok": 0.25,
-    "tests_recall": 0.26,
-    "tests_precision": 0.32,
-    "tests_top10_precision": 0.33,
-    "tests_caught": 0.5
+    "rename_ok": 0.13,
+    "tests_recall": 0.37,
+    "tests_precision": 0.3,
+    "tests_top10_precision": 0.3,
+    "tests_caught": 0.25
    },
    "zustand": {
     "callers_recall": 1.0,
@@ -581,7 +581,7 @@
     "common_recall": 0.29,
     "common_recall_with_maybe": 0.15,
     "common_precision": 0.2,
-    "rename_ok": 0.25,
+    "rename_ok": 0.19,
     "tests_recall": 0.25,
     "tests_precision": 0.25,
     "tests_top10_precision": 0.25,
