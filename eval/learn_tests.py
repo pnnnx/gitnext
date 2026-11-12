@@ -184,10 +184,17 @@ def mean(v):
     return round(statistics.mean(v), 3) if v else None
 
 
+# gitnext: `tests-for` from the call graph; coverage / union: this script's own map;
+# learned: `tests-for` again after `gitnext learn-tests` — the product, not the prototype
+SOURCES = ("gitnext", "coverage", "union", "learned")
+
+
 def summarize(rows: list[dict], truth: str) -> dict:
     out = {}
     rs = [r for r in rows if r.get(truth)]
-    for src in ("gitnext", "coverage", "union"):
+    for src in SOURCES:
+        if not all(src in r[truth] for r in rs):
+            continue
         out[src] = {m: mean([r[truth][src][m] for r in rs]) for m in ("recall", "precision", "top_precision", "caught")}
     out["functions"] = len(rs)
     return out
@@ -206,7 +213,7 @@ def render(res: dict) -> str:
               "|---|---:|---|---:|---:|---:|---:|"]
         for g, gname in (("pick", "pick (есть вызывающие)"), ("random", "случайные"), ("all", "все")):
             s = res["summary"][g][truth]
-            for src in ("gitnext", "coverage", "union"):
+            for src in [x for x in SOURCES if x in s]:
                 m = s[src]
                 L.append(f"| {gname} | {s['functions']} | {src} | {pct(m['recall'])} | {pct(m['precision'])} | "
                          f"{pct(m['top_precision'])} | {pct(m['caught'])} |")
@@ -290,6 +297,7 @@ def main() -> None:
     sample = run.pick(syms, root, a.n, a.seed)
     rand = pick_random(syms, root, a.n2, a.seed, {s["qualified"] for s in sample})
     rows = []
+    truth_of: dict[str, dict[str, set]] = {}
     cov_missed = tf_missed = 0
     for group, ss in (("pick", sample), ("random", rand)):
         for s in ss:
@@ -319,10 +327,25 @@ def main() -> None:
             r.update(truth_full=len(full["failed"]), truth_eval=len(ev.get("failed", [])),
                      missed_by_coverage=sorted(tf_full - set(cov))[:8],
                      covered_not_failing=sorted(set(cov) - tf_full)[:8], top_coverage=cov[:TOP])
-            for tname, tr in (("full", tf_full), ("eval", set(ev.get("failed", [])))):
+            truth_of[q] = {"full": tf_full, "eval": set(ev.get("failed", []))}
+            for tname, tr in truth_of[q].items():
                 if tr:
                     r[tname] = {"gitnext": score(gx_names, tr), "coverage": score(cov, tr), "union": score(un, tr)}
             rows.append(r)
+
+    # the same question to gitnext itself once it has learned the map
+    t0 = time.time()
+    code, said = run.gx(["learn-tests"], root, timeout=1800)
+    learn_s = round(time.time() - t0, 1)
+    if code == 0:
+        for r in rows:
+            names, _, _ = run.tests_for(root, r["symbol"])
+            for tname, tr in truth_of.get(r["symbol"], {}).items():
+                if tr:
+                    r[tname]["learned"] = score(names, tr)
+        (root / ".gitnext" / "tests.db").unlink(missing_ok=True)  # later runs measure the call graph again
+    else:
+        print("gitnext learn-tests failed:", said[-300:])
 
     med = lambda v: round(statistics.median(v), 1)  # noqa: E731
     res = {"repo": "click", "commit": repo["commit"][:12], "seed": a.seed,
@@ -336,7 +359,7 @@ def main() -> None:
                     "map_pairs": sum(len(v) for v in fmap.values()), "map_functions": len(fmap), "map_tests": len(width),
                     "map_test_names": len({test_name(c) for c in width}), "items": items,
                     "tf_pairs": sum(len(v) for v in tmap.values()), "tf_missed": tf_missed, "cov_missed": cov_missed,
-                    "functions_with_body": len(bodies), **st}}
+                    "functions_with_body": len(bodies), "gitnext_learn_s": learn_s if code == 0 else None, **st}}
     out = run.HERE / "results"
     (out / f"{a.out}.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
     md = render(res)

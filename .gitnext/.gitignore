@@ -5,3 +5,6 @@ journal.jsonl
 hook-seen.tsv
 tui-welcomed
 .fuse_hidden*
+tests.db
+tests.db-*
+coverage.db*

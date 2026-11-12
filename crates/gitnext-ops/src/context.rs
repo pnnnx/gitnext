@@ -206,7 +206,7 @@ pub fn context(ws: &Workspace, g: &Graph, task: &str, budget: usize) -> String {
                 block.push_str(&text_mentions(g, root, *i));
             }
             if !r.sym.test {
-                let t = locate::tests_for(g, *i, 3);
+                let t = locate::tests_for_at(g, root, *i, 3).0;
                 if !t.is_empty() {
                     let names: Vec<&str> = t.iter().take(5).map(|x| g.short_name(x.symbol)).collect();
                     let _ = writeln!(block, "tests: {}{}", names.join(", "), if t.len() > 5 { format!(" +{}", t.len() - 5) } else { String::new() });

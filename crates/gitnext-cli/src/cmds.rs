@@ -189,6 +189,9 @@ pub enum More {
     Msg,
     /// Hooks for agent harnesses (reads the hook JSON on stdin): `read`, `session-start`
     Hook { event: String },
+    /// Run the tests once with coverage and remember which test runs which function (Python / pytest-cov);
+    /// `tests-for`, `look` and `check` then name the tests that really execute a function
+    LearnTests,
     /// After a change: build the project and run the tests of what changed; prints a verdict (exit 1 if it fails)
     Check {
         /// Seconds each command may take
@@ -256,6 +259,10 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
                 text.join(" ")
             };
             out.text(&gitnext_ops::locate::render_locate(&g, &ws.root, &t, !no_code));
+        }
+        More::LearnTests => {
+            let g = ws.graph()?;
+            out.text(&gitnext_ops::learn::render(&gitnext_ops::learn::learn(&ws.root, &g)?));
         }
         More::Check { timeout } => {
             let g = ws.graph()?;

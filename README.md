@@ -54,6 +54,7 @@ gitnext             # open the TUI
 | edit one function without reading the file | `gitnext edit replace <Sym> -f new.py` / `replace_symbol` |
 | rename everywhere (imports, tests, `__all__`, `mod.func`) | `gitnext rename <old> <new>` / `rename_symbol` |
 | what breaks, which tests to run | `gitnext impact <Sym>` · `gitnext tests-for <Sym>` (the 10 most likely to fail + one command for the rest) |
+| which tests really run a function (Python) | `gitnext learn-tests` — one pytest run with coverage; `tests-for`, `look` and `check` then use the real list (on click: 100% of the failing tests found instead of 19%) |
 | did my change break anything | `gitnext check` — builds and runs the tests of what changed, prints a verdict (`gitnext rename A B --check` does it right after the rename) |
 | error or traceback → code | `gitnext locate` (stdin) / `locate` |
 | where were we | `gitnext brief` · `gitnext journal` |

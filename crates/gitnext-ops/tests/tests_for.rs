@@ -124,3 +124,40 @@ fn text_hits_name_the_enclosing_function() {
     assert!(hits[1].starts_with("  tool.py:5: LIMIT"), "{hits:?}");
     let _ = std::fs::remove_dir_all(&dir);
 }
+
+/// With a learned map `tests-for` names the tests that really ran the function — also the
+/// ones the call graph cannot see — and says when the function changed since.
+#[test]
+fn learned_map_replaces_the_call_graph() {
+    let dir = project(
+        "learned",
+        &[
+            ("app.py", "def handler(x):\n    return x + 1\n\n\nREGISTRY = {\"h\": handler}\n\n\ndef dispatch(name, x):\n    return REGISTRY[name](x)\n"),
+            ("tests/test_app.py", "from app import dispatch\n\n\ndef test_dispatch():\n    assert dispatch(\"h\", 1) == 2\n\n\ndef test_other():\n    assert True\n"),
+        ],
+    );
+    let mut idx = Index::open(&dir).unwrap();
+    idx.refresh().unwrap();
+    let g = idx.graph().unwrap();
+    let target = g.find("app::handler")[0];
+    // `handler` is only reached through a dict: without a map the answer is the whole mirror
+    // test file, including a test that never runs it
+    let (t, source) = locate::tests_for_at(&g, &dir, target, 4);
+    assert_eq!(source, locate::Source::Graph);
+    assert!(t.iter().any(|x| g.syms[x.symbol].sym.name == "test_other"), "{:?}", t.iter().map(|x| &x.how).collect::<Vec<_>>());
+    let hash = g.syms[target].sym.body_hash.clone();
+    let row = |h: &str| ("app::handler".to_string(), h.to_string(), "tests/test_app.py".to_string(), "test_dispatch".to_string());
+    gitnext_ops::gitnext_index::TestMap::write(&dir, "pytest-cov", &[row(&hash)]).unwrap();
+    let (t, source) = locate::tests_for_at(&g, &dir, target, 4);
+    assert_eq!(source, locate::Source::Learned { stale: false });
+    assert_eq!(t.iter().map(|x| g.syms[x.symbol].sym.name.as_str()).collect::<Vec<_>>(), ["test_dispatch"]);
+    let text = locate::render_tests_for(&g, &dir, target, 4, false);
+    assert!(text.starts_with("tests that ran handler (1)") && text.contains("pytest tests/test_app.py::test_dispatch") && text.contains("ran this code in the coverage run"), "{text}");
+    // the function was edited after the map was learned
+    gitnext_ops::gitnext_index::TestMap::write(&dir, "pytest-cov", &[row("an older hash")]).unwrap();
+    assert_eq!(locate::tests_for_at(&g, &dir, target, 4).1, locate::Source::Learned { stale: true });
+    assert!(locate::render_tests_for(&g, &dir, target, 4, false).contains("the code changed since that run"));
+    // a function the map does not know falls back to the call graph
+    assert_eq!(locate::tests_for_at(&g, &dir, g.find("app::dispatch")[0], 4).1, locate::Source::Graph);
+    let _ = std::fs::remove_dir_all(&dir);
+}

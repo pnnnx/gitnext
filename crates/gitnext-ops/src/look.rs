@@ -156,14 +156,15 @@ fn symbol(ws: &Workspace, g: &Graph, ids: &[usize], lite: bool) -> String {
         }
     }
     // tests that reach it, and how to run exactly those
-    let t = locate::tests_for(g, i, 4);
+    let (t, source) = locate::tests_for_at(g, root, i, 4);
     if t.is_empty() {
         let _ = writeln!(s, "tests: none reach it through the call graph");
     } else {
         // most likely to fail first: name those, one command for them and one for the rest
         let top = &t[..t.len().min(locate::TOP_TESTS)];
         let names: Vec<String> = top.iter().take(8).map(|x| g.short_name(x.symbol).to_string()).collect();
-        let _ = writeln!(s, "tests ({}{}): {}{}", t.len(), crate::trust::tests_short(&r.file), names.join(", "), if t.len() > 8 { " …" } else { "" });
+        let trust = if source == locate::Source::Graph { crate::trust::tests_short(&r.file) } else { "; from a coverage run".to_string() };
+        let _ = writeln!(s, "tests ({}{trust}): {}{}", t.len(), names.join(", "), if t.len() > 8 { " …" } else { "" });
         for cmd in locate::run_commands(g, root, top).into_iter().take(2) {
             let _ = writeln!(s, "  run: {cmd}");
         }

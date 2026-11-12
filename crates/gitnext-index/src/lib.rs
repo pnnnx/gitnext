@@ -5,11 +5,13 @@
 
 mod graph;
 pub mod libs;
+mod testmap;
 pub mod notes;
 pub mod semdiff;
 
 pub use graph::{flatten_use, Callees, DirDeps, Graph, Hierarchy, ImpactNode, SymRef};
 pub use libs::{Dep, LibUse};
+pub use testmap::{read_coverage, Covering, TestMap};
 
 use anyhow::{Context, Result};
 use gitnext_parse::{analyze_in, find_crate, file_type_label, hash_hex, lang_for, Edge, EdgeKind, FileAnalysis, Kind, Param, Symbol};
@@ -438,7 +440,7 @@ fn ensure_gitignore(dir: &Path) -> Result<()> {
     let gi = dir.join(".gitignore");
     let mut text = std::fs::read_to_string(&gi).unwrap_or_else(|_| "# local state — map/ and notes.tsv are meant to be committed\n".into());
     let mut changed = !gi.exists();
-    for line in ["index.db", "index.db-*", "journal.jsonl", "hook-seen.tsv", "tui-welcomed", ".fuse_hidden*"] {
+    for line in ["index.db", "index.db-*", "tests.db", "tests.db-*", "coverage.db*", "journal.jsonl", "hook-seen.tsv", "tui-welcomed", ".fuse_hidden*"] {
         if !text.lines().any(|l| l.trim() == line) {
             text.push_str(line);
             text.push('\n');

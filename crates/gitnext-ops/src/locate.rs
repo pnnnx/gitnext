@@ -273,6 +273,49 @@ pub fn tests_for(g: &Graph, i: usize, depth: usize) -> Vec<TestRef> {
     out.into_iter().map(|(symbol, e)| TestRef { symbol, how: e.how() }).collect()
 }
 
+/// Where a list of tests came from.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Source {
+    /// the call graph and naming conventions
+    Graph,
+    /// a coverage run (`gitnext learn-tests`); `stale`: the function changed since
+    Learned { stale: bool },
+}
+
+/// Tests for `i`, from the learned map when it knows the function, else from the call graph.
+/// A map answer is the tests that really ran the code, narrowest first.
+pub fn tests_for_at(g: &Graph, root: &Path, i: usize, depth: usize) -> (Vec<TestRef>, Source) {
+    let r = &g.syms[i];
+    let covering = gitnext_index::TestMap::open_existing(root).map(|m| m.tests_of(&r.sym.qualified)).unwrap_or_default();
+    if covering.is_empty() {
+        return (tests_for(g, i, depth), Source::Graph);
+    }
+    let stale = covering.iter().any(|c| c.body_hash != r.sym.body_hash);
+    let mirror = mirror_test_files(&r.file);
+    let mut by_place: std::collections::HashMap<(&str, &str), usize> = std::collections::HashMap::new();
+    for (k, s) in g.syms.iter().enumerate() {
+        if s.sym.test && s.sym.kind.is_callable() {
+            by_place.entry((s.file.as_str(), s.sym.name.as_str())).or_insert(k);
+        }
+    }
+    let mut out: Vec<(bool, u32, TestRef)> = Vec::new();
+    for c in &covering {
+        let last = c.name.rsplit("::").next().unwrap_or(&c.name);
+        let Some(&k) = by_place.get(&(c.file.as_str(), last)) else { continue }; // the test was renamed or removed since
+        if out.iter().any(|(_, _, t)| t.symbol == k) {
+            continue;
+        }
+        let in_mirror = mirror.iter().any(|m| c.file.ends_with(m.as_str()));
+        out.push((!in_mirror, c.breadth, TestRef { symbol: k, how: if in_mirror { "ran it, its test file".into() } else { "ran it".into() } }));
+    }
+    if out.is_empty() {
+        return (tests_for(g, i, depth), Source::Graph);
+    }
+    // the narrowest tests first (they run little else, so they are about this code); the map is already in that order
+    out.sort_by_key(|(not_mirror, breadth, _)| (*breadth, *not_mirror));
+    (out.into_iter().map(|(_, _, t)| t).collect(), Source::Learned { stale })
+}
+
 /// Whether the symbol is a test a runner can be asked for by name (not a helper in a test file).
 pub fn is_runnable(g: &Graph, i: usize) -> bool {
     is_runnable_test(&g.syms[i])
@@ -554,15 +597,15 @@ pub fn file_commands(g: &Graph, root: &Path, tests: &[TestRef]) -> Vec<String> {
 /// The tests to run first and the command for them, plus one command for every file with
 /// the rest (`all`: every test by name instead).
 pub fn render_tests_for(g: &Graph, root: &Path, i: usize, depth: usize, all: bool) -> String {
-    let t = tests_for(g, i, depth);
+    let (t, source) = tests_for_at(g, root, i, depth);
     if t.is_empty() {
         return format!("no tests reach {} (depth {depth}) — it is untested by the call graph\n", g.short_name(i));
     }
     let top = if all { &t[..] } else { &t[..t.len().min(TOP_TESTS)] };
     let mut s = if top.len() < t.len() {
-        format!("tests reaching {} ({}), the {} most likely to fail first:\n", g.short_name(i), t.len(), top.len())
+        format!("tests {} {} ({}), the {} most likely to fail first:\n", if source == Source::Graph { "reaching" } else { "that ran" }, g.short_name(i), t.len(), top.len())
     } else {
-        format!("tests reaching {} ({}), most likely to fail first:\n", g.short_name(i), t.len())
+        format!("tests {} {} ({}), most likely to fail first:\n", if source == Source::Graph { "reaching" } else { "that ran" }, g.short_name(i), t.len())
     };
     for x in top {
         let _ = writeln!(s, "{}  {}:{} ({})", g.short_name(x.symbol), g.syms[x.symbol].file, g.syms[x.symbol].sym.start_line, x.how);
@@ -577,7 +620,11 @@ pub fn render_tests_for(g: &Graph, root: &Path, i: usize, depth: usize, all: boo
             let _ = writeln!(s, "  {c}");
         }
     }
-    let _ = writeln!(s, "note: {}.", crate::trust::tests_note(&g.syms[i].file));
+    let note = match source {
+        Source::Graph => crate::trust::tests_note(&g.syms[i].file),
+        Source::Learned { stale } => crate::trust::tests_note_learned(stale),
+    };
+    let _ = writeln!(s, "note: {note}.");
     s
 }
 

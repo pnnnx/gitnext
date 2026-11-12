@@ -28,9 +28,21 @@ pub fn callers_sure(file: &str) -> String {
 
 /// What the agent must know about a test list that came from the call graph.
 pub fn tests_note(file: &str) -> String {
+    // Python can do better than the call graph: one coverage run gives the real list
+    let learn = if gitnext_parse::family_of(file) == Some("python") { "; `gitnext learn-tests` learns the real list from one test run" } else { "" };
     match row(file).and_then(|r| r.2) {
-        Some(p) => format!("the call graph finds ≈{p}% of the tests that would fail — run the whole test file before you finish"),
+        Some(p) => format!("the call graph finds ≈{p}% of the tests that would fail — run the whole test file before you finish{learn}"),
         None => "how many failing tests the call graph finds is not measured for this language — run the whole test file before you finish".to_string(),
+    }
+}
+
+/// For a list that came from a coverage run (`gitnext learn-tests`) instead of the call graph.
+pub fn tests_note_learned(stale: bool) -> String {
+    let base = "these tests ran this code in the coverage run (measured on click: 98% of such tests fail when the code breaks, and none is missing)";
+    if stale {
+        format!("{base}; the code changed since that run — `gitnext learn-tests` refreshes the map")
+    } else {
+        base.to_string()
     }
 }
 

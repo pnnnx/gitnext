@@ -18,6 +18,7 @@ pub mod explain;
 pub mod history;
 pub mod insight;
 pub mod journal;
+pub mod learn;
 pub mod libs;
 pub mod locate;
 pub mod look;

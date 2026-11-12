@@ -164,7 +164,7 @@ pub fn check(root: &Path, g: &Graph, timeout: Duration) -> Check {
     let mut tests: Vec<TestRef> = Vec::new();
     for &i in &changed {
         // a changed test is run itself; other code brings the tests most likely to fail for it
-        let mine = if g.syms[i].sym.test { vec![TestRef { symbol: i, how: "changed".into() }] } else { locate::tests_for(g, i, 4).into_iter().take(locate::TOP_TESTS).collect() };
+        let mine = if g.syms[i].sym.test { vec![TestRef { symbol: i, how: "changed".into() }] } else { locate::tests_for_at(g, root, i, 4).0.into_iter().take(locate::TOP_TESTS).collect() };
         for t in mine {
             if tests.len() < MAX_TESTS && !tests.iter().any(|x| x.symbol == t.symbol) && locate::is_runnable(g, t.symbol) {
                 tests.push(t);
