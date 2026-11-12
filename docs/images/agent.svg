@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="446" viewBox="0 0 1000 446" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-label="Tasks solved by a 4B local model: with plain tools 4 of 24, with gitnext tools 17 of 24">
+<title>Tasks solved by a 4B local model: with plain tools 4 of 24, with gitnext tools 17 of 24</title>
+<rect width="1000" height="446" rx="14" fill="#fbfcfa" stroke="#d5dad3"/>
+<text x="28" y="40" font-size="19" font-weight="700" fill="#1c2433">A 4B local model on real projects: tasks solved</text>
+<text x="28" y="64" font-size="13" fill="#5e6b78">Qwen 3.5 4B on llama.cpp · click (Python) and semver (Rust) · 6 tasks of each kind · judged by the projects' own compilers and tests</text>
+<rect x="28" y="82" width="12" height="12" rx="3" fill="#eb6834"/><text x="46" y="93" font-size="13" fill="#1c2433">plain tools: read, grep, edit, run</text>
+<rect x="316.8" y="82" width="12" height="12" rx="3" fill="#2a78d6"/><text x="334.8" y="93" font-size="13" fill="#1c2433">the same model with gitnext tools</text>
+<path d="M330 114V364" stroke="#d5dad3" stroke-width="1"/>
+<text x="28" y="137" font-size="14" font-weight="600" fill="#1c2433">Find where a function is</text>
+<path d="M330 122h309.3a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-309.3z" fill="#eb6834"/>
+<text x="653.3" y="135.5" font-size="13" font-weight="400" fill="#1c2433">4 of 6</text>
+<path d="M330 142h466.0a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-466.0z" fill="#2a78d6"/>
+<text x="810.0" y="155.5" font-size="13" font-weight="700" fill="#1c2433">6 of 6</text>
+<text x="28" y="201" font-size="14" font-weight="600" fill="#1c2433">Who calls this function</text>
+
+<text x="340.0" y="199.5" font-size="13" font-weight="400" fill="#1c2433">0 of 6</text>
+<path d="M330 206h466.0a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-466.0z" fill="#2a78d6"/>
+<text x="810.0" y="219.5" font-size="13" font-weight="700" fill="#1c2433">6 of 6</text>
+<text x="28" y="265" font-size="14" font-weight="600" fill="#1c2433">Rename it everywhere</text>
+<text x="28" y="283" font-size="12" fill="#5e6b78">the project must still build</text>
+
+<text x="340.0" y="263.5" font-size="13" font-weight="400" fill="#1c2433">0 of 6</text>
+<path d="M330 270h387.7a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-387.7z" fill="#2a78d6"/>
+<text x="731.7" y="283.5" font-size="13" font-weight="700" fill="#1c2433">5 of 6</text>
+<text x="28" y="329" font-size="14" font-weight="600" fill="#1c2433">Fix a failing test</text>
+<text x="28" y="347" font-size="12" fill="#5e6b78">a seeded bug</text>
+
+<text x="340.0" y="327.5" font-size="13" font-weight="400" fill="#1c2433">0 of 6</text>
+
+<text x="340.0" y="347.5" font-size="13" font-weight="700" fill="#1c2433">0 of 6</text>
+<text x="28" y="392" font-size="12.5" fill="#5e6b78">24 tasks: 4 solved with plain tools, 17 with gitnext (15 when the model is not asked to look before it answers).</text>
+<text x="28" y="412" font-size="12.5" fill="#5e6b78">Fixing a bug is the open one: 0 of 6 here; 3 of 12 on click in a later run, once gitnext why knew what the failing test really runs.</text>
+</svg>

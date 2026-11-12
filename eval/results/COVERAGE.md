@@ -21,7 +21,7 @@ that the answer is right.
 
 | function | tests |
 |---|---|
-| parsers: Rust, Python, Go, Java, TS, JS, C, C++ | 35 fixture files (`gitnext-parse/tests/fixtures`) and unit tests in the parsers |
+| parsers: Rust, Python, Go, Java, TS, JS, C, C++ | fixtures with the expected output in eight languages (`gitnext-parse/tests/fixtures`) and unit tests in the parsers |
 | call graph: receiver types, results of functions, library results | `gitnext-index/tests` (10) |
 | `rename`, `impact` of a rename | `rename_impact.rs`, `rename_more.rs` (11) |
 | `ops`, `undo --op` (operation journal) | `oplog.rs` (11) |

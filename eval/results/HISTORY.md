@@ -5,6 +5,36 @@ Runs 1–5: five repos (one per language), one sample (seed 7, 8 functions, 4 mu
 From run 6 on: ten repos, 20 functions and 8 mutants per repo, three seeds, and a threshold next to every number.
 Since the run after run 4, a rename only counts as ok if the project's tests still pass too.
 
+## The agent runs · a 4B local model with and without gitnext
+
+`eval/agent.py` (`sh eval/run_agent_mac.sh`): Qwen 3.5 4B on llama.cpp, the projects click (Python) and semver (Rust).
+Four kinds of task — find where a function is, who calls it, rename it everywhere, fix a seeded bug — judged by the
+project's own compiler and tests. `plain`: read, grep, edit, run. `gitnext`: the same plus look, rename, replace, check.
+`verify`: gitnext, and an answer given before any tool call or a change that does not pass `gitnext check` goes back
+to the model. `lite`: only the five tools of `gitnext mcp --profile lite`.
+
+| run | tasks per mode | plain | gitnext | verify | lite |
+|---|---:|---:|---:|---:|---:|
+| 1 (8 tasks × 3) | 24 | 3 | 11 | | |
+| 2 | 24 | 4 | 14 | 14 | |
+| 3 (`why` added) | 24 | 4 | 15 | 17 | |
+| 4 (find, callers, rename only) | 18 | | 14 | | 17 |
+| 5 (fix only; stopped at 22 of 24) | 11 | | 2 | | 1 |
+
+Run 3 by kind, 6 tasks each (plain → gitnext → verify): find 4 → 6 → 6, who calls 0 → 3 → 6, rename 0 → 6 → 5, fix 0 → 0 → 0.
+Run 4: tokens sent to the model, all 18 tasks: 34.0 k with eleven tools, 28.8 k with five.
+
+What the conversations showed, and what was changed after each run:
+- without gitnext the model guesses file paths (`src/processing.py`) and looks for `*.py` in a Rust project;
+- told "the test `test_greater_than` fails" it asked for `greater_than`, found nothing and invented a function —
+  hence `gitnext why <test>` / `check <test>`: run the test, give the failure and the code to look at;
+- it writes the corrected function as text instead of calling `replace` — the harness now puts such a function in
+  place and checks it (as it already did with tool calls written as text);
+- all 5 lost runs of run 4 were answers given before any tool call — every gitnext mode now sends such an answer back;
+- run 5, the first `fix` tasks solved (click 3 of 12, with the coverage map; semver 0 of 10, without one): where
+  the model called `check <test>` and the map was there, the culprit was first 5 times of 5 and 3 were solved; in
+  the other two it did not see the wrong line — hence the changed lines in the answer of `why`.
+
 ## Run 8 · in TypeScript the test is the file; coverage maps for Go and Rust
 
 **tests-for, TypeScript.** `it('…', () => …)` is not a named function; its calls are booked to the module of the

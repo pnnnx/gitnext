@@ -172,7 +172,7 @@ enum Cmd {
         /// Write/merge .mcp.json in the repository root instead of serving
         #[arg(long)]
         install: bool,
-        /// full (every tool) or lite (7 tools, terse, small outputs — for local 3–14B models)
+        /// full (every tool) or lite (5 tools, terse, small outputs — for local 3–14B models)
         #[arg(long, default_value = "full")]
         profile: String,
     },
