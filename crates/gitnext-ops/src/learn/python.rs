@@ -63,5 +63,5 @@ pub(super) fn run(root: &Path, g: &Graph) -> Result<Run> {
             }
         }
     }
-    Ok(Run { source: "pytest-cov", command, seconds, tests_failed: !out.status.success(), pairs })
+    Ok(Run { source: "pytest-cov", command, seconds, tests_failed: !out.status.success(), pairs, notes: Vec::new() })
 }

@@ -28,6 +28,9 @@ pub(crate) struct Run {
     /// part of the name must be those of the test's symbol in the graph: that is how `tests-for`
     /// and `why` find it again.
     pub pairs: BTreeSet<(usize, String, String)>,
+    /// what the user should know about this run, one line each: where an instrumented build was
+    /// left and how large it is, how many tests could not be run alone or were not found in the graph
+    pub notes: Vec<String>,
 }
 
 /// The language is in the repository when a file ends so; its tests are run by the function.
@@ -44,6 +47,8 @@ pub struct Learned {
     pub pairs: usize,
     /// functions with a body that no test ran
     pub never_run: usize,
+    /// from the languages' runs, and why a language of the repository gave no map
+    pub notes: Vec<String>,
 }
 
 /// file → for each line, the innermost function with a body around it (tests are not counted).
@@ -100,6 +105,7 @@ pub fn learn(root: &Path, g: &Graph) -> Result<Learned> {
         tests,
         pairs: n,
         never_run: with_body.saturating_sub(functions),
+        notes: runs.iter().flat_map(|r| r.notes.iter().cloned()).chain(errors.into_iter().filter(|e| !e.ends_with(": not supported yet"))).collect(),
     })
 }
 
@@ -110,6 +116,9 @@ pub fn render(l: &Learned) -> String {
     );
     if l.never_run > 0 {
         s.push_str(&format!("{} functions were run by no test — for those `tests-for` still uses the call graph\n", l.never_run));
+    }
+    for n in &l.notes {
+        s.push_str(&format!("note: {n}\n"));
     }
     if l.tests_failed {
         s.push_str("note: the test run itself reported failures; the map holds what ran\n");
