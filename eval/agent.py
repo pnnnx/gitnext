@@ -10,6 +10,9 @@ Modes (tools the model gets):
   cmd      no tool-calling API at all: the context is in the task and the model answers with
            one shell command (or a short script) in a ```sh block, or `DONE: answer` — for
            models that write tool calls as text; `gitnext` is on PATH
+  verify   gitnext tools, and the run may end only when the work is checked: an answer given
+           without a look at the code, or a change that `gitnext check` does not pass, goes back
+           to the model (a small model stops after one step otherwise)
 
 Every run is watched by a loop guard (eval/guard.py): repeated calls, no progress, the same
 error again and again, see-saw edits, repeated text, step and token budgets. A stopped run
@@ -23,8 +26,9 @@ and checked by the project itself:
   rename    "rename X to Y everywhere"     → it compiles and no old name is left
 
     python3 eval/agent.py --host http://127.0.0.1:8080 --repos click,cobra \\
-        --tasks find,callers,fix,rename --modes base,gitnext,ctx,cmd --repeat 2
-Results: eval/results/agent-latest.json (+ .md).
+        --tasks find,callers,fix,rename --modes base,gitnext,verify --repeat 3
+`--repeat N` gives N task sets per repo (other functions, another bug), every mode on each.
+Results: eval/results/agent-latest.json (+ .md; .trace.jsonl — every conversation).
 
 One task of your own, on any repository (a "task card" for a small model):
 
@@ -173,6 +177,36 @@ CMD_SYSTEM = ("You are a coding agent working in a software project. Answer with
               "cat, grep, sed -i. "
               "When the task is done answer `DONE: <answer>`. Be brief. Do not modify tests unless asked.")
 TOKEN_BUDGET = int(os.environ.get("AGENT_TOKEN_BUDGET", "0"))  # prompt tokens per run, 0 = no limit
+GITNEXT_MODES = ("gitnext", "both", "verify")  # modes with the gitnext tools
+
+
+class Gate:
+    """Mode `verify`: the run may end only when the work is checked. A small model stops after one
+    step ("the bug is in X") or answers from memory; the gate sends it back, each kind once:
+    use a tool before answering; make the change you were asked for; and, as long as files are
+    changed, pass `gitnext check` (up to `CHECKS` times). Nothing here knows the task or its answer."""
+    CHECKS = 3
+
+    def __init__(self, guard: Guard, check):
+        self.guard, self.check = guard, check
+        self.start = guard.fingerprint()
+        self.said: dict[str, int] = {}
+
+    def on_finish(self, tool_steps: int) -> str | None:
+        if tool_steps == 0 and "tool" not in self.said:
+            self.said["tool"] = 1
+            return "You have not looked at the code yet. Use the tools to find the answer in the project, then answer."
+        changed = self.guard.fingerprint() != self.start
+        if not changed and "nochange" not in self.said:
+            self.said["nochange"] = 1
+            return ("No file was changed. If the task asks to change the code, make the change now with the tools; "
+                    "if it only asks a question, repeat your answer.")
+        if changed and self.said.get("check", 0) < self.CHECKS:
+            out = self.check()
+            if "verdict: ok" not in out:
+                self.said["check"] = self.said.get("check", 0) + 1
+                return "The check of your change failed:\n" + out[-1500:] + "\nFix it, then finish."
+        return None
 
 
 def command_of(content: str) -> str | None:
@@ -186,7 +220,7 @@ def command_of(content: str) -> str | None:
 
 def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: int, deadline: float) -> dict:
     cmd = mode == "cmd"
-    tools = [] if cmd else BASE_TOOLS + (GITNEXT_TOOLS if mode in ("gitnext", "both") else [])
+    tools = [] if cmd else BASE_TOOLS + (GITNEXT_TOOLS if mode in GITNEXT_MODES else [])
     prompt = task["prompt"]
     if task.get("handoff"):  # a weaker model gave up on this task: what it tried
         prompt += "\n\nAn earlier attempt was stopped. Its notes:\n" + task["handoff"]
@@ -204,6 +238,7 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
             return ""
 
     guard = Guard(root, max_steps, TOKEN_BUDGET, locate=locate)
+    gate = Gate(guard, lambda: call_tool("check", {}, root, lang)) if mode == "verify" else None
     answer = ""
     for _ in range(max_steps):
         if time.time() > deadline:
@@ -241,7 +276,11 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
                 msgs.append({"role": "user", "content": "Answer with one command in a ```sh block, or `DONE: <answer>`." + (f"\n{note}" if note else "")})
                 continue
             answer = done.group(1).strip() if done else text
-            break
+            back = gate.on_finish(used["steps"]) if gate else None
+            if back is None:
+                break
+            msgs.append({"role": "user", "content": back})
+            continue
         used["steps"] += 1
         finished = False
         for c in calls:
@@ -260,7 +299,11 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
                     out = guard.after_call(used["steps"], name, a, call_tool(name, a, root, lang))
             msgs.append({"role": "user", "content": out} if cmd else {"role": "tool", "tool_call_id": c.get("id", name), "content": out})
         if finished:
-            break
+            back = gate.on_finish(used["steps"] - 1) if gate else None  # the step that only calls `finish` is not a look at the code
+            if back is None:
+                break
+            msgs.append({"role": "user", "content": back})
+            continue
         note = guard.end_step(used["steps"], used["tokens_in"])
         if guard.stop:
             break
@@ -268,6 +311,9 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
             msgs.append({"role": "user", "content": note})
     used["answer"] = answer[:500]
     used["guard"] = {k: v for k, v in guard.stats.items() if v}
+    if gate and gate.said:
+        used["gate"] = gate.said
+    used["_msgs"] = msgs  # the whole conversation, for the trace file
     if guard.stop or (not answer and used["steps"] >= max_steps):
         used["stopped"] = guard.stop or "steps"
         used["handoff"] = guard.handoff(task["prompt"])
@@ -283,16 +329,20 @@ def make_tasks(repo: dict, root: Path, kinds: list[str], seed: int) -> list[dict
     tasks = []
     if "find" in kinds and sample:
         s = sample[0]
-        tasks.append({"kind": "find", "prompt": f"In which file is the function `{s['name']}` defined? Answer with the file path.", "file": s["file"]})
+        tasks.append({"kind": "find", "target": s["qualified"], "prompt": f"In which file is the function `{s['name']}` defined? Answer with the file path.", "file": s["file"]})
     if "callers" in kinds and len(sample) > 1:
         s = sample[1]
-        truth = s["_callers"]
-        tasks.append({"kind": "callers", "prompt": f"Which functions or methods call `{s['name']}`? Answer with their names, one per line.",
-                      "truth": sorted(q.rsplit("::", 1)[-1] for q in truth)})
+        # the compiler's answer where the language has one (gitnext's own answer would favour its modes)
+        c = ev.check_callers(root, repo, syms, s) or {}
+        truth, judge = (c["truth"], "compiler") if c.get("truth") else (s["_callers"], "gitnext")
+        tasks.append({"kind": "callers", "target": s["qualified"], "truth_from": judge,
+                      "prompt": f"Which functions or methods call `{s['name']}`? Answer with their names, one per line.",
+                      "truth": sorted({q.rsplit("::", 1)[-1] for q in truth})})
     if "rename" in kinds and len(sample) > 2:
         s = sample[2]
         new = s["name"] + ("_v2" if "_" in s["name"] or s["name"].islower() else "V2")
-        tasks.append({"kind": "rename", "prompt": f"Rename the function `{s['name']}` to `{new}` everywhere in the project (definition and every use). The project must still compile.",
+        tasks.append({"kind": "rename", "target": s["qualified"],
+                      "prompt": f"Rename the function `{s['name']}` to `{new}` everywhere in the project (definition and every use). The project must still compile.",
                       "old": s["name"], "new": new})
     if "fix" in kinds:
         bug = seed_bug(repo, root, syms, rng)
@@ -340,7 +390,7 @@ def seed_bug(repo: dict, root: Path, syms: list[dict], rng: random.Random) -> di
                         patch = ev.sh("git diff", root)[1]
                         ev.restore(root)
                         name = sorted(failed)[0]
-                        return {"kind": "fix", "patch": patch, "prompt": f"The test `{name}` fails. Find the bug in the code and fix it (do not change the tests).", "failing": sorted(failed)[:10]}
+                        return {"kind": "fix", "target": s["qualified"], "patch": patch, "prompt": f"The test `{name}` fails. Find the bug in the code and fix it (do not change the tests).", "failing": sorted(failed)[:10]}
                     ev.restore(root)
                     break
     return None
@@ -369,6 +419,20 @@ def check(task: dict, repo: dict, root: Path, res: dict) -> bool:
     return False
 
 
+def trace_of(msgs: list) -> list:
+    """The conversation of one run, small enough to keep: long tool output is cut in the middle."""
+    out = []
+    for m in msgs:
+        text = m.get("content") or ""
+        if len(text) > 3000:
+            text = text[:2000] + f"\n… ({len(text) - 3000} characters cut) …\n" + text[-1000:]
+        row = {"role": m["role"], "content": text}
+        if m.get("tool_calls"):
+            row["calls"] = [f'{c["function"]["name"]} {c["function"].get("arguments", "")}'[:600] for c in m["tool_calls"]]
+        out.append(row)
+    return out
+
+
 def run_card(card_path: Path, mode: str, host: str, steps: int, minutes: float, escalate_host: str) -> dict:
     """One task from a card file: run the agent in the card's repository, judge by the card's
     `accept` command, leave the result and the patch next to the card."""
@@ -388,6 +452,7 @@ def run_card(card_path: Path, mode: str, host: str, steps: int, minutes: float, 
         res["escalated"] = {"steps": up["steps"], "tokens_in": up["tokens_in"], "answer": up["answer"], "passed": verdict.startswith("exit 0")}
         res["passed"] = res["escalated"]["passed"]
     res.update({"mode": mode, "seconds": round(time.time() - t0), "accept": accept, "verdict": verdict[-1500:]})
+    card_path.with_suffix(".trace.json").write_text(json.dumps(trace_of(res.pop("_msgs", [])), ensure_ascii=False, indent=1))
     patch = subprocess.run(["git", "diff", "HEAD"], cwd=root, capture_output=True, text=True, errors="replace").stdout
     card_path.with_suffix(".patch").write_text(patch)
     card_path.with_suffix(".result.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
@@ -401,9 +466,9 @@ def main() -> None:
     ap.add_argument("--host", default="http://127.0.0.1:8080")
     ap.add_argument("--repos", default="click,cobra")
     ap.add_argument("--tasks", default="find,callers,fix,rename")
-    ap.add_argument("--modes", default="base,gitnext,ctx,both,cmd")
+    ap.add_argument("--modes", default="base,gitnext,ctx,both,cmd,verify")
     ap.add_argument("--escalate-host", default="", help="a stronger model's server: a run the loop guard stopped is handed to it with the notes")
-    ap.add_argument("--repeat", type=int, default=1)
+    ap.add_argument("--repeat", type=int, default=1, help="task sets per repo: each takes other functions and another bug (seed, seed + 1, …)")
     ap.add_argument("--steps", type=int, default=25)
     ap.add_argument("--minutes", type=float, default=20, help="time limit per run")
     ap.add_argument("--seed", type=int, default=11)
@@ -420,13 +485,18 @@ def main() -> None:
     for repo in repos:
         root = ev.prepare(repo)
         ev.gx(["init"], root, timeout=1800)
-        tasks = make_tasks(repo, root, args.tasks.split(","), args.seed)
+        base = ev.sh("git rev-parse HEAD", root)[1].strip()
+        clean = lambda: (ev.sh(f"git reset -q --hard {base}", root), ev.restore(root))  # noqa: E731
         for rep in range(args.repeat):
+            clean()
+            tasks = make_tasks(repo, root, args.tasks.split(","), args.seed + rep)
             for task in tasks:
                 for mode in modes:
-                    ev.restore(root)
+                    clean()
                     if task["kind"] == "fix":
+                        # the bug is a commit: `git diff` and `gitnext check` must not point at it
                         subprocess.run(["git", "apply"], input=task["patch"], text=True, cwd=root)
+                        ev.sh("git -c user.name=eval -c user.email=eval@example.invalid -c commit.gpgsign=false commit -qam 'seeded bug'", root)
                     ev.gx(["index"], root)
                     t0 = time.time()
                     try:
@@ -439,22 +509,24 @@ def main() -> None:
                             res["passed"] = res["escalated"]["passed"]
                     except Exception as e:
                         res = {"passed": False, "error": str(e)[:300]}
-                    res.update({"repo": repo["name"], "task": task["kind"], "mode": mode, "repeat": rep, "seconds": round(time.time() - t0)})
+                    res.update({"repo": repo["name"], "task": task["kind"], "target": task.get("target"), "mode": mode, "repeat": rep, "seconds": round(time.time() - t0)})
+                    with Path(args.out).with_suffix(".trace.jsonl").open("a") as f:
+                        f.write(json.dumps({k: res.get(k) for k in ("repo", "task", "target", "mode", "repeat", "passed")} | {"messages": trace_of(res.pop("_msgs", []))}, ensure_ascii=False) + "\n")
                     rows.append(res)
                     print(f"{repo['name']:8} {task['kind']:8} {mode:8} {'✓' if res['passed'] else '✗'} steps {res.get('steps')} tok {res.get('tokens_in')}/{res.get('tokens_out')} {res['seconds']}s tools {res.get('tools')}"
-                          + (f" guard {res['guard']}" if res.get("guard") else "") + (f" stopped: {res['stopped']}" if res.get("stopped") else "") + (" escalated" if res.get("escalated") else ""), flush=True)
+                          + (f" guard {res['guard']}" if res.get("guard") else "") + (f" gate {res['gate']}" if res.get("gate") else "") + (f" stopped: {res['stopped']}" if res.get("stopped") else "") + (" escalated" if res.get("escalated") else ""), flush=True)
                     Path(args.out).parent.mkdir(exist_ok=True)
                     Path(args.out).write_text(json.dumps(rows, ensure_ascii=False, indent=1))
-        ev.restore(root)
+        clean()
     # summary per mode
-    md = ["| mode | passed | median steps | tokens in (sum) | gitnext tool calls | calls written as text | guard stepped in | stopped by guard | escalated |", "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    md = ["| mode | passed | median steps | tokens in (sum) | gitnext tool calls | calls written as text | guard stepped in | stopped by guard | sent back by the gate | escalated |", "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for mode in modes:
         rs = [r for r in rows if r["mode"] == mode]
         if not rs:
             continue
         steps = sorted(r.get("steps") or 0 for r in rs)
-        gcalls = sum(sum(v for k, v in (r.get("tools") or {}).items() if k in ("look", "rename", "replace_symbol")) for r in rs)
-        md.append(f"| {mode} | {sum(r['passed'] for r in rs)}/{len(rs)} | {steps[len(steps)//2]} | {sum(r.get('tokens_in') or 0 for r in rs)} | {gcalls} | {sum(r.get('text_calls') or 0 for r in rs)} | {sum(sum((r.get('guard') or {}).values()) for r in rs)} | {sum(1 for r in rs if r.get('stopped'))} | {sum(1 for r in rs if r.get('escalated'))} |")
+        gcalls = sum(sum(v for k, v in (r.get("tools") or {}).items() if k in ("look", "rename", "replace_symbol", "check")) for r in rs)
+        md.append(f"| {mode} | {sum(r['passed'] for r in rs)}/{len(rs)} | {steps[len(steps)//2]} | {sum(r.get('tokens_in') or 0 for r in rs)} | {gcalls} | {sum(r.get('text_calls') or 0 for r in rs)} | {sum(sum((r.get('guard') or {}).values()) for r in rs)} | {sum(1 for r in rs if r.get('stopped'))} | {sum(sum((r.get('gate') or {}).values()) for r in rs)} | {sum(1 for r in rs if r.get('escalated'))} |")
     Path(args.out).with_suffix(".md").write_text("\n".join(md) + "\n")
     print("\n".join(md))
 

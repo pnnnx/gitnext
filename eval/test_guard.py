@@ -209,6 +209,41 @@ class Case(unittest.TestCase):
         self.assertEqual(res["answer"], "two lines")
 
 
+    # ---- the gate of `verify` mode
+
+    def fake_gitnext(self) -> str:
+        """`gitnext check` passes once calc.py subtracts; every other command says nothing."""
+        g = self.root.parent / f"gitnext-{self.root.name}.sh"
+        g.write_text("#!/bin/sh\nif [ \"$1\" = check ]; then grep -q 'a - b' calc.py && echo 'verdict: ok' || { echo 'calc.py: test_add failed'; echo 'verdict: failed'; }; fi\n")
+        g.chmod(0o755)
+        self.addCleanup(g.unlink)
+        self.addCleanup(setattr, agent.ev, "GITNEXT", agent.ev.GITNEXT)
+        agent.ev.GITNEXT = str(g)
+        return str(g)
+
+    def test_verify_sends_back_an_answer_given_without_a_look(self):
+        self.fake_gitnext()
+        res, s = self.run_agent([say("it is in calc.py"), call("grep", pattern="add"), say("calc.py"), say("calc.py")], mode="verify")
+        self.assertEqual(res["gate"], {"tool": 1, "nochange": 1})
+        self.assertEqual(res["answer"], "calc.py")
+        self.assertIn("You have not looked at the code yet", s.seen())
+        self.assertIn("No file was changed", s.seen())
+
+    def test_verify_ends_only_when_the_check_passes(self):
+        self.fake_gitnext()
+        res, s = self.run_agent([call("edit_file", path="calc.py", old="a + b", new="a * b"), call("finish", answer="fixed"),
+                                 call("edit_file", path="calc.py", old="a * b", new="a - b"), call("finish", answer="fixed now")], mode="verify")
+        self.assertEqual(res["gate"], {"check": 1})
+        self.assertEqual(res["answer"], "fixed now")
+        self.assertIn("The check of your change failed", s.seen())
+        self.assertIn("test_add failed", s.seen())
+        self.assertIn("look", [t["function"]["name"] for t in s.requests[0]["tools"]])  # the gitnext tools are there
+
+    def test_other_modes_have_no_gate(self):
+        res, _ = self.run_agent([say("it is in calc.py")], mode="gitnext")
+        self.assertEqual(res["answer"], "it is in calc.py")
+        self.assertNotIn("gate", res)
+
     # ---- a task card
 
     def test_task_card_is_judged_by_its_accept_command(self):
@@ -230,7 +265,8 @@ class Case(unittest.TestCase):
         finally:
             s.close()
         self.assertFalse(res["passed"])
-        for f in (card, card.with_suffix(".patch"), card.with_suffix(".result.json")):
+        self.assertEqual(json.loads(card.with_suffix(".trace.json").read_text())[-1]["content"], "DONE: nothing to do")
+        for f in (card, card.with_suffix(".patch"), card.with_suffix(".result.json"), card.with_suffix(".trace.json")):
             f.unlink()
 
 
