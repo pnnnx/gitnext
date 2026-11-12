@@ -199,7 +199,7 @@ pub enum More {
     Msg,
     /// Hooks for agent harnesses (reads the hook JSON on stdin): `read`, `session-start`
     Hook { event: String },
-    /// Run the tests once with coverage and remember which test runs which function (Python / pytest-cov);
+    /// Run the tests once with coverage and remember which test runs which function (Python: pytest-cov; Go: go test -cover; Rust: llvm-tools);
     /// `tests-for`, `look` and `check` then name the tests that really execute a function
     LearnTests,
     /// A test fails: run it and get the failure in a few lines and the code it reaches, the most likely

@@ -12,12 +12,12 @@ that the answer is right.
 | `callers` (and the callers part of `look`, `impact`) | found / correct, against compile errors after the definition is renamed | 100% ±1 / 99% ±1 (232 functions) |
 | … methods that share a name | found, and found counting "maybe" | 83% ±6 / 98% ±2 (108) |
 | `rename` | the project still compiles and its tests pass | 91% ±3 (338) |
-| `tests-for` (and the tests part of `look`, `check`) | failing tests found; at least one of the first 10 fails | 47% ±6; 77% ±6 (167). TypeScript: 3% |
-| `learn-tests` (Python) | the same with the learned map (`learn_tests.py`, click) | 100% of the failing tests (the graph: 19%) |
-| `why`, `check <test>` | place of the function at fault for a seeded bug (`why_rank.py`, `why-rank.md`) | first in 10% from the call graph (37 bugs), 90% with the learned map (20 bugs, Python) |
+| `tests-for` (and the tests part of `look`, `check`) | failing tests found; at least one of the first 10 fails | 49% ±6; 79% ±6 (167). TypeScript: 19% |
+| `learn-tests` (Python, Go, Rust) | the same with the learned map (`learn_tests.py`, `learn_tests_go.py`, `learn_tests_rust.py`) | 100% of the failing tests in all three (the graph: 19% on click, Go 78%, Rust 59%) |
+| `why`, `check <test>` | place of the function at fault for a seeded bug (`why_rank.py`, `why-rank.md`) | first in 10% from the call graph (37 bugs); with the learned map 90% (20 bugs, Python) and 70% (20 bugs, Rust) |
 | the tools as a small model uses them | `agent.py`, Qwen 3.5 4B: find / callers / rename / fix | see the agent runs in `HISTORY.md` |
 
-## 2. Unit tests (`cargo test --workspace`, 98 tests)
+## 2. Unit tests (`cargo test --workspace`, 115 tests)
 
 | function | tests |
 |---|---|
@@ -26,8 +26,9 @@ that the answer is right.
 | `rename`, `impact` of a rename | `rename_impact.rs`, `rename_more.rs` (11) |
 | `ops`, `undo --op` (operation journal) | `oplog.rs` (11) |
 | `digest` | `digest.rs` (10, on saved output of real tools) |
-| `why` | `why.rs` (10) |
-| `tests-for`, the learned map | `tests_for.rs`, `testmap.rs` (7) |
+| `why` | `why.rs` (11) |
+| `tests-for`, the learned map | `tests_for.rs`, `testmap.rs` (8) |
+| `learn-tests`: Go, Rust | unit tests of the parsers of coverage output, and one end-to-end test each (skipped without `go` / `llvm-tools`) |
 | `check`, `context`, `locate`, `outline` | 3, 4, 2, 1 |
 | semantic diff (`diff`, `since`, `changelog`), `libs`, `setup`, MCP server, TUI | 4, 3, 3, 2, 3 |
 

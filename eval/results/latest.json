@@ -3,7 +3,7 @@
   "repo": "cobra",
   "lang": "go",
   "commit": "adbc8813901b",
-  "index_seconds": 0.1,
+  "index_seconds": 0.0,
   "symbols": 288,
   "files": 19,
   "seeds": [
@@ -2967,7 +2967,7 @@
     "file_tokens": 15286
    }
   ],
-  "seconds": 15,
+  "seconds": 16,
   "summary": {
    "callers_recall": 1.0,
    "callers_precision": 0.989,
@@ -3239,7 +3239,7 @@
   "repo": "chi",
   "lang": "go",
   "commit": "c64ed7d6635f",
-  "index_seconds": 0.0,
+  "index_seconds": 0.1,
   "symbols": 351,
   "files": 55,
   "seeds": [
@@ -5592,7 +5592,7 @@
   "repo": "click",
   "lang": "python",
   "commit": "8abb77a8432e",
-  "index_seconds": 0.1,
+  "index_seconds": 0.2,
   "symbols": 761,
   "files": 32,
   "seeds": [
@@ -8474,7 +8474,7 @@
     "file_tokens": 4264
    }
   ],
-  "seconds": 7,
+  "seconds": 8,
   "summary": {
    "callers_recall": null,
    "callers_precision": null,
@@ -8802,18 +8802,17 @@
     "symbol": "src::middleware::persist::createJSONStorage",
     "level": "file",
     "truth": 6,
-    "predicted": 2,
-    "recall": 0.3333333333333333,
+    "predicted": 3,
+    "recall": 0.5,
     "precision": 1.0,
-    "top_hits": 2,
-    "top_n": 2,
+    "top_hits": 3,
+    "top_n": 3,
     "top_precision": 1.0,
     "top_best": 1.0,
     "caught": 1.0,
     "missed": [
      "tests/devtools.test.tsx",
      "tests/middlewareTypes.test.tsx",
-     "tests/persistPromiseLike.test.ts",
      "tests/types.test.tsx"
     ]
    }
@@ -8821,7 +8820,7 @@
   "look": [
    {
     "symbol": "src::middleware::persist::createJSONStorage",
-    "look_tokens": 363,
+    "look_tokens": 387,
     "file_tokens": 3010
    }
   ],
@@ -8838,13 +8837,13 @@
    "common_checked": 0,
    "rename_ok": 1.0,
    "rename_checked": 1,
-   "tests_recall": 0.333,
+   "tests_recall": 0.5,
    "tests_precision": 1.0,
    "tests_top10_precision": 1.0,
    "tests_top10_best": 1.0,
    "tests_caught": 1.0,
    "tests_checked": 1,
-   "look_vs_file": 0.121
+   "look_vs_file": 0.129
   },
   "summary_seeds": {
    "7": {
@@ -8859,13 +8858,13 @@
     "common_checked": 0,
     "rename_ok": 1.0,
     "rename_checked": 1,
-    "tests_recall": 0.333,
+    "tests_recall": 0.5,
     "tests_precision": 1.0,
     "tests_top10_precision": 1.0,
     "tests_top10_best": 1.0,
     "tests_caught": 1.0,
     "tests_checked": 1,
-    "look_vs_file": 0.121
+    "look_vs_file": 0.129
    },
    "8": {
     "callers_recall": 1.0,
@@ -8879,13 +8878,13 @@
     "common_checked": 0,
     "rename_ok": 1.0,
     "rename_checked": 1,
-    "tests_recall": 0.333,
+    "tests_recall": 0.5,
     "tests_precision": 1.0,
     "tests_top10_precision": 1.0,
     "tests_top10_best": 1.0,
     "tests_caught": 1.0,
     "tests_checked": 1,
-    "look_vs_file": 0.121
+    "look_vs_file": 0.129
    },
    "9": {
     "callers_recall": 1.0,
@@ -8899,13 +8898,13 @@
     "common_checked": 0,
     "rename_ok": 1.0,
     "rename_checked": 1,
-    "tests_recall": 0.333,
+    "tests_recall": 0.5,
     "tests_precision": 1.0,
     "tests_top10_precision": 1.0,
     "tests_top10_best": 1.0,
     "tests_caught": 1.0,
     "tests_checked": 1,
-    "look_vs_file": 0.121
+    "look_vs_file": 0.129
    }
   },
   "noise": {
@@ -8969,15 +8968,15 @@
     "threshold": 1.0
    },
    "tests_recall": {
-    "mean": 0.333,
+    "mean": 0.5,
     "functions": 1,
-    "boot_lo": 0.333,
-    "boot_hi": 0.333,
+    "boot_lo": 0.5,
+    "boot_hi": 0.5,
     "boot_half": 0.0,
     "seeds": [
-     0.333,
-     0.333,
-     0.333
+     0.5,
+     0.5,
+     0.5
     ],
     "seed_sd": 0.0,
     "threshold": 1.0
@@ -9039,15 +9038,15 @@
     "threshold": 1.0
    },
    "look_vs_file": {
-    "mean": 0.121,
+    "mean": 0.129,
     "functions": 1,
-    "boot_lo": 0.121,
-    "boot_hi": 0.121,
+    "boot_lo": 0.129,
+    "boot_hi": 0.129,
     "boot_half": 0.0,
     "seeds": [
-     0.121,
-     0.121,
-     0.121
+     0.129,
+     0.129,
+     0.129
     ],
     "seed_sd": 0.0,
     "threshold": 0.0
@@ -11196,23 +11195,23 @@
     "symbol": "src::compose::resolve_end::resolveEnd",
     "level": "file",
     "truth": 19,
-    "predicted": 2,
-    "recall": 0.05263157894736842,
-    "precision": 0.5,
-    "top_hits": 1,
-    "top_n": 2,
-    "top_precision": 0.5,
-    "top_best": 0.5,
+    "predicted": 13,
+    "recall": 0.5789473684210527,
+    "precision": 0.8461538461538461,
+    "top_hits": 9,
+    "top_n": 10,
+    "top_precision": 0.9,
+    "top_best": 1.0,
     "caught": 1.0,
     "missed": [
-     "tests/clone.ts",
-     "tests/collection-access.ts",
-     "tests/compat.ts",
      "tests/cst.ts",
-     "tests/directives.ts",
-     "tests/doc/YAML-1.1.spec.ts",
      "tests/doc/YAML-1.2.spec.ts",
-     "tests/doc/anchors.ts"
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/properties.ts"
     ]
    },
    {
@@ -11240,16 +11239,15 @@
     "symbol": "src::public_api::parseAllDocuments",
     "level": "file",
     "truth": 4,
-    "predicted": 0,
-    "recall": 0.0,
-    "precision": 0.0,
-    "top_hits": 0,
-    "top_n": 0,
-    "top_precision": 0.0,
-    "top_best": 0.0,
-    "caught": 0.0,
+    "predicted": 2,
+    "recall": 0.25,
+    "precision": 0.5,
+    "top_hits": 1,
+    "top_n": 2,
+    "top_precision": 0.5,
+    "top_best": 0.5,
+    "caught": 1.0,
     "missed": [
-     "tests/doc/YAML-1.1.spec.ts",
      "tests/doc/YAML-1.2.spec.ts",
      "tests/doc/errors.ts",
      "tests/doc/parse.ts"
@@ -11321,14 +11319,14 @@
     "symbol": "src::doc::Document::Document::setSchema",
     "level": "file",
     "truth": 20,
-    "predicted": 0,
-    "recall": 0.0,
-    "precision": 0.0,
-    "top_hits": 0,
-    "top_n": 0,
-    "top_precision": 0.0,
-    "top_best": 0.0,
-    "caught": 0.0,
+    "predicted": 1,
+    "recall": 0.05,
+    "precision": 1.0,
+    "top_hits": 1,
+    "top_n": 1,
+    "top_precision": 1.0,
+    "top_best": 1.0,
+    "caught": 1.0,
     "missed": [
      "tests/cli.ts",
      "tests/clone.ts",
@@ -11390,23 +11388,20 @@
     "symbol": "src::compose::composer::Composer::compose",
     "level": "file",
     "truth": 17,
-    "predicted": 1,
-    "recall": 0.0,
-    "precision": 0.0,
-    "top_hits": 0,
-    "top_n": 1,
-    "top_precision": 0.0,
-    "top_best": 0.0,
-    "caught": 0.0,
+    "predicted": 14,
+    "recall": 0.7058823529411765,
+    "precision": 0.8571428571428571,
+    "top_hits": 9,
+    "top_n": 10,
+    "top_precision": 0.9,
+    "top_best": 1.0,
+    "caught": 1.0,
     "missed": [
-     "tests/clone.ts",
-     "tests/collection-access.ts",
-     "tests/compat.ts",
-     "tests/directives.ts",
-     "tests/doc/YAML-1.1.spec.ts",
      "tests/doc/YAML-1.2.spec.ts",
-     "tests/doc/anchors.ts",
-     "tests/doc/comments.ts"
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/stringify.ts"
     ]
    },
    {
@@ -11434,23 +11429,23 @@
     "symbol": "src::doc::NodeCreator::NodeCreator::setAnchors",
     "level": "file",
     "truth": 20,
-    "predicted": 1,
-    "recall": 0.05,
+    "predicted": 7,
+    "recall": 0.35,
     "precision": 1.0,
-    "top_hits": 1,
-    "top_n": 1,
+    "top_hits": 7,
+    "top_n": 7,
     "top_precision": 1.0,
     "top_best": 1.0,
     "caught": 1.0,
     "missed": [
      "tests/cli.ts",
-     "tests/clone.ts",
-     "tests/collection-access.ts",
      "tests/compat.ts",
      "tests/directives.ts",
      "tests/doc/YAML-1.1.spec.ts",
      "tests/doc/YAML-1.2.spec.ts",
-     "tests/doc/anchors.ts"
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts"
     ]
    },
    {
@@ -11503,23 +11498,22 @@
     "symbol": "src::parse::cst::tokenType",
     "level": "file",
     "truth": 19,
-    "predicted": 3,
-    "recall": 0.10526315789473684,
-    "precision": 0.6666666666666666,
-    "top_hits": 2,
-    "top_n": 3,
-    "top_precision": 0.6666666666666666,
-    "top_best": 0.6666666666666666,
+    "predicted": 14,
+    "recall": 0.631578947368421,
+    "precision": 0.8571428571428571,
+    "top_hits": 9,
+    "top_n": 10,
+    "top_precision": 0.9,
+    "top_best": 1.0,
     "caught": 1.0,
     "missed": [
-     "tests/clone.ts",
-     "tests/collection-access.ts",
-     "tests/compat.ts",
-     "tests/directives.ts",
-     "tests/doc/YAML-1.1.spec.ts",
      "tests/doc/YAML-1.2.spec.ts",
-     "tests/doc/anchors.ts",
-     "tests/doc/comments.ts"
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/properties.ts"
     ]
    },
    {
@@ -11566,23 +11560,22 @@
     "symbol": "src::compose::compose_doc::composeDoc",
     "level": "file",
     "truth": 18,
-    "predicted": 2,
-    "recall": 0.05555555555555555,
-    "precision": 0.5,
-    "top_hits": 1,
-    "top_n": 2,
-    "top_precision": 0.5,
-    "top_best": 0.5,
+    "predicted": 13,
+    "recall": 0.6111111111111112,
+    "precision": 0.8461538461538461,
+    "top_hits": 9,
+    "top_n": 10,
+    "top_precision": 0.9,
+    "top_best": 1.0,
     "caught": 1.0,
     "missed": [
-     "tests/clone.ts",
-     "tests/collection-access.ts",
-     "tests/compat.ts",
-     "tests/directives.ts",
-     "tests/doc/YAML-1.1.spec.ts",
      "tests/doc/YAML-1.2.spec.ts",
-     "tests/doc/anchors.ts",
-     "tests/doc/comments.ts"
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/properties.ts"
     ]
    },
    {
@@ -11608,23 +11601,21 @@
     "symbol": "src::parse::lexer::Lexer::flow",
     "level": "file",
     "truth": 15,
-    "predicted": 3,
-    "recall": 0.13333333333333333,
-    "precision": 0.6666666666666666,
-    "top_hits": 2,
-    "top_n": 3,
-    "top_precision": 0.6666666666666666,
-    "top_best": 0.6666666666666666,
+    "predicted": 16,
+    "recall": 0.6,
+    "precision": 0.5625,
+    "top_hits": 6,
+    "top_n": 10,
+    "top_precision": 0.6,
+    "top_best": 0.9,
     "caught": 1.0,
     "missed": [
-     "tests/compat.ts",
-     "tests/directives.ts",
      "tests/doc/YAML-1.2.spec.ts",
-     "tests/doc/anchors.ts",
      "tests/doc/comments.ts",
      "tests/doc/errors.ts",
-     "tests/doc/parse.ts",
-     "tests/doc/stringify.ts"
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/properties.ts"
     ]
    },
    {
@@ -11652,7 +11643,7 @@
    },
    {
     "symbol": "src::compose::resolve_end::resolveEnd",
-    "look_tokens": 413,
+    "look_tokens": 466,
     "file_tokens": 298
    },
    {
@@ -11662,7 +11653,7 @@
    },
    {
     "symbol": "src::public_api::parseAllDocuments",
-    "look_tokens": 402,
+    "look_tokens": 431,
     "file_tokens": 1638
    },
    {
@@ -11682,7 +11673,7 @@
    },
    {
     "symbol": "src::doc::Document::Document::setSchema",
-    "look_tokens": 491,
+    "look_tokens": 506,
     "file_tokens": 3274
    },
    {
@@ -11707,7 +11698,7 @@
    },
    {
     "symbol": "src::public_api::parseDocument",
-    "look_tokens": 430,
+    "look_tokens": 492,
     "file_tokens": 1638
    },
    {
@@ -11722,27 +11713,27 @@
    },
    {
     "symbol": "src::doc::anchors::anchorNames",
-    "look_tokens": 172,
+    "look_tokens": 240,
     "file_tokens": 248
    },
    {
     "symbol": "src::parse::cst::prettyToken",
-    "look_tokens": 176,
+    "look_tokens": 179,
     "file_tokens": 1265
    },
    {
     "symbol": "src::log::warn",
-    "look_tokens": 181,
+    "look_tokens": 217,
     "file_tokens": 129
    },
    {
     "symbol": "src::nodes::toJS::ToJSContext::setSource",
-    "look_tokens": 261,
+    "look_tokens": 284,
     "file_tokens": 810
    },
    {
     "symbol": "src::stringify::stringifyComment::lineComment",
-    "look_tokens": 249,
+    "look_tokens": 253,
     "file_tokens": 189
    },
    {
@@ -11752,12 +11743,12 @@
    },
    {
     "symbol": "src::compose::composer::Composer::compose",
-    "look_tokens": 259,
+    "look_tokens": 333,
     "file_tokens": 2191
    },
    {
     "symbol": "src::doc::NodeCreator::NodeCreator::setAnchors",
-    "look_tokens": 276,
+    "look_tokens": 337,
     "file_tokens": 1323
    },
    {
@@ -11772,12 +11763,12 @@
    },
    {
     "symbol": "src::parse::cst::tokenType",
-    "look_tokens": 420,
+    "look_tokens": 465,
     "file_tokens": 1265
    },
    {
     "symbol": "src::parse::lexer::Lexer::flow",
-    "look_tokens": 734,
+    "look_tokens": 772,
     "file_tokens": 4124
    },
    {
@@ -11787,7 +11778,7 @@
    },
    {
     "symbol": "src::nodes::YAMLSeq::YAMLSeq::unshift",
-    "look_tokens": 197,
+    "look_tokens": 234,
     "file_tokens": 2805
    },
    {
@@ -11812,7 +11803,7 @@
    },
    {
     "symbol": "src::compose::compose_doc::composeDoc",
-    "look_tokens": 468,
+    "look_tokens": 521,
     "file_tokens": 475
    },
    {
@@ -11822,7 +11813,7 @@
    },
    {
     "symbol": "src::stringify::stringify::createStringifyContext",
-    "look_tokens": 366,
+    "look_tokens": 387,
     "file_tokens": 1463
    },
    {
@@ -11832,16 +11823,16 @@
    },
    {
     "symbol": "src::errors::prettifyError",
-    "look_tokens": 493,
+    "look_tokens": 550,
     "file_tokens": 718
    },
    {
     "symbol": "src::compose::resolve_props::resolveProps",
-    "look_tokens": 1441,
+    "look_tokens": 1452,
     "file_tokens": 1417
    }
   ],
-  "seconds": 9,
+  "seconds": 10,
   "summary": {
    "callers_recall": 1.0,
    "callers_precision": 1.0,
@@ -11854,13 +11845,13 @@
    "common_checked": 10,
    "rename_ok": 0.846,
    "rename_checked": 39,
-   "tests_recall": 0.019,
-   "tests_precision": 0.159,
-   "tests_top10_precision": 0.159,
-   "tests_top10_best": 0.159,
-   "tests_caught": 0.238,
+   "tests_recall": 0.18,
+   "tests_precision": 0.308,
+   "tests_top10_precision": 0.319,
+   "tests_top10_best": 0.352,
+   "tests_caught": 0.381,
    "tests_checked": 21,
-   "look_vs_file": 0.546
+   "look_vs_file": 0.576
   },
   "summary_seeds": {
    "7": {
@@ -11875,13 +11866,13 @@
     "common_checked": 8,
     "rename_ok": 0.85,
     "rename_checked": 20,
-    "tests_recall": 0.007,
-    "tests_precision": 0.062,
-    "tests_top10_precision": 0.062,
-    "tests_top10_best": 0.062,
-    "tests_caught": 0.125,
+    "tests_recall": 0.11,
+    "tests_precision": 0.293,
+    "tests_top10_precision": 0.3,
+    "tests_top10_best": 0.312,
+    "tests_caught": 0.375,
     "tests_checked": 8,
-    "look_vs_file": 0.581
+    "look_vs_file": 0.623
    },
    "8": {
     "callers_recall": 1.0,
@@ -11895,13 +11886,13 @@
     "common_checked": 8,
     "rename_ok": 0.9,
     "rename_checked": 20,
-    "tests_recall": 0.019,
-    "tests_precision": 0.208,
-    "tests_top10_precision": 0.208,
-    "tests_top10_best": 0.208,
-    "tests_caught": 0.25,
+    "tests_recall": 0.211,
+    "tests_precision": 0.339,
+    "tests_top10_precision": 0.35,
+    "tests_top10_best": 0.375,
+    "tests_caught": 0.375,
     "tests_checked": 8,
-    "look_vs_file": 0.501
+    "look_vs_file": 0.532
    },
    "9": {
     "callers_recall": 1.0,
@@ -11915,13 +11906,13 @@
     "common_checked": 8,
     "rename_ok": 0.85,
     "rename_checked": 20,
-    "tests_recall": 0.024,
-    "tests_precision": 0.146,
-    "tests_top10_precision": 0.146,
-    "tests_top10_best": 0.146,
-    "tests_caught": 0.25,
+    "tests_recall": 0.158,
+    "tests_precision": 0.301,
+    "tests_top10_precision": 0.312,
+    "tests_top10_best": 0.362,
+    "tests_caught": 0.375,
     "tests_checked": 8,
-    "look_vs_file": 0.494
+    "look_vs_file": 0.51
    }
   },
   "noise": {
@@ -12024,87 +12015,87 @@
     "threshold": 0.09
    },
    "tests_recall": {
-    "mean": 0.019,
+    "mean": 0.18,
     "functions": 21,
-    "boot_lo": 0.005,
-    "boot_hi": 0.033,
-    "boot_half": 0.014,
+    "boot_lo": 0.088,
+    "boot_hi": 0.28,
+    "boot_half": 0.096,
     "seeds": [
-     0.007,
-     0.019,
-     0.024
+     0.11,
+     0.211,
+     0.158
     ],
-    "seed_sd": 0.009,
-    "threshold": 0.05
+    "seed_sd": 0.051,
+    "threshold": 0.1
    },
    "tests_precision": {
-    "mean": 0.159,
+    "mean": 0.308,
     "functions": 21,
-    "boot_lo": 0.056,
-    "boot_hi": 0.27,
-    "boot_half": 0.107,
+    "boot_lo": 0.168,
+    "boot_hi": 0.453,
+    "boot_half": 0.142,
     "seeds": [
-     0.062,
-     0.208,
-     0.146
+     0.293,
+     0.339,
+     0.301
     ],
-    "seed_sd": 0.073,
-    "threshold": 0.11
-   },
-   "tests_top10_precision": {
-    "mean": 0.159,
-    "functions": 21,
-    "boot_lo": 0.056,
-    "boot_hi": 0.27,
-    "boot_half": 0.107,
-    "seeds": [
-     0.062,
-     0.208,
-     0.146
-    ],
-    "seed_sd": 0.073,
-    "threshold": 0.11
-   },
-   "tests_top10_best": {
-    "mean": 0.159,
-    "functions": 21,
-    "boot_lo": 0.056,
-    "boot_hi": 0.27,
-    "boot_half": 0.107,
-    "seeds": [
-     0.062,
-     0.208,
-     0.146
-    ],
-    "seed_sd": 0.073,
-    "threshold": 0.11
-   },
-   "tests_caught": {
-    "mean": 0.238,
-    "functions": 21,
-    "boot_lo": 0.095,
-    "boot_hi": 0.381,
-    "boot_half": 0.143,
-    "seeds": [
-     0.125,
-     0.25,
-     0.25
-    ],
-    "seed_sd": 0.072,
+    "seed_sd": 0.025,
     "threshold": 0.15
    },
-   "look_vs_file": {
-    "mean": 0.546,
-    "functions": 39,
-    "boot_lo": 0.44,
-    "boot_hi": 0.663,
-    "boot_half": 0.112,
+   "tests_top10_precision": {
+    "mean": 0.319,
+    "functions": 21,
+    "boot_lo": 0.171,
+    "boot_hi": 0.471,
+    "boot_half": 0.15,
     "seeds": [
-     0.581,
-     0.501,
-     0.494
+     0.3,
+     0.35,
+     0.312
     ],
-    "seed_sd": 0.049,
+    "seed_sd": 0.026,
+    "threshold": 0.15
+   },
+   "tests_top10_best": {
+    "mean": 0.352,
+    "functions": 21,
+    "boot_lo": 0.19,
+    "boot_hi": 0.519,
+    "boot_half": 0.164,
+    "seeds": [
+     0.312,
+     0.375,
+     0.362
+    ],
+    "seed_sd": 0.033,
+    "threshold": 0.17
+   },
+   "tests_caught": {
+    "mean": 0.381,
+    "functions": 21,
+    "boot_lo": 0.19,
+    "boot_hi": 0.571,
+    "boot_half": 0.19,
+    "seeds": [
+     0.375,
+     0.375,
+     0.375
+    ],
+    "seed_sd": 0.0,
+    "threshold": 0.2
+   },
+   "look_vs_file": {
+    "mean": 0.576,
+    "functions": 39,
+    "boot_lo": 0.463,
+    "boot_hi": 0.702,
+    "boot_half": 0.119,
+    "seeds": [
+     0.623,
+     0.532,
+     0.51
+    ],
+    "seed_sd": 0.06,
     "threshold": 0.12
    }
   }
@@ -12113,7 +12104,7 @@
   "repo": "jsoup",
   "lang": "java",
   "commit": "d90d57521d93",
-  "index_seconds": 3.3,
+  "index_seconds": 3.0,
   "symbols": 2663,
   "files": 105,
   "seeds": [
@@ -16344,7 +16335,7 @@
     "file_tokens": 4377
    }
   ],
-  "seconds": 147,
+  "seconds": 151,
   "summary": {
    "callers_recall": 0.996,
    "callers_precision": 0.996,
@@ -16616,7 +16607,7 @@
   "repo": "json-java",
   "lang": "java",
   "commit": "2cd0a8c2112a",
-  "index_seconds": 0.3,
+  "index_seconds": 0.2,
   "symbols": 542,
   "files": 26,
   "seeds": [
@@ -19342,7 +19333,7 @@
     "file_tokens": 3760
    }
   ],
-  "seconds": 22,
+  "seconds": 21,
   "summary": {
    "callers_recall": 1.0,
    "callers_precision": 1.0,
@@ -23429,7 +23420,7 @@
     "file_tokens": 684
    }
   ],
-  "seconds": 11,
+  "seconds": 10,
   "summary": {
    "callers_recall": 0.991,
    "callers_precision": 1.0,

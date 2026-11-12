@@ -110,7 +110,9 @@ pub fn learn(root: &Path, g: &Graph) -> Result<Learned> {
         }
     }
     let (functions, tests, n) = map.size();
-    let with_body = owners(g).values().flat_map(|lines| lines.iter().flatten()).collect::<std::collections::HashSet<_>>().len();
+    // Python counts a body from the line after `def`; the compiled languages from the signature
+    let header = runs.iter().all(|r| r.source != "pytest-cov");
+    let with_body = owners_at(g, header).values().flat_map(|lines| lines.iter().flatten()).collect::<std::collections::HashSet<_>>().len();
     Ok(Learned {
         command: runs.iter().map(|r| r.command.as_str()).collect::<Vec<_>>().join("; "),
         seconds: runs.iter().map(|r| r.seconds).sum(),

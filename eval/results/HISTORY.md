@@ -5,6 +5,33 @@ Runs 1–5: five repos (one per language), one sample (seed 7, 8 functions, 4 mu
 From run 6 on: ten repos, 20 functions and 8 mutants per repo, three seeds, and a threshold next to every number.
 Since the run after run 4, a rename only counts as ok if the project's tests still pass too.
 
+## Run 8 · in TypeScript the test is the file; coverage maps for Go and Rust
+
+**tests-for, TypeScript.** `it('…', () => …)` is not a named function; its calls are booked to the module of the
+test file, and `tests-for` dropped everything that is not a function. A test file's module now counts as a test.
+Paired comparison with run 7 on the same functions (`--compare`): only yaml and zustand moved, every metric up.
+
+| yaml (21 functions) | run 7 | run 8 | difference, 90% interval |
+|---|---:|---:|---|
+| tests recall | 1.9% | 18.0% | +16.1 (+7.8 … +25.1) |
+| tests precision | 15.9% | 30.8% | +14.9 (+5.5 … +25.9) |
+| caught by the top 10 | 23.8% | 38.1% | +14.3 (+4.8 … +28.6) |
+
+All languages: tests recall 47% → 49% ±6, caught by the top 10: 77% → 79% ±6; TypeScript 3% → 19% ±10 and 27% → 41% ±19.
+Why it stops there (`learn-tests-yaml.causes.md`): paths deeper than 4 calls, "maybe" edges, exports under another
+name. A coverage map per test file finds 100% on both TypeScript projects (`learn_tests_js.py`) for 2.3–6.2 plain test runs.
+
+**learn-tests, Go and Rust.** The prototypes are in the product (`learn/go.rs`, `learn/rust.rs`): the map of cobra is
+236 functions / 13 106 pairs and of semver 70 / 782 — the prototypes' numbers; chi 166 / 3 992 (164 / 3 826 plus two
+of its four `init` functions, which now have entries of their own), indexmap 358 / 3 837 (43 of its 192 tests are
+written inside a macro and are not symbols of the graph).
+
+**why with the map, Rust** (`why-rank-rust.md`, 20 seeded bugs): the culprit is first in 15% from the call graph and
+in 70% with the map; semver 10 of 10 (2 of 10 from the graph), indexmap 4 of 10 — its other 6 fail only in tests made
+by a macro. Two things found on the way: the first line of a function was not counted for Rust (one-line functions
+lost), and `impl Display` / `impl Debug` of one type share a qualified name — the map compared the code of one with
+the hash of the other and marked an untouched function "changed".
+
 ## `why` · where the function at fault is in the list (37 seeded bugs)
 
 `eval/why_rank.py`: one operator is changed inside a function (as `eval/agent.py` does for its `fix` tasks), a test
