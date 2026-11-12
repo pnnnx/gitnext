@@ -68,6 +68,7 @@ TOL = 0.05  # allowed drop of a rate before --check fails, where the baseline ha
 RATES = ("recall", "precision", "_ok", "caught", "with_maybe")  # the summary keys --check watches
 CACHE_VERSION = 2  # bump when what truth.json stores changes its meaning: CI keys its cache on this number
 MAX_TRIES = 2  # mutants: at most MAX_TRIES × --mutants functions of a sample are tried
+SAMPLE_FROM: dict | None = None  # --sample-from: repo → the earlier run whose functions are measured again
 BOOT = 2000  # bootstrap resamples behind every "±"
 
 
@@ -711,13 +712,28 @@ def run_repo(repo: dict, n: int, mutants: int, seed, tests_in_rename: bool) -> d
     # how many call edges resolve inside the repo
     m = re.search(r"(\d+) symbols · (\d+) edges", gx(["index"], root)[1])
     res["edges"] = int(m.group(2)) if m else None
-    CALLERS_MEMO = {}
-    try:
-        plain = {sd: pick(syms, root, n, sd) for sd in seeds}
-        common = {sd: pick(syms, root, n, sd, common=True) if L["errors"] else [] for sd in seeds}
-        blind = {sd: pick(syms, root, n, sd, blind=True) if L["errors"] else [] for sd in seeds}
-    finally:
-        CALLERS_MEMO = None
+    prev = SAMPLE_FROM.get(repo["name"]) if SAMPLE_FROM is not None else None
+    if SAMPLE_FROM is not None and prev is None:
+        raise RuntimeError(f"--sample-from: no sample of {repo['name']} in that run")
+    if prev is not None:  # the functions of the earlier run, not drawn again: a change of the graph moves no function
+        if prev.get("commit") != res["commit"]:
+            raise RuntimeError(f"--sample-from: {repo['name']} was at {prev.get('commit')}, now at {res['commit']}")
+        by_q = {s["qualified"]: s for s in syms}
+        again = lambda key: {sd: [by_q[q] for q in prev.get(key, {}).get(str(sd), []) if q in by_q] for sd in seeds}
+        plain, common, blind = again("samples"), again("samples_common"), again("samples_blind")
+        pool = {s["qualified"]: s for v in (*plain.values(), *common.values(), *blind.values()) for s in v}
+        qs = list(pool)
+        for at in range(0, len(qs), 40):  # what gitnext says now, asked as pick asks it
+            for q, (sure, maybe) in callers_many(root, qs[at:at + 40]).items():
+                pool[q]["_callers"], pool[q]["_maybe"] = sure, maybe
+    else:
+        CALLERS_MEMO = {}
+        try:
+            plain = {sd: pick(syms, root, n, sd) for sd in seeds}
+            common = {sd: pick(syms, root, n, sd, common=True) if L["errors"] else [] for sd in seeds}
+            blind = {sd: pick(syms, root, n, sd, blind=True) if L["errors"] else [] for sd in seeds}
+        finally:
+            CALLERS_MEMO = None
 
     def distinct(by_seed: dict) -> list[dict]:
         seen: dict[str, dict] = {}
@@ -931,8 +947,157 @@ def compare(results: list[dict], baseline: dict) -> list[str]:
     return bad
 
 
+# --compare: the per-function value of every metric, read from the rows of one kind of check
+# (the same formulas as metric_values; None: the function does not count for this metric)
+PAIRED = {
+    "callers_recall": ("callers", lambda c: c.get("recall")),
+    "callers_precision": ("callers", lambda c: c.get("precision") if c.get("recall") is not None else None),
+    "blind_recall": ("callers_blind", lambda c: c.get("recall")),
+    "common_recall": ("callers_common", lambda c: c.get("recall")),
+    "common_recall_with_maybe": ("callers_common", lambda c: c.get("recall_with_maybe") if c.get("recall") is not None else None),
+    "common_precision": ("callers_common", lambda c: c.get("precision") if c.get("recall") is not None else None),
+    "rename_ok": ("rename", lambda x: 1.0 if x["ok"] else 0.0),
+    "tests_recall": ("tests", lambda t: t.get("recall")),
+    "tests_precision": ("tests", lambda t: t.get("precision") if "recall" in t else None),
+    "tests_top10_precision": ("tests", lambda t: t.get("top_precision") if "recall" in t else None),
+    "tests_top10_best": ("tests", lambda t: t.get("top_best") if "recall" in t else None),
+    "tests_caught": ("tests", lambda t: t.get("caught") if "recall" in t else None),
+    "look_vs_file": ("look", lambda x: x["look_tokens"] / max(1, x["file_tokens"])),
+}
+
+
+def _load_run(p: str) -> list[dict]:
+    path = Path(p)
+    if not path.exists() and (HERE / "results" / f"{p}.json").exists():
+        path = HERE / "results" / f"{p}.json"  # a bare name: eval/results/<name>.json
+    data = json.loads(path.read_text())
+    if not isinstance(data, list) or not all(isinstance(r, dict) and "repo" in r for r in data):
+        sys.exit(f"{path}: not the results of a run (eval/results/<name>.json, a list with one entry per repo)")
+    return data
+
+
+def paired_values(a: list[dict], b: list[dict]) -> tuple[dict, list[str]]:
+    """For every metric, the functions both runs measured: (repo, lang, symbol, value in A, value in B).
+    And what does not pair: repos or commits that differ, functions only one run has."""
+    ra = {r["repo"]: r for r in a if "error" not in r}
+    rb = {r["repo"]: r for r in b if "error" not in r}
+    notes = []
+    for name in sorted(set(ra) ^ set(rb)):
+        notes.append(f"{name}: only in {'A' if name in ra else 'B'} (or failed in the other run) — left out")
+    out: dict[str, list[tuple]] = {k: [] for k in PAIRED}
+    lost: dict[str, list[int]] = {}  # kind of rows → [functions in A, in B, in both]
+    for name in sorted(set(ra) & set(rb)):
+        x, y = ra[name], rb[name]
+        if x.get("commit") != y.get("commit"):
+            notes.append(f"{name}: different commits ({x.get('commit')} / {y.get('commit')}) — left out")
+            continue
+        for kind in {k for k, _ in PAIRED.values()}:
+            ia = {row["symbol"]: row for row in x.get(kind, [])}
+            ib = {row["symbol"]: row for row in y.get(kind, [])}
+            both = [s for s in ia if s in ib]
+            c = lost.setdefault(kind, [0, 0, 0])
+            c[0] += len(ia)
+            c[1] += len(ib)
+            c[2] += len(both)
+            for k, (kk, get) in PAIRED.items():
+                if kk != kind:
+                    continue
+                for s in both:
+                    va, vb = get(ia[s]), get(ib[s])
+                    if va is not None and vb is not None:
+                        out[k].append((name, x["lang"], s, va, vb))
+    for kind, (na, nb, nboth) in sorted(lost.items()):
+        if na != nboth or nb != nboth:
+            notes.append(f"{kind}: {na} functions in A, {nb} in B, {nboth} in both — "
+                         f"{(na + nb - 2 * nboth) / max(1, na + nb):.0%} do not pair (the sample depends on gitnext's answers)")
+    return out, notes
+
+
+def paired_stats(rows: list[tuple]) -> dict | None:
+    """The mean difference B − A over the functions, its 90% interval when the functions are drawn again
+    (bootstrap, within each repo — a repo keeps its number of functions) and the verdict."""
+    if not rows:
+        return None
+    n = len(rows)
+    by_repo: dict[str, list[float]] = {}
+    for repo, _, _, va, vb in rows:
+        by_repo.setdefault(repo, []).append(vb - va)
+    d = [x for v in by_repo.values() for x in v]
+    rng = random.Random(BOOT)
+    boots = sorted(sum(sum(rng.choices(v, k=len(v))) for v in by_repo.values()) / n for _ in range(BOOT))
+    lo, hi = boots[int(0.05 * BOOT)], boots[int(0.95 * BOOT) - 1]
+    # the same mean, but for two versions measured on independent samples: what --check and latest.md allow
+    a = [r[3] for r in rows]
+    rng = random.Random(BOOT)
+    ba = sorted(sum(rng.choices(a, k=n)) / n for _ in range(BOOT))
+    unpaired = (ba[int(0.95 * BOOT) - 1] - ba[int(0.05 * BOOT)]) / 2
+    changed = sum(1 for x in d if abs(x) > 1e-12)
+    # a difference whose whole interval is under half a point is real but too small to matter
+    verdict = ("same" if not changed else "< 0.5 pt" if max(abs(lo), abs(hi)) < 0.005
+               else "better" if lo > 0 else "worse" if hi < 0 else "can't tell")
+    return {"functions": n, "changed": changed, "a": sum(a) / n, "b": sum(r[4] for r in rows) / n,
+            "diff": sum(d) / n, "lo": lo, "hi": hi, "unpaired_half": unpaired, "verdict": verdict}
+
+
+def compare_runs(pa: str, pb: str, top: int = 10) -> str:
+    """`--compare A B`: the two runs on the functions both measured. A difference counts when its 90%
+    interval stays on one side of zero: the noise of the sample cancels out, only functions whose
+    answer changed move the number."""
+    pairs, notes = paired_values(_load_run(pa), _load_run(pb))
+    pts = lambda x: f"{x * 100:+.1f}"
+    md = [f"# {Path(pa).stem} (A) → {Path(pb).stem} (B)", "",
+          "Paired: each function is measured by both versions, the difference B − A is taken per function, and the "
+          "90% interval comes from drawing the functions again (within each repo). `better` / `worse`: the whole interval "
+          "is on one side of zero. `can't tell`: it covers zero. `same`: no function changed. `< 0.5 pt`: the whole interval "
+          "is within half a point. `changed`: functions whose "
+          "value differs — a difference rests on them alone, read them below. `± alone`: the noise of one version on its "
+          "own (as in latest.md): two separate runs would need a difference that large.", ""]
+    if notes:
+        md += ["Not paired:", *[f"- {x}" for x in notes], ""]
+    langs = sorted({r[1] for v in pairs.values() for r in v})
+    repos = sorted({r[0] for v in pairs.values() for r in v})
+    head = "| metric | functions | changed | A | B | B − A, points | 90% interval | ± alone | verdict |"
+    sep = "|---|---:|---:|---:|---:|---:|---:|---:|---|"
+
+    def table(title: str, keep) -> list[str]:
+        rows = []
+        for k, label in METRIC_NAMES.items():
+            s = paired_stats([r for r in pairs[k] if keep(r)])
+            if s:
+                rows.append(f"| {label} | {s['functions']} | {s['changed']} | {s['a']:.1%} | {s['b']:.1%} | {pts(s['diff'])} | "
+                            f"{pts(s['lo'])} … {pts(s['hi'])} | ±{s['unpaired_half'] * 100:.1f} | **{s['verdict']}** |")
+        return [f"## {title}", "", head, sep, *rows, ""] if rows else []
+
+    md += table("All repos", lambda r: True)
+    for lang in langs:
+        md += table(lang, lambda r, lang=lang: r[1] == lang)
+    # per repo: only the metrics where some function changed
+    per = ["## Per repo (metrics where a function changed)", "", "| repo | metric | functions | changed | A | B | B − A | 90% interval | verdict |",
+           "|---|---|---:|---:|---:|---:|---:|---:|---|"]
+    for repo in repos:
+        for k, label in METRIC_NAMES.items():
+            s = paired_stats([r for r in pairs[k] if r[0] == repo])
+            if s and s["changed"]:
+                per.append(f"| {repo} | {label} | {s['functions']} | {s['changed']} | {s['a']:.1%} | {s['b']:.1%} | {pts(s['diff'])} | "
+                           f"{pts(s['lo'])} … {pts(s['hi'])} | {s['verdict']} |")
+    md += (per + [""]) if len(per) > 4 else ["## Per repo", "", "No function changed its value.", ""]
+    ch = [f"## Functions that changed (up to {top} per metric, largest first)", ""]
+    for k, label in METRIC_NAMES.items():
+        moved = sorted((r for r in pairs[k] if abs(r[4] - r[3]) > 1e-12), key=lambda r: -abs(r[4] - r[3]))
+        if moved:
+            ch.append(f"- **{label}** ({len(moved)}): " + "; ".join(f"{r[0]} `{r[2]}` {r[3]:.0%} → {r[4]:.0%}" for r in moved[:top]))
+    md += ch if len(ch) > 2 else []
+    return "\n".join(md) + "\n"
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--compare", nargs=2, metavar=("A", "B"), help="compare two runs (their .json, or names in eval/results) on the\n"
+                    "functions both measured: the difference, its 90%% interval and whether B is better, worse or can't tell")
+    ap.add_argument("--compare-out", metavar="FILE", help="with --compare: also write the table to this file")
+    ap.add_argument("--sample-from", metavar="RUN", help="measure the functions an earlier run picked (its .json, or a name in\n"
+                    "eval/results) instead of drawing them again: the sample asks gitnext, so a change of the graph\n"
+                    "would move it. Then --compare pairs every function. Same --seeds as that run")
     ap.add_argument("--repos", default="", help="comma-separated names (default: all)")
     ap.add_argument("--n", type=int, default=20, help="functions sampled per repo and seed")
     ap.add_argument("--mutants", type=int, default=8, help="of those, how many get the test-suite check (one that cannot be\n"
@@ -947,8 +1112,16 @@ def main() -> None:
     ap.add_argument("--check", action="store_true", help="exit 1 if a rate dropped below eval/baseline.json by more than its threshold")
     ap.add_argument("--bless", action="store_true", help="accept the results as the baseline of this sample (--n, --mutants, --seeds)")
     args = ap.parse_args()
-    global USE_CACHE
+    if args.compare:
+        md = compare_runs(*args.compare)
+        if args.compare_out:
+            Path(args.compare_out).write_text(md)
+        print(md)
+        return
+    global USE_CACHE, SAMPLE_FROM
     USE_CACHE = not args.no_cache
+    if args.sample_from:
+        SAMPLE_FROM = {r["repo"]: r for r in _load_run(args.sample_from) if "error" not in r}
     seeds = [args.seed] if args.seed is not None else [int(x) for x in args.seeds.split(",") if x.strip()]
     cfg = f"n{args.n}-m{args.mutants}-seeds{','.join(map(str, seeds))}"  # a baseline belongs to one sample
     repos = json.loads((HERE / "repos.json").read_text())
