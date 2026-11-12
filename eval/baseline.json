@@ -23,7 +23,7 @@
    },
    "chi": {
     "callers_recall": 1.0,
-    "callers_precision": 0.908,
+    "callers_precision": 0.967,
     "callers_checked": 26,
     "blind_recall": 1.0,
     "blind_checked": 9,
@@ -218,7 +218,7 @@
    },
    "chi": {
     "callers_recall": 0.04,
-    "callers_precision": 0.09,
+    "callers_precision": 0.05,
     "blind_recall": 0.12,
     "common_recall": 0.2,
     "common_recall_with_maybe": 0.1,
@@ -344,7 +344,7 @@
    },
    "chi": {
     "callers_recall": 1.0,
-    "callers_precision": 0.981,
+    "callers_precision": 1.0,
     "callers_checked": 6,
     "blind_recall": 1.0,
     "blind_checked": 2,

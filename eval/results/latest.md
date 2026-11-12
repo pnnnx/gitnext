@@ -1,12 +1,12 @@
 | repo | lang | symbols | index s | callers recall | callers precision | callers recall, picked blind | shared names: recall (+maybe) | shared names: precision | rename ok | tests recall | tests precision | top-10 fail (best possible) | caught by top-10 | look / file |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | cobra | go | 288 | 0.0 | 100% ±3 (45) | 96% ±4 | 100% ±4 (31) | 100% ±100 (100% ±100) (1) | 100% ±100 | 87% ±8 (46) | 89% ±10 (21) | 36% ±13 | 44% ±14 (78% ±12) | 81% ±15 | 7% ±3 |
-| chi | go | 351 | 0.0 | 100% ±4 (26) | 91% ±9 | 100% ±12 (9) | 70% ±20 (100% ±10) (10) | 100% ±15 | 94% ±6 (35) | 66% ±15 (16) | 61% ±17 | 67% ±16 (71% ±16) | 88% ±13 | 22% ±7 |
+| chi | go | 351 | 0.0 | 100% ±4 (26) | 97% ±5 | 100% ±12 (9) | 70% ±20 (100% ±10) (10) | 100% ±15 | 94% ±6 (35) | 66% ±15 (16) | 61% ±17 | 67% ±16 (71% ±16) | 88% ±13 | 22% ±7 |
 | click | python | 761 | 0.1 | — | — | — | — | — | 66% ±11 (50) | 21% ±11 (23) | 38% ±14 | 40% ±14 (50% ±15) | 70% ±18 | 8% ±2 |
 | sqlparse | python | 287 | 0.0 | — | — | — | — | — | 81% ±10 (42) | 42% ±16 (19) | 63% ±15 | 65% ±16 (67% ±16) | 79% ±16 | 27% ±6 |
-| zustand | typescript | 175 | 0.0 | 100% ±100 (1) | 100% ±100 | 100% ±100 (1) | — | — | 100% ±100 (1) | 33% ±100 (1) | 100% ±100 | 100% ±100 (100% ±100) | 100% ±100 | 12% ±0 |
+| zustand | typescript | 175 | 0.1 | 100% ±100 (1) | 100% ±100 | 100% ±100 (1) | — | — | 100% ±100 (1) | 33% ±100 (1) | 100% ±100 | 100% ±100 (100% ±100) | 100% ±100 | 12% ±0 |
 | yaml | typescript | 440 | 0.1 | 100% ±3 (38) | 100% ±3 | 100% ±4 (33) | 65% ±25 (90% ±10) (10) | 100% ±15 | 69% ±13 (39) | 2% ±5 (21) | 16% ±11 | 16% ±11 (16% ±11) | 24% ±15 | 55% ±12 |
-| jsoup | java | 2663 | 2.8 | 100% ±3 (49) | 99% ±3 | 97% ±5 (35) | 87% ±8 (96% ±5) (40) | 99% ±3 | 96% ±6 (49) | 26% ±13 (21) | 70% ±14 | 69% ±14 (77% ±13) | 90% ±12 | 17% ±6 |
+| jsoup | java | 2663 | 2.5 | 100% ±3 (49) | 99% ±3 | 97% ±5 (35) | 87% ±8 (96% ±5) (40) | 99% ±3 | 96% ±6 (49) | 26% ±13 (21) | 70% ±14 | 69% ±14 (77% ±13) | 90% ±12 | 17% ±6 |
 | json-java | java | 542 | 0.2 | 100% ±3 (36) | 100% ±3 | 100% ±4 (28) | 100% ±7 (100% ±7) (16) | 100% ±7 | 97% ±5 (37) | 70% ±15 (22) | 52% ±14 | 66% ±11 (82% ±11) | 100% ±5 | 10% ±3 |
 | semver | rust | 113 | 0.0 | 100% ±20 (5) | 100% ±20 | 100% ±20 (5) | 100% ±50 (100% ±50) (2) | 100% ±50 | 100% ±20 (5) | 61% ±34 (3) | 64% ±34 | 67% ±34 (67% ±34) | 67% ±34 | 15% ±9 |
 | indexmap | rust | 1026 | 0.1 | 99% ±4 (32) | 100% ±4 | 100% ±5 (21) | 78% ±12 (100% ±4) (29) | 99% ±5 | 70% ±13 (33) | 52% ±14 (19) | 40% ±14 | 40% ±14 (40% ±14) | 74% ±16 | 13% ±6 |
@@ -17,7 +17,7 @@ the number stays in when the functions are drawn again (bootstrap), and never le
 | per language | all | go | python | typescript | java | rust |
 |---|---:|---:|---:|---:|---:|---:|
 | callers recall | 100% ±1 (232) | 100% ±2 (71) | — | 100% ±3 (39) | 100% ±2 (85) | 99% ±3 (37) |
-| callers precision | 98% ±2 (232) | 94% ±4 (71) | — | 100% ±3 (39) | 99% ±2 (85) | 100% ±3 (37) |
+| callers precision | 99% ±1 (232) | 96% ±3 (71) | — | 100% ±3 (39) | 99% ±2 (85) | 100% ±3 (37) |
 | callers recall, picked blind | 99% ±1 (163) | 100% ±3 (40) | — | 100% ±3 (34) | 98% ±3 (63) | 100% ±4 (26) |
 | shared names: recall | 83% ±6 (108) | 73% ±23 (11) | — | 65% ±25 (10) | 90% ±6 (56) | 80% ±11 (31) |
 | shared names: recall with maybe | 98% ±2 (108) | 100% ±10 (11) | — | 90% ±10 (10) | 97% ±3 (56) | 100% ±4 (31) |
@@ -33,7 +33,7 @@ the number stays in when the functions are drawn again (bootstrap), and never le
 | all repos | mean | functions | 90% interval | on each seed | 2 × SD of the seeds | threshold |
 |---|---:|---:|---:|---:|---:|---:|
 | callers recall | 99.8% | 232 | 100–100% | 100 / 100 / 100 | 0.2 | ±1 |
-| callers precision | 97.9% | 232 | 97–99% | 98 / 99 / 98 | 1.0 | ±2 |
+| callers precision | 98.6% | 232 | 98–100% | 98 / 100 / 98 | 2.0 | ±1 |
 | callers recall, picked blind | 99.2% | 163 | 98–100% | 100 / 98 / 100 | 1.6 | ±1 |
 | shared names: recall | 83.2% | 108 | 78–89% | 85 / 83 / 80 | 5.0 | ±6 |
 | shared names: recall with maybe | 97.6% | 108 | 96–99% | 99 / 97 / 97 | 1.8 | ±2 |
@@ -46,4 +46,4 @@ the number stays in when the functions are drawn again (bootstrap), and never le
 | caught by the top 10 | 75.3% | 166 | 70–81% | 71 / 76 / 82 | 11.8 | ±6 |
 | look / file | 19.3% | 337 | 17–22% | 21 / 19 / 18 | 2.6 | ±3 |
 
-Sample `n20-m8-seeds7,8,9`: 20 functions and 8 mutants per repo and seed, seeds 7, 8, 9. Run time: 3 min 17 s; of the compilers' and test suites' answers 1231 came from the cache, 2 were asked now.
+Sample `n20-m8-seeds7,8,9`: 20 functions and 8 mutants per repo and seed, seeds 7, 8, 9. Run time: 3 min 11 s; of the compilers' and test suites' answers 1231 came from the cache, 2 were asked now.

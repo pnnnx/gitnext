@@ -1,6 +1,6 @@
 {
  "config": "n20-m8-seeds7,8,9",
- "seconds": 197,
+ "seconds": 191,
  "scopes": {
   "all": {
    "callers_recall": {
@@ -18,18 +18,18 @@
     "threshold": 0.01
    },
    "callers_precision": {
-    "mean": 0.979,
+    "mean": 0.986,
     "functions": 232,
-    "boot_lo": 0.966,
-    "boot_hi": 0.99,
-    "boot_half": 0.012,
+    "boot_lo": 0.975,
+    "boot_hi": 0.995,
+    "boot_half": 0.01,
     "seeds": [
-     0.975,
-     0.986,
-     0.98
+     0.981,
+     0.998,
+     0.981
     ],
-    "seed_sd": 0.005,
-    "threshold": 0.02
+    "seed_sd": 0.01,
+    "threshold": 0.01
    },
    "blind_recall": {
     "mean": 0.992,
@@ -202,18 +202,18 @@
     "threshold": 0.02
    },
    "callers_precision": {
-    "mean": 0.941,
+    "mean": 0.963,
     "functions": 71,
-    "boot_lo": 0.9,
-    "boot_hi": 0.975,
-    "boot_half": 0.037,
+    "boot_lo": 0.929,
+    "boot_hi": 0.989,
+    "boot_half": 0.03,
     "seeds": [
-     0.927,
-     0.957,
-     0.949
+     0.947,
+     1.0,
+     0.951
     ],
-    "seed_sd": 0.015,
-    "threshold": 0.04
+    "seed_sd": 0.029,
+    "threshold": 0.03
    },
    "blind_recall": {
     "mean": 1.0,
@@ -1040,7 +1040,7 @@
     8,
     9
    ],
-   "seconds": 11,
+   "seconds": 12,
    "summary": {
     "callers_recall": 1.0,
     "callers_precision": 0.96,
@@ -1321,7 +1321,7 @@
    "seconds": 7,
    "summary": {
     "callers_recall": 1.0,
-    "callers_precision": 0.908,
+    "callers_precision": 0.967,
     "callers_checked": 26,
     "blind_recall": 1.0,
     "blind_checked": 9,
@@ -1342,7 +1342,7 @@
    "summary_seeds": {
     "7": {
      "callers_recall": 1.0,
-     "callers_precision": 0.897,
+     "callers_precision": 0.943,
      "callers_checked": 15,
      "blind_recall": 1.0,
      "blind_checked": 5,
@@ -1362,7 +1362,7 @@
     },
     "8": {
      "callers_recall": 1.0,
-     "callers_precision": 0.896,
+     "callers_precision": 1.0,
      "callers_checked": 14,
      "blind_recall": 1.0,
      "blind_checked": 5,
@@ -1382,7 +1382,7 @@
     },
     "9": {
      "callers_recall": 1.0,
-     "callers_precision": 0.938,
+     "callers_precision": 0.943,
      "callers_checked": 15,
      "blind_recall": 1.0,
      "blind_checked": 3,
@@ -1417,18 +1417,18 @@
      "threshold": 0.04
     },
     "callers_precision": {
-     "mean": 0.908,
+     "mean": 0.967,
      "functions": 26,
-     "boot_lo": 0.82,
-     "boot_hi": 0.981,
-     "boot_half": 0.08,
+     "boot_lo": 0.901,
+     "boot_hi": 1.0,
+     "boot_half": 0.049,
      "seeds": [
-      0.897,
-      0.896,
-      0.938
+      0.943,
+      1.0,
+      0.943
      ],
-     "seed_sd": 0.024,
-     "threshold": 0.09
+     "seed_sd": 0.033,
+     "threshold": 0.05
     },
     "blind_recall": {
      "mean": 1.0,
@@ -1596,7 +1596,7 @@
     8,
     9
    ],
-   "seconds": 14,
+   "seconds": 15,
    "summary": {
     "callers_recall": null,
     "callers_precision": null,
@@ -2513,7 +2513,7 @@
     8,
     9
    ],
-   "seconds": 127,
+   "seconds": 117,
    "summary": {
     "callers_recall": 0.996,
     "callers_precision": 0.988,
@@ -2791,7 +2791,7 @@
     8,
     9
    ],
-   "seconds": 15,
+   "seconds": 16,
    "summary": {
     "callers_recall": 1.0,
     "callers_precision": 1.0,
@@ -3347,7 +3347,7 @@
     8,
     9
    ],
-   "seconds": 8,
+   "seconds": 9,
    "summary": {
     "callers_recall": 0.991,
     "callers_precision": 1.0,

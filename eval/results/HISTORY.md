@@ -21,7 +21,7 @@ changes that followed it (`run6-seeds.json`), both measured the new way on the s
 | all repos | mean | functions | 90% interval | on seed 7 / 8 / 9 | 2 × SD of the seeds | threshold |
 |---|---:|---:|---:|---:|---:|---:|
 | callers recall | 99.8% | 232 | 100–100% | 100 / 100 / 100 | 0.2 | ±1 |
-| callers precision | 97.9% | 232 | 97–99% | 98 / 99 / 98 | 1.0 | ±2 |
+| callers precision | 98.6% | 232 | 98–100% | 98 / 100 / 98 | 2.0 | ±1 |
 | callers recall, picked blind | 99.2% | 163 | 98–100% | 100 / 98 / 100 | 1.6 | ±1 |
 | shared names: recall | 83.2% | 108 | 78–89% | 85 / 83 / 80 | 5.0 | ±6 |
 | shared names: recall with maybe | 97.6% | 108 | 96–99% | 99 / 97 / 97 | 1.8 | ±2 |
@@ -41,7 +41,7 @@ tests-for numbers move by 9–12 points; in one repo (16–23 mutants) their thr
 | per language | all | go | python | typescript | java | rust |
 |---|---:|---:|---:|---:|---:|---:|
 | callers recall | 100% ±1 (232) | 100% ±2 (71) | — | 100% ±3 (39) | 100% ±2 (85) | 99% ±3 (37) |
-| callers precision | 98% ±2 (232) | 94% ±4 (71) | — | 100% ±3 (39) | 99% ±2 (85) | 100% ±3 (37) |
+| callers precision | 99% ±1 (232) | 96% ±3 (71) | — | 100% ±3 (39) | 99% ±2 (85) | 100% ±3 (37) |
 | callers recall, picked blind | 99% ±1 (163) | 100% ±3 (40) | — | 100% ±3 (34) | 98% ±3 (63) | 100% ±4 (26) |
 | shared names: recall | 83% ±6 (108) | 73% ±23 (11) | — | 65% ±25 (10) | 90% ±6 (56) | 80% ±11 (31) |
 | shared names: recall with maybe | 98% ±2 (108) | 100% ±10 (11) | — | 90% ±10 (10) | 97% ±3 (56) | 100% ±4 (31) |
@@ -109,6 +109,14 @@ again: all ten repos, three seeds — 3 min 17 s (jsoup 2 min 7 s; with one name
 of 7 min 41 s). With an empty cache the compilers and test suites work for about 240 minutes (jsoup 103, yaml 45,
 chi 34, json-java 29). CI runs one seed of 8 functions and 4 mutants (about 55 minutes of that with an empty
 cache, under a minute after) and keeps `truth.json` between runs.
+
+**Checked at acceptance.** The same sample run again gives the same numbers; sqlparse, semver and a small sample of
+chi asked from scratch (121 answers of the compilers and test suites) give the same answers. One more error of the
+measurement came up: `go build ./...` skips directories that start with `_` (chi's `_examples`), so the real callers
+there counted as wrong. They are left out now, like Rust benches: callers precision chi 91% → 97%, Go 94% → 96% ±3,
+all repos 97.9% → 98.6% ±1 (the tables above hold the new numbers). What is left in Go is gitnext's own error:
+a method whose name is unique in the repo takes the calls of a library method of the same name
+(`ctx.Value(…)` → `endpoints.Value`, `c.Flags().HasFlags()` → `Command.HasFlags`).
 
 ## Run 5 · the ground truth was wrong in three places
 

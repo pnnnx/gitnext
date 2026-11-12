@@ -261,6 +261,9 @@ LANG = {
         fail_stmt='panic("gitnext-mutant")',
         failing_alone=go_failing_alone,
         tests_key="tests2",  # under "tests": answers taken with a renamed test binary (see go_failing_alone)
+        # `./...` skips directories that start with `_` or `.` and `testdata` (chi's `_examples`): the compiler
+        # never sees a caller there, so it can be neither confirmed nor refuted
+        unseen=lambda file: any(d.startswith(("_", ".")) or d == "testdata" for d in file.split("/")[:-1]),
         level="name",
     ),
     "python": dict(

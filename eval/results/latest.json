@@ -2964,7 +2964,7 @@
     "file_tokens": 15286
    }
   ],
-  "seconds": 11,
+  "seconds": 12,
   "summary": {
    "callers_recall": 1.0,
    "callers_precision": 0.96,
@@ -3583,7 +3583,6 @@
      "middleware::URLFormat"
     ],
     "found": [
-     "_examples::fileserver::FileServer",
      "main::Mux::Mount",
      "main::URLParamFromCtx",
      "middleware::CleanPath",
@@ -3596,7 +3595,7 @@
     "maybe": [],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.8888888888888888,
+    "precision": 1.0,
     "recall_with_maybe": 1.0
    },
    {
@@ -3709,13 +3708,12 @@
      "main::Mux::routeHTTP"
     ],
     "found": [
-     "_examples::fileserver::FileServer",
      "main::Mux::routeHTTP"
     ],
     "maybe": [],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.5,
+    "precision": 1.0,
     "recall_with_maybe": 1.0
    },
    {
@@ -3742,14 +3740,6 @@
      "main::node::setEndpoint"
     ],
     "found": [
-     "_examples::rest::AdminOnly",
-     "_examples::rest::DeleteArticle",
-     "_examples::rest::GetArticle",
-     "_examples::rest::UpdateArticle",
-     "_examples::rest::init",
-     "_examples::versions::getArticle",
-     "_examples::versions::listArticles",
-     "_examples::versions::presenter::v3::Article::Render",
      "main::Mux::ServeHTTP",
      "main::Mux::routeHTTP",
      "main::RouteContext",
@@ -3761,7 +3751,7 @@
     "maybe": [],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.06666666666666667,
+    "precision": 0.14285714285714285,
     "recall_with_maybe": 1.0
    },
    {
@@ -3857,24 +3847,13 @@
      "middleware::Profiler"
     ],
     "found": [
-     "_examples::custom_handler::main",
-     "_examples::custom_method::main",
-     "_examples::fileserver::main",
-     "_examples::graceful::service",
-     "_examples::hello_world::main",
-     "_examples::limits::main",
-     "_examples::pathvalue::main",
-     "_examples::router_walk::main",
-     "_examples::todos_resource::main",
-     "_examples::todos_resource::todosResource::Routes",
-     "_examples::todos_resource::usersResource::Routes",
      "main::Mux::Route",
      "middleware::Profiler"
     ],
     "maybe": [],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.15384615384615385,
+    "precision": 1.0,
     "recall_with_maybe": 1.0
    },
    {
@@ -4297,7 +4276,6 @@
      "middleware::URLFormat"
     ],
     "found": [
-     "_examples::fileserver::FileServer",
      "main::Mux::Mount",
      "main::URLParamFromCtx",
      "middleware::CleanPath",
@@ -4310,7 +4288,7 @@
     "maybe": [],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.8888888888888888,
+    "precision": 1.0,
     "recall_with_maybe": 1.0
    },
    {
@@ -5341,7 +5319,7 @@
   "seconds": 7,
   "summary": {
    "callers_recall": 1.0,
-   "callers_precision": 0.908,
+   "callers_precision": 0.967,
    "callers_checked": 26,
    "blind_recall": 1.0,
    "blind_checked": 9,
@@ -5362,7 +5340,7 @@
   "summary_seeds": {
    "7": {
     "callers_recall": 1.0,
-    "callers_precision": 0.897,
+    "callers_precision": 0.943,
     "callers_checked": 15,
     "blind_recall": 1.0,
     "blind_checked": 5,
@@ -5382,7 +5360,7 @@
    },
    "8": {
     "callers_recall": 1.0,
-    "callers_precision": 0.896,
+    "callers_precision": 1.0,
     "callers_checked": 14,
     "blind_recall": 1.0,
     "blind_checked": 5,
@@ -5402,7 +5380,7 @@
    },
    "9": {
     "callers_recall": 1.0,
-    "callers_precision": 0.938,
+    "callers_precision": 0.943,
     "callers_checked": 15,
     "blind_recall": 1.0,
     "blind_checked": 3,
@@ -5437,18 +5415,18 @@
     "threshold": 0.04
    },
    "callers_precision": {
-    "mean": 0.908,
+    "mean": 0.967,
     "functions": 26,
-    "boot_lo": 0.82,
-    "boot_hi": 0.981,
-    "boot_half": 0.08,
+    "boot_lo": 0.901,
+    "boot_hi": 1.0,
+    "boot_half": 0.049,
     "seeds": [
-     0.897,
-     0.896,
-     0.938
+     0.943,
+     1.0,
+     0.943
     ],
-    "seed_sd": 0.024,
-    "threshold": 0.09
+    "seed_sd": 0.033,
+    "threshold": 0.05
    },
    "blind_recall": {
     "mean": 1.0,
@@ -7112,7 +7090,7 @@
     "file_tokens": 4485
    }
   ],
-  "seconds": 14,
+  "seconds": 15,
   "summary": {
    "callers_recall": null,
    "callers_precision": null,
@@ -8768,7 +8746,7 @@
   "repo": "zustand",
   "lang": "typescript",
   "commit": "9fed2eb2f3af",
-  "index_seconds": 0.0,
+  "index_seconds": 0.1,
   "symbols": 175,
   "files": 36,
   "seeds": [
@@ -12195,7 +12173,7 @@
   "repo": "jsoup",
   "lang": "java",
   "commit": "d90d57521d93",
-  "index_seconds": 2.8,
+  "index_seconds": 2.5,
   "symbols": 2663,
   "files": 105,
   "seeds": [
@@ -16424,7 +16402,7 @@
     "file_tokens": 4377
    }
   ],
-  "seconds": 127,
+  "seconds": 117,
   "summary": {
    "callers_recall": 0.996,
    "callers_precision": 0.988,
@@ -19422,7 +19400,7 @@
     "file_tokens": 3760
    }
   ],
-  "seconds": 15,
+  "seconds": 16,
   "summary": {
    "callers_recall": 1.0,
    "callers_precision": 1.0,
@@ -23509,7 +23487,7 @@
     "file_tokens": 684
    }
   ],
-  "seconds": 8,
+  "seconds": 9,
   "summary": {
    "callers_recall": 0.991,
    "callers_precision": 1.0,
