@@ -293,13 +293,9 @@ fn find_block(cur: &[&str], h: &Hunk) -> Vec<usize> {
     if pat.is_empty() || pat.len() > cur.len() {
         return vec![];
     }
-    // a short context means the block touched the start / end of the file: it must still be there
-    let at_start = h.pre.len() < CONTEXT;
-    let at_end = h.post.len() < CONTEXT;
-    (0..=cur.len() - pat.len())
-        .filter(|&i| (!at_start || i == 0) && (!at_end || i + pat.len() == cur.len()) && cur[i..i + pat.len()] == pat[..])
-        .map(|i| i + h.pre.len())
-        .collect()
+    // no anchor to the start / end of the file: code appended after the last function or an import added
+    // on top is the most common later change, and "exactly one match" already guards a short context
+    (0..=cur.len() - pat.len()).filter(|&i| cur[i..i + pat.len()] == pat[..]).map(|i| i + h.pre.len()).collect()
 }
 
 /// The file with the operation's blocks put back, or why that is not possible.
@@ -352,6 +348,10 @@ pub fn undo(root: &Path, id: u64) -> Result<UndoReport> {
     }
     let mut changes = Vec::new();
     for f in &o.files {
+        // the log is a local file anyone can write: an operation never reaches outside the repository
+        if f.path.is_empty() || !Path::new(&f.path).components().all(|c| matches!(c, std::path::Component::Normal(_))) {
+            bail!("operation #{id} names a file outside the repository ({}); nothing undone", f.path);
+        }
         let (cur, new) = revert_file(root, &ops, o, f)?;
         changes.push((f.path.clone(), cur, new));
     }

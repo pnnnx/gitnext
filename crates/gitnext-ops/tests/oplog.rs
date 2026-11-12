@@ -172,3 +172,34 @@ fn parallel_writers_get_distinct_ids() {
     ids.sort();
     assert_eq!(ids, (1..=160).collect::<Vec<u64>>());
 }
+
+#[test]
+fn undo_survives_lines_added_above_and_below_by_hand() {
+    // the last function of a file, then code appended after it: the usual order of an agent's edits
+    let dir = project("ends", &[("a.py", TWO)]);
+    let op_f = edit(&dir, "f", EditKind::Replace, "def f(x):\n    return x + 1\n");
+    let op_g = edit(&dir, "g", EditKind::Replace, "def g(y):\n    return y * 2\n");
+    let text = format!("import os\n{}\n\ndef z():\n    return 0\n", read(&dir, "a.py"));
+    std::fs::write(dir.join("a.py"), &text).unwrap();
+    oplog::undo(&dir, op_g).unwrap();
+    oplog::undo(&dir, op_f).unwrap();
+    assert_eq!(read(&dir, "a.py"), format!("import os\n{TWO}\n\ndef z():\n    return 0\n"));
+}
+
+#[test]
+fn undo_refuses_a_file_outside_the_repository() {
+    let dir = project("outside", &[("a.py", TWO)]);
+    let op = edit(&dir, "f", EditKind::Replace, "def f(x):\n    return x + 1\n");
+    let outside = dir.parent().unwrap().join(format!("gitnext-oplog-outside-{}.txt", std::process::id()));
+    std::fs::write(&outside, read(&dir, "a.py")).unwrap();
+    let log = oplog::path(&dir);
+    let name = outside.file_name().unwrap().to_str().unwrap();
+    for forged in [format!("../{name}"), outside.to_str().unwrap().to_string()] {
+        std::fs::write(&log, std::fs::read_to_string(&log).unwrap().replace("\"path\":\"a.py\"", &format!("\"path\":\"{forged}\""))).unwrap();
+        let err = oplog::undo(&dir, op).unwrap_err().to_string();
+        assert!(err.contains("outside the repository"), "{err}");
+        assert!(read(&dir, "a.py").contains("x + 1") && std::fs::read_to_string(&outside).unwrap().contains("x + 1"));
+        std::fs::write(&log, std::fs::read_to_string(&log).unwrap().replace(&format!("\"path\":\"{forged}\""), "\"path\":\"a.py\"")).unwrap();
+    }
+    let _ = std::fs::remove_file(outside);
+}
