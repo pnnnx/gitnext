@@ -132,6 +132,8 @@ pub fn edit_symbol(root: &Path, g: &Graph, i: usize, kind: EditKind, code: &str,
     };
     let new_text = join(&lines, nl);
     let changes = write_checked(root, &r.file, &old_text, &new_text, force)?;
+    let tool = match kind { EditKind::Replace => "replace", EditKind::InsertAfter => "insert_after", EditKind::Delete => "delete" };
+    crate::oplog::record(root, tool, &r.sym.qualified, &[(r.file.clone(), old_text, new_text)]);
     Ok(EditResult { file: r.file.clone(), lines: new_range, changes })
 }
 
@@ -221,7 +223,9 @@ pub fn rename_leftover_text(root: &Path, r: &mut RenameReport) -> Result<()> {
             }
         }
         if !r.dry_run {
-            std::fs::write(&path, out.join("\n"))?;
+            let new_text = out.join("\n");
+            std::fs::write(&path, &new_text)?;
+            crate::oplog::record(root, "rename --text", &format!("{} → {}", r.old, r.new), &[(f.clone(), text, new_text)]);
         }
     }
     r.leftover.retain(|x| !done.iter().any(|d| x.starts_with(&format!("{d}:"))));
@@ -404,6 +408,7 @@ pub fn rename(root: &Path, g: &Graph, i: usize, new_name: &str, dry_run: bool) -
         for (file, _, new_text) in &outputs {
             std::fs::write(root.join(file), new_text)?;
         }
+        crate::oplog::record(root, "rename", &format!("{} → {}", report.old, report.new), &outputs);
     }
     Ok(report)
 }

@@ -23,6 +23,7 @@ pub mod libs;
 pub mod locate;
 pub mod look;
 pub mod lsp;
+pub mod oplog;
 pub mod render;
 pub mod trust;
 

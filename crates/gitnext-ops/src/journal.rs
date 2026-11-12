@@ -30,6 +30,9 @@ pub struct Entry {
     pub naive_tokens: usize,
     #[serde(default)]
     pub error: bool,
+    /// operation recorded by this call (`gitnext ops`, `gitnext undo --op N`)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub op: Option<u64>,
 }
 
 pub fn path(root: &Path) -> PathBuf {
@@ -63,7 +66,7 @@ pub fn sessions(entries: &[Entry]) -> Vec<(String, Vec<&Entry>)> {
     by.into_iter().rev().map(|((_, s), v)| (s, v)).collect()
 }
 
-fn hm(ts: i64) -> String {
+pub(crate) fn hm(ts: i64) -> String {
     let d = crate::history_date(ts);
     let secs = ts.rem_euclid(86_400);
     format!("{d} {:02}:{:02} UTC", secs / 3600, (secs % 3600) / 60)

@@ -38,6 +38,7 @@ impl Server {
         let snapshot = Snapshot::of(&graph);
         let t = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0);
         let session = format!("{:x}", t ^ (std::process::id() as u64) << 32).chars().rev().take(6).collect();
+        gitnext_ops::oplog::set_actor(format!("mcp:{session}"));
         Ok(Server { ws, index, graph, sent: HashMap::new(), snapshot, session, profile })
     }
 
@@ -324,6 +325,7 @@ impl Server {
                 let i = find_one(g, s_arg(a, "symbol").ok_or("missing `symbol`")?)?;
                 let new = s_arg(a, "new_name").ok_or("missing `new_name`")?;
                 let dry = a.get("dry_run").and_then(Value::as_bool).unwrap_or(false);
+                let _op = gitnext_ops::oplog::Group::start(&root, "rename", &format!("{} → {new}", g.syms[i].sym.qualified));
                 let mut r = edit::rename(&root, g, i, new, dry).map_err(|e| format!("{e:#}"))?;
                 if a.get("text").and_then(Value::as_bool).unwrap_or(false) {
                     edit::rename_leftover_text(&root, &mut r).map_err(|e| format!("{e:#}"))?;
@@ -392,6 +394,7 @@ impl Server {
             out_tokens,
             naive_tokens: naive,
             error: res.is_err(),
+            op: if edit && res.is_ok() { gitnext_ops::oplog::take_last() } else { None },
         };
         gitnext_ops::journal::append(&self.ws.root, &e);
         (out_tokens, naive)

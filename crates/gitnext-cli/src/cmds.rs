@@ -173,8 +173,18 @@ pub enum More {
     },
     /// Check that everything is in place for agents (binary on PATH, index, map, agent configs, model server)
     Doctor,
-    /// Take back the last commit; its changes stay staged (refuses if already pushed)
-    Undo,
+    /// Take back the last commit; its changes stay staged (refuses if already pushed).
+    /// `--op N` undoes one gitnext edit instead (see `gitnext ops`)
+    Undo {
+        /// operation number from `gitnext ops`; other changes stay as they are
+        #[arg(long)]
+        op: Option<u64>,
+    },
+    /// Edits made through gitnext (CLI and MCP), newest first: who, what, which files; `undo --op N` takes one back
+    Ops {
+        #[arg(short = 'n', default_value_t = 20)]
+        n: usize,
+    },
     /// Branches: ahead / behind and what each one changes
     Branches,
     /// Every earlier point of HEAD (commits, resets, checkouts); `--to N` goes back to one
@@ -402,7 +412,21 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
                 println!("  tip: `gitnext setup claude --hooks` also answers whole reads of big code files with an outline");
             }
         }
-        More::Undo => {
+        More::Undo { op: Some(id) } => {
+            let r = gitnext_ops::oplog::undo(&ws.root, id)?;
+            if out.json {
+                return out.json(&r);
+            }
+            out.text(&gitnext_ops::oplog::render_undo(&r));
+        }
+        More::Ops { n } => {
+            let ops = gitnext_ops::oplog::load(&ws.root);
+            if out.json {
+                return out.json(&ops.iter().rev().take(n).collect::<Vec<_>>());
+            }
+            out.text(&gitnext_ops::oplog::render(&ops, n));
+        }
+        More::Undo { op: None } => {
             let c = ws.repo()?.undo_commit().map_err(|e| anyhow::anyhow!(gitnext_ops::changes::humanize(&e)))?;
             println!("✓ took back {} “{}” — its changes are staged; edit and `gitnext commit` again", c.short, c.summary);
             println!("  (to redo it as it was: `gitnext timeline --to 1`)");

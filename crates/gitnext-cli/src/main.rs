@@ -587,6 +587,7 @@ fn run() -> Result<()> {
             let ws = Workspace::open(&cwd)?;
             let g = ws.graph()?;
             let i = one(&g, &symbol)?;
+            let _op = gitnext_ops::oplog::Group::start(&ws.root, "rename", &format!("{} → {new_name}", g.syms[i].sym.qualified));
             let mut r = gitnext_ops::edit::rename(&ws.root, &g, i, &new_name, dry_run)?;
             if text {
                 gitnext_ops::edit::rename_leftover_text(&ws.root, &mut r)?;

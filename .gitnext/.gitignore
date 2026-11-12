@@ -8,3 +8,4 @@ tui-welcomed
 tests.db
 tests.db-*
 coverage.db*
+ops.jsonl
