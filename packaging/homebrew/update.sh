@@ -1,6 +1,6 @@
 #!/bin/sh
 # Print the Homebrew formula for a released version, with real sha256 sums:
-#   sh packaging/homebrew/update.sh v0.2.0 > ../homebrew-tap/Formula/gitnext.rb
+#   sh packaging/homebrew/update.sh v0.3.0 > ../homebrew-tap/Formula/gitnext.rb
 set -e
 TAG=${1:?usage: update.sh vX.Y.Z}
 REPO=${GITNEXT_REPO:-pnnnx/gitnext}

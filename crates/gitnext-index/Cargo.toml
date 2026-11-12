@@ -6,7 +6,7 @@ license.workspace = true
 
 [dependencies]
 anyhow = "1.0.104"
-gitnext-parse = { version = "0.2.0", path = "../gitnext-parse" }
+gitnext-parse = { version = "0.3.0", path = "../gitnext-parse" }
 ignore = "0.4.34"
 rayon = "1.12.0"
 rusqlite = { version = "0.41.1", features = ["bundled"] }

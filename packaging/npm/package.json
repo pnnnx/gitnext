@@ -1,6 +1,6 @@
 {
   "name": "gitnext",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "git that understands code: code map, symbol graph and plain-language git for AI agents and people",
   "license": "MIT",
   "homepage": "https://github.com/pnnnx/gitnext",
