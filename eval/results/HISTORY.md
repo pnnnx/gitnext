@@ -1,8 +1,114 @@
 # Eval history
 
-Same repos and commits (eval/repos.json), same sample (seed 7, 8 functions, 4 mutants per repo).
 Ground truth comes from each project's compiler and test suite, see `eval/run.py`.
-From the last run on, a rename only counts as ok if the project's tests still pass too.
+Runs 1–5: five repos (one per language), one sample (seed 7, 8 functions, 4 mutants per repo).
+From run 6 on: ten repos, 20 functions and 8 mutants per repo, three seeds, and a threshold next to every number.
+Since the run after run 4, a rename only counts as ok if the project's tests still pass too.
+
+## Run 6 · a sample large enough to tell a change from noise
+
+The measurement changed, so these numbers are a new starting point. `a → b` below: the code of run 5
+(`run6-before.json`) → gitnext with the Rust receiver types, `callers` for several names and the tests-for
+changes that followed it (`run6-seeds.json`), both measured the new way on the same functions.
+
+- **A second repo per language**: chi (Go), sqlparse (Python), yaml (TypeScript), json-java (Java), indexmap (Rust).
+- **20 functions and 8 mutants per repo, seeds 7, 8, 9.** A function that several seeds picked is measured once.
+  Checked now (run 5 in brackets): rename 337 functions (30), callers 232 (22), shared names 108 (10), mutants 166 (16).
+- **A threshold for every number**, written as `77% ±6 (20)`. The functions are drawn again 2000 times (bootstrap);
+  the ± is half the 90% interval of the mean, and never less than what one function weighs (100 / functions).
+  A change smaller than the ± is noise. `--check` uses the same thresholds per repo instead of one 5-point tolerance.
+
+| all repos | mean | functions | 90% interval | on seed 7 / 8 / 9 | 2 × SD of the seeds | threshold |
+|---|---:|---:|---:|---:|---:|---:|
+| callers recall | 99.8% | 232 | 100–100% | 100 / 100 / 100 | 0.2 | ±1 |
+| callers precision | 97.9% | 232 | 97–99% | 98 / 99 / 98 | 1.0 | ±2 |
+| callers recall, picked blind | 99.2% | 163 | 98–100% | 100 / 98 / 100 | 1.6 | ±1 |
+| shared names: recall | 83.2% | 108 | 78–89% | 85 / 83 / 80 | 5.0 | ±6 |
+| shared names: recall with maybe | 97.6% | 108 | 96–99% | 99 / 97 / 97 | 1.8 | ±2 |
+| shared names: precision | 99.5% | 93 | 99–100% | 100 / 100 / 99 | 0.6 | ±2 |
+| rename ok (tests pass) | 82.8% | 337 | 80–86% | 85 / 85 / 80 | 6.2 | ±4 |
+| tests recall | 45.4% | 166 | 40–51% | 42 / 51 / 51 | 10.4 | ±6 |
+| tests precision | 47.1% | 166 | 42–52% | 44 / 49 / 53 | 9.0 | ±6 |
+| top-10 that fail | 50.9% | 166 | 46–56% | 47 / 55 / 56 | 9.8 | ±6 |
+| … best possible order | 60.5% | 166 | 55–66% | 55 / 64 / 65 | 11.2 | ±6 |
+| caught by the top 10 | 75.3% | 166 | 70–81% | 71 / 76 / 82 | 11.8 | ±6 |
+| look / file | 19.3% | 337 | 17–22% | 21 / 19 / 18 | 2.6 | ±3 |
+
+A seed is one sample of 20 per repo, the mean is over all three, so two seeds differ by more than the threshold of
+the mean — the two columns agree (2 × SD ≈ threshold × √3). On one seed (all repos, about 55 mutants) the
+tests-for numbers move by 9–12 points; in one repo (16–23 mutants) their threshold is 10–18 points.
+
+| per language | all | go | python | typescript | java | rust |
+|---|---:|---:|---:|---:|---:|---:|
+| callers recall | 100% ±1 (232) | 100% ±2 (71) | — | 100% ±3 (39) | 100% ±2 (85) | 99% ±3 (37) |
+| callers precision | 98% ±2 (232) | 94% ±4 (71) | — | 100% ±3 (39) | 99% ±2 (85) | 100% ±3 (37) |
+| callers recall, picked blind | 99% ±1 (163) | 100% ±3 (40) | — | 100% ±3 (34) | 98% ±3 (63) | 100% ±4 (26) |
+| shared names: recall | 83% ±6 (108) | 73% ±23 (11) | — | 65% ±25 (10) | 90% ±6 (56) | 80% ±11 (31) |
+| shared names: recall with maybe | 98% ±2 (108) | 100% ±10 (11) | — | 90% ±10 (10) | 97% ±3 (56) | 100% ±4 (31) |
+| shared names: precision | 100% ±2 (93) | 100% ±13 (8) | — | 100% ±15 (7) | 100% ±2 (52) | 99% ±4 (26) |
+| rename ok (tests pass) | 83% ±4 (337) | 90% ±6 (81) | 73% ±8 (92) | 70% ±13 (40) | 96% ±3 (86) | 74% ±12 (38) |
+| tests recall | 45% ±6 (166) | 79% ±9 (37) | 30% ±10 (42) | 3% ±5 (22) | 49% ±12 (43) | 53% ±14 (22) |
+| tests precision | 47% ±6 (166) | 47% ±11 (37) | 49% ±11 (42) | 20% ±12 (22) | 61% ±10 (43) | 43% ±14 (22) |
+| top-10 that fail | 51% ±6 (166) | 54% ±11 (37) | 52% ±11 (42) | 20% ±12 (22) | 67% ±9 (43) | 44% ±14 (22) |
+| … best possible order | 60% ±6 (166) | 75% ±10 (37) | 58% ±11 (42) | 20% ±12 (22) | 80% ±8 (43) | 44% ±14 (22) |
+| caught by the top 10 | 75% ±6 (166) | 84% ±10 (37) | 74% ±12 (42) | 27% ±16 (22) | 95% ±6 (43) | 73% ±14 (22) |
+| look / file | 19% ±3 (337) | 14% ±4 (81) | 17% ±4 (92) | 54% ±12 (40) | 14% ±4 (86) | 14% ±6 (38) |
+
+Per repo: `latest.md`; every number with its interval and its value on each seed: `run6-seeds.json`.
+
+**The first use of the thresholds** — what the changes in gitnext since run 5 did, on the same functions:
+
+| | a → b | threshold | |
+|---|---:|---:|---|
+| shared names: recall, all repos | 71% → 83% | ±7 | real |
+| shared names: recall, Rust | 34% → 80% (28 → 31 methods) | ±13 | real |
+| shared names: recall with maybe, Rust | 89% → 100% | ±8 | real |
+| shared names: recall with maybe, all repos | 95% → 98% | ±3 | at the threshold |
+| tests recall, Rust | 49% → 53% | ±14 | noise |
+| caught by the top 10, Rust | 68% → 73% | ±16 | noise |
+| every other number, all repos | moves by 0–0.6 points | ±1 … ±6 | noise |
+
+What 8 functions per repo did not show:
+
+- **rename ok was 100% everywhere; on 337 functions it is 83% ±4** (cobra 87, chi 94, click 66, sqlparse 81, yaml 69,
+  jsoup 96, json-java 97, indexmap 70). Of the 58 renames that fail: 22 do not compile, 28 break tests, 6 gitnext
+  refuses (`#private` methods in TypeScript: "not a valid identifier"), 2 leave a test suite that does not start.
+  Seen causes: `--text` renames a method of another type with the same name (`template.Execute`, `io.ReadCloser.Close`,
+  `string[].unshift`) and string literals (`'warn'`, `'flow'`); a method that implements an interface of a library
+  is renamed (`error.Error`, `Map.Entry.getValue`, `Iterator.hasNext`); uses are left behind — through the package
+  (`click.format_filename(…)`, `sqlparse.parse(…)`) and in a Rust `use crate::util::{a, b, third}` list (7 of the
+  10 failures in indexmap).
+- **tests-for in yaml finds 2% ±5 of the failing test files**: the tests are anonymous `test('…', () => …)` callbacks
+  in `tests/*.ts`, there is no named test function to reach through the call graph.
+- **callers recall does not depend on how the functions are picked.** The samples hold only functions gitnext finds a
+  caller for. Picked blind (the first 20 of the same order, whatever gitnext sees), 163 functions have uses the
+  compiler names, and gitnext misses all callers of one of them (`Safelist.isSafeTag` in jsoup): 99.2% ±1.
+
+Errors of the measurement, found and fixed on the way (the answers taken the old way are not used):
+
+- **Go: seven cobra tests failed under every mutant.** The tests were run one at a time from a binary named
+  `.gnx.test`; cobra reads the command line as its own arguments unless the binary is called `cobra.test`. The binary
+  keeps the name `go test` gives it, and tests that fail alone on the untouched commit are part of the baseline.
+  cobra on the sample of run 5: tests recall 82% → 96%, precision 17% → 22%, top-10 that fail 30% → 28%,
+  caught by the top 10 100% → 50% (the seven tests made every top 10 look like a hit).
+- **Python: the list of failing tests was cut and polluted.** `| tail -400` kept the last 400 lines of the pytest
+  summary: 4 of 24 click mutants fail more tests than that (372 test names became 122, 365 → 122, 353 → 102,
+  288 → 102). The name of a parametrized case was taken from inside its id (`test_x[a::integer]` → `integer`):
+  9 of 24 sqlparse mutants had such names in their truth. The sample of run 5 (4 click mutants) was not affected.
+- **Python: a test module that no longer imports stopped the run** ("Interrupted: 1 error during collection") and
+  read as "no test fails". The suite now continues past it and every test of such a module counts as failing. No
+  mutant of this sample hit it, but four click renames that had passed this way now fail (click rename ok 74% → 66%).
+- **Python: a test is `file::name` now**, a bare name merged tests of the same name in different files.
+- **Rust: code behind a feature was not compiled** (`cargo check --tests`), so real callers in indexmap's `rayon`
+  and `serde` modules counted as wrong: callers precision 90% → 100% with `--all-features`. Benches (they need
+  nightly there) are left out of what gitnext found.
+
+Cost. The verdict on a rename (build + tests) is kept per distinct edit, like the other answers of the compilers
+and test suites, and `gitnext callers` is asked about 40 functions at once, so a second run only asks gitnext
+again: all ten repos, three seeds — 3 min 17 s (jsoup 2 min 7 s; with one name per `callers` run it was 5 min 48 s
+of 7 min 41 s). With an empty cache the compilers and test suites work for about 240 minutes (jsoup 103, yaml 45,
+chi 34, json-java 29). CI runs one seed of 8 functions and 4 mutants (about 55 minutes of that with an empty
+cache, under a minute after) and keeps `truth.json` between runs.
 
 ## Run 5 · the ground truth was wrong in three places
 
