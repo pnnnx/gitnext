@@ -230,8 +230,10 @@ class Case(unittest.TestCase):
         res, s = self.run_agent([say("it is in calc.py"), call("grep", pattern="add"), say("calc.py"), say("calc.py")], mode="verify")
         self.assertEqual(res["gate"], {"tool": 1, "nochange": 1})
         self.assertEqual(res["answer"], "calc.py")
-        self.assertIn("You have not looked at the code yet", s.seen())
+        self.assertIn("Your first step must be a tool call", s.seen())
         self.assertIn("No file was changed", s.seen())
+        # the answer given without a look is not shown to the model again
+        self.assertNotIn("it is in calc.py", json.dumps(s.requests[1]["messages"]))
 
     def test_verify_ends_only_when_the_check_passes(self):
         self.fake_gitnext()
@@ -306,6 +308,13 @@ class Case(unittest.TestCase):
         self.assertIn("The function `add` you wrote was put in place (calc.py:1-2)", seen)
         self.assertIn("It failed: write the whole corrected function again.", seen)
         self.assertIn("verdict: ok", seen)
+
+    def test_the_same_code_written_again_is_not_checked_again(self):
+        self.fake_gitnext()
+        same = "Fixed:\n```python\n" + (self.root / "calc.py").read_text() + "```"
+        res, s = self.run_agent([call("grep", pattern="add"), say(same), say("done")], mode="gitnext")
+        self.assertIn("is the same as the code already in the file", s.seen())
+        self.assertNotIn("The check:", s.seen())
 
     def test_code_in_the_answer_is_left_alone_when_it_is_not_a_function_of_the_project(self):
         self.fake_gitnext()

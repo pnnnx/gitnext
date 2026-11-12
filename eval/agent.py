@@ -128,10 +128,15 @@ def code_as_text(text: str, root: Path) -> str | None:
         if name.lower().startswith("test"):
             continue
         code = block[m.start():].rstrip() + "\n"
+        before = ev.sh("git diff", root)[1]
         p = subprocess.run([ev.GITNEXT, "edit", "replace", name], input=code, cwd=root, capture_output=True, text=True)
         if p.returncode != 0:
             continue
         where = (p.stdout.strip().split("\n") or [""])[0].removeprefix("ok ").strip()
+        if ev.sh("git diff", root)[1] == before:
+            # the function as it already is (or the same wrong fix again): a check would say what it said before
+            return (f"The function `{name}` you wrote is the same as the code already in the file ({where}): nothing changed, the test still fails. "
+                    "One line of it is wrong. Find that line and write the whole function again with that line corrected.")
         verdict = ev.gx(["check"], root, timeout=900)[1][-MAX_OUT:]
         failed = "verdict: FAILED" in verdict
         return (f"The function `{name}` you wrote was put in place ({where}). The check:\n{verdict}\n"
@@ -263,6 +268,9 @@ class Gate:
         self.guard, self.check, self.full = guard, check, full
         self.start = guard.fingerprint()
         self.said: dict[str, int] = {}
+        # the answer just sent back is to be taken out of the conversation: a small model that sees
+        # what it made up repeats it word for word (3 of 8 `fix` runs in lite)
+        self.drop = False
 
     def on_finish(self, tool_steps: int, text: str = "", tools: tuple = ()) -> str | None:
         bare = text.strip(" `\n.()")
@@ -271,7 +279,8 @@ class Gate:
             return f"`{bare}` is a tool, not an answer: call it with its arguments."
         if tool_steps == 0 and "tool" not in self.said:
             self.said["tool"] = 1
-            return "You have not looked at the code yet. Use the tools to find the answer in the project, then answer."
+            self.drop = True
+            return "Your first step must be a tool call, not an answer: `check` with the name of the failing test if a test fails, otherwise `look`."
         if not self.full:
             return None
         changed = self.guard.fingerprint() != self.start
@@ -368,7 +377,12 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
             back = gate.on_finish(used["steps"], text, names) if gate else None
             if back is None:
                 break
-            msgs.append({"role": "user", "content": back})
+            if gate.drop:
+                gate.drop = False
+                msgs.pop()
+                msgs[1] = {**msgs[1], "content": msgs[1]["content"] + "\n\n" + back}
+            else:
+                msgs.append({"role": "user", "content": back})
             continue
         used["steps"] += 1
         finished = False
