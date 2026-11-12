@@ -169,25 +169,27 @@ def go_failed(out: str) -> set[str]:
 
 def go_failing_alone(root: Path) -> set[str]:
     """Go tests that fail, each run on its own. A panic kills the whole test binary, so one
-    `go test` run names only the first test that reached the broken function."""
+    `go test` run names only the first test that reached the broken function.
+    The binary keeps the name `go test` gives it (`cobra.test`): a project may look at it — cobra
+    reads the command line as its own arguments under any other name, and seven tests fail."""
     failed = set()
     _, dirs = sh("go list -f '{{.Dir}}' ./...", root)
     for d in [Path(x) for x in dirs.split() if x.startswith("/")]:
-        binary = d / ".gnx.test"
-        sh(f"go test -c -o {binary} .", d, timeout=900)
-        if not binary.exists():
-            continue  # no tests in this package
-        _, names = sh(f"{binary} -test.list '^(Test|Example|Fuzz)'", d)
-        for n in [x for x in names.split() if re.match(r"(Test|Example|Fuzz)\w*$", x)]:
-            code, _ = sh(f"{binary} -test.run '^{n}$' -test.count=1", d, timeout=300)
-            if code:
-                failed.add(n)
-        binary.unlink()
+        out = d / ".gnx-bin"
+        sh(f"rm -rf {out}; mkdir {out} && go test -c -o {out}/ .", d, timeout=900)
+        for binary in out.glob("*.test"):  # none: no tests in this package
+            _, names = sh(f"{binary} -test.list '^(Test|Example|Fuzz)'", d)
+            for n in [x for x in names.split() if re.match(r"(Test|Example|Fuzz)\w*$", x)]:
+                code, _ = sh(f"{binary} -test.run '^{n}$' -test.count=1", d, timeout=300)
+                if code:
+                    failed.add(n)
+        shutil.rmtree(out, ignore_errors=True)
     return failed
 
 
 def py_failed(out: str) -> set[str]:
-    return {m.group(1).split("[")[0].rsplit("::", 1)[-1] for m in re.finditer(r"^(?:FAILED|ERROR) [^\s]+::([^\s]+)", out, re.M)}
+    # `FAILED tests/a.py::Class::test_x[a::b c] - message` → test_x: the id of a parametrized case may hold anything
+    return {m.group(1).rsplit("::", 1)[-1] for m in re.finditer(r"^(?:FAILED|ERROR) ([^\s\[]+::[^\s\[]+)", out, re.M)}
 
 
 def rust_failed(out: str) -> set[str]:
@@ -230,12 +232,15 @@ LANG = {
         failed=lambda out, root: go_failed(out),
         fail_stmt='panic("gitnext-mutant")',
         failing_alone=go_failing_alone,
+        tests_key="tests2",  # under "tests": answers taken with a renamed test binary (see go_failing_alone)
         level="name",
     ),
     "python": dict(
         compile=".venv/bin/python -m compileall -q . >/dev/null && .venv/bin/python -m pytest -q --co -p no:cacheprovider 2>&1 | tail -3",
         errors=None,  # no compiler to name every use
-        tests=".venv/bin/python -m pytest -q -rfE -p no:cacheprovider -x --maxfail=10000 2>&1 | tail -400",
+        # the whole summary, no tracebacks: `| tail -400` cut the list wherever hundreds of tests failed
+        tests=".venv/bin/python -m pytest -q -rfE --tb=no -p no:cacheprovider -x --maxfail=10000 2>&1",
+        tests_key="tests3",  # "tests": cut at 400 lines; "tests2": names taken from inside parametrized ids
         ran=lambda out, root: bool(re.search(r"\d+ (passed|failed|error)", out)),
         failed=lambda out, root: py_failed(out),
         fail_stmt='raise RuntimeError("gitnext-mutant")',
@@ -297,9 +302,13 @@ def restore(root: Path) -> None:
 
 
 def baseline_tests(root: Path, L: dict) -> dict:
-    """The suite on the untouched commit: did it run, and which tests fail already (those are not ours)."""
+    """The suite on the untouched commit: did it run, and which tests fail already (those are not ours).
+    Asked the same way a mutant is: where its tests run one at a time, the ones failing alone count too."""
     _, tout = sh(L["tests"], root, timeout=2400)
-    return {"ran": bool(L["ran"](tout, root)), "failed": sorted(L["failed"](tout, root)), "tail": tout[-300:]}
+    failed = L["failed"](tout, root)
+    if "failing_alone" in L:
+        failed = failed | L["failing_alone"](root)
+    return {"ran": bool(L["ran"](tout, root)), "failed": sorted(failed), "tail": tout[-300:]}
 
 
 def symbols(root: Path) -> list[dict]:
