@@ -161,3 +161,31 @@ fn learned_map_replaces_the_call_graph() {
     assert_eq!(locate::tests_for_at(&g, &dir, g.find("app::dispatch")[0], 4).1, locate::Source::Graph);
     let _ = std::fs::remove_dir_all(&dir);
 }
+
+/// JavaScript / TypeScript: `it('…', () => …)` is not a named function — the test is the file.
+#[test]
+fn a_typescript_test_file_is_a_test() {
+    let dir = std::env::temp_dir().join(format!("gitnext-testsfor-ts-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(dir.join("src")).unwrap();
+    std::fs::create_dir_all(dir.join("tests")).unwrap();
+    std::fs::write(dir.join("package.json"), "{ \"name\": \"demo\", \"devDependencies\": { \"vitest\": \"^3.0.0\" } }\n").unwrap();
+    std::fs::write(dir.join("src/price.ts"), "export function totalPrice(items: number[]): number {\n  return items.reduce((a, b) => a + b, 0)\n}\n\nexport function unused(): number {\n  return 1\n}\n").unwrap();
+    std::fs::write(
+        dir.join("tests/cart.ts"),
+        "import { describe, expect, it } from 'vitest'\nimport { totalPrice } from '../src/price'\n\ndescribe('cart', () => {\n  it('adds up', () => {\n    expect(totalPrice([1, 2])).toBe(3)\n  })\n})\n",
+    )
+    .unwrap();
+    let mut idx = Index::open(&dir).unwrap();
+    idx.refresh().unwrap();
+    let g = idx.graph().unwrap();
+    let t = locate::tests_for(&g, g.find("totalPrice")[0], 4);
+    let files: Vec<&str> = t.iter().map(|x| g.syms[x.symbol].file.as_str()).collect();
+    assert_eq!(files, ["tests/cart.ts"]);
+    // the command runs that file
+    let cmds = locate::run_commands(&g, &dir, &t);
+    assert!(cmds.iter().any(|c| c.contains("vitest run") && c.contains("tests/cart.ts")), "{cmds:?}");
+    // a function no test file calls gets none
+    assert!(locate::tests_for(&g, g.find("unused")[0], 4).is_empty());
+    let _ = std::fs::remove_dir_all(&dir);
+}

@@ -227,7 +227,7 @@ pub fn tests_for(g: &Graph, i: usize, depth: usize) -> Vec<TestRef> {
             continue;
         }
         let Some(idx) = lookup(&n) else { continue };
-        if !g.syms[idx].sym.kind.is_callable() {
+        if !is_test_unit(&g.syms[idx]) {
             continue;
         }
         reach(idx, n.depth);
@@ -239,7 +239,7 @@ pub fn tests_for(g: &Graph, i: usize, depth: usize) -> Vec<TestRef> {
                     continue;
                 }
                 if let Some(j) = lookup(&m) {
-                    if g.syms[j].sym.kind.is_callable() {
+                    if is_test_unit(&g.syms[j]) {
                         reach(j, depth + m.depth);
                     }
                 }
@@ -255,7 +255,7 @@ pub fn tests_for(g: &Graph, i: usize, depth: usize) -> Vec<TestRef> {
     let by_name = name.len() >= 4 && !r.sym.test;
     let mut in_mirror = Vec::new();
     for (k, s) in g.syms.iter().enumerate() {
-        if !s.sym.test || !s.sym.kind.is_callable() {
+        if !s.sym.test || !is_test_unit(s) {
             continue;
         }
         let known = found.contains_key(&k);
@@ -380,6 +380,14 @@ fn mirror_test_files(file: &str) -> Vec<String> {
         "rs" => vec![format!("/{stem}.rs"), format!("tests/{stem}.rs")],
         _ => vec![],
     }
+}
+
+/// What can be named as a test: a function — and, in JavaScript and TypeScript, the test file
+/// itself. `it('…', () => …)` is not a named function: the calls made inside it are booked to
+/// the file's module, and the runner takes a file (`npx vitest run tests/x.ts`). Without this
+/// `tests-for` found 2% of the failing test files of yaml.
+fn is_test_unit(s: &gitnext_index::SymbolRow) -> bool {
+    s.sym.kind.is_callable() || (s.sym.test && s.sym.kind == Kind::Module && gitnext_parse::family_of(&s.file) == Some("js"))
 }
 
 /// A test the runner executes on its own (not a helper inside a test file).
