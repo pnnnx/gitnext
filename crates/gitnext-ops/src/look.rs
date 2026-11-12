@@ -59,7 +59,17 @@ pub fn look(ws: &Workspace, g: &Graph, what: &str, lite: bool) -> String {
         _ => what,
     };
     let name = name.trim_end_matches("()").trim_end_matches(':');
-    let ids = g.find(name);
+    let mut ids = g.find(name);
+    // a bare name that is also somebody's full name (C `main`) must not hide its namesakes
+    // (`run::main`, `cli::main`): picking one silently sends the agent to the wrong code
+    if !ids.is_empty() && !name.contains("::") && !name.contains('.') && !name.contains('@') {
+        for i in g.named(name) {
+            let k = g.syms[i].sym.kind;
+            if !ids.contains(&i) && (k.is_callable() || k.is_type()) {
+                ids.push(i);
+            }
+        }
+    }
     if !ids.is_empty() {
         let first = g.syms[ids[0]].sym.qualified.clone();
         if ids.iter().all(|&i| g.syms[i].sym.qualified == first) {
@@ -68,7 +78,10 @@ pub fn look(ws: &Workspace, g: &Graph, what: &str, lite: bool) -> String {
         let mut s = format!("{} things are called `{name}` — look at one by its full name (or several at once):\n", ids.len());
         for &i in ids.iter().take(12) {
             let r = &g.syms[i];
-            let _ = writeln!(s, "  {} ({}) {}:{}", g.short_name(i), r.sym.kind.as_str(), r.file, r.sym.start_line);
+            // a name that would only bring this list back is pinned by its line: `main@78`
+            let short = g.short_name(i);
+            let label = if g.find(short).iter().all(|&x| g.syms[x].sym.qualified == r.sym.qualified) && short != name { short.to_string() } else { format!("{}@{}", r.sym.name, r.sym.start_line) };
+            let _ = writeln!(s, "  {label} ({}) {}:{}", r.sym.kind.as_str(), r.file, r.sym.start_line);
         }
         return s;
     }
@@ -104,13 +117,17 @@ fn symbol(ws: &Workspace, g: &Graph, ids: &[usize], lite: bool) -> String {
     if !sure.is_empty() || !maybe.is_empty() {
         let list: Vec<String> = sure.iter().take(12).map(|(c, l)| format!("{} {}:{l}", g.short_name(*c), short_file(&g.syms[*c].file))).collect();
         let more = sure.len().saturating_sub(12);
+        // how far to trust the list: measured share of real callers among the sure ones;
+        // a small model is not shown the doubtful ones at all
+        let trust = crate::trust::callers_sure(&r.file);
         let _ = writeln!(
             s,
-            "called by ({}): {}{}{}",
+            "called by ({}{}): {}{}{}",
             sure.len(),
+            if trust.is_empty() || sure.is_empty() { String::new() } else { format!(", {trust}") },
             if list.is_empty() { "—".to_string() } else { list.join(", ") },
             if more > 0 { format!(" +{more}") } else { String::new() },
-            if maybe.is_empty() { String::new() } else { format!(" · maybe {} more via calls on objects of unknown type", maybe.len()) }
+            if maybe.is_empty() || lite { String::new() } else { format!(" · maybe {} more via calls on objects of unknown type", maybe.len()) }
         );
     } else if r.sym.kind.is_callable() {
         let _ = writeln!(s, "called by: nothing in the repo{}", if tests.is_empty() { "" } else { " except tests" });
@@ -146,7 +163,7 @@ fn symbol(ws: &Workspace, g: &Graph, ids: &[usize], lite: bool) -> String {
         // most likely to fail first: name those, one command for them and one for the rest
         let top = &t[..t.len().min(locate::TOP_TESTS)];
         let names: Vec<String> = top.iter().take(8).map(|x| g.short_name(x.symbol).to_string()).collect();
-        let _ = writeln!(s, "tests ({}): {}{}", t.len(), names.join(", "), if t.len() > 8 { " …" } else { "" });
+        let _ = writeln!(s, "tests ({}{}): {}{}", t.len(), crate::trust::tests_short(&r.file), names.join(", "), if t.len() > 8 { " …" } else { "" });
         for cmd in locate::run_commands(g, root, top).into_iter().take(2) {
             let _ = writeln!(s, "  run: {cmd}");
         }

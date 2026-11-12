@@ -21,6 +21,8 @@ pub struct Opts {
     pub all: bool,
     /// Full doc comments instead of the first paragraph.
     pub full_doc: bool,
+    /// For a small model: leave out what it would have to doubt ("maybe" callers).
+    pub lite: bool,
 }
 
 fn loc(g: &Graph, i: usize) -> String {
@@ -305,9 +307,25 @@ fn list_line(label: &str, ids: &[usize], g: &Graph, o: Opts) -> String {
 pub fn callers(g: &Graph, i: usize, o: Opts) -> String {
     let all = g.callers(i);
     let (tests, real): (Vec<_>, Vec<_>) = all.iter().partition(|(c, _)| g.syms[*c].sym.test);
-    let mut s = format!("callers of {} ({}, approximate):\n", g.syms[i].sym.qualified, real.len());
-    for (c, line) in &real {
+    // sure: the call names this function, or the receiver's type is known; maybe: a call on a
+    // value of unknown type that could reach it
+    let (sure, maybe): (Vec<_>, Vec<_>) = real.iter().partition(|(c, _)| !g.is_guess(*c, i));
+    let trust = crate::trust::callers_sure(&g.syms[i].file);
+    let mut s = format!(
+        "callers of {} ({} sure{}{}):\n",
+        g.syms[i].sym.qualified,
+        sure.len(),
+        if trust.is_empty() { String::new() } else { format!(", {trust}") },
+        if maybe.is_empty() { String::new() } else { format!("; {} maybe", maybe.len()) }
+    );
+    for (c, line) in &sure {
         let _ = writeln!(s, "{}  {}:{line}", g.short_name(*c), g.syms[*c].file);
+    }
+    if !maybe.is_empty() && !o.lite {
+        let _ = writeln!(s, "maybe — the receiver's type is unknown, check each before relying on it:");
+        for (c, line) in &maybe {
+            let _ = writeln!(s, "{}  {}:{line}", g.short_name(*c), g.syms[*c].file);
+        }
     }
     if o.tests {
         for (c, line) in &tests {

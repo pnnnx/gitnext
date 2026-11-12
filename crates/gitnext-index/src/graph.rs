@@ -258,6 +258,11 @@ impl Graph {
     }
 
     /// Find symbols by exact qualified name, `::`-suffix, or bare name.
+    /// Every symbol with this bare name, whatever it belongs to (`main` of each program).
+    pub fn named(&self, name: &str) -> Vec<usize> {
+        self.by_name.get(name).cloned().unwrap_or_default()
+    }
+
     pub fn find(&self, q: &str) -> Vec<usize> {
         let q = q.trim();
         // `name@123` / `name:L123` pins an overload / duplicate by its start line.

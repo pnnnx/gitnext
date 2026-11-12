@@ -22,6 +22,7 @@ pub mod locate;
 pub mod look;
 pub mod lsp;
 pub mod render;
+pub mod trust;
 
 use std::path::{Path, PathBuf};
 

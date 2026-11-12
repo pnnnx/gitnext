@@ -117,7 +117,11 @@ enum Cmd {
         public: bool,
     },
     /// Who calls this function/method (or instantiates this class)
-    Callers { symbol: String },
+    Callers {
+        /// One or more functions / methods / classes
+        #[arg(required = true)]
+        symbols: Vec<String>,
+    },
     /// What this function/method calls
     Callees { symbol: String },
     /// What breaks if this symbol changes: reverse dependencies, files, tests
@@ -221,7 +225,7 @@ fn run() -> Result<()> {
     let out = Out {
         json: cli.json,
         pretty: cli.pretty,
-        opts: Opts { verbose: color_on(), tests: cli.tests, all: false, full_doc: cli.full },
+        opts: Opts { verbose: color_on(), tests: cli.tests, all: false, full_doc: cli.full, lite: false },
     };
     let Some(cmd) = cli.cmd else {
         return gitnext_tui::run(&Workspace::open(&cwd)?);
@@ -457,10 +461,14 @@ fn run() -> Result<()> {
             }
             out.text(&render::symbols(&g, &p, kind, public, out.opts));
         }
-        Cmd::Callers { symbol } => {
+        Cmd::Callers { symbols } => {
             let ws = Workspace::open(&cwd)?;
             let g = ws.graph()?;
-            let ids = lookup(&g, &symbol)?;
+            // several names in one run: the graph is loaded once (it is the slow part on a big repo)
+            let mut ids = Vec::new();
+            for symbol in &symbols {
+                ids.extend(lookup(&g, symbol)?);
+            }
             if out.json {
                 let v: Vec<_> = ids
                     .iter()

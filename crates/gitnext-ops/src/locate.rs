@@ -244,7 +244,9 @@ pub fn tests_for(g: &Graph, i: usize, depth: usize) -> Vec<TestRef> {
             continue;
         }
         let known = found.contains_key(&k);
-        if !known && !(by_name && is_runnable_test(s)) {
+        // names and file names only mean something within one language: a C++ `main` in a
+        // fixture is not a test of Python's `main`
+        if !known && !(by_name && is_runnable_test(s) && gitnext_parse::family_of(&s.file) == gitnext_parse::family_of(&r.file)) {
             continue;
         }
         let tw = name_words(&s.sym.name);
@@ -570,6 +572,7 @@ pub fn render_tests_for(g: &Graph, root: &Path, i: usize, depth: usize, all: boo
             let _ = writeln!(s, "  {c}");
         }
     }
+    let _ = writeln!(s, "note: {}.", crate::trust::tests_note(&g.syms[i].file));
     s
 }
 

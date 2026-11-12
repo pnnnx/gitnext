@@ -150,6 +150,7 @@ impl Server {
             tests: a.get("tests").and_then(Value::as_bool).unwrap_or(false),
             all: a.get("all").and_then(Value::as_bool).unwrap_or(false),
             full_doc: a.get("full_doc").and_then(Value::as_bool).unwrap_or(false),
+            lite: matches!(self.profile, Profile::Lite),
         };
         let sym = |k: &str| -> Result<Vec<usize>, String> {
             let q = s_arg(a, k).ok_or_else(|| format!("missing `{k}`"))?;

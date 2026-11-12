@@ -48,3 +48,65 @@ fn most_likely_tests_first() {
     assert_eq!(all.matches("test_flow_").count(), 2 * 12, "{all}");
     let _ = std::fs::remove_dir_all(&dir);
 }
+
+fn project(name: &str, files: &[(&str, &str)]) -> std::path::PathBuf {
+    let dir = std::env::temp_dir().join(format!("gitnext-{name}-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    for (p, c) in files {
+        let f = dir.join(p);
+        std::fs::create_dir_all(f.parent().unwrap()).unwrap();
+        std::fs::write(f, c).unwrap();
+    }
+    dir
+}
+
+/// A test in another language that happens to carry the same name is not a test of this function.
+#[test]
+fn names_do_not_cross_languages() {
+    let dir = project(
+        "crosslang",
+        &[
+            ("tool.py", "def main():\n    return run()\n\n\ndef run():\n    return 1\n"),
+            ("tests/fixtures/zoo.cpp", "int helper() { return 1; }\n\nint main() {\n    return helper();\n}\n"),
+            ("tests/test_tool.py", "from tool import main\n\n\ndef test_main():\n    assert main() == 1\n"),
+        ],
+    );
+    let mut idx = Index::open(&dir).unwrap();
+    idx.refresh().unwrap();
+    let g = idx.graph().unwrap();
+    let target = g.find("tool::main")[0];
+    let files: Vec<&str> = locate::tests_for(&g, target, 4).iter().map(|x| g.syms[x.symbol].file.as_str()).collect();
+    assert_eq!(files, ["tests/test_tool.py"]);
+    let text = locate::render_tests_for(&g, &dir, target, 4, false);
+    assert!(text.contains("note: the call graph finds ≈19% of the tests that would fail"), "{text}");
+    let _ = std::fs::remove_dir_all(&dir);
+}
+
+/// `look main` with several `main`s lists them all — also when one of them is exactly `main`.
+#[test]
+fn look_asks_when_a_bare_name_has_namesakes() {
+    let dir = project(
+        "namesakes",
+        &[
+            ("tool.py", "def main():\n    return 1\n\n\ndef only_here():\n    return main()\n"),
+            ("native/zoo.cpp", "int helper() { return 1; }\n\nint main() {\n    return helper();\n}\n"),
+        ],
+    );
+    let mut idx = Index::open(&dir).unwrap();
+    idx.refresh().unwrap();
+    let g = idx.graph().unwrap();
+    let ws = gitnext_ops::Workspace::open(&dir).unwrap();
+    let text = gitnext_ops::look::look(&ws, &g, "main", false);
+    assert!(text.starts_with("2 things are called `main`"), "{text}");
+    assert!(text.contains("tool::main") && text.contains("main@3 (function) native/zoo.cpp:3"), "{text}");
+    // each label in the list leads to exactly one of them
+    assert!(gitnext_ops::look::look(&ws, &g, "main@3", false).contains("int main"));
+    assert!(gitnext_ops::look::look(&ws, &g, "tool::main", false).contains("def main"));
+    // a name without namesakes is answered at once, with how far to trust the callers
+    let one = gitnext_ops::look::look(&ws, &g, "only_here", false);
+    assert!(one.contains("def only_here"), "{one}");
+    // sure / maybe apart in the callers list
+    let callers = gitnext_ops::render::callers(&g, g.find("tool::main")[0], Default::default());
+    assert!(callers.starts_with("callers of tool::main (1 sure"), "{callers}");
+    let _ = std::fs::remove_dir_all(&dir);
+}
