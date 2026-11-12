@@ -7,7 +7,17 @@
   `src/eval.rs::matches_greater`, `tests/test_x.py::TestA::test_b[case]`, `eval.rs matches_greater`.
   Words of which only some are names list those names instead of "nothing found". In a trial with
   Qwen 3.5 4B and 27B, 37 of 89 `look` calls were written one of these ways and found nothing; all are answered now.
+- **`gitnext dead` names only what nothing refers to.** It knew calls only: a function used as a value, a class
+  used as a type, a base or a metaclass, an imported name, a Go `init` were "likely dead" — 160 of 225 on ten
+  projects, and deleting them broke the build of six. Now the name must be written nowhere outside the symbol.
+- **`gitnext edit replace`** keeps every line where it was when the code comes back as it was read (a line indented
+  less than the first, tabs under spaces); **`edit delete`** and `read` take the whole doc comment (a Javadoc
+  whose lines do not start with `*` was cut in half, and the delete refused).
+- **`callees`** lists a method called on an object of unknown type as "maybe", as `callers` does; `look` counts
+  such calls instead of naming them.
+- `eval/consistency.py`: do the commands agree with each other and with the source (`eval/results/consistency.md`).
 - eval: a tool call cut by the token limit (a long `replace`) is asked for again instead of ending the run.
+- Release: the Intel Mac binary is built again (its runner was retired); `CITATION.cff`.
 
 ## 0.3.0 — 2026-11-12
 

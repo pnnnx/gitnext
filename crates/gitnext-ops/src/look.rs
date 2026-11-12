@@ -250,7 +250,10 @@ fn symbol(ws: &Workspace, g: &Graph, ids: &[usize], lite: bool) -> String {
         let c = g.callees(ids[0]);
         if !c.resolved.is_empty() {
             let list: Vec<String> = c.resolved.iter().take(12).map(|(t, _)| g.short_name(*t).to_string()).collect();
-            let _ = writeln!(s, "calls: {}{}", list.join(", "), if c.resolved.len() > 12 { format!(" +{}", c.resolved.len() - 12) } else { String::new() });
+            let more = if c.resolved.len() > 12 { format!(" +{}", c.resolved.len() - 12) } else { String::new() };
+            // guesses (a method called on an object of unknown type) are counted, not named — as in "called by"
+            let maybe = if c.maybe.is_empty() || lite { String::new() } else { format!(" · maybe {} more via calls on objects of unknown type", c.maybe.len()) };
+            let _ = writeln!(s, "calls: {}{more}{maybe}", list.join(", "));
         }
         if let Some(l) = crate::libs::describe(root, g, ids[0]) {
             let _ = writeln!(s, "libraries: {l}");

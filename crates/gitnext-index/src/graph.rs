@@ -84,8 +84,11 @@ pub struct Hierarchy {
 /// Outgoing calls of a function, split by how confidently they resolved.
 #[derive(Debug, Default)]
 pub struct Callees {
-    /// Exactly one candidate in the repo.
+    /// Exactly one candidate in the repo, and the reference names it for sure.
     pub resolved: Vec<(usize, u32)>,
+    /// One candidate, reached only by its name on a receiver of unknown type (`x.close()`):
+    /// the same pairs that `callers` lists as "maybe".
+    pub maybe: Vec<(usize, u32)>,
     /// Several candidates (e.g. `.as_str()` on an unknown receiver).
     pub ambiguous: Vec<(String, Vec<usize>)>,
     /// Not defined in the repo (std, external crates, closures…).
@@ -1093,7 +1096,7 @@ impl Graph {
                 }
                 [i] => {
                     if seen.insert(i) {
-                        out.resolved.push((i, e.line));
+                        if self.is_guess(src, i) { out.maybe.push((i, e.line)) } else { out.resolved.push((i, e.line)) }
                     }
                 }
                 ref many => {

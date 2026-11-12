@@ -37,6 +37,17 @@ pub fn doc_start(lines: &[String], start: usize) -> usize {
     let mut a = start;
     while a > 1 {
         let prev = lines[a - 2].trim_start();
+        // the end of a block comment: the whole comment belongs to the item, whatever its lines
+        // start with (a Javadoc without a `*` on every line)
+        if prev.trim_end().ends_with("*/") && !prev.contains("/*") {
+            match (1..a - 1).rev().take(400).find(|&k| lines[k - 1].contains("/*")) {
+                Some(open) if lines[open - 1].trim_start().starts_with("/*") => {
+                    a = open;
+                    continue;
+                }
+                _ => break, // the comment begins after code on its line: not this item's
+            }
+        }
         let is_doc = prev.starts_with("///") || prev.starts_with("//!") || prev.starts_with("#[") || prev.starts_with('@')
             || prev.starts_with("/**") || prev.starts_with("* ") || prev == "*" || prev.starts_with("*/")
             || (prev.starts_with("//") && !prev.is_empty());
@@ -54,18 +65,31 @@ fn starts_with_doc(code: &str) -> bool {
     first.starts_with("///") || first.starts_with("//") || first.starts_with("#[") || first.starts_with('@') || first.starts_with("/*")
 }
 
-/// Re-indent `code` to `indent` if it was sent flush-left (common for agents).
+/// Move `code` so that its first line stands at `indent` (agents send code flush-left); the other
+/// lines keep their place relative to the first — also one that is indented less than it, so that
+/// a symbol replaced with its own code is the same text.
 fn reindent(code: &str, indent: &str) -> Vec<String> {
     let lines: Vec<&str> = code.trim_end_matches('\n').lines().collect();
-    let min = lines
-        .iter()
-        .filter(|l| !l.trim().is_empty())
-        .map(|l| l.len() - l.trim_start().len())
-        .min()
-        .unwrap_or(0);
+    let own = |l: &str| l.len() - l.trim_start().len();
+    let first_line = lines.iter().find(|l| !l.trim().is_empty()).copied().unwrap_or("");
+    let first = own(first_line);
+    // already where it belongs (the code as `read` showed it): not a character is touched — a file
+    // that mixes tabs and spaces has no "less indented" to compute
+    if &first_line[..first] == indent {
+        return lines.iter().map(|l| l.to_string()).collect();
+    }
     lines
         .iter()
-        .map(|l| if l.trim().is_empty() { String::new() } else { format!("{indent}{}", &l[min.min(l.len() - l.trim_start().len())..]) })
+        .map(|l| {
+            if l.trim().is_empty() {
+                String::new()
+            } else if own(l) >= first {
+                format!("{indent}{}", &l[first..])
+            } else {
+                let keep = indent.len().saturating_sub(first - own(l));
+                format!("{}{}", indent.get(..keep).unwrap_or(indent), l.trim_start())
+            }
+        })
         .collect()
 }
 

@@ -209,13 +209,14 @@ pub struct Dead {
 }
 
 fn is_entry_name(name: &str) -> bool {
-    matches!(name, "main" | "new" | "default" | "drop" | "fmt" | "from" | "setup" | "teardown")
+    // `init`: Go runs every `func init()` of a package by itself
+    matches!(name, "main" | "init" | "new" | "default" | "drop" | "fmt" | "from" | "setup" | "teardown")
         || (name.starts_with("__") && name.ends_with("__"))
         || name.starts_with('~')
 }
 
-/// Symbols nothing in the repo references (approximate: dynamic dispatch, macros,
-/// reflection and external users are invisible to the graph).
+/// Symbols nothing in the repo refers to: no call in the graph, and the name is written nowhere
+/// outside the symbol itself (approximate: reflection, generated names and external users are invisible).
 pub fn dead(g: &Graph, root: &Path) -> Dead {
     let entries: HashSet<usize> = entrypoints(g, root).into_iter().map(|e| e.symbol).collect();
     let referenced: HashSet<&str> = g
@@ -227,6 +228,7 @@ pub fn dead(g: &Graph, root: &Path) -> Dead {
         .collect();
     let mut likely = Vec::new();
     let mut public_unused = Vec::new();
+    let mut candidates = Vec::new();
     for (i, r) in g.syms.iter().enumerate() {
         let s = &r.sym;
         if s.test || s.trait_impl.is_some() || s.decl || !(s.kind.is_callable() || s.kind.is_type()) || is_entry_name(&s.name) || entries.contains(&i) {
@@ -243,6 +245,9 @@ pub fn dead(g: &Graph, root: &Path) -> Dead {
         if s.signature.starts_with('@') {
             continue; // decorated Python callables are usually registered somewhere
         }
+        if r.file.ends_with(".d.ts") {
+            continue; // declarations for the compiler (`interface ImportMeta`), merged with ones outside the repo
+        }
         if referenced.contains(s.qualified.as_str()) {
             continue;
         }
@@ -258,6 +263,17 @@ pub fn dead(g: &Graph, root: &Path) -> Dead {
                 }
             }
         }
+        candidates.push(i);
+    }
+    // The graph knows calls. A name is also used as a value (`return _BaseCommand`), a type
+    // (`-> _SourceVarsDict`), a base or metaclass, an import, a callback (`map(helper)`): if the name
+    // is written anywhere outside the symbol itself, something refers to it.
+    let named = named_elsewhere(g, root, &candidates);
+    for i in candidates {
+        if named.contains(&i) {
+            continue;
+        }
+        let (r, s) = (&g.syms[i], &g.syms[i].sym);
         let line = format!("{} {}  {}:{}", s.kind.as_str(), g.short_name(i), r.file, s.start_line);
         if s.is_public() && !s.name.starts_with('_') {
             public_unused.push(line);
@@ -266,6 +282,39 @@ pub fn dead(g: &Graph, root: &Path) -> Dead {
         }
     }
     Dead { likely, public_unused }
+}
+
+/// Of `candidates`, the symbols whose name is written in the code outside their own lines
+/// (comment lines aside). One pass over the files.
+fn named_elsewhere(g: &Graph, root: &Path, candidates: &[usize]) -> HashSet<usize> {
+    let mut by_name: HashMap<&str, Vec<usize>> = HashMap::new();
+    for &i in candidates {
+        by_name.entry(g.syms[i].sym.name.as_str()).or_default().push(i);
+    }
+    let mut named = HashSet::new();
+    if by_name.is_empty() {
+        return named;
+    }
+    for f in g.files.iter().filter(|f| f.parsed && f.lines < 50_000) {
+        let Ok(text) = std::fs::read_to_string(root.join(&f.path)) else { continue };
+        for (n, line) in text.lines().enumerate() {
+            let t = line.trim_start();
+            if t.starts_with('#') || t.starts_with("//") || t.starts_with('*') || t.starts_with("/*") {
+                continue;
+            }
+            let ln = n as u32 + 1;
+            for word in line.split(|c: char| !(c.is_alphanumeric() || c == '_')) {
+                let Some(ids) = by_name.get(word) else { continue };
+                for &i in ids {
+                    let r = &g.syms[i];
+                    if !(r.file == f.path && r.sym.start_line <= ln && ln <= r.sym.end_line) {
+                        named.insert(i);
+                    }
+                }
+            }
+        }
+    }
+    named
 }
 
 pub fn render_dead(d: &Dead) -> String {

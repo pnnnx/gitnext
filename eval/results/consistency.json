@@ -1,0 +1,439 @@
+{
+ "cobra": {
+  "symmetry": {
+   "functions": 30,
+   "caller_pairs": 59,
+   "not_in_callees": [],
+   "not_in_impact": [],
+   "callee_pairs": 79,
+   "not_in_callers": [],
+   "sure_here_maybe_there": []
+  },
+  "read": {
+   "symbols": 30,
+   "wrong": []
+  },
+  "symbols": {
+   "symbols": 288,
+   "wrong": []
+  },
+  "search": {
+   "symbols": 30,
+   "not_found": []
+  },
+  "edit": {
+   "replaced": 10,
+   "deleted": 10,
+   "wrong": []
+  },
+  "hierarchy": {
+   "types": 0,
+   "bases": 0,
+   "missing_base": [],
+   "missing_subtype": []
+  },
+  "dead": {
+   "likely": 0,
+   "public_unused": 23,
+   "named_elsewhere": [],
+   "deleted": 0,
+   "broke": null
+  },
+  "seconds": 7
+ },
+ "chi": {
+  "symmetry": {
+   "functions": 30,
+   "caller_pairs": 19,
+   "not_in_callees": [],
+   "not_in_impact": [],
+   "callee_pairs": 33,
+   "not_in_callers": [],
+   "sure_here_maybe_there": []
+  },
+  "read": {
+   "symbols": 30,
+   "wrong": []
+  },
+  "symbols": {
+   "symbols": 351,
+   "wrong": []
+  },
+  "search": {
+   "symbols": 30,
+   "not_found": []
+  },
+  "edit": {
+   "replaced": 10,
+   "deleted": 10,
+   "wrong": []
+  },
+  "hierarchy": {
+   "types": 0,
+   "bases": 0,
+   "missing_base": [],
+   "missing_subtype": []
+  },
+  "dead": {
+   "likely": 0,
+   "public_unused": 6,
+   "named_elsewhere": [],
+   "deleted": 0,
+   "broke": null
+  },
+  "seconds": 5
+ },
+ "click": {
+  "symmetry": {
+   "functions": 30,
+   "caller_pairs": 26,
+   "not_in_callees": [],
+   "not_in_impact": [],
+   "callee_pairs": 32,
+   "not_in_callers": [],
+   "sure_here_maybe_there": []
+  },
+  "read": {
+   "symbols": 30,
+   "wrong": []
+  },
+  "symbols": {
+   "symbols": 761,
+   "wrong": []
+  },
+  "search": {
+   "symbols": 30,
+   "not_found": []
+  },
+  "edit": {
+   "replaced": 10,
+   "deleted": 10,
+   "wrong": []
+  },
+  "hierarchy": {
+   "types": 45,
+   "bases": 47,
+   "missing_base": [],
+   "missing_subtype": []
+  },
+  "dead": {
+   "likely": 0,
+   "public_unused": 3,
+   "named_elsewhere": [],
+   "deleted": 0,
+   "broke": null
+  },
+  "seconds": 13
+ },
+ "sqlparse": {
+  "symmetry": {
+   "functions": 30,
+   "caller_pairs": 55,
+   "not_in_callees": [],
+   "not_in_impact": [],
+   "callee_pairs": 49,
+   "not_in_callers": [],
+   "sure_here_maybe_there": []
+  },
+  "read": {
+   "symbols": 30,
+   "wrong": []
+  },
+  "symbols": {
+   "symbols": 287,
+   "wrong": []
+  },
+  "search": {
+   "symbols": 30,
+   "not_found": []
+  },
+  "edit": {
+   "replaced": 10,
+   "deleted": 10,
+   "wrong": []
+  },
+  "hierarchy": {
+   "types": 25,
+   "bases": 27,
+   "missing_base": [],
+   "missing_subtype": []
+  },
+  "dead": {
+   "likely": 5,
+   "public_unused": 2,
+   "named_elsewhere": [],
+   "deleted": 5,
+   "broke": {
+    "compile_errors": [],
+    "tests": [
+     "test_duplicate_linebreaks",
+     "test_except_formatting",
+     "test_format_invalid_where_clause",
+     "test_having_produces_newline",
+     "test_identifier_list",
+     "test_identifier_list_comment_first",
+     "test_identifier_list_with_wrap_after",
+     "test_issue315_utf8_by_default"
+    ],
+    "tests_ran": true
+   }
+  },
+  "seconds": 9
+ },
+ "zustand": {
+  "symmetry": {
+   "functions": 30,
+   "caller_pairs": 21,
+   "not_in_callees": [],
+   "not_in_impact": [],
+   "callee_pairs": 24,
+   "not_in_callers": [],
+   "sure_here_maybe_there": []
+  },
+  "read": {
+   "symbols": 30,
+   "wrong": []
+  },
+  "symbols": {
+   "symbols": 175,
+   "wrong": []
+  },
+  "search": {
+   "symbols": 30,
+   "not_found": []
+  },
+  "edit": {
+   "replaced": 10,
+   "deleted": 10,
+   "wrong": []
+  },
+  "hierarchy": {
+   "types": 0,
+   "bases": 0,
+   "missing_base": [],
+   "missing_subtype": []
+  },
+  "dead": {
+   "likely": 0,
+   "public_unused": 0,
+   "named_elsewhere": [],
+   "deleted": 0,
+   "broke": null
+  },
+  "seconds": 5
+ },
+ "yaml": {
+  "symmetry": {
+   "functions": 30,
+   "caller_pairs": 47,
+   "not_in_callees": [],
+   "not_in_impact": [],
+   "callee_pairs": 36,
+   "not_in_callers": [],
+   "sure_here_maybe_there": []
+  },
+  "read": {
+   "symbols": 30,
+   "wrong": []
+  },
+  "symbols": {
+   "symbols": 440,
+   "wrong": []
+  },
+  "search": {
+   "symbols": 30,
+   "not_found": []
+  },
+  "edit": {
+   "replaced": 10,
+   "deleted": 10,
+   "wrong": []
+  },
+  "hierarchy": {
+   "types": 16,
+   "bases": 16,
+   "missing_base": [],
+   "missing_subtype": []
+  },
+  "dead": {
+   "likely": 0,
+   "public_unused": 2,
+   "named_elsewhere": [],
+   "deleted": 0,
+   "broke": null
+  },
+  "seconds": 9
+ },
+ "jsoup": {
+  "symmetry": {
+   "functions": 30,
+   "caller_pairs": 67,
+   "not_in_callees": [],
+   "not_in_impact": [],
+   "callee_pairs": 19,
+   "not_in_callers": [],
+   "sure_here_maybe_there": []
+  },
+  "read": {
+   "symbols": 30,
+   "wrong": []
+  },
+  "symbols": {
+   "symbols": 2661,
+   "wrong": []
+  },
+  "search": {
+   "symbols": 27,
+   "not_found": []
+  },
+  "edit": {
+   "replaced": 10,
+   "deleted": 10,
+   "wrong": []
+  },
+  "hierarchy": {
+   "types": 100,
+   "bases": 100,
+   "missing_base": [],
+   "missing_subtype": []
+  },
+  "dead": {
+   "likely": 1,
+   "public_unused": 2,
+   "named_elsewhere": [],
+   "deleted": 0,
+   "broke": null
+  },
+  "seconds": 244
+ },
+ "json-java": {
+  "symmetry": {
+   "functions": 30,
+   "caller_pairs": 51,
+   "not_in_callees": [],
+   "not_in_impact": [],
+   "callee_pairs": 42,
+   "not_in_callers": [],
+   "sure_here_maybe_there": []
+  },
+  "read": {
+   "symbols": 30,
+   "wrong": []
+  },
+  "symbols": {
+   "symbols": 540,
+   "wrong": []
+  },
+  "search": {
+   "symbols": 30,
+   "not_found": []
+  },
+  "edit": {
+   "replaced": 10,
+   "deleted": 10,
+   "wrong": []
+  },
+  "hierarchy": {
+   "types": 5,
+   "bases": 5,
+   "missing_base": [],
+   "missing_subtype": []
+  },
+  "dead": {
+   "likely": 1,
+   "public_unused": 0,
+   "named_elsewhere": [],
+   "deleted": 0,
+   "broke": null
+  },
+  "seconds": 18
+ },
+ "semver": {
+  "symmetry": {
+   "functions": 30,
+   "caller_pairs": 45,
+   "not_in_callees": [],
+   "not_in_impact": [],
+   "callee_pairs": 25,
+   "not_in_callers": [],
+   "sure_here_maybe_there": []
+  },
+  "read": {
+   "symbols": 30,
+   "wrong": []
+  },
+  "symbols": {
+   "symbols": 113,
+   "wrong": []
+  },
+  "search": {
+   "symbols": 30,
+   "not_found": []
+  },
+  "edit": {
+   "replaced": 10,
+   "deleted": 10,
+   "wrong": []
+  },
+  "hierarchy": {
+   "types": 0,
+   "bases": 0,
+   "missing_base": [],
+   "missing_subtype": []
+  },
+  "dead": {
+   "likely": 0,
+   "public_unused": 1,
+   "named_elsewhere": [],
+   "deleted": 0,
+   "broke": null
+  },
+  "seconds": 3
+ },
+ "indexmap": {
+  "symmetry": {
+   "functions": 30,
+   "caller_pairs": 9,
+   "not_in_callees": [],
+   "not_in_impact": [],
+   "callee_pairs": 30,
+   "not_in_callers": [],
+   "sure_here_maybe_there": []
+  },
+  "read": {
+   "symbols": 30,
+   "wrong": []
+  },
+  "symbols": {
+   "symbols": 1026,
+   "wrong": []
+  },
+  "search": {
+   "symbols": 29,
+   "not_found": []
+  },
+  "edit": {
+   "replaced": 10,
+   "deleted": 10,
+   "wrong": []
+  },
+  "hierarchy": {
+   "types": 0,
+   "bases": 0,
+   "missing_base": [],
+   "missing_subtype": []
+  },
+  "dead": {
+   "likely": 57,
+   "public_unused": 12,
+   "named_elsewhere": [],
+   "deleted": 57,
+   "broke": {
+    "compile_errors": [],
+    "tests": [],
+    "tests_ran": true
+   }
+  },
+  "seconds": 14
+ }
+}

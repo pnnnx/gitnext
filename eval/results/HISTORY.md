@@ -35,6 +35,27 @@ What the conversations showed, and what was changed after each run:
   the model called `check <test>` and the map was there, the culprit was first 5 times of 5 and 3 were solved; in
   the other two it did not see the wrong line — hence the changed lines in the answer of `why`.
 
+### A trial on a rented GPU: the same `fix` tasks with a 27B model
+
+The harness on Kaggle (two T4 cards, llama.cpp with CUDA, the settings of the Mac runs), gitnext 0.3.0, the `fix`
+tasks of click and semver with the coverage map, three bugs per project. One run, 6 tasks per cell — the counts of
+solved tasks are too few to compare; the steps and tokens differ in every single task.
+
+| model | mode | solved | median steps | tokens sent, all 6 | seconds, all 6 |
+|---|---|---:|---:|---:|---:|
+| Qwen 3.5 27B | plain | 5 of 6 | 16 | 498 k | 1184 |
+| | gitnext | 6 of 6 | 5 | 58 k | 378 |
+| | lite | 6 of 6 | 7 | 105 k | 676 |
+| Qwen 3.5 4B | gitnext | 2 of 6 | 16 | 499 k | 385 |
+| | lite | 2 of 6 | 17 | 332 k | 322 |
+
+- The 27B model with gitnext does the same thing every time: `check <test>`, one edit, `check`, done — 4 or 5 steps.
+- The 4B model: 37 of its and the 27B model's 89 `look` calls named a place the way a traceback does
+  (`src/eval.rs:62`, `tests/test_options.py:460-500`, `eval.rs::matches_greater`) and got "nothing found"; with the
+  five tools of `lite` there is no other way to read lines, and three of its four lost `lite` runs ended at the step
+  limit on such calls. `look` takes these now. In the three lost `gitnext` runs out of four the model named the bug
+  and stopped without an edit. One run ended on a `replace` cut by the token limit — the harness asks again now.
+
 ## Run 8 · in TypeScript the test is the file; coverage maps for Go and Rust
 
 **tests-for, TypeScript.** `it('…', () => …)` is not a named function; its calls are booked to the module of the
