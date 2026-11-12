@@ -66,6 +66,7 @@ GITNEXT_TOOLS = [
     tool("look", "gitnext: everything about a function, class, file or error in one call — its code, who calls it, what it calls, the tests that reach it and how to run them. Use this first.", {"what": S}, ["what"]),
     tool("rename", "gitnext: rename a function/class everywhere (definition, calls, imports, tests, comments).", {"old": S, "new": S}, ["old", "new"]),
     tool("replace_symbol", "gitnext: replace the whole code of one function/class by name, without reading the file.", {"symbol": S, "code": S}, ["symbol", "code"]),
+    tool("check", "gitnext: after a change — build the project and run the tests of what you changed; answers with a verdict.", {}, []),
 ]
 
 
@@ -102,6 +103,8 @@ def call_tool(name: str, a: dict, root: Path, lang: str) -> str:
             return ev.gx(["look", a["what"]], root)[1][:MAX_OUT]
         if name == "rename":
             return ev.gx(["rename", a["old"], a["new"], "--text"], root)[1][:MAX_OUT]
+        if name == "check":
+            return ev.gx(["check"], root, timeout=900)[1][-MAX_OUT:]
         if name == "replace_symbol":
             p = subprocess.run([ev.GITNEXT, "edit", "replace", a["symbol"]], input=a["code"], cwd=root, capture_output=True, text=True)
             return (p.stdout + p.stderr)[:MAX_OUT]
@@ -157,7 +160,8 @@ SYSTEM = ("You are a coding agent working in a software project. Use the tools t
           "Be brief. When done, call finish with the answer. Do not modify tests unless asked.")
 CMD_SYSTEM = ("You are a coding agent working in a software project. Answer with ONE shell command (or a short script) in a ```sh block "
               "and nothing else; you will get its output back. Useful commands: `gitnext look <function, class or file>` (its code, who calls it, "
-              "its tests — in one call), `gitnext rename <old> <new> --text`, cat, grep, sed -i, and the project's test command. "
+              "its tests — in one call), `gitnext rename <old> <new> --text`, `gitnext check` (after a change: builds and runs the tests of what you changed), "
+              "cat, grep, sed -i. "
               "When the task is done answer `DONE: <answer>`. Be brief. Do not modify tests unless asked.")
 TOKEN_BUDGET = int(os.environ.get("AGENT_TOKEN_BUDGET", "0"))  # prompt tokens per run, 0 = no limit
 

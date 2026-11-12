@@ -35,6 +35,7 @@ SAME_ERROR_LIMIT = 3    # the same error this many times: stop
 SOFT_SHARE = 0.7        # of the step / token budget: "wrap up"
 CHANGING = {"edit_file", "rename", "replace_symbol", "run", "sh"}  # tools that may change files
 RUNNING = {"run", "sh"}                                              # tools whose output starts with `exit N`
+VERDICT = {"check"}                                                  # gitnext's own build + tests verdict
 
 
 def _git(root: Path, *args: str, stdin: str | None = None) -> str:
@@ -47,7 +48,7 @@ def _git(root: Path, *args: str, stdin: str | None = None) -> str:
 
 def is_test_command(cmd: str) -> bool:
     """Whether a shell command runs a test suite (its success is what "the code works" means)."""
-    return bool(re.search(r"\b(pytest|unittest|go test|cargo (nextest|test)|mvn\b.*\btest|gradlew?\b.*\btest|npm (run )?test|yarn test|pnpm test|vitest|jest|ctest|make (test|check))\b", cmd))
+    return bool(re.search(r"\b(gitnext check|pytest|unittest|go test|cargo (nextest|test)|mvn\b.*\btest|gradlew?\b.*\btest|npm (run )?test|yarn test|pnpm test|vitest|jest|ctest|make (test|check))\b", cmd))
 
 
 def call_key(name: str, args: dict) -> str:
@@ -182,10 +183,12 @@ class Guard:
                     out += (f"\n\nNOTE: you keep switching between the same two versions of the code. The files were put back to {where}. "
                             "Neither version works — try a different change.")
         self.calls[key] = (step, before, out)
-        if name in RUNNING:
+        if name in VERDICT:  # `gitnext check`: its verdict is the tests' word
+            out = ("exit 0\n" if "verdict: ok" in out else "exit 1\n") + out if "verdict:" in out else out
+        if name in RUNNING or name in VERDICT:
             code = re.match(r"exit (-?\d+)", out)
             if code and code.group(1) == "0":
-                if is_test_command(args.get("command", "")):
+                if name in VERDICT or is_test_command(args.get("command", "")):
                     self.green, self.green_is_start = self.snapshot(), False
             elif code:
                 sig = error_signature(out)

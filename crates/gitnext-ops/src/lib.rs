@@ -11,6 +11,7 @@ use serde::Serialize;
 pub mod agents;
 pub mod bench;
 pub mod changes;
+pub mod check;
 pub mod context;
 pub mod edit;
 pub mod explain;

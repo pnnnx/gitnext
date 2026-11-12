@@ -158,6 +158,9 @@ enum Cmd {
         /// Also rename the old name where it is only text: comments, strings, docs
         #[arg(long)]
         text: bool,
+        /// Then build and run the tests of what changed, and print the verdict (as `gitnext check`)
+        #[arg(long)]
+        check: bool,
     },
     #[command(flatten)]
     More(cmds::More),
@@ -569,7 +572,7 @@ fn run() -> Result<()> {
             let ws = Workspace::open(&cwd)?;
             cmds::edit(&ws, op, out.json)?;
         }
-        Cmd::Rename { symbol, new_name, dry_run, text } => {
+        Cmd::Rename { symbol, new_name, dry_run, text, check } => {
             let ws = Workspace::open(&cwd)?;
             let g = ws.graph()?;
             let i = one(&g, &symbol)?;
@@ -581,6 +584,14 @@ fn run() -> Result<()> {
                 return out.json(&r);
             }
             out.text(&gitnext_ops::edit::render_rename(&r));
+            if check && !dry_run {
+                let g = ws.graph()?; // the files changed: index them again
+                let c = gitnext_ops::check::check(&ws.root, &g, std::time::Duration::from_secs(600));
+                out.text(&gitnext_ops::check::render(&g, &c));
+                if !c.ok() {
+                    std::process::exit(1);
+                }
+            }
         }
         Cmd::More(m) => cmds::more(&cwd, m, &out)?,
         Cmd::Tui => gitnext_tui::run(&Workspace::open(&cwd)?)?,

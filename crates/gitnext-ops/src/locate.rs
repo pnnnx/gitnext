@@ -273,6 +273,11 @@ pub fn tests_for(g: &Graph, i: usize, depth: usize) -> Vec<TestRef> {
     out.into_iter().map(|(symbol, e)| TestRef { symbol, how: e.how() }).collect()
 }
 
+/// Whether the symbol is a test a runner can be asked for by name (not a helper in a test file).
+pub fn is_runnable(g: &Graph, i: usize) -> bool {
+    is_runnable_test(&g.syms[i])
+}
+
 /// `testParseURL_basic` → ["test", "parse", "url", "basic"]: camelCase, snake_case, digits apart.
 fn name_words(n: &str) -> Vec<String> {
     let mut out: Vec<String> = Vec::new();
