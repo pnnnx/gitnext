@@ -71,6 +71,18 @@ pub fn outline(g: &Graph, root: &Path, path: &str, o: Opts) -> String {
         let public_only = !is_file && !o.all;
         outline_file(g, root, f, public_only, o, &mut s);
     }
+    if s.is_empty() {
+        // a folder of tests, benches or private helpers: say what is there instead of nothing
+        let _ = writeln!(s, "{} at `{path}`, nothing public in them — `gitnext outline {path} --all` shows the rest{}:", crate::changes::plural(files.len(), "file"), if o.tests { "" } else { ", `--tests` the tests too" });
+        for f in files.iter().take(30) {
+            let ids: Vec<usize> = g.in_file(f).into_iter().filter(|&i| !is_file_module(&g.syms[i].sym)).collect();
+            let tests = ids.iter().filter(|&&i| g.syms[i].sym.test).count();
+            let _ = writeln!(s, "  {f} · {}{}", crate::changes::plural(ids.len(), "symbol"), if tests > 0 { format!(", {tests} of them test code") } else { String::new() });
+        }
+        if files.len() > 30 {
+            let _ = writeln!(s, "  … {} more", files.len() - 30);
+        }
+    }
     s
 }
 
