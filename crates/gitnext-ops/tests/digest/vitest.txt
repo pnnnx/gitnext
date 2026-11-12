@@ -1,0 +1,843 @@
+
+ RUN  v4.1.11 /home/claude/gitnext/eval/.work/yaml
+
+ ❯ tests/doc/stringify.ts (243 tests | 33 failed) 158ms
+       × long line in sequence 15ms
+       × long line in sequence in map 2ms
+       × long line in sequence 1ms
+       × long line in sequence in map 1ms
+     × sibling sequences 3ms
+     × further relatives 1ms
+     × only match objects 2ms
+   × array 1ms
+     × JS Object 1ms
+       × explicit tag on block sequence 3ms
+       × single-line comment on block sequence 1ms
+       × single-line comment and explicit tag on block sequence 1ms
+       × explicit tag and comment on block sequence 1ms
+       × anchor on block sequence 1ms
+       × anchor and explicit tag on block sequence 1ms
+       × explicit tag on explicit-value block sequence 1ms
+     × empty string camelBool 1ms
+     × empty string upperBool 1ms
+   × YAML node inside object (#128) 1ms
+     × indent: 1 1ms
+     × indent: 4 1ms
+     × indent: 1 1ms
+     × indent: 2 4ms
+     × indent: 4 1ms
+     × collectionStyle: undefined 1ms
+     × collectionStyle: 'any' 1ms
+     × collectionStyle: 'block' 1ms
+     × [1, undefined, 2] 0ms
+     × empty array 0ms
+     × Object, array of string 1ms
+     × function as filter of Object entries 1ms
+     × function as filter of Map entries 1ms
+     × function as transformer 1ms
+ ❯ tests/collection-access.ts (32 tests | 2 failed) 33ms
+     × set 8ms
+     × toString 1ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 35 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/collection-access.ts > OMap > set
+AssertionError: expected '!!omap []\n' to be '!!omap\n- a: 2\n- b: 5\n- null\n- d: …' // Object.is equality
+
+- Expected
++ Received
+
+- !!omap
+- - a: 2
+- - b: 5
+- - null
+- - d: 6
++ !!omap []
+
+
+ ❯ tests/collection-access.ts:254:25
+    252|     ])
+    253|     expect(omap.size).toBe(4)
+    254|     expect(String(doc)).toBe(`\
+       |                         ^
+    255| !!omap
+    256| - a: 2
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/35]⎯
+
+ FAIL  tests/collection-access.ts > OMap > toString
+AssertionError: expected '!!omap []\n' to be '!!omap\n- a: 1\n- b:\n    c: 3\n    d…' // Object.is equality
+
+- Expected
++ Received
+
+- !!omap
+- - a: 1
+- - b:
+-     c: 3
+-     d: 4
++ !!omap []
+
+
+ ❯ tests/collection-access.ts:263:25
+    261|
+    262|   test('toString', () => {
+    263|     expect(String(doc)).toBe(`\
+       |                         ^
+    264| !!omap
+    265| - a: 1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/35]⎯
+
+ FAIL  tests/doc/stringify.ts > YAML 1.1 > string > long line in sequence
+ FAIL  tests/doc/stringify.ts > YAML 1.2 > string > long line in sequence
+AssertionError: expected [ 2, +0 ] to match object [ 20, 20, 20, 17, +0 ]
+
+- Expected
++ Received
+
+  [
+-   20,
+-   20,
+-   20,
+-   17,
++   2,
+    0,
+  ]
+
+ ❯ tests/doc/stringify.ts:188:11
+    186|             .split('\n')
+    187|             .map(line => line.length)
+    188|         ).toMatchObject([20, 20, 20, 17, 0])
+       |           ^
+    189|       })
+    190|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/35]⎯
+
+ FAIL  tests/doc/stringify.ts > YAML 1.1 > string > long line in sequence in map
+ FAIL  tests/doc/stringify.ts > YAML 1.2 > string > long line in sequence in map
+AssertionError: expected [ 4, 4, +0 ] to match object [ 4, 20, 20, 20, 20, 10, +0 ]
+
+- Expected
++ Received
+
+  [
+    4,
+-   20,
+-   20,
+-   20,
+-   20,
+-   10,
++   4,
+    0,
+  ]
+
+ ❯ tests/doc/stringify.ts:203:11
+    201|             .split('\n')
+    202|             .map(line => line.length)
+    203|         ).toMatchObject([4, 20, 20, 20, 20, 10, 0])
+       |           ^
+    204|       })
+    205|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/35]⎯
+
+ FAIL  tests/doc/stringify.ts > circular references > sibling sequences
+AssertionError: expected '[]\n' to be '- &a1\n  - one\n- &a2\n  - two\n- *a1…' // Object.is equality
+
+- Expected
++ Received
+
+- - &a1
+-   - one
+- - &a2
+-   - two
+- - *a1
+- - *a1
+- - *a2
++ []
+
+
+ ❯ tests/doc/stringify.ts:280:33
+    278|     const two = ['two']
+    279|     const seq = [one, two, one, one, two]
+    280|     expect(YAML.stringify(seq)).toBe(`- &a1
+       |                                 ^
+    281|   - one
+    282| - &a2
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/35]⎯
+
+ FAIL  tests/doc/stringify.ts > circular references > further relatives
+AssertionError: expected '[]\n' to be '- foo:\n    bar:\n      baz: &a1\n   …' // Object.is equality
+
+- Expected
++ Received
+
+- - foo:
+-     bar:
+-       baz: &a1
+-         a: 1
+- - fe:
+-     fi:
+-       fo:
+-         baz: *a1
++ []
+
+
+ ❯ tests/doc/stringify.ts:292:33
+    290|     const baz = { a: 1 }
+    291|     const seq = [{ foo: { bar: { baz } } }, { fe: { fi: { fo: { baz } …
+    292|     expect(YAML.stringify(seq)).toBe(`- foo:
+       |                                 ^
+    293|     bar:
+    294|       baz: &a1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/35]⎯
+
+ FAIL  tests/doc/stringify.ts > circular references > only match objects
+AssertionError: expected '[]\n' to be '- a\n- a\n- 1\n- 1\n- true\n- true\n-…' // Object.is equality
+
+- Expected
++ Received
+
+- - a
+- - a
+- - 1
+- - 1
+- - true
+- - true
+- - &foo1 2001-12-15T02:59:43.100Z
+- - *foo1
++ []
+
+
+ ❯ tests/doc/stringify.ts:306:8
+    304|     const seq = ['a', 'a', 1, 1, true, true, date, date]
+    305|     expect(YAML.stringify(seq, { anchorPrefix: 'foo', version: '1.1' }…
+    306|       .toBe(`- a
+       |        ^
+    307| - a
+    308| - 1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/35]⎯
+
+ FAIL  tests/doc/stringify.ts > array
+AssertionError: expected '[]\n' to be '- 3\n- - four\n  - 5\n' // Object.is equality
+
+- Expected
++ Received
+
+- - 3
+- - - four
+-   - 5
++ []
+
+
+ ❯ tests/doc/stringify.ts:325:15
+    323|   const array = [3, ['four', 5]]
+    324|   const str = YAML.stringify(array)
+    325|   expect(str).toBe(
+       |               ^
+    326|     `- 3
+    327| - - four
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/35]⎯
+
+ FAIL  tests/doc/stringify.ts > maps > JS Object
+AssertionError: expected 'x: 3\ny:\n  []\nz:\n  w: five\n  v: 6…' to be 'x: 3\ny:\n  - 4\nz:\n  w: five\n  v: …' // Object.is equality
+
+- Expected
++ Received
+
+  x: 3
+  y:
+-   - 4
++   []
+  z:
+    w: five
+    v: 6
+
+
+ ❯ tests/doc/stringify.ts:336:17
+    334|     const object = { x: 3, y: [4], z: { w: 'five', v: 6 } }
+    335|     const str = YAML.stringify(object)
+    336|     expect(str).toBe(
+       |                 ^
+    337|       `x: 3
+    338| y:
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/35]⎯
+
+ FAIL  tests/doc/stringify.ts > maps > properties on collections in block mapping > explicit tag on block sequence
+AssertionError: expected 'key:\n  !tag []\n' to be 'key: !tag\n  - one\n  - two\n' // Object.is equality
+
+- Expected
++ Received
+
+- key: !tag
+-   - one
+-   - two
++ key:
++   !tag []
+
+
+ ❯ tests/doc/stringify.ts:439:27
+    437|       `
+    438|       const doc = YAML.parseDocument(src)
+    439|       expect(String(doc)).toBe(src)
+       |                           ^
+    440|     })
+    441|     test('explicit tag on block mapping', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/35]⎯
+
+ FAIL  tests/doc/stringify.ts > maps > properties on collections in block mapping > single-line comment on block sequence
+AssertionError: expected 'key:\n  #comment\n  []\n' to be 'key:\n  #comment\n  - one\n  - two\n' // Object.is equality
+
+- Expected
++ Received
+
+  key:
+    #comment
+-   - one
+-   - two
++   []
+
+
+ ❯ tests/doc/stringify.ts:457:27
+    455|       `
+    456|       const doc = YAML.parseDocument(src)
+    457|       expect(String(doc)).toBe(source`
+       |                           ^
+    458|         key:
+    459|           #comment
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/35]⎯
+
+ FAIL  tests/doc/stringify.ts > maps > properties on collections in block mapping > single-line comment and explicit tag on block sequence
+AssertionError: expected 'key:\n  #comment\n  !tag []\n' to be 'key:\n  #comment\n  !tag\n  - one\n  …' // Object.is equality
+
+- Expected
++ Received
+
+  key:
+    #comment
+-   !tag
+-   - one
+-   - two
++   !tag []
+
+
+ ❯ tests/doc/stringify.ts:472:27
+    470|       `
+    471|       const doc = YAML.parseDocument(src)
+    472|       expect(String(doc)).toBe(source`
+       |                           ^
+    473|         key:
+    474|           #comment
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/35]⎯
+
+ FAIL  tests/doc/stringify.ts > maps > properties on collections in block mapping > explicit tag and comment on block sequence
+AssertionError: expected 'key:\n  #comment\n  !tag []\n' to be 'key:\n  #comment\n  !tag\n  - one\n  …' // Object.is equality
+
+- Expected
++ Received
+
+  key:
+    #comment
+-   !tag
+-   - one
+-   - two
++   !tag []
+
+
+ ❯ tests/doc/stringify.ts:488:27
+    486|       `
+    487|       const doc = YAML.parseDocument(src)
+    488|       expect(String(doc)).toBe(source`
+       |                           ^
+    489|         key:
+    490|           #comment
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/35]⎯
+
+ FAIL  tests/doc/stringify.ts > maps > properties on collections in block mapping > anchor on block sequence
+AssertionError: expected 'key:\n  &anchor []\n' to be 'key: &anchor\n  - one\n  - two\n' // Object.is equality
+
+- Expected
++ Received
+
+- key: &anchor
+-   - one
+-   - two
++ key:
++   &anchor []
+
+
+ ❯ tests/doc/stringify.ts:503:27
+    501|       `
+    502|       const doc = YAML.parseDocument(src)
+    503|       expect(String(doc)).toBe(src)
+       |                           ^
+    504|     })
+    505|     test('anchor and explicit tag on block sequence', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/35]⎯
+
+ FAIL  tests/doc/stringify.ts > maps > properties on collections in block mapping > anchor and explicit tag on block sequence
+AssertionError: expected 'key:\n  &anchor !tag []\n' to be 'key: &anchor !tag\n  - one\n  - two\n' // Object.is equality
+
+- Expected
++ Received
+
+- key: &anchor !tag
+-   - one
+-   - two
++ key:
++   &anchor !tag []
+
+
+ ❯ tests/doc/stringify.ts:512:27
+    510|       `
+    511|       const doc = YAML.parseDocument(src)
+    512|       expect(String(doc)).toBe(src)
+       |                           ^
+    513|     })
+    514|     test('explicit tag on empty mapping', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/35]⎯
+
+ FAIL  tests/doc/stringify.ts > maps > properties on collections in block mapping > explicit tag on explicit-value block sequence
+AssertionError: expected '? [ key ]\n: !tag []\n' to be '? [ key ]\n: !tag\n  - one\n  - two\n' // Object.is equality
+
+- Expected
++ Received
+
+  ? [ key ]
+- : !tag
+-   - one
+-   - two
++ : !tag []
+
+
+ ❯ tests/doc/stringify.ts:558:27
+    556|       `
+    557|       const doc = YAML.parseDocument(src)
+    558|       expect(String(doc)).toBe(src)
+       |                           ^
+    559|     })
+    560|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/35]⎯
+
+ FAIL  tests/doc/stringify.ts > Custom null/bool string representations > empty string camelBool
+AssertionError: expected '[]\n' to be '- True\n- False\n' // Object.is equality
+
+- Expected
++ Received
+
+- - True
+- - False
++ []
+
+
+ ❯ tests/doc/stringify.ts:806:17
+    804|     const doc = YAML.parse('[true, false]')
+    805|     const str = YAML.stringify(doc, { trueStr: 'True', falseStr: 'Fals…
+    806|     expect(str).toBe('- True\n- False\n')
+       |                 ^
+    807|     expect(YAML.parse(str)).toEqual([true, false])
+    808|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/35]⎯
+
+ FAIL  tests/doc/stringify.ts > Custom null/bool string representations > empty string upperBool
+AssertionError: expected '[]\n' to be '- TRUE\n- FALSE\n' // Object.is equality
+
+- Expected
++ Received
+
+- - TRUE
+- - FALSE
++ []
+
+
+ ❯ tests/doc/stringify.ts:813:17
+    811|     const doc = YAML.parse('[true, false]')
+    812|     const str = YAML.stringify(doc, { trueStr: 'TRUE', falseStr: 'FALS…
+    813|     expect(str).toBe('- TRUE\n- FALSE\n')
+       |                 ^
+    814|     expect(YAML.parse(str)).toEqual([true, false])
+    815|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/35]⎯
+
+ FAIL  tests/doc/stringify.ts > YAML node inside object (#128)
+AssertionError: expected 'array:\n  []\nmap:\n  #mc\n  foo: bar…' to be 'array:\n  - 1\nmap:\n  #mc\n  foo: ba…' // Object.is equality
+
+- Expected
++ Received
+
+  array:
+-   - 1
++   []
+  map:
+    #mc
+    foo: bar
+    seq:
+      #sc
+-     - a
++     []
+
+
+ ❯ tests/doc/stringify.ts:966:31
+    964|   map.commentBefore = 'mc'
+    965|   const obj = { array: [1], map }
+    966|   expect(YAML.stringify(obj)).toBe(source`
+       |                               ^
+    967|     array:
+    968|       - 1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/35]⎯
+
+ FAIL  tests/doc/stringify.ts > custom indent > indent: 1
+AssertionError: expected 'array:\n []\nmap:\n #mc\n foo: bar\n …' to be 'array:\n - a: 1\n   b: 2\nmap:\n #mc\…' // Object.is equality
+
+- Expected
++ Received
+
+  array:
+-  - a: 1
+-    b: 2
++  []
+  map:
+   #mc
+   foo: bar
+   seq:
+    #sc
+-   - a
++   []
+
+
+ ❯ tests/doc/stringify.ts:1027:48
+    1025|
+    1026|   test('indent: 1', () => {
+    1027|     expect(YAML.stringify(obj, { indent: 1 })).toBe(source`
+       |                                                ^
+    1028|       array:
+    1029|        - a: 1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/35]⎯
+
+ FAIL  tests/doc/stringify.ts > custom indent > indent: 4
+AssertionError: expected 'array:\n    []\nmap:\n    #mc\n    fo…' to be 'array:\n    - a: 1\n      b: 2\nmap:\…' // Object.is equality
+
+- Expected
++ Received
+
+  array:
+-     - a: 1
+-       b: 2
++     []
+  map:
+      #mc
+      foo: bar
+      seq:
+          #sc
+-         - a
++         []
+
+
+ ❯ tests/doc/stringify.ts:1041:48
+    1039|
+    1040|   test('indent: 4', () => {
+    1041|     expect(YAML.stringify(obj, { indent: 4 })).toBe(source`
+       |                                                ^
+    1042|       array:
+    1043|           - a: 1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/35]⎯
+
+ FAIL  tests/doc/stringify.ts > indentSeq: false > indent: 1
+AssertionError: expected 'array:\n []\nmap:\n seq:\n  #sc\n  []…' to be 'array:\n - a: 1\n   b: 2\nmap:\n seq:…' // Object.is equality
+
+- Expected
++ Received
+
+  array:
+-  - a: 1
+-    b: 2
++  []
+  map:
+   seq:
+    #sc
+-   - a
++   []
+
+
+ ❯ tests/doc/stringify.ts:1064:66
+    1062|
+    1063|   test('indent: 1', () => {
+    1064|     expect(YAML.stringify(obj, { indent: 1, indentSeq: false })).toBe(…
+       |                                                                  ^
+    1065|       array:
+    1066|        - a: 1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/35]⎯
+
+ FAIL  tests/doc/stringify.ts > indentSeq: false > indent: 2
+AssertionError: expected 'array:\n[]\nmap:\n  seq:\n  #sc\n  []…' to be 'array:\n- a: 1\n  b: 2\nmap:\n  seq:\…' // Object.is equality
+
+- Expected
++ Received
+
+  array:
+- - a: 1
+-   b: 2
++ []
+  map:
+    seq:
+    #sc
+-   - a
++   []
+
+
+ ❯ tests/doc/stringify.ts:1076:66
+    1074|
+    1075|   test('indent: 2', () => {
+    1076|     expect(YAML.stringify(obj, { indent: 2, indentSeq: false })).toBe(…
+       |                                                                  ^
+    1077|       array:
+    1078|       - a: 1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/35]⎯
+
+ FAIL  tests/doc/stringify.ts > indentSeq: false > indent: 4
+AssertionError: expected 'array:\n  []\nmap:\n    seq:\n      #…' to be 'array:\n  - a: 1\n    b: 2\nmap:\n   …' // Object.is equality
+
+- Expected
++ Received
+
+  array:
+-   - a: 1
+-     b: 2
++   []
+  map:
+      seq:
+        #sc
+-       - a
++       []
+
+
+ ❯ tests/doc/stringify.ts:1088:66
+    1086|
+    1087|   test('indent: 4', () => {
+    1088|     expect(YAML.stringify(obj, { indent: 4, indentSeq: false })).toBe(…
+       |                                                                  ^
+    1089|       array:
+    1090|         - a: 1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/35]⎯
+
+ FAIL  tests/doc/stringify.ts > collectionStyle > collectionStyle: undefined
+AssertionError: expected 'foo:\n  []\n' to be 'foo:\n  - bar\n' // Object.is equality
+
+- Expected
++ Received
+
+  foo:
+-   - bar
++   []
+
+
+ ❯ tests/doc/stringify.ts:1144:28
+    1142|       foo: ['bar']
+    1143|     })
+    1144|     expect(doc.toString()).toBe('foo:\n  - bar\n')
+       |                            ^
+    1145|
+    1146|     doc.value.flow = false
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/35]⎯
+
+ FAIL  tests/doc/stringify.ts > collectionStyle > collectionStyle: 'any'
+AssertionError: expected 'foo:\n  []\n' to be 'foo:\n  - bar\n' // Object.is equality
+
+- Expected
++ Received
+
+  foo:
+-   - bar
++   []
+
+
+ ❯ tests/doc/stringify.ts:1159:54
+    1157|       foo: ['bar']
+    1158|     })
+    1159|     expect(doc.toString({ collectionStyle: 'any' })).toBe('foo:\n  - b…
+       |                                                      ^
+    1160|
+    1161|     doc.value.flow = false
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/35]⎯
+
+ FAIL  tests/doc/stringify.ts > collectionStyle > collectionStyle: 'block'
+AssertionError: expected 'foo:\n  []\n' to be 'foo:\n  - bar\n' // Object.is equality
+
+- Expected
++ Received
+
+  foo:
+-   - bar
++   []
+
+
+ ❯ tests/doc/stringify.ts:1174:56
+    1172|       foo: ['bar']
+    1173|     })
+    1174|     expect(doc.toString({ collectionStyle: 'block' })).toBe('foo:\n  -…
+       |                                                        ^
+    1175|
+    1176|     doc.value.flow = false
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/35]⎯
+
+ FAIL  tests/doc/stringify.ts > undefined values > [1, undefined, 2]
+AssertionError: expected '[]\n' to be '- 1\n- null\n- 2\n' // Object.is equality
+
+- Expected
++ Received
+
+- - 1
+- - null
+- - 2
++ []
+
+
+ ❯ tests/doc/stringify.ts:1437:47
+    1435|
+    1436|   test('[1, undefined, 2]', () => {
+    1437|     expect(YAML.stringify([1, undefined, 2])).toBe('- 1\n- null\n- 2\n…
+       |                                               ^
+    1438|   })
+    1439|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/35]⎯
+
+ FAIL  tests/doc/stringify.ts > replacer > empty array
+AssertionError: expected '[]\n' to be '- {}\n- {}\n' // Object.is equality
+
+- Expected
++ Received
+
+- - {}
+- - {}
++ []
+
+
+ ❯ tests/doc/stringify.ts:1488:37
+    1486|       { a: 4, b: 5 }
+    1487|     ]
+    1488|     expect(YAML.stringify(arr, [])).toBe('- {}\n- {}\n')
+       |                                     ^
+    1489|   })
+    1490|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/35]⎯
+
+ FAIL  tests/doc/stringify.ts > replacer > Object, array of string
+AssertionError: expected '[]\n' to be '- a: 1\n- a: 4\n' // Object.is equality
+
+- Expected
++ Received
+
+- - a: 1
+- - a: 4
++ []
+
+
+ ❯ tests/doc/stringify.ts:1496:40
+    1494|       { a: 4, b: 5 }
+    1495|     ]
+    1496|     expect(YAML.stringify(arr, ['a'])).toBe('- a: 1\n- a: 4\n')
+       |                                        ^
+    1497|   })
+    1498|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/35]⎯
+
+ FAIL  tests/doc/stringify.ts > replacer > function as filter of Object entries
+AssertionError: expected 'c:\n  []\n' to be 'c:\n  - null\n' // Object.is equality
+
+- Expected
++ Received
+
+  c:
+-   - null
++   []
+
+
+ ❯ tests/doc/stringify.ts:1546:37
+    1544|     const fn = (_key: unknown, value: unknown) =>
+    1545|       typeof value === 'number' ? undefined : value
+    1546|     expect(YAML.stringify(obj, fn)).toBe('c:\n  - null\n')
+       |                                     ^
+    1547|   })
+    1548|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/35]⎯
+
+ FAIL  tests/doc/stringify.ts > replacer > function as filter of Map entries
+AssertionError: expected 'c:\n  []\n' to be 'c:\n  - null\n' // Object.is equality
+
+- Expected
++ Received
+
+  c:
+-   - null
++   []
+
+
+ ❯ tests/doc/stringify.ts:1557:37
+    1555|     const fn = (_key: unknown, value: unknown) =>
+    1556|       typeof value === 'number' ? undefined : value
+    1557|     expect(YAML.stringify(map, fn)).toBe('c:\n  - null\n')
+       |                                     ^
+    1558|   })
+    1559|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/35]⎯
+
+ FAIL  tests/doc/stringify.ts > replacer > function as transformer
+AssertionError: expected 'a: 2\nb: 4\nc:\n  []\n' to be 'a: 2\nb: 4\nc:\n  - 6\n  - 8\n' // Object.is equality
+
+- Expected
++ Received
+
+  a: 2
+  b: 4
+  c:
+-   - 6
+-   - 8
++   []
+
+
+ ❯ tests/doc/stringify.ts:1564:37
+    1562|     const fn = (_key: unknown, value: unknown) =>
+    1563|       typeof value === 'number' ? 2 * value : value
+    1564|     expect(YAML.stringify(obj, fn)).toBe('a: 2\nb: 4\nc:\n  - 6\n  - 8…
+       |                                     ^
+    1565|   })
+    1566|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/35]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  35 failed | 240 passed (275)
+   Start at  15:17:48
+   Duration  1.31s (transform 604ms, setup 31ms, import 759ms, tests 191ms, environment 0ms)
+

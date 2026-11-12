@@ -23,6 +23,10 @@ pub struct Step {
     pub seconds: f32,
     /// the end of the command's output (stdout and stderr together)
     pub output: String,
+    /// what failed, where and with what message — from the whole output, not its end
+    pub digest: crate::digest::Digest,
+    /// repo locations named anywhere in the output (`path:line`), in the order they came
+    pub frames: Vec<crate::locate::Frame>,
 }
 
 pub struct Check {
@@ -112,7 +116,16 @@ pub fn build_commands(root: &Path, files: &[&str]) -> Vec<String> {
     v
 }
 
-fn run(root: &Path, what: &'static str, command: &str, timeout: Duration) -> Step {
+/// The commands that run exactly these tests, as the project's own environment runs them.
+pub fn test_commands(g: &Graph, root: &Path, tests: &[TestRef]) -> Vec<String> {
+    locate::run_commands(g, root, tests)
+        .into_iter()
+        .filter(|c| !c.starts_with('#')) // C/C++: no single way to run tests
+        .map(|c| if c.starts_with("pytest ") && root.join(".venv/bin/pytest").exists() { format!(".venv/bin/{c}") } else { c })
+        .collect()
+}
+
+pub fn run(root: &Path, g: &Graph, what: &'static str, command: &str, timeout: Duration) -> Step {
     let log = std::env::temp_dir().join(format!("gitnext-check-{}-{}.log", std::process::id(), what));
     let started = Instant::now();
     let (mut ok, mut timed_out) = (false, false);
@@ -141,11 +154,19 @@ fn run(root: &Path, what: &'static str, command: &str, timeout: Duration) -> Ste
             }
         }
     }
-    let text = std::fs::read_to_string(&log).unwrap_or_default();
+    // a runaway log is cut to its first megabytes: the first failures are what matters
+    let text = std::fs::read(&log).map(|b| String::from_utf8_lossy(&b[..b.len().min(8 << 20)]).into_owned()).unwrap_or_default();
     let _ = std::fs::remove_file(&log);
     let lines: Vec<&str> = text.lines().collect();
     let output = lines[lines.len().saturating_sub(25)..].join("\n");
-    Step { what, command: command.to_string(), ok, timed_out, seconds: started.elapsed().as_secs_f32(), output }
+    let (mut digest, frames) = if ok { Default::default() } else { (crate::digest::digest(&text), locate::frames(g, root, &text)) };
+    // paths as the project has them, not as the tool printed them (`/abs/repo/command.go`, `./command.go`)
+    for f in &mut digest.failures {
+        if let Some(rel) = f.file.as_deref().and_then(|p| locate::match_file(g, root, p)) {
+            f.file = Some(rel);
+        }
+    }
+    Step { what, command: command.to_string(), ok, timed_out, seconds: started.elapsed().as_secs_f32(), output, digest, frames }
 }
 
 /// Build, then the tests most likely to fail for every changed symbol. Stops at a failed build.
@@ -156,7 +177,7 @@ pub fn check(root: &Path, g: &Graph, timeout: Duration) -> Check {
     files.dedup();
     let mut steps = Vec::new();
     for c in build_commands(root, &files) {
-        steps.push(run(root, "build", &c, timeout));
+        steps.push(run(root, g, "build", &c, timeout));
         if !steps.last().is_some_and(|s| s.ok) {
             return Check { changed, tests: 0, steps };
         }
@@ -171,14 +192,8 @@ pub fn check(root: &Path, g: &Graph, timeout: Duration) -> Check {
             }
         }
     }
-    for mut c in locate::run_commands(g, root, &tests) {
-        if c.starts_with('#') {
-            continue; // C/C++: no single way to run tests
-        }
-        if c.starts_with("pytest ") && root.join(".venv/bin/pytest").exists() {
-            c = format!(".venv/bin/{c}");
-        }
-        steps.push(run(root, "tests", &c, timeout));
+    for c in test_commands(g, root, &tests) {
+        steps.push(run(root, g, "tests", &c, timeout));
     }
     Check { changed, tests: tests.len(), steps }
 }
@@ -193,7 +208,10 @@ pub fn render(g: &Graph, c: &Check) -> String {
         let state = if st.ok { "ok" } else if st.timed_out { "TIMED OUT" } else { "FAILED" };
         let _ = writeln!(s, "{:<5} {:<9} {:>5.1}s  {}", st.what, state, st.seconds, st.command);
         if !st.ok {
-            for l in st.output.lines() {
+            // what failed, where, the message — not the tool's whole output
+            let text = if st.digest.failures.is_empty() { st.output.clone() } else { crate::digest::render(&st.digest, 5) };
+
+            for l in text.lines() {
                 let _ = writeln!(s, "  {l}");
             }
         }

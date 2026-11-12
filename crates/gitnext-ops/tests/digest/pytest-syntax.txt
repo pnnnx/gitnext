@@ -1,0 +1,15 @@
+ImportError while loading conftest '/home/claude/gitnext/eval/.work/click/tests/conftest.py'.
+tests/conftest.py:3: in <module>
+    from click.testing import CliRunner
+src/click/__init__.py:10: in <module>
+    from .core import Argument as Argument
+src/click/core.py:24: in <module>
+    from . import types
+src/click/types.py:17: in <module>
+    from .exceptions import BadParameter
+src/click/exceptions.py:10: in <module>
+    from .utils import echo
+E     File "/home/claude/gitnext/eval/.work/click/src/click/utils.py", line 457
+E       if shorten
+E                 ^
+E   SyntaxError: expected ':'

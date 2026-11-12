@@ -202,6 +202,23 @@ pub enum More {
     /// Run the tests once with coverage and remember which test runs which function (Python / pytest-cov);
     /// `tests-for`, `look` and `check` then name the tests that really execute a function
     LearnTests,
+    /// A test fails: run it and get the failure in a few lines and the code it reaches, the most likely
+    /// culprit first (exit 1 while it fails). `greater_than` finds `test_greater_than`
+    Why {
+        /// Test names
+        names: Vec<String>,
+        /// Seconds the test command may take
+        #[arg(long, default_value_t = 600)]
+        timeout: u64,
+    },
+    /// Build or test output (stdin, or the arguments) in a few lines: what failed, where, the message —
+    /// `cargo test 2>&1 | gitnext digest`
+    Digest {
+        text: Vec<String>,
+        /// Failures printed in full; the rest are counted and named
+        #[arg(long, default_value_t = 5)]
+        max: usize,
+    },
     /// After a change: build the project and run the tests of what changed; prints a verdict (exit 1 if it fails)
     Check {
         /// Seconds each command may take
@@ -273,6 +290,36 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
         More::LearnTests => {
             let g = ws.graph()?;
             out.text(&gitnext_ops::learn::render(&gitnext_ops::learn::learn(&ws.root, &g)?));
+        }
+        More::Why { names, timeout } => {
+            let g = ws.graph()?;
+            if names.is_empty() {
+                bail!("which test? `gitnext why <test name>`");
+            }
+            let mut ids: Vec<usize> = Vec::new();
+            for t in &names {
+                let found = gitnext_ops::why::find_tests(&g, t);
+                if found.is_empty() {
+                    let near: Vec<&str> = gitnext_ops::why::similar_tests(&g, t).into_iter().map(|i| g.syms[i].sym.name.as_str()).collect();
+                    bail!("no test named `{t}`{}", if near.is_empty() { String::new() } else { format!("; close: {}", near.join(", ")) });
+                }
+                ids.extend(found.into_iter().filter(|i| !ids.contains(i)).collect::<Vec<_>>());
+            }
+            let w = gitnext_ops::why::why(&ws.root, &g, &ids, std::time::Duration::from_secs(timeout));
+            out.text(&gitnext_ops::why::render(&g, &ws.root, &w));
+            if w.failed() {
+                std::process::exit(1);
+            }
+        }
+        More::Digest { text, max } => {
+            let t = if text.is_empty() {
+                let mut s = String::new();
+                std::io::stdin().read_to_string(&mut s)?;
+                s
+            } else {
+                text.join(" ")
+            };
+            out.text(&gitnext_ops::digest::render(&gitnext_ops::digest::digest(&t), max));
         }
         More::Check { timeout } => {
             let g = ws.graph()?;

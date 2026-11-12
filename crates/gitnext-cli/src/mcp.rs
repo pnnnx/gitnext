@@ -104,6 +104,8 @@ fn tools() -> Value {
              json!({ "items": { "type": "array", "items": { "type": "object", "properties": { "symbol": { "type": "string" }, "summary": { "type": "string" } }, "required": ["symbol", "summary"] } } }), &["items"]),
         tool("locate", "Paste a compiler error, panic, test failure or traceback: returns the repo symbols at those file:line locations (innermost function/method) and the code of the top one.",
              json!({ "text": { "type": "string" } }), &["text"]),
+        tool("why", "A test fails: runs it and returns the failure in a few lines (what, where, the message) and the code the test reaches, most likely culprit first, with the code of the top ones. Use this first when told that a test fails.",
+             json!({ "test": { "type": "string", "description": "test name; `greater_than` finds `test_greater_than`" } }), &["test"]),
         tool("tests_for", "Tests that exercise a symbol: the 10 most likely to fail if it breaks (direct calls and tests named after it first) with the exact command to run them, plus one command for the whole test files.",
              json!({ "symbol": sym, "depth": { "type": "integer" }, "all": { "type": "boolean", "description": "name every test, not only the top 10" } }), &["symbol"]),
         tool("history", "Commits that changed one symbol (added / signature / body / docs), newest first — the 'why is it like this' view without reading git logs.",
@@ -282,6 +284,15 @@ impl Server {
                 s
             }
             "locate" => gitnext_ops::locate::render_locate(g, &root, s_arg(a, "text").ok_or("missing `text`")?, true),
+            "why" => {
+                let name = s_arg(a, "test").ok_or("missing `test`")?;
+                let ids = gitnext_ops::why::find_tests(g, name);
+                if ids.is_empty() {
+                    let near: Vec<&str> = gitnext_ops::why::similar_tests(g, name).into_iter().map(|i| g.syms[i].sym.name.as_str()).collect();
+                    return Err(format!("no test named `{name}`{}", if near.is_empty() { String::new() } else { format!("; close: {}", near.join(", ")) }));
+                }
+                gitnext_ops::why::render(g, &root, &gitnext_ops::why::why(&root, g, &ids, std::time::Duration::from_secs(600)))
+            }
             "tests_for" => {
                 let d = a.get("depth").and_then(Value::as_u64).unwrap_or(4) as usize;
                 let all = a.get("all").and_then(Value::as_bool).unwrap_or(false);

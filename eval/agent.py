@@ -4,7 +4,8 @@ server), to measure what gitnext gives an agent — without loca or any other ha
 
 Modes (tools the model gets):
   base     list_dir, read_file, grep, edit_file, run, finish
-  gitnext  base + look, rename, replace_symbol (gitnext's own tools)
+  gitnext  base + look, rename, replace_symbol, check, why (gitnext's own tools); a failing
+           command's long output comes back as its digest (what failed, where, the message)
   ctx      base, and `gitnext context` output appended to the task
   both     gitnext tools + context
   cmd      no tool-calling API at all: the context is in the task and the model answers with
@@ -56,6 +57,7 @@ from guard import Guard, compress, trim_repeats
 
 HERE = Path(__file__).resolve().parent
 MAX_OUT = 6000  # chars of tool output shown to the model
+DIGEST_FROM = 1200  # gitnext modes: a failing command's output longer than this comes back as its digest
 CTX_CHARS = int(os.environ.get("AGENT_CTX_CHARS", "40000"))  # ~ the model's context: older tool output is cut beyond it
 
 
@@ -80,10 +82,22 @@ GITNEXT_TOOLS = [
     tool("rename", "gitnext: rename a function/class everywhere (definition, calls, imports, tests, comments).", {"old": S, "new": S}, ["old", "new"]),
     tool("replace_symbol", "gitnext: replace the whole code of one function/class by name, without reading the file.", {"symbol": S, "code": S}, ["symbol", "code"]),
     tool("check", "gitnext: after a change — build the project and run the tests of what you changed; answers with a verdict.", {}, []),
+    tool("why", "gitnext: a test fails — runs it and returns the failure in a few lines and the code to look at, the most likely culprit first. Use this first when a test fails.", {"test": S}, ["test"]),
 ]
 
 
-def call_tool(name: str, a: dict, root: Path, lang: str) -> str:
+def digest(out: str) -> str | None:
+    """A long failing output through `gitnext digest`: what failed, where, the message — or None
+    when gitnext does not recognise it."""
+    try:
+        d = subprocess.run([ev.GITNEXT, "digest"], input=out, cwd=".", capture_output=True, text=True, timeout=60).stdout
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return d if d.strip() and not d.startswith(("not recognised", "no output")) else None
+
+
+def call_tool(name: str, a: dict, root: Path, lang: str, short: bool = False) -> str:
+    """`short`: a failing command's long output is given as its digest (the gitnext modes)."""
     def path(p):
         q = (root / (p or ".")).resolve()
         if root.resolve() not in q.parents and q != root.resolve():
@@ -113,6 +127,10 @@ def call_tool(name: str, a: dict, root: Path, lang: str) -> str:
             # the project's own environment first (`pytest` of its .venv, `vitest` of its node_modules), as a developer has it
             env = "".join(f"{root / d}:" for d in (".venv/bin", "node_modules/.bin") if (root / d).is_dir())
             code, out = ev.sh(f'PATH="{env}{Path(ev.GITNEXT).resolve().parent}:$PATH"; ' + a["command"], root, timeout=600)
+            if short and code != 0 and len(out) > DIGEST_FROM:
+                d = digest(out)
+                if d:
+                    return f"exit {code}\n{d}(the whole output: {out.count(chr(10)) + 1} lines)"
             return f"exit {code}\n{out[-MAX_OUT:]}"
         if name == "look":
             return ev.gx(["look", a["what"]], root)[1][:MAX_OUT]
@@ -120,6 +138,8 @@ def call_tool(name: str, a: dict, root: Path, lang: str) -> str:
             return ev.gx(["rename", a["old"], a["new"], "--text"], root)[1][:MAX_OUT]
         if name == "check":
             return ev.gx(["check"], root, timeout=900)[1][-MAX_OUT:]
+        if name == "why":
+            return ev.gx(["why", a["test"]], root, timeout=900)[1][:MAX_OUT]
         if name == "replace_symbol":
             p = subprocess.run([ev.GITNEXT, "edit", "replace", a["symbol"]], input=a["code"], cwd=root, capture_output=True, text=True)
             return (p.stdout + p.stderr)[:MAX_OUT]
@@ -175,7 +195,8 @@ SYSTEM = ("You are a coding agent working in a software project. Use the tools t
           "Be brief. When done, call finish with the answer. Do not modify tests unless asked.")
 CMD_SYSTEM = ("You are a coding agent working in a software project. Answer with ONE shell command (or a short script) in a ```sh block "
               "and nothing else; you will get its output back. Useful commands: `gitnext look <function, class or file>` (its code, who calls it, "
-              "its tests — in one call), `gitnext rename <old> <new> --text`, `gitnext check` (after a change: builds and runs the tests of what you changed), "
+              "its tests — in one call), `gitnext why <test>` (a test fails: the failure in a few lines and the code to look at), "
+              "`gitnext rename <old> <new> --text`, `gitnext check` (after a change: builds and runs the tests of what you changed), "
               "cat, grep, sed -i. "
               "When the task is done answer `DONE: <answer>`. Be brief. Do not modify tests unless asked.")
 TOKEN_BUDGET = int(os.environ.get("AGENT_TOKEN_BUDGET", "0"))  # prompt tokens per run, 0 = no limit
@@ -299,7 +320,7 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
             else:
                 out = guard.before_call(used["steps"], name, a)
                 if out is None:
-                    out = guard.after_call(used["steps"], name, a, call_tool(name, a, root, lang))
+                    out = guard.after_call(used["steps"], name, a, call_tool(name, a, root, lang, short=cmd or mode in GITNEXT_MODES))
             msgs.append({"role": "user", "content": out} if cmd else {"role": "tool", "tool_call_id": c.get("id", name), "content": out})
         if finished:
             back = gate.on_finish(used["steps"] - 1) if gate else None  # the step that only calls `finish` is not a look at the code
@@ -528,7 +549,7 @@ def main() -> None:
         if not rs:
             continue
         steps = sorted(r.get("steps") or 0 for r in rs)
-        gcalls = sum(sum(v for k, v in (r.get("tools") or {}).items() if k in ("look", "rename", "replace_symbol", "check")) for r in rs)
+        gcalls = sum(sum(v for k, v in (r.get("tools") or {}).items() if k in ("look", "rename", "replace_symbol", "check", "why")) for r in rs)
         md.append(f"| {mode} | {sum(r['passed'] for r in rs)}/{len(rs)} | {steps[len(steps)//2]} | {sum(r.get('tokens_in') or 0 for r in rs)} | {gcalls} | {sum(r.get('text_calls') or 0 for r in rs)} | {sum(sum((r.get('guard') or {}).values()) for r in rs)} | {sum(1 for r in rs if r.get('stopped'))} | {sum(sum((r.get('gate') or {}).values()) for r in rs)} | {sum(1 for r in rs if r.get('escalated'))} |")
     Path(args.out).with_suffix(".md").write_text("\n".join(md) + "\n")
     print("\n".join(md))

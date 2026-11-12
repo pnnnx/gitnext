@@ -1,0 +1,24 @@
+[INFO] Running org.jsoup.nodes.TextNodeTest
+[ERROR] Tests run: 12, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.041 s <<< FAILURE! -- in org.jsoup.nodes.TextNodeTest
+[ERROR] org.jsoup.nodes.TextNodeTest.testSplitText -- Time elapsed: 0.004 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <Hello > but was: <Hello>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+	at org.jsoup.nodes.TextNodeTest.testSplitText(TextNodeTest.java:88)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   TextNodeTest.testSplitText:88 expected: <Hello > but was: <Hello>
+[INFO] 
+[ERROR] Tests run: 1543, Failures: 1, Errors: 0, Skipped: 12
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.2.5:test (default-test) on project jsoup: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /home/user/jsoup/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]

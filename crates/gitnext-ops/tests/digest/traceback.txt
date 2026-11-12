@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/user/proj/tools/build.py", line 88, in <module>
+    main()
+  File "/home/user/proj/tools/build.py", line 61, in main
+    config = load(path)
+  File "/home/user/proj/tools/config.py", line 17, in load
+    return json.loads(text)["build"]
+KeyError: 'build'

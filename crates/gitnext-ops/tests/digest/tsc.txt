@@ -1,0 +1,1 @@
+src/nodes/YAMLSeq.ts(328,15): error TS2551: Property 'lengthh' does not exist on type 'string[]'. Did you mean 'length'?

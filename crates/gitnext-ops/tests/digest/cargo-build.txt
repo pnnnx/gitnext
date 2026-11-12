@@ -1,0 +1,16 @@
+    Checking semver v1.0.28 (/home/claude/gitnext/eval/.work/semver)
+error[E0609]: no field `majr` on type `&Comparator`
+  --> src/eval.rs:63:25
+   |
+63 |     if ver.major != cmp.majr {
+   |                         ^^^^ unknown field
+   |
+help: a field with a similar name exists
+   |
+63 |     if ver.major != cmp.major {
+   |                            +
+
+For more information about this error, try `rustc --explain E0609`.
+error: could not compile `semver` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `semver` (lib test) due to 1 previous error

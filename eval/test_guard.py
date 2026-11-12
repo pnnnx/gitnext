@@ -214,7 +214,9 @@ class Case(unittest.TestCase):
     def fake_gitnext(self) -> str:
         """`gitnext check` passes once calc.py subtracts; every other command says nothing."""
         g = self.root.parent / f"gitnext-{self.root.name}.sh"
-        g.write_text("#!/bin/sh\nif [ \"$1\" = check ]; then grep -q 'a - b' calc.py && echo 'verdict: ok — builds, 1 test pass' || { grep -q 'a / b' calc.py && echo 'verdict: builds, but no test reaches the changed code' || { echo 'calc.py: test_add failed'; echo 'verdict: FAILED — tests (see the output above)'; }; }; fi\n")
+        g.write_text("#!/bin/sh\nif [ \"$1\" = check ]; then grep -q 'a - b' calc.py && echo 'verdict: ok — builds, 1 test pass' || { grep -q 'a / b' calc.py && echo 'verdict: builds, but no test reaches the changed code' || { echo 'calc.py: test_add failed'; echo 'verdict: FAILED — tests (see the output above)'; }; }; fi\n"
+                     "if [ \"$1\" = digest ]; then cat >/dev/null; echo 'tests: 1 failed'; echo '✗ test_add  calc.py:2'; fi\n"
+                     "if [ \"$1\" = why ]; then echo \"why: test_$2 — FAILS\"; fi\n")
         g.chmod(0o755)
         self.addCleanup(g.unlink)
         self.addCleanup(setattr, agent.ev, "GITNEXT", agent.ev.GITNEXT)
@@ -251,6 +253,27 @@ class Case(unittest.TestCase):
         tool.write_text("#!/bin/sh\necho from-venv\n")
         tool.chmod(0o755)
         self.assertIn("from-venv", agent.call_tool("run", {"command": "projtool"}, self.root, "python"))
+
+    def test_long_failing_output_comes_back_as_its_digest(self):
+        self.fake_gitnext()
+        noisy = "seq 1 400; exit 1"
+        _, s = self.run_agent([call("run", command=noisy), say("it fails")], mode="gitnext")
+        self.assertIn("tests: 1 failed", s.seen())
+        self.assertIn("the whole output: 401 lines", s.seen())
+        self.assertNotIn("399", s.seen())
+        # without gitnext the model gets the output itself; a short or a passing one is never digested
+        _, s = self.run_agent([call("run", command=noisy), say("it fails")], mode="base")
+        self.assertIn("399", s.seen())
+        _, s = self.run_agent([call("run", command="echo short; exit 1"), call("run", command="seq 1 400"), say("ok")], mode="gitnext")
+        self.assertIn("short", s.seen())
+        self.assertIn("399", s.seen())
+
+    def test_why_is_a_tool_of_the_gitnext_modes(self):
+        self.fake_gitnext()
+        res, s = self.run_agent([call("why", test="add"), say("the bug is in add")], mode="gitnext")
+        self.assertIn("why: test_add — FAILS", s.seen())
+        self.assertEqual(res["tools"], {"why": 1})
+        self.assertNotIn("why", [t["function"]["name"] for t in self.run_agent([say("x")], mode="base")[1].requests[0]["tools"]])
 
     def test_other_modes_have_no_gate(self):
         res, _ = self.run_agent([say("it is in calc.py")], mode="gitnext")

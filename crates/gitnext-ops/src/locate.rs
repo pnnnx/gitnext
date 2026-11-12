@@ -16,24 +16,29 @@ pub struct Frame {
     pub symbol: Option<usize>,
 }
 
-const CODE_EXT: &[&str] = &["rs", "py", "pyi", "c", "h", "cc", "cpp", "cxx", "hpp", "hh", "hxx", "ipp", "inl"];
+const CODE_EXT: &[&str] = &["rs", "py", "pyi", "c", "h", "cc", "cpp", "cxx", "hpp", "hh", "hxx", "ipp", "inl", "go", "java", "kt", "ts", "tsx", "js", "jsx", "mjs", "cjs"];
 
 /// Map a path as printed by a tool (absolute, ./relative, site-packages…) to an indexed file.
-fn match_file(g: &Graph, root: &Path, raw: &str) -> Option<String> {
+pub(crate) fn match_file(g: &Graph, root: &Path, raw: &str) -> Option<String> {
     let raw = raw.trim().trim_matches(['"', '\'', '(', ')', '`']);
     let p = raw.strip_prefix(&format!("{}/", root.display())).unwrap_or(raw).trim_start_matches("./");
     if g.files.iter().any(|f| f.path == p) {
         return Some(p.to_string());
     }
     // longest indexed path that is a suffix of the printed one
-    g.files
-        .iter()
-        .filter(|f| p.ends_with(&format!("/{}", f.path)) || p.ends_with(&f.path) && p.len() == f.path.len())
-        .max_by_key(|f| f.path.len())
-        .map(|f| f.path.clone())
+    let by_suffix = g.files.iter().filter(|f| p.ends_with(&format!("/{}", f.path)) || p.ends_with(&f.path) && p.len() == f.path.len()).max_by_key(|f| f.path.len()).map(|f| f.path.clone());
+    if by_suffix.is_some() || p.contains('/') {
+        return by_suffix;
+    }
+    // a bare file name (a Java stack frame: `TextNodeTest.java:88`), when only one file has it
+    let mut named = g.files.iter().filter(|f| f.path.rsplit('/').next() == Some(p));
+    match (named.next(), named.next()) {
+        (Some(f), None) => Some(f.path.clone()),
+        _ => None,
+    }
 }
 
-fn innermost(g: &Graph, file: &str, line: u32) -> Option<usize> {
+pub(crate) fn innermost(g: &Graph, file: &str, line: u32) -> Option<usize> {
     g.in_file(file)
         .into_iter()
         .filter(|&i| {
@@ -64,16 +69,26 @@ pub fn frames(g: &Graph, root: &Path, text: &str) -> Vec<Frame> {
             }
         }
         // generic: some/path.ext:LINE[:COL]
-        for token in l.split(|c: char| c.is_whitespace() || c == ',' || c == '(' || c == ')' || c == '\'' || c == '"') {
-            let mut parts = token.split(':');
-            let Some(path) = parts.next() else { continue };
-            let ext = path.rsplit('.').next().unwrap_or("");
-            if !CODE_EXT.contains(&ext) {
-                continue;
+        for word in l.split_whitespace() {
+            // tsc `src/x.ts(12,5):`, maven `/abs/X.java:[12,5]`
+            let w = word.trim_matches(['\'', '"', '`']);
+            if let Some((path, n, _)) = crate::digest::location(w).filter(|(p, _, _)| CODE_EXT.contains(&p.rsplit('.').next().unwrap_or(""))) {
+                if let Some(f) = match_file(g, root, &path) {
+                    push(f, n);
+                    continue;
+                }
             }
-            let Some(n) = parts.next().and_then(|x| x.parse::<u32>().ok()) else { continue };
-            if let Some(f) = match_file(g, root, path) {
-                push(f, n);
+            for token in word.split([',', '(', ')', '\'', '"']) {
+                let mut parts = token.split(':');
+                let Some(path) = parts.next() else { continue };
+                let ext = path.rsplit('.').next().unwrap_or("");
+                if !CODE_EXT.contains(&ext) {
+                    continue;
+                }
+                let Some(n) = parts.next().and_then(|x| x.parse::<u32>().ok()) else { continue };
+                if let Some(f) = match_file(g, root, path) {
+                    push(f, n);
+                }
             }
         }
     }
@@ -322,7 +337,7 @@ pub fn is_runnable(g: &Graph, i: usize) -> bool {
 }
 
 /// `testParseURL_basic` → ["test", "parse", "url", "basic"]: camelCase, snake_case, digits apart.
-fn name_words(n: &str) -> Vec<String> {
+pub(crate) fn name_words(n: &str) -> Vec<String> {
     let mut out: Vec<String> = Vec::new();
     let cs: Vec<char> = n.chars().collect();
     let mut cur = String::new();

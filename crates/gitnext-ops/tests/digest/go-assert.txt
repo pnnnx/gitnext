@@ -1,0 +1,10 @@
+=== RUN   TestCommandAlias
+--- FAIL: TestCommandAlias (0.00s)
+    command_test.go:120: Unexpected error: unknown command "say" for "print"
+    command_test.go:123: expected "echo", got "print"
+=== RUN   TestRootFlags
+--- PASS: TestRootFlags (0.00s)
+FAIL
+FAIL	github.com/spf13/cobra	0.012s
+ok  	github.com/spf13/cobra/doc	0.004s
+FAIL

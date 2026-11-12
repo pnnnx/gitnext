@@ -1,0 +1,17 @@
+F....................................................................    [100%]
+=================================== FAILURES ===================================
+___________________________ test_filename_formatting ___________________________
+
+    def test_filename_formatting():
+        assert click.format_filename(b"foo.txt") == "foo.txt"
+>       assert click.format_filename(b"/x/foo.txt") == "/x/foo.txt"
+E       AssertionError: assert 'foo.txt' == '/x/foo.txt'
+E         
+E         - /x/foo.txt
+E         ? ---
+E         + foo.txt
+
+tests/test_utils/test_format_filename.py:6: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_utils/test_format_filename.py::test_filename_formatting - A...
+1 failed, 68 passed in 0.16s

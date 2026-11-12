@@ -56,6 +56,8 @@ gitnext             # open the TUI
 | what breaks, which tests to run | `gitnext impact <Sym>` · `gitnext tests-for <Sym>` (the 10 most likely to fail + one command for the rest) |
 | which tests really run a function (Python) | `gitnext learn-tests` — one pytest run with coverage; `tests-for`, `look` and `check` then use the real list (on click: 100% of the failing tests found instead of 19%) |
 | did my change break anything | `gitnext check` — builds and runs the tests of what changed, prints a verdict (`gitnext rename A B --check` does it right after the rename) |
+| a test fails — why | `gitnext why <test>` / `why` — runs it; the failure in a few lines and the code the test reaches, the most likely culprit first |
+| a long build or test log | `cargo test 2>&1 \| gitnext digest` — what failed, where, the message (a vitest run with 35 failures: 843 lines → 12) |
 | error or traceback → code | `gitnext locate` (stdin) / `locate` |
 | where were we | `gitnext brief` · `gitnext journal` |
 | which libraries the code calls, with versions | `gitnext libs` (and `look` shows them per function) |
