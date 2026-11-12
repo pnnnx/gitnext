@@ -95,7 +95,7 @@ LITE_TOOLS = [
     tool("replace", "Replace one whole function or class with new code. No need to read the file first.", {"symbol": S, "code": S}, ["symbol", "code"]),
     tool("add_after", "Add new code (a new function) right after an existing function or class.", {"symbol": S, "code": S}, ["symbol", "code"]),
     tool("rename", "Rename a function or class everywhere: definition, calls, imports, tests.", {"old": S, "new": S}, ["old", "new"]),
-    tool("check", "Run the tests. No arguments: after your change — says ok or what failed. With test: why that test fails and the code to fix.", {"test": S}, []),
+    tool("check", "A test fails: call this first with test = its name — it runs the test and shows the failure and the code to fix. After your change: call it with no arguments — says ok or what failed.", {"test": S}, []),
     tool("finish", "Finish the task with the final answer.", {"answer": S}, ["answer"]),
 ]
 
@@ -250,7 +250,7 @@ CMD_SYSTEM = ("You are a coding agent working in a software project. Answer with
 TOKEN_BUDGET = int(os.environ.get("AGENT_TOKEN_BUDGET", "0"))  # prompt tokens per run, 0 = no limit
 GITNEXT_MODES = ("gitnext", "both", "verify", "lite")  # modes with the gitnext tools
 LITE_SYSTEM = ("You are a coding agent working in a software project. You have five tools for the code: look (read: a function, a file, an error), "
-               "replace and add_after (change code), rename, check (run the tests; give `test` when a test fails). "
+               "replace and add_after (change code), rename, check (a test fails: call it first with the test's name; after a change: with no arguments). "
                "Use them, be brief, and call finish with the answer when done. Do not modify tests unless asked.")
 
 

@@ -137,8 +137,8 @@ fn lite_tools() -> Value {
           "description": "Rename a function or class everywhere: definition, calls, imports, tests.",
           "inputSchema": { "type": "object", "properties": { "symbol": str_("current name"), "new_name": str_("new name") }, "required": ["symbol", "new_name"] } },
         { "name": "check",
-          "description": "Run the tests. No arguments: after your change — says ok or what failed. With test: why that test fails and the code to fix.",
-          "inputSchema": { "type": "object", "properties": { "test": str_("a failing test (optional)") } } },
+          "description": "A test fails: call this first with test = its name — it runs the test and shows the failure and the code to fix. After your change: call it with no arguments — says ok or what failed.",
+          "inputSchema": { "type": "object", "properties": { "test": str_("the name of a failing test (optional)") } } },
     ])
 }
 
