@@ -105,6 +105,9 @@ enum Cmd {
         query: Vec<String>,
         #[arg(short = 'n', default_value_t = 20)]
         limit: usize,
+        /// Search the text of the files instead of names: every line that contains the query, with the function it is in
+        #[arg(long)]
+        text: bool,
     },
     /// List symbols in a file or directory (default: whole repo)
     Symbols {
@@ -436,10 +439,18 @@ fn run() -> Result<()> {
                 out.text(&render::show(&g, i, out.opts));
             }
         }
-        Cmd::Search { query, limit } => {
+        Cmd::Search { query, limit, text } => {
             let ws = Workspace::open(&cwd)?;
             let g = ws.graph()?;
             let q = query.join(" ");
+            if text {
+                let hits = gitnext_ops::look::text_hits(&g, &ws.root, &q, limit);
+                if out.json {
+                    return out.json(&hits);
+                }
+                out.text(&if hits.is_empty() { format!("no line contains `{q}`\n") } else { hits.join("\n") + "\n" });
+                return Ok(());
+            }
             if out.json {
                 let v: Vec<_> = g.search(&q, limit).into_iter().map(|i| g.sym_ref(i)).collect();
                 return out.json(&v);

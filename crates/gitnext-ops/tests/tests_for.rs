@@ -110,3 +110,17 @@ fn look_asks_when_a_bare_name_has_namesakes() {
     assert!(callers.starts_with("callers of tool::main (1 sure"), "{callers}");
     let _ = std::fs::remove_dir_all(&dir);
 }
+
+/// Text search names the function each hit is in.
+#[test]
+fn text_hits_name_the_enclosing_function() {
+    let dir = project("texthits", &[("tool.py", "def render(x):\n    return \"()::\" + x\n\n\nLIMIT = \"()::\"\n")]);
+    let mut idx = Index::open(&dir).unwrap();
+    idx.refresh().unwrap();
+    let g = idx.graph().unwrap();
+    let hits = gitnext_ops::look::text_hits(&g, &dir, "()::", 10);
+    assert_eq!(hits.len(), 2, "{hits:?}");
+    assert!(hits[0].starts_with("  tool.py:2 (in render): return"), "{hits:?}");
+    assert!(hits[1].starts_with("  tool.py:5: LIMIT"), "{hits:?}");
+    let _ = std::fs::remove_dir_all(&dir);
+}

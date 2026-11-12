@@ -194,6 +194,31 @@ fn short_file(p: &str) -> &str {
     p.rsplit('/').next().unwrap_or(p)
 }
 
+/// Lines that contain `what` (any text: a string literal, an operator, a message), each with
+/// the function it sits in — "who builds this string" answered without grep.
+pub fn text_hits(g: &Graph, root: &std::path::Path, what: &str, limit: usize) -> Vec<String> {
+    let low = what.to_lowercase();
+    let mut hits = Vec::new();
+    'files: for f in g.files.iter().filter(|f| f.lines < 20_000) {
+        let Ok(t) = std::fs::read_to_string(root.join(&f.path)) else { continue };
+        for (n, line) in t.lines().enumerate() {
+            if line.to_lowercase().contains(&low) {
+                let ln = n as u32 + 1;
+                // the innermost function / type around the line
+                let owner = (0..g.syms.len())
+                    .filter(|&i| g.syms[i].file == f.path && g.syms[i].sym.start_line <= ln && g.syms[i].sym.end_line >= ln && (g.syms[i].sym.kind.is_callable() || g.syms[i].sym.kind.is_type()))
+                    .min_by_key(|&i| g.syms[i].sym.end_line - g.syms[i].sym.start_line);
+                let within = owner.map(|i| format!(" (in {})", g.short_name(i))).unwrap_or_default();
+                hits.push(format!("  {}:{ln}{within}: {}", f.path, line.trim().chars().take(120).collect::<String>()));
+                if hits.len() >= limit {
+                    break 'files;
+                }
+            }
+        }
+    }
+    hits
+}
+
 fn words_hits(g: &Graph, root: &std::path::Path, what: &str) -> String {
     let mut s = String::new();
     let hits = g.search(what, 10);
@@ -205,19 +230,7 @@ fn words_hits(g: &Graph, root: &std::path::Path, what: &str) -> String {
             let _ = writeln!(s, "  {} ({}) {}:{}{sum}", g.short_name(i), r.sym.kind.as_str(), r.file, r.sym.start_line);
         }
     }
-    let low = what.to_lowercase();
-    let mut text_hits = Vec::new();
-    'files: for f in g.files.iter().filter(|f| f.lines < 20_000) {
-        let Ok(t) = std::fs::read_to_string(root.join(&f.path)) else { continue };
-        for (n, line) in t.lines().enumerate() {
-            if line.to_lowercase().contains(&low) {
-                text_hits.push(format!("  {}:{}: {}", f.path, n + 1, line.trim().chars().take(120).collect::<String>()));
-                if text_hits.len() >= 20 {
-                    break 'files;
-                }
-            }
-        }
-    }
+    let text_hits = text_hits(g, root, what, 20);
     if !text_hits.is_empty() {
         s.push_str("text:\n");
         s.push_str(&text_hits.join("\n"));
