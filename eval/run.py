@@ -13,10 +13,14 @@ truth from the project itself:
             Checked twice: for functions with a unique name, and for methods
             whose name several types share (`common` — only the receiver's type
             tells them apart).
+            And once more for functions picked without asking gitnext (`blind`):
+            the two samples above hold only functions it finds a caller for, so
+            they cannot show a function whose callers it misses entirely.
   rename    `gitnext rename <f> <f>Gnx --text`, then the project must still
             compile and its tests must still pass.
   tests     make the function fail on entry and run the whole test suite:
-            the tests that fail are the ones that exercise it. Compared with
+            the tests that fail are the ones that exercise it. A test is its
+            name, in Python `file::name`, in TypeScript its file. Compared with
             `gitnext tests-for --all` → recall / precision, and with the 10 tests
             it puts first → how many of those fail (top-10 precision) and whether
             any does (caught).
@@ -192,6 +196,30 @@ def py_failed(out: str) -> set[str]:
     return {m.group(1).rsplit("::", 1)[-1] for m in re.finditer(r"^(?:FAILED|ERROR) ([^\s\[]+::[^\s\[]+)", out, re.M)}
 
 
+PY_TESTS: dict[str, dict[str, list[str]]] = {}  # repo root → test file → its tests (py_collect), filled by run_repo
+
+
+def py_collect(root: Path) -> dict[str, list[str]]:
+    """Every test of the untouched commit, by file, as `file::test`."""
+    _, out = sh(".venv/bin/python -m pytest --co -q -p no:cacheprovider 2>&1", root, timeout=1200)
+    by_file: dict[str, set[str]] = {}
+    for m in re.finditer(r"^([^\s:\[]+\.py)::([^\s\[]+)", out, re.M):
+        by_file.setdefault(m.group(1), set()).add(f"{m.group(1)}::{m.group(2).rsplit('::', 1)[-1]}")
+    return {f: sorted(v) for f, v in by_file.items()}
+
+
+def py_failed_ids(out: str, root: Path) -> set[str]:
+    """Failing tests as `file::test`: two files may hold a test of the same name, a bare name would merge
+    them. A test module that could not be imported (`ERROR tests/a.py - ImportError`) fails all its tests."""
+    ids: set[str] = set()
+    for m in re.finditer(r"^(?:FAILED|ERROR) ([^\s:\[]+\.py)(?:::([^\s\[]+))?", out, re.M):
+        if m.group(2):
+            ids.add(f"{m.group(1)}::{m.group(2).rsplit('::', 1)[-1]}")
+        else:
+            ids.update(PY_TESTS.get(str(root), {}).get(m.group(1), []))
+    return ids
+
+
 def rust_failed(out: str) -> set[str]:
     return {m.group(1).rsplit("::", 1)[-1] for m in re.finditer(r"^test (\S+) \.\.\. FAILED", out, re.M)}
 
@@ -239,8 +267,12 @@ LANG = {
         compile=".venv/bin/python -m compileall -q . >/dev/null && .venv/bin/python -m pytest -q --co -p no:cacheprovider 2>&1 | tail -3",
         errors=None,  # no compiler to name every use
         # the whole summary, no tracebacks: `| tail -400` cut the list wherever hundreds of tests failed
-        tests=".venv/bin/python -m pytest -q -rfE --tb=no -p no:cacheprovider -x --maxfail=10000 2>&1",
-        tests_key="tests3",  # "tests": cut at 400 lines; "tests2": names taken from inside parametrized ids
+        # and all of the suite: without --continue-on-collection-errors a test module that no longer imports stops the run
+        # before any test ("Interrupted: 1 error during collection") — it looked like "no test fails"
+        tests=".venv/bin/python -m pytest -q -rfE --tb=no -p no:cacheprovider -x --maxfail=10000 --continue-on-collection-errors 2>&1",
+        tests_key="tests4",  # "tests": cut at 400 lines; "tests2": names from inside parametrized ids; "tests3": stopped at a collection error
+        collect=py_collect,
+        ids=py_failed_ids,
         ran=lambda out, root: bool(re.search(r"\d+ (passed|failed|error)", out)),
         failed=lambda out, root: py_failed(out),
         fail_stmt='raise RuntimeError("gitnext-mutant")',
@@ -266,7 +298,10 @@ LANG = {
         level="name",
     ),
     "rust": dict(
-        compile="cargo check --tests --message-format human 2>&1",
+        # all features: code behind a feature (indexmap's rayon and serde modules) is code gitnext indexes too
+        compile="cargo check --tests --all-features --message-format human 2>&1",
+        uses_key="uses2",  # "uses": without the features
+        unseen=lambda file: file.startswith("benches/"),  # `cargo check --benches` needs nightly where benches use #![feature(test)]
         errors=lambda out, root: rust_errors(out),
         tests="cargo test --no-fail-fast 2>&1",
         ran=lambda out, root: "test result:" in out,
@@ -305,7 +340,7 @@ def baseline_tests(root: Path, L: dict) -> dict:
     """The suite on the untouched commit: did it run, and which tests fail already (those are not ours).
     Asked the same way a mutant is: where its tests run one at a time, the ones failing alone count too."""
     _, tout = sh(L["tests"], root, timeout=2400)
-    failed = L["failed"](tout, root)
+    failed = L.get("ids", L["failed"])(tout, root)
     if "failing_alone" in L:
         failed = failed | L["failing_alone"](root)
     return {"ran": bool(L["ran"](tout, root)), "failed": sorted(failed), "tail": tout[-300:]}
@@ -319,36 +354,69 @@ def symbols(root: Path) -> list[dict]:
 CALLERS_MEMO: dict | None = None  # run_repo turns it on: the tree is clean there, and in a big repo one call takes seconds
 
 
-def callers(root: Path, q: str) -> tuple[set[str], set[str]]:
-    if CALLERS_MEMO is not None and (str(root), q) in CALLERS_MEMO:
-        return CALLERS_MEMO[(str(root), q)]
-    code, out = gx(["--json", "callers", q], root)
+def _callers_of(entry: dict) -> tuple[set[str], set[str]]:
     sure, maybe = set(), set()
-    if not code:
-        d = json.loads(out)
-        for entry in d if isinstance(d, list) else [d]:
-            for c, _line in entry.get("callers", []):
-                sure.add(c["qualified"])
-            for c in entry.get("maybe", []) or []:
-                maybe.add((c[0] if isinstance(c, list) else c)["qualified"])
-    if CALLERS_MEMO is not None:
-        CALLERS_MEMO[(str(root), q)] = (sure, maybe)
+    for c, _line in entry.get("callers", []):
+        sure.add(c["qualified"])
+    for c in entry.get("maybe", []) or []:
+        maybe.add((c[0] if isinstance(c, list) else c)["qualified"])
     return sure, maybe
+
+
+def callers_many(root: Path, qs: list[str]) -> dict[str, tuple[set[str], set[str]]]:
+    """`gitnext callers` for several functions in one run: in a big repo every run costs a second or two.
+    A gitnext that takes one name at a time, or does not find one of the names, is asked name by name."""
+    memo = CALLERS_MEMO if CALLERS_MEMO is not None else {}
+
+    def ask(names: list[str]) -> bool:
+        code, out = gx(["--json", "callers", *names], root)
+        try:
+            d = json.loads(out) if not code else None
+        except ValueError:
+            d = None
+        if d is None:
+            return False
+        got: dict[str, tuple[set[str], set[str]]] = {n: (set(), set()) for n in names}
+        for entry in d if isinstance(d, list) else [d]:
+            name = names[0] if len(names) == 1 else (entry.get("symbol") or {}).get("qualified")
+            if name in got:
+                sure, maybe = _callers_of(entry)
+                got[name][0].update(sure)
+                got[name][1].update(maybe)
+        for n in names:
+            memo[(str(root), n)] = got[n]
+        return True
+
+    new = [q for q in dict.fromkeys(qs) if (str(root), q) not in memo]
+    if len(new) > 1:
+        ask(new)
+    for q in new:
+        if (str(root), q) not in memo and not ask([q]):
+            memo[(str(root), q)] = (set(), set())
+    return {q: memo[(str(root), q)] for q in qs}
+
+
+def callers(root: Path, q: str) -> tuple[set[str], set[str]]:
+    return callers_many(root, [q])[q]
+
+
+def tests_for_rows(root: Path, q: str) -> list[tuple[str, str, str]]:
+    """What `gitnext tests-for --all` names, most likely first: (test name, test file, how it was found)."""
+    code, out = gx(["tests-for", q, "--all"], root)
+    if code:  # a gitnext without `--all` lists everything anyway
+        code, out = gx(["tests-for", q], root)
+    return [(m.group(1).rsplit("::", 1)[-1], m.group(2), m.group(3)) for m in re.finditer(r"^(\S+)\s+(\S+?):\d+ \(([^)]*)\)", out, re.M)]
 
 
 def tests_for(root: Path, q: str) -> tuple[list[str], list[str], set[str]]:
     """(test names, test files — both most likely first, names found through the call graph only)"""
-    code, out = gx(["tests-for", q, "--all"], root)
-    if code:  # a gitnext without `--all` lists everything anyway
-        code, out = gx(["tests-for", q], root)
     names, files, graph = [], [], set()
-    for m in re.finditer(r"^(\S+)\s+(\S+?):\d+ \(([^)]*)\)", out, re.M):
-        n = m.group(1).rsplit("::", 1)[-1]
+    for n, f, how in tests_for_rows(root, q):
         if n not in names:
             names.append(n)
-        if m.group(2) not in files:
-            files.append(m.group(2))
-        if "hop" in m.group(3) or "direct" in m.group(3):
+        if f not in files:
+            files.append(f)
+        if "hop" in how or "direct" in how:
             graph.add(n)
     return names, files, graph
 
@@ -365,9 +433,11 @@ def enclosing(syms: list[dict], file: str, line: int) -> str | None:
     return best["qualified"]
 
 
-def pick(syms: list[dict], root: Path, n: int, seed: int, common: bool = False) -> list[dict]:
-    """Functions to check. Default: names that occur once in the repo. `common`: methods whose
-    name several types share (`release`, `parse`…) — only the receiver's type tells them apart."""
+def pick(syms: list[dict], root: Path, n: int, seed: int, common: bool = False, blind: bool = False) -> list[dict]:
+    """Functions to check. Default: names that occur once in the repo, with a caller gitnext knows of.
+    `common`: methods whose name several types share (`release`, `parse`…) — only the receiver's type
+    tells them apart. `blind`: the first n of the same order whether gitnext sees a caller or not —
+    a function whose callers it misses entirely never gets into the default sample."""
     names: dict[str, int] = {}
     for s in syms:
         if s["kind"] in ("function", "method") and not s.get("test"):
@@ -390,16 +460,19 @@ def pick(syms: list[dict], root: Path, n: int, seed: int, common: bool = False) 
     rng.shuffle(cands)
     out = []
     used = set()
-    for s in cands:
-        if s["name"] in used:  # one method per shared name
-            continue
-        sure, maybe = callers(root, s["qualified"])
-        if sure or (common and maybe):
-            s["_callers"], s["_maybe"] = sure, maybe
-            out.append(s)
-            used.add(s["name"])
-        if len(out) >= n:
-            break
+    for at in range(0, len(cands), 40):  # gitnext is asked about 40 functions per run
+        chunk = cands[at:at + 40]
+        found = callers_many(root, [s["qualified"] for s in chunk])
+        for s in chunk:
+            if s["name"] in used:  # one method per shared name
+                continue
+            sure, maybe = found[s["qualified"]]
+            if blind or sure or (common and maybe):
+                s["_callers"], s["_maybe"] = sure, maybe
+                out.append(s)
+                used.add(s["name"])
+            if len(out) >= n:
+                return out
     return out
 
 
@@ -473,7 +546,7 @@ def check_callers(root: Path, repo: dict, syms: list[dict], s: dict) -> dict | N
     L = LANG[repo["lang"]]
     if not L["errors"]:
         return None
-    sites = cached(f"{repo['name']}@{repo['commit'][:12]}:uses:{s['qualified']}", lambda: use_sites(root, repo, s))
+    sites = cached(f"{repo['name']}@{repo['commit'][:12]}:{L.get('uses_key', 'uses')}:{s['qualified']}", lambda: use_sites(root, repo, s))
     if sites is None:
         return None
     modules = {x["qualified"] for x in syms if x["kind"] == "module"}
@@ -482,14 +555,17 @@ def check_callers(root: Path, repo: dict, syms: list[dict], s: dict) -> dict | N
     # a use on an import line (Java static import, TS re-export) is not a call
     import_files = {f for f, q in hits if q in modules}
     truth = {q for f, q in hits if q not in modules}
-    found = s["_callers"]
+    # code the compile command does not build (Rust benches need nightly) can be neither confirmed nor refuted
+    seen = lambda c: not L.get("unseen", lambda f: False)(file_of.get(c, ""))
+    found = {c for c in s["_callers"] if seen(c)}
+    maybe = {c for c in s["_maybe"] if seen(c)}
     if not truth and not import_files:
         return {"symbol": s["qualified"], "skipped": "compiler reported no uses"}
     ok_found = {c for c in found if c in truth or file_of.get(c) in import_files}
     return {
-        "symbol": s["qualified"], "truth": sorted(truth), "found": sorted(found), "maybe": sorted(s["_maybe"]), "import_files": sorted(import_files),
+        "symbol": s["qualified"], "truth": sorted(truth), "found": sorted(found), "maybe": sorted(maybe), "import_files": sorted(import_files),
         "recall": len(found & truth) / len(truth) if truth else None, "precision": len(ok_found) / len(found) if found else None,
-        "recall_with_maybe": len((found | s["_maybe"]) & truth) / len(truth) if truth else None,
+        "recall_with_maybe": len((found | maybe) & truth) / len(truth) if truth else None,
     }
 
 
@@ -523,13 +599,14 @@ def check_rename(root: Path, repo: dict, s: dict, run_tests: bool, baseline_fail
         v = {"compiled": compiled, "ran": None, "failed": [], "detail": "" if compiled else cout[-500:]}
         if compiled and run_tests:
             tcode, tout = sh(L["tests"], root, timeout=1800)
-            v["ran"], v["failed"] = bool(L["ran"](tout, root)), sorted(L["failed"](tout, root))
+            v["ran"], v["failed"] = bool(L["ran"](tout, root)), sorted(L.get("ids", L["failed"])(tout, root))
         return v
 
-    # the same edit gets the same verdict: the build and the tests are asked once per distinct diff,
-    # so a second run costs only gitnext's time, and a changed gitnext pays only for what it edits differently
+    # the same edit gets the same verdict from the same commands: the build and the tests are asked once per
+    # distinct diff, so a second run costs only gitnext's time, and a changed gitnext pays only for what it edits differently
     diff = sh("git diff --no-color", root)[1]
-    key = f"{repo['name']}@{repo['commit'][:12]}:rename{'' if run_tests else '-fast'}:{hashlib.sha1(diff.encode()).hexdigest()}"
+    how = hashlib.sha1((L["compile"] + (L["tests"] if run_tests else "")).encode()).hexdigest()[:8]
+    key = f"{repo['name']}@{repo['commit'][:12]}:rename:{how}:{hashlib.sha1(diff.encode()).hexdigest()}"
     v = cached(key, verdict, keep=lambda v: v["ran"] is not False)  # a suite that did not start: ask again next time
     failed = set(v["failed"]) - baseline_failed
     tests_ok = None if v["ran"] is None else (not failed and v["ran"])  # a suite that did not start has no failures either
@@ -541,7 +618,8 @@ def check_rename(root: Path, repo: dict, s: dict, run_tests: bool, baseline_fail
 
 
 def failing_tests(root: Path, repo: dict, s: dict, baseline_failed: set[str]) -> dict:
-    """Tests that fail when `s` throws on entry (or why that could not be measured)."""
+    """Tests that fail when `s` throws on entry (or why that could not be measured): `failed` — their
+    names; `ids`, where the language has them (Python) — the same tests as `file::test`."""
     L = LANG[repo["lang"]]
     at = body_start(root, s, repo["lang"])
     if not at:
@@ -555,6 +633,7 @@ def failing_tests(root: Path, repo: dict, s: dict, baseline_failed: set[str]) ->
     if ccode and repo["lang"] != "python":
         restore(root)
         return {"skipped": "mutant does not compile"}
+    ids = None
     if "failing_alone" in L:
         truth = L["failing_alone"](root) - baseline_failed
     else:
@@ -563,8 +642,10 @@ def failing_tests(root: Path, repo: dict, s: dict, baseline_failed: set[str]) ->
             restore(root)
             return {"skipped": "the test suite did not run"}
         truth = L["failed"](tout, root) - baseline_failed
+        if "ids" in L:
+            ids = L["ids"](tout, root) - baseline_failed
     restore(root)
-    return {"failed": sorted(truth)}
+    return {"failed": sorted(truth)} if ids is None else {"failed": sorted(truth), "ids": sorted(ids)}
 
 
 TOP = 10  # tests-for names this many by default
@@ -578,22 +659,26 @@ def check_tests(root: Path, repo: dict, s: dict, baseline_failed: set[str]) -> d
         return None
     if "skipped" in t:
         return {"symbol": s["qualified"], "skipped": t["skipped"]}
-    truth = set(t["failed"])
-    names, files, graph = tests_for(root, s["qualified"])
-    order = files if L["level"] == "file" else names
+    # a test is its file (TS), `file::name` (Python: `ids`) or its name
+    level = "file" if L["level"] == "file" else "id" if "ids" in t else "name"
+    key = {"file": lambda n, f: f, "id": lambda n, f: f"{f}::{n}", "name": lambda n, f: n}[level]
+    truth = set(t["ids"] if level == "id" else t["failed"])
+    rows = tests_for_rows(root, s["qualified"])
+    order = list(dict.fromkeys(key(n, f) for n, f, how in rows))
+    graph = {key(n, f) for n, f, how in rows if "hop" in how or "direct" in how}
     pred = set(order)
     if not truth:
         return {"symbol": s["qualified"], "skipped": "no test fails when it throws", "predicted": len(pred)}
     tp = len(pred & truth)
     top = order[:TOP]
     top_hits = sum(1 for x in top if x in truth)
-    out = {"symbol": s["qualified"], "level": L["level"], "truth": len(truth), "predicted": len(pred),
+    out = {"symbol": s["qualified"], "level": level, "truth": len(truth), "predicted": len(pred),
            "recall": tp / len(truth), "precision": tp / len(pred) if pred else 0.0,
            # of the 10 tests named first: how many fail, and how many could at best (few tests fail at all)
            "top_hits": top_hits, "top_n": len(top), "top_precision": top_hits / len(top) if top else 0.0,
            "top_best": min(tp, len(top)) / len(top) if top else 0.0, "caught": 1.0 if top_hits else 0.0,
            "missed": sorted(truth - pred)[:8]}
-    if L["level"] == "name":
+    if level != "file":
         out["recall_graph_only"] = len(graph & truth) / len(truth)
     return out
 
@@ -627,6 +712,7 @@ def run_repo(repo: dict, n: int, mutants: int, seed, tests_in_rename: bool) -> d
     try:
         plain = {sd: pick(syms, root, n, sd) for sd in seeds}
         common = {sd: pick(syms, root, n, sd, common=True) if L["errors"] else [] for sd in seeds}
+        blind = {sd: pick(syms, root, n, sd, blind=True) if L["errors"] else [] for sd in seeds}
     finally:
         CALLERS_MEMO = None
 
@@ -637,19 +723,24 @@ def run_repo(repo: dict, n: int, mutants: int, seed, tests_in_rename: bool) -> d
                 seen.setdefault(s["qualified"], s)
         return list(seen.values())
 
-    sample, sample_common = distinct(plain), distinct(common)
+    sample, sample_common, sample_blind = distinct(plain), distinct(common), distinct(blind)
     res["sample"] = [s["qualified"] for s in sample]
     res["sample_common"] = [s["qualified"] for s in sample_common]
     res["samples"] = {str(sd): [s["qualified"] for s in plain[sd]] for sd in seeds}
     res["samples_common"] = {str(sd): [s["qualified"] for s in common[sd]] for sd in seeds}
+    res["samples_blind"] = {str(sd): [s["qualified"] for s in blind[sd]] for sd in seeds}
+    if "collect" in L:  # on the untouched commit, before the first mutant
+        PY_TESTS[str(root)] = cached(f"{repo['name']}@{repo['commit'][:12]}:collect", lambda: L["collect"](root), keep=bool)
     # baseline: tests already failing before any change are not ours
     base = cached(f"{repo['name']}@{repo['commit'][:12]}:baseline:{L.get('tests_key', 'tests')}", lambda: baseline_tests(root, L), keep=lambda v: v["ran"])
     if not base["ran"]:  # otherwise "no test failed" would pass every check below
         raise RuntimeError(f"the test suite of {repo['name']} did not run: {base['tail']}")
-    baseline_failed = set(base["failed"])
+    baseline_failed = set(base["failed"])  # in the units the checks compare: `ids` where the language has them
     res["baseline_failing_tests"] = sorted(baseline_failed)[:20]
     res["callers"] = [x for s in sample if (x := check_callers(root, repo, syms, s))]
     res["callers_common"] = [x for s in sample_common if (x := check_callers(root, repo, syms, s))]
+    # picked whether gitnext sees a caller or not: the functions the compiler finds uses of
+    res["callers_blind"] = [x for s in sample_blind if (x := check_callers(root, repo, syms, s))]
     res["rename"] = [check_rename(root, repo, s, tests_in_rename, baseline_failed) for s in sample]
     # mutants: down each seed's sample until `mutants` functions are measured (with the throw some do not
     # compile, some fail no test), trying at most MAX_TRIES × mutants of them
@@ -682,7 +773,7 @@ def mean(v: list[float]) -> float | None:
 
 
 METRIC_NAMES = {
-    "callers_recall": "callers recall", "callers_precision": "callers precision",
+    "callers_recall": "callers recall", "callers_precision": "callers precision", "blind_recall": "callers recall, picked blind",
     "common_recall": "shared names: recall", "common_recall_with_maybe": "shared names: recall with maybe",
     "common_precision": "shared names: precision", "rename_ok": "rename ok (tests pass)",
     "tests_recall": "tests recall", "tests_precision": "tests precision", "tests_top10_precision": "top-10 that fail",
@@ -696,10 +787,13 @@ def metric_values(r: dict, only: dict | None = None) -> dict[str, list[float]]:
         return rows if only is None else [x for x in rows if x["symbol"] in only[kind]]
     cal = [c for c in keep("plain", r["callers"]) if c.get("recall") is not None]
     com = [c for c in keep("common", r.get("callers_common", [])) if c.get("recall") is not None]
+    bli = [c for c in keep("blind", r.get("callers_blind", [])) if c.get("recall") is not None]
     tst = [t for t in keep("mutants", r["tests"]) if "recall" in t]
     return {
         "callers_recall": [c["recall"] for c in cal],
         "callers_precision": [c["precision"] for c in cal if c["precision"] is not None],
+        # the first functions of the same order, with or without a caller in gitnext's graph
+        "blind_recall": [c["recall"] for c in bli],
         # methods whose name several types share: sure callers, and sure + "maybe"
         "common_recall": [c["recall"] for c in com],
         "common_recall_with_maybe": [c["recall_with_maybe"] for c in com],
@@ -715,7 +809,8 @@ def metric_values(r: dict, only: dict | None = None) -> dict[str, list[float]]:
 
 
 def seed_only(r: dict, seed) -> dict:
-    return {"plain": set(r["samples"][str(seed)]), "common": set(r["samples_common"][str(seed)]), "mutants": set(r["mutants"][str(seed)])}
+    return {"plain": set(r["samples"][str(seed)]), "common": set(r["samples_common"][str(seed)]),
+            "blind": set(r.get("samples_blind", {}).get(str(seed), [])), "mutants": set(r["mutants"][str(seed)])}
 
 
 def summarize(r: dict, only: dict | None = None) -> dict:
@@ -724,6 +819,8 @@ def summarize(r: dict, only: dict | None = None) -> dict:
         "callers_recall": mean(v["callers_recall"]),
         "callers_precision": mean(v["callers_precision"]),
         "callers_checked": len(v["callers_recall"]),
+        "blind_recall": mean(v["blind_recall"]),
+        "blind_checked": len(v["blind_recall"]),
         "common_recall": mean(v["common_recall"]),
         "common_precision": mean(v["common_precision"]),
         "common_recall_with_maybe": mean(v["common_recall_with_maybe"]),
@@ -782,18 +879,18 @@ def render_md(results: list[dict], agg: dict | None = None, note: str = "") -> s
     def pm(z: dict, k: str, count: bool = False) -> str:  # "77% ±6 (20)"
         e = (z or {}).get(k)
         return "—" if not e else f"{e['mean']:.0%} ±{e['threshold'] * 100:.0f}" + (f" ({e['functions']})" if count else "")
-    rows = ["| repo | lang | symbols | index s | callers recall | callers precision | shared names: recall (+maybe) | shared names: precision | rename ok "
+    rows = ["| repo | lang | symbols | index s | callers recall | callers precision | callers recall, picked blind | shared names: recall (+maybe) | shared names: precision | rename ok "
             "| tests recall | tests precision | top-10 fail (best possible) | caught by top-10 | look / file |",
-            "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+            "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for r in results:
         if "error" in r:
-            rows.append(f"| {r['repo']} | {r.get('lang','')} | error: {r['error'][:60]} |||||||||||")
+            rows.append(f"| {r['repo']} | {r.get('lang','')} | error: {r['error'][:60]} ||||||||||||")
             continue
         z = r.get("noise") or {}
         com = "—" if not z.get("common_recall") else f"{pm(z, 'common_recall')} ({pm(z, 'common_recall_with_maybe')}) ({z['common_recall']['functions']})"
         top = "—" if not z.get("tests_top10_precision") else f"{pm(z, 'tests_top10_precision')} ({pm(z, 'tests_top10_best')})"
         rows.append(f"| {r['repo']} | {r['lang']} | {r['symbols']} | {r['index_seconds']} | {pm(z, 'callers_recall', True)} | "
-                    f"{pm(z, 'callers_precision')} | {com} | {pm(z, 'common_precision')} | {pm(z, 'rename_ok', True)} | "
+                    f"{pm(z, 'callers_precision')} | {pm(z, 'blind_recall', True)} | {com} | {pm(z, 'common_precision')} | {pm(z, 'rename_ok', True)} | "
                     f"{pm(z, 'tests_recall', True)} | {pm(z, 'tests_precision')} | {top} | {pm(z, 'tests_caught')} | {pm(z, 'look_vs_file')} |")
     out = "\n".join(rows) + "\n"
     if not agg:

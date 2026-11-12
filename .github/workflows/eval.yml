@@ -38,7 +38,7 @@ jobs:
           key: ${{ steps.truth.outputs.key }}-${{ github.run_id }}
           restore-keys: ${{ steps.truth.outputs.key }}-
       # A small sample here (its own baseline in eval/baseline.json): with an empty cache it asks the compilers
-      # and test suites for about 50 minutes, one seed of 20 functions for about 110. The three seeds and the
+      # and test suites for about 55 minutes, one seed of 20 functions for about 120. The three seeds and the
       # thresholds are run locally. The step stops before the job does, so what was asked so far is still saved.
       - name: eval
         timeout-minutes: 100
