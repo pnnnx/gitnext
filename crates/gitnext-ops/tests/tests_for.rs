@@ -78,7 +78,7 @@ fn names_do_not_cross_languages() {
     let files: Vec<&str> = locate::tests_for(&g, target, 4).iter().map(|x| g.syms[x.symbol].file.as_str()).collect();
     assert_eq!(files, ["tests/test_tool.py"]);
     let text = locate::render_tests_for(&g, &dir, target, 4, false);
-    assert!(text.contains("note: the call graph finds ≈19% of the tests that would fail"), "{text}");
+    assert!(text.contains("note: the call graph finds ≈") && text.contains("% of the tests that would fail"), "{text}");
     let _ = std::fs::remove_dir_all(&dir);
 }
 

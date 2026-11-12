@@ -4,16 +4,17 @@
 //! change; the compiler and the tests have the last word. Between those lies a line the
 //! agent should not have to guess: a "sure" caller can be acted on, a test list from the
 //! call graph is a starting point. The numbers are what the project's own eval measured
-//! (`eval/results/latest.md`, run 5 of 12 Nov 2026) — update them when the eval moves.
+//! (`eval/results/latest.md`, run 6 of 12 Nov 2026: ten repos, two per language, 232 functions for
+//! callers and 166 for tests) — update them when the eval moves by more than its threshold.
 
 /// (language family, share of "sure" callers that are real, share of failing tests the
 /// call graph finds) — in percent; `None` = not measured for that language.
 const MEASURED: &[(&str, Option<u8>, Option<u8>)] = &[
-    ("go", Some(97), Some(82)),
-    ("java", Some(100), Some(19)),
-    ("js", Some(100), Some(33)),
-    ("rust", Some(100), Some(61)),
-    ("python", None, Some(19)),
+    ("go", Some(96), Some(79)),
+    ("java", Some(99), Some(49)),
+    ("js", Some(100), Some(3)),
+    ("rust", Some(100), Some(53)),
+    ("python", None, Some(30)),
 ];
 
 fn row(file: &str) -> Option<&'static (&'static str, Option<u8>, Option<u8>)> {
