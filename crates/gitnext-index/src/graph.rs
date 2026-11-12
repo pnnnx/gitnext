@@ -798,19 +798,40 @@ impl Graph {
     /// (`r.Context()`), or every candidate declares a result that is no repo type
     /// (`PersistentFlags() *flag.FlagSet`). Not when the candidates disagree or declare nothing
     /// (`el.tag()` with several `tag`s): then `m` may well be the repo's.
-    fn result_from_outside(&self, file: &str, e: &Edge, callee: &str) -> bool {
+    fn result_from_outside(&self, file: &str, e: &Edge, callee: &str, known_only: bool) -> bool {
         // Go's `make(T)` / `new(T)` return their argument's type, which may be the repo's
         if matches!(last_segment(callee), "make" | "new") {
             return false;
         }
         let targets = drop_decls(&self.syms, self.resolve_call_raw(file, &Edge { to: callee.to_string(), ..e.clone() }));
+        if targets.is_empty() && known_only {
+            // not a repo function: known only for `pkg.Func(…)` in Go, where a package function
+            // that returns the caller's own type is rare
+            return file.ends_with(".go") && !callee.contains("()::") && !callee.starts_with('.') && !matches!(qualifier(callee), "" | "Self");
+        }
         targets.iter().all(|&t| {
             let s = &self.syms[t].sym;
             !s.kind.is_type()
                 && s.returns.as_deref().and_then(result_type_name).is_some_and(|name| {
-                    !self.by_name.get(name).is_some_and(|v| v.iter().any(|&i| self.syms[i].sym.kind.is_type()))
+                    // `T`, `K2`: a type parameter stands for whatever the caller passes
+                    let param = name.len() <= 2 && name.starts_with(|c: char| c.is_ascii_uppercase());
+                    !param && !self.by_name.get(name).is_some_and(|v| v.iter().any(|&i| self.syms[i].sym.kind.is_type()))
                 })
         })
+    }
+
+    /// A call written as `f().m()` whose receiver is hardly a repo type: whatever repo method is
+    /// called `m`, this call is not known to be it — `callers` says "maybe".
+    pub fn foreign_receiver(&self, file: &str, e: &Edge) -> bool {
+        e.to.rsplit_once("()::").is_some_and(|(c, _)| self.result_from_outside(file, e, c, false))
+    }
+
+    /// The same for `rename`, which breaks the build when it is wrong either way, so only what is
+    /// known: `f` is a repo function that declares a library result, or (Go) a function of an
+    /// imported package (`template.New(…).Execute`). A library call that hands a repo object on
+    /// (`assertInstanceOf(TextNode.class, n).getWholeText()`, `nodes.get(0).text()`) is not that.
+    pub fn foreign_receiver_for_rename(&self, file: &str, e: &Edge) -> bool {
+        e.to.rsplit_once("()::").is_some_and(|(c, _)| self.result_from_outside(file, e, c, true))
     }
 
     /// Names of the repo types a call returns, from the declared result type of what it
@@ -939,7 +960,7 @@ impl Graph {
                     .collect();
                 // `r.Context()::Value`, `c.PersistentFlags()::HasFlags`: the receiver is a library
                 // type, so the one repo method of that name is only a guess
-                let foreign = e.to.rsplit_once("()::").is_some_and(|(c, _)| self.result_from_outside(file, e, c));
+                let foreign = self.foreign_receiver(file, e);
                 for t in targets {
                     if t != src {
                         m.entry(t).or_default().push((src, e.kind, e.line));

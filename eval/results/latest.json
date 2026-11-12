@@ -3,7 +3,7 @@
   "repo": "cobra",
   "lang": "go",
   "commit": "adbc8813901b",
-  "index_seconds": 0.0,
+  "index_seconds": 0.1,
   "symbols": 288,
   "files": 19,
   "seeds": [
@@ -454,13 +454,14 @@
      "main::Command::ExecuteContext"
     ],
     "found": [
-     "main::Command::ExecuteContext",
+     "main::Command::ExecuteContext"
+    ],
+    "maybe": [
      "main::tmpl"
     ],
-    "maybe": [],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.5,
+    "precision": 1.0,
     "recall_with_maybe": 1.0
    },
    {
@@ -1101,16 +1102,17 @@
      "main::Command::DebugFlags"
     ],
     "found": [
+     "main::Command::DebugFlags"
+    ],
+    "maybe": [
      "doc::GenYamlCustom",
-     "main::Command::DebugFlags",
      "main::Command::HasInheritedFlags",
      "main::Command::HasLocalFlags",
      "main::Command::HasPersistentFlags"
     ],
-    "maybe": [],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.2,
+    "precision": 1.0,
     "recall_with_maybe": 1.0
    }
   ],
@@ -1395,13 +1397,14 @@
      "main::Command::ExecuteContext"
     ],
     "found": [
-     "main::Command::ExecuteContext",
+     "main::Command::ExecuteContext"
+    ],
+    "maybe": [
      "main::tmpl"
     ],
-    "maybe": [],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.5,
+    "precision": 1.0,
     "recall_with_maybe": 1.0
    },
    {
@@ -1981,12 +1984,12 @@
    },
    {
     "symbol": "main::Command::Execute",
-    "ok": false,
-    "compiled": false,
-    "tests_ok": null,
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
     "tests_failed": [],
-    "old_name_left": "cobra.go:98:// Execute method is called.\ncobra.go:104:// Execute method is terminated.\ncommand.go:266:// Notice that a call to Execute and ExecuteC will replace a nil context of\ncommand.go:976:\t\t\t// - Execute all persistent pre-runs from the root parent till this command.\ncommand.go:977:\t\t\t// - Exec",
-    "detail": "# github.com/spf13/cobra\n./cobra.go:186:13: t.ExecuteGnx undefined (type *template.Template has no field or method ExecuteGnx)\nFAIL\tgithub.com/spf13/cobra [build failed]\nFAIL\tgithub.com/spf13/cobra/doc [build failed]\nFAIL\n"
+    "old_name_left": "cobra.go:98:// Execute method is called.\ncobra.go:104:// Execute method is terminated.\ncobra.go:186:\t\t\treturn t.Execute(w, data)\ncommand.go:266:// Notice that a call to Execute and ExecuteC will replace a nil context of\ncommand.go:976:\t\t\t// - Execute all persistent pre-runs from the root parent till",
+    "detail": ""
    },
    {
     "symbol": "main::Command::CalledAs",
@@ -2292,12 +2295,12 @@
    },
    {
     "symbol": "main::Command::HasFlags",
-    "ok": false,
-    "compiled": false,
-    "tests_ok": null,
+    "ok": true,
+    "compiled": true,
+    "tests_ok": true,
     "tests_failed": [],
-    "old_name_left": "",
-    "detail": "lag.FlagSet has no field or method HasFlagsGnx)\n./command.go:1807:29: c.PersistentFlags().HasFlagsGnx undefined (type *pflag.FlagSet has no field or method HasFlagsGnx)\n./command.go:1812:24: c.LocalFlags().HasFlagsGnx undefined (type *pflag.FlagSet has no field or method HasFlagsGnx)\n./command.go:1817:28: c.InheritedFlags().HasFlagsGnx undefined (type *pflag.FlagSet has no field or method HasFlagsGnx)\nFAIL\tgithub.com/spf13/cobra [build failed]\nFAIL\tgithub.com/spf13/cobra/doc [build failed]\nFAIL\n"
+    "old_name_left": "command.go:1802:\treturn c.Flags().HasFlags()\ncommand.go:1807:\treturn c.PersistentFlags().HasFlags()\ncommand.go:1812:\treturn c.LocalFlags().HasFlags()\ncommand.go:1817:\treturn c.InheritedFlags().HasFlags()\ndoc/yaml_docs.go:112:\tif flags.HasFlags() {",
+    "detail": ""
    }
   ],
   "mutants": {
@@ -2690,7 +2693,7 @@
    {
     "symbol": "main::flagCompError::Error",
     "skipped": "no test fails when it throws",
-    "predicted": 212
+    "predicted": 208
    },
    {
     "symbol": "main::Command::Root",
@@ -2765,7 +2768,7 @@
    },
    {
     "symbol": "main::Command::PrintErrf",
-    "look_tokens": 259,
+    "look_tokens": 263,
     "file_tokens": 15286
    },
    {
@@ -2775,7 +2778,7 @@
    },
    {
     "symbol": "main::Command::Flags",
-    "look_tokens": 400,
+    "look_tokens": 403,
     "file_tokens": 15286
    },
    {
@@ -2785,12 +2788,12 @@
    },
    {
     "symbol": "main::Command::Println",
-    "look_tokens": 269,
+    "look_tokens": 273,
     "file_tokens": 15286
    },
    {
     "symbol": "main::Command::Execute",
-    "look_tokens": 259,
+    "look_tokens": 274,
     "file_tokens": 15286
    },
    {
@@ -2830,7 +2833,7 @@
    },
    {
     "symbol": "main::Command::InitDefaultCompletionCmd",
-    "look_tokens": 1793,
+    "look_tokens": 1797,
     "file_tokens": 9767
    },
    {
@@ -2840,7 +2843,7 @@
    },
    {
     "symbol": "main::Command::PrintErrln",
-    "look_tokens": 269,
+    "look_tokens": 272,
     "file_tokens": 15286
    },
    {
@@ -2850,7 +2853,7 @@
    },
    {
     "symbol": "main::Command::HasParent",
-    "look_tokens": 311,
+    "look_tokens": 315,
     "file_tokens": 15286
    },
    {
@@ -2865,7 +2868,7 @@
    },
    {
     "symbol": "main::Command::HelpFunc",
-    "look_tokens": 369,
+    "look_tokens": 373,
     "file_tokens": 15286
    },
    {
@@ -2885,7 +2888,7 @@
    },
    {
     "symbol": "main::Command::Root",
-    "look_tokens": 343,
+    "look_tokens": 346,
     "file_tokens": 15286
    },
    {
@@ -2915,7 +2918,7 @@
    },
    {
     "symbol": "main::flagCompError::Error",
-    "look_tokens": 243,
+    "look_tokens": 245,
     "file_tokens": 9767
    },
    {
@@ -2940,7 +2943,7 @@
    },
    {
     "symbol": "main::Command::Traverse",
-    "look_tokens": 552,
+    "look_tokens": 556,
     "file_tokens": 15286
    },
    {
@@ -2960,14 +2963,14 @@
    },
    {
     "symbol": "main::Command::HasFlags",
-    "look_tokens": 197,
+    "look_tokens": 270,
     "file_tokens": 15286
    }
   ],
-  "seconds": 13,
+  "seconds": 15,
   "summary": {
    "callers_recall": 1.0,
-   "callers_precision": 0.96,
+   "callers_precision": 0.989,
    "callers_checked": 45,
    "blind_recall": 1.0,
    "blind_checked": 31,
@@ -2975,7 +2978,7 @@
    "common_precision": 1.0,
    "common_recall_with_maybe": 1.0,
    "common_checked": 1,
-   "rename_ok": 0.87,
+   "rename_ok": 0.913,
    "rename_checked": 46,
    "tests_recall": 0.89,
    "tests_precision": 0.362,
@@ -2988,7 +2991,7 @@
   "summary_seeds": {
    "7": {
     "callers_recall": 1.0,
-    "callers_precision": 0.95,
+    "callers_precision": 0.975,
     "callers_checked": 20,
     "blind_recall": 1.0,
     "blind_checked": 12,
@@ -2996,7 +2999,7 @@
     "common_precision": 1.0,
     "common_recall_with_maybe": 1.0,
     "common_checked": 1,
-    "rename_ok": 0.9,
+    "rename_ok": 0.95,
     "rename_checked": 20,
     "tests_recall": 0.839,
     "tests_precision": 0.4,
@@ -3028,7 +3031,7 @@
    },
    "9": {
     "callers_recall": 1.0,
-    "callers_precision": 0.958,
+    "callers_precision": 1.0,
     "callers_checked": 19,
     "blind_recall": 1.0,
     "blind_checked": 10,
@@ -3036,7 +3039,7 @@
     "common_precision": 1.0,
     "common_recall_with_maybe": 1.0,
     "common_checked": 1,
-    "rename_ok": 0.8,
+    "rename_ok": 0.85,
     "rename_checked": 20,
     "tests_recall": 0.763,
     "tests_precision": 0.413,
@@ -3044,7 +3047,7 @@
     "tests_top10_best": 0.749,
     "tests_caught": 1.0,
     "tests_checked": 8,
-    "look_vs_file": 0.049
+    "look_vs_file": 0.05
    }
   },
   "noise": {
@@ -3063,18 +3066,18 @@
     "threshold": 0.03
    },
    "callers_precision": {
-    "mean": 0.96,
+    "mean": 0.989,
     "functions": 45,
-    "boot_lo": 0.924,
-    "boot_hi": 0.994,
-    "boot_half": 0.035,
+    "boot_lo": 0.978,
+    "boot_hi": 1.0,
+    "boot_half": 0.011,
     "seeds": [
-     0.95,
+     0.975,
      1.0,
-     0.958
+     1.0
     ],
-    "seed_sd": 0.027,
-    "threshold": 0.04
+    "seed_sd": 0.014,
+    "threshold": 0.03
    },
    "blind_recall": {
     "mean": 1.0,
@@ -3133,18 +3136,18 @@
     "threshold": 1.0
    },
    "rename_ok": {
-    "mean": 0.87,
+    "mean": 0.913,
     "functions": 46,
-    "boot_lo": 0.783,
-    "boot_hi": 0.935,
-    "boot_half": 0.076,
+    "boot_lo": 0.848,
+    "boot_hi": 0.978,
+    "boot_half": 0.065,
     "seeds": [
-     0.9,
+     0.95,
      1.0,
-     0.8
+     0.85
     ],
-    "seed_sd": 0.1,
-    "threshold": 0.08
+    "seed_sd": 0.076,
+    "threshold": 0.07
    },
    "tests_recall": {
     "mean": 0.89,
@@ -3219,13 +3222,13 @@
    "look_vs_file": {
     "mean": 0.071,
     "functions": 46,
-    "boot_lo": 0.043,
-    "boot_hi": 0.1,
-    "boot_half": 0.029,
+    "boot_lo": 0.044,
+    "boot_hi": 0.101,
+    "boot_half": 0.028,
     "seeds": [
      0.055,
      0.1,
-     0.049
+     0.05
     ],
     "seed_sd": 0.028,
     "threshold": 0.03
@@ -3236,7 +3239,7 @@
   "repo": "chi",
   "lang": "go",
   "commit": "c64ed7d6635f",
-  "index_seconds": 0.1,
+  "index_seconds": 0.0,
   "symbols": 351,
   "files": 55,
   "seeds": [
@@ -3740,18 +3743,19 @@
      "main::node::setEndpoint"
     ],
     "found": [
-     "main::Mux::ServeHTTP",
-     "main::Mux::routeHTTP",
      "main::RouteContext",
      "main::node::setEndpoint",
      "middleware::GetClientIPAddr",
-     "middleware::GetLogEntry",
      "middleware::GetReqID"
     ],
-    "maybe": [],
+    "maybe": [
+     "main::Mux::ServeHTTP",
+     "main::Mux::routeHTTP",
+     "middleware::GetLogEntry"
+    ],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.14285714285714285,
+    "precision": 0.25,
     "recall_with_maybe": 1.0
    },
    {
@@ -4618,8 +4622,8 @@
     "compiled": false,
     "tests_ok": null,
     "tests_failed": [],
-    "old_name_left": "_examples/rest/routes.json:28:        \"comment\": \"URLFormat is a middleware that parses the url extension from a request path and stores it\\non the context as a string under the key `middleware.URLFormatCtxKey`. The middleware will\\ntrim the suffix from the routing path and continue routing.\\n\\nRout",
-    "detail": "# github.com/go-chi/chi/v5\n./context.go:26:16: ctx.ValueGnx undefined (type context.Context has no field or method ValueGnx)\n./mux.go:71:25: r.Context().ValueGnx undefined (type context.Context has no field or method ValueGnx)\n./mux.go:457:22: r.Context().ValueGnx undefined (type context.Context has no field or method ValueGnx)\nFAIL\tgithub.com/go-chi/chi/v5 [build failed]\nFAIL\tgithub.com/go-chi/chi/v5/middleware [build failed]\nFAIL\n"
+    "old_name_left": "_examples/rest/main.go:177:\tarticle := r.Context().Value(\"article\").(*Article)\n_examples/rest/main.go:187:\tarticle := r.Context().Value(\"article\").(*Article)\n_examples/rest/main.go:207:\tarticle := r.Context().Value(\"article\").(*Article)\n_examples/rest/routes.json:28:        \"comment\": \"URLFormat is ",
+    "detail": "# github.com/go-chi/chi/v5\n./context.go:26:16: ctx.ValueGnx undefined (type context.Context has no field or method ValueGnx)\nFAIL\tgithub.com/go-chi/chi/v5 [build failed]\nFAIL\tgithub.com/go-chi/chi/v5/middleware [build failed]\nFAIL\n"
    },
    {
     "symbol": "main::node::InsertRoute",
@@ -5088,9 +5092,9 @@
     "symbol": "main::endpoints::Value",
     "level": "name",
     "truth": 105,
-    "predicted": 43,
-    "recall": 0.38095238095238093,
-    "precision": 0.9302325581395349,
+    "predicted": 52,
+    "recall": 0.45714285714285713,
+    "precision": 0.9230769230769231,
     "top_hits": 9,
     "top_n": 10,
     "top_precision": 0.9,
@@ -5099,14 +5103,14 @@
     "missed": [
      "Example_clientIP",
      "Example_clientIPFromXFFTrustedProxies",
-     "TestAdvisory_GHSA_3fxj_6jh8_hvhx",
-     "TestAdvisory_GHSA_9g5q_2w5x_hmxf",
-     "TestAdvisory_GHSA_j6qf_3m9c_vwj3",
-     "TestAdvisory_GHSA_rjr7_jggh_pgcp",
      "TestBasicAuth",
-     "TestCleanPath"
+     "TestCleanPath",
+     "TestCompressor",
+     "TestCompressorDefaultTextTypes",
+     "TestContentCharset",
+     "TestContentCharsetMediaParameters"
     ],
-    "recall_graph_only": 0.3619047619047619
+    "recall_graph_only": 0.4380952380952381
    },
    {
     "symbol": "main::Mux::MethodNotAllowedHandler",
@@ -5227,7 +5231,7 @@
    },
    {
     "symbol": "main::endpoints::Value",
-    "look_tokens": 294,
+    "look_tokens": 262,
     "file_tokens": 5518
    },
    {
@@ -5319,7 +5323,7 @@
   "seconds": 8,
   "summary": {
    "callers_recall": 1.0,
-   "callers_precision": 0.967,
+   "callers_precision": 0.971,
    "callers_checked": 26,
    "blind_recall": 1.0,
    "blind_checked": 9,
@@ -5329,7 +5333,7 @@
    "common_checked": 10,
    "rename_ok": 0.943,
    "rename_checked": 35,
-   "tests_recall": 0.661,
+   "tests_recall": 0.665,
    "tests_precision": 0.614,
    "tests_top10_precision": 0.667,
    "tests_top10_best": 0.711,
@@ -5340,7 +5344,7 @@
   "summary_seeds": {
    "7": {
     "callers_recall": 1.0,
-    "callers_precision": 0.943,
+    "callers_precision": 0.95,
     "callers_checked": 15,
     "blind_recall": 1.0,
     "blind_checked": 5,
@@ -5380,7 +5384,7 @@
    },
    "9": {
     "callers_recall": 1.0,
-    "callers_precision": 0.943,
+    "callers_precision": 0.95,
     "callers_checked": 15,
     "blind_recall": 1.0,
     "blind_checked": 3,
@@ -5390,8 +5394,8 @@
     "common_checked": 10,
     "rename_ok": 0.9,
     "rename_checked": 20,
-    "tests_recall": 0.77,
-    "tests_precision": 0.602,
+    "tests_recall": 0.78,
+    "tests_precision": 0.601,
     "tests_top10_precision": 0.672,
     "tests_top10_best": 0.684,
     "tests_caught": 1.0,
@@ -5415,17 +5419,17 @@
     "threshold": 0.04
    },
    "callers_precision": {
-    "mean": 0.967,
+    "mean": 0.971,
     "functions": 26,
-    "boot_lo": 0.901,
+    "boot_lo": 0.913,
     "boot_hi": 1.0,
-    "boot_half": 0.049,
+    "boot_half": 0.043,
     "seeds": [
-     0.943,
+     0.95,
      1.0,
-     0.943
+     0.95
     ],
-    "seed_sd": 0.033,
+    "seed_sd": 0.029,
     "threshold": 0.05
    },
    "blind_recall": {
@@ -5499,29 +5503,29 @@
     "threshold": 0.06
    },
    "tests_recall": {
-    "mean": 0.661,
+    "mean": 0.665,
     "functions": 16,
-    "boot_lo": 0.508,
-    "boot_hi": 0.803,
-    "boot_half": 0.148,
+    "boot_lo": 0.514,
+    "boot_hi": 0.807,
+    "boot_half": 0.146,
     "seeds": [
      0.587,
      0.654,
-     0.77
+     0.78
     ],
-    "seed_sd": 0.093,
+    "seed_sd": 0.098,
     "threshold": 0.15
    },
    "tests_precision": {
     "mean": 0.614,
     "functions": 16,
     "boot_lo": 0.443,
-    "boot_hi": 0.777,
-    "boot_half": 0.167,
+    "boot_hi": 0.776,
+    "boot_half": 0.166,
     "seeds": [
      0.725,
      0.544,
-     0.602
+     0.601
     ],
     "seed_sd": 0.093,
     "threshold": 0.17
@@ -5596,7 +5600,7 @@
    8,
    9
   ],
-  "edges": 9744,
+  "edges": 9729,
   "sample": [
    "click::types::Path::coerce_path_result",
    "click::core::Option::get_help_extra",
@@ -7022,7 +7026,7 @@
     "file_tokens": 4763
    }
   ],
-  "seconds": 53,
+  "seconds": 20,
   "summary": {
    "callers_recall": null,
    "callers_precision": null,
@@ -8470,7 +8474,7 @@
     "file_tokens": 4264
    }
   ],
-  "seconds": 49,
+  "seconds": 7,
   "summary": {
    "callers_recall": null,
    "callers_precision": null,
@@ -11837,7 +11841,7 @@
     "file_tokens": 1417
    }
   ],
-  "seconds": 8,
+  "seconds": 9,
   "summary": {
    "callers_recall": 1.0,
    "callers_precision": 1.0,
@@ -12109,7 +12113,7 @@
   "repo": "jsoup",
   "lang": "java",
   "commit": "d90d57521d93",
-  "index_seconds": 2.4,
+  "index_seconds": 3.3,
   "symbols": 2663,
   "files": 105,
   "seeds": [
@@ -12635,14 +12639,15 @@
     "found": [
      "org::jsoup::nodes::Element::getElementById",
      "org::jsoup::nodes::Element::selectFirst",
-     "org::jsoup::parser::StreamParser::selectNext",
-     "org::jsoup::select::Collector::findFirstNode",
      "org::jsoup::select::Selector::selectFirst"
     ],
-    "maybe": [],
+    "maybe": [
+     "org::jsoup::parser::StreamParser::selectNext",
+     "org::jsoup::select::Collector::findFirstNode"
+    ],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.6,
+    "precision": 1.0,
     "recall_with_maybe": 1.0
    },
    {
@@ -15125,14 +15130,15 @@
     "found": [
      "org::jsoup::nodes::Element::getElementById",
      "org::jsoup::nodes::Element::selectFirst",
-     "org::jsoup::parser::StreamParser::selectNext",
-     "org::jsoup::select::Collector::findFirstNode",
      "org::jsoup::select::Selector::selectFirst"
     ],
-    "maybe": [],
+    "maybe": [
+     "org::jsoup::parser::StreamParser::selectNext",
+     "org::jsoup::select::Collector::findFirstNode"
+    ],
     "import_files": [],
     "recall": 1.0,
-    "precision": 0.6,
+    "precision": 1.0,
     "recall_with_maybe": 1.0
    }
   ],
@@ -15233,8 +15239,8 @@
     "compiled": false,
     "tests_ok": null,
     "tests_failed": [],
-    "old_name_left": "src/test/java/org/jsoup/select/CompiledQueryTest.java:228:        assertSame(outer, mode(true, () -> legacyStream.findFirst().get()));\nsrc/test/java/org/jsoup/select/CompiledQueryTest.java:229:        assertEquals(\"inner\", mode(false, () -> webStream.findFirst().get().id()));",
-    "detail": "ot find symbol\n[ERROR]   symbol:   method findFirstGnx()\n[ERROR]   location: interface java.util.stream.Stream<T>\n[ERROR] -> [Help 1]\n[ERROR] \n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] \n[ERROR] For more information about the errors and possible solutions, please read the following articles:\n[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException\n"
+    "old_name_left": "src/main/java/org/jsoup/parser/StreamParser.java:317:                .findFirst()\nsrc/main/java/org/jsoup/select/Collector.java:73:        Element el = stream(eval, root).findFirst().orElse(null);\nsrc/main/java/org/jsoup/select/Collector.java:89:        T node = streamNodes(eval, root, type).findFir",
+    "detail": "   symbol:   method findFirstGnx()\n[ERROR]   location: interface java.util.stream.Stream<org.jsoup.nodes.Element>\n[ERROR] -> [Help 1]\n[ERROR] \n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] \n[ERROR] For more information about the errors and possible solutions, please read the following articles:\n[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException\n"
    },
    {
     "symbol": "org::jsoup::internal::CssMatching::isQuirksMode",
@@ -15687,9 +15693,9 @@
     "symbol": "org::jsoup::select::Evaluator::asPredicate",
     "level": "name",
     "truth": 957,
-    "predicted": 26,
+    "predicted": 23,
     "recall": 0.022988505747126436,
-    "precision": 0.8461538461538461,
+    "precision": 0.9565217391304348,
     "top_hits": 9,
     "top_n": 10,
     "top_precision": 0.9,
@@ -15848,9 +15854,9 @@
     "symbol": "org::jsoup::nodes::Attributes::getIgnoreCase",
     "level": "name",
     "truth": 610,
-    "predicted": 252,
-    "recall": 0.3557377049180328,
-    "precision": 0.8611111111111112,
+    "predicted": 251,
+    "recall": 0.3540983606557377,
+    "precision": 0.8605577689243028,
     "top_hits": 10,
     "top_n": 10,
     "top_precision": 1.0,
@@ -15866,7 +15872,7 @@
      "adjustsForeignNameCase",
      "afterSelfIsNoOp"
     ],
-    "recall_graph_only": 0.3557377049180328
+    "recall_graph_only": 0.3540983606557377
    },
    {
     "symbol": "org::jsoup::parser::Parser::getMaxDepth",
@@ -16109,7 +16115,7 @@
    },
    {
     "symbol": "org::jsoup::select::Evaluator::asPredicate",
-    "look_tokens": 306,
+    "look_tokens": 333,
     "file_tokens": 9555
    },
    {
@@ -16124,7 +16130,7 @@
    },
    {
     "symbol": "org::jsoup::parser::TokenQueue::matchesWhitespace",
-    "look_tokens": 330,
+    "look_tokens": 331,
     "file_tokens": 5312
    },
    {
@@ -16134,17 +16140,17 @@
    },
    {
     "symbol": "org::jsoup::parser::ParseErrorList::tracking",
-    "look_tokens": 321,
+    "look_tokens": 322,
     "file_tokens": 311
    },
    {
     "symbol": "org::jsoup::nodes::Node::ownerDocument",
-    "look_tokens": 421,
+    "look_tokens": 422,
     "file_tokens": 9713
    },
    {
     "symbol": "org::jsoup::select::Collector::findFirst",
-    "look_tokens": 393,
+    "look_tokens": 378,
     "file_tokens": 1055
    },
    {
@@ -16154,7 +16160,7 @@
    },
    {
     "symbol": "org::jsoup::nodes::Attributes::hasKey",
-    "look_tokens": 333,
+    "look_tokens": 334,
     "file_tokens": 6790
    },
    {
@@ -16164,7 +16170,7 @@
    },
    {
     "symbol": "org::jsoup::select::Collector::streamNodes",
-    "look_tokens": 392,
+    "look_tokens": 393,
     "file_tokens": 1055
    },
    {
@@ -16184,7 +16190,7 @@
    },
    {
     "symbol": "org::jsoup::nodes::Attribute::getValue",
-    "look_tokens": 351,
+    "look_tokens": 352,
     "file_tokens": 3027
    },
    {
@@ -16194,7 +16200,7 @@
    },
    {
     "symbol": "org::jsoup::safety::Safelist::addTags",
-    "look_tokens": 380,
+    "look_tokens": 381,
     "file_tokens": 6936
    },
    {
@@ -16229,7 +16235,7 @@
    },
    {
     "symbol": "org::jsoup::internal::Normalizer::lowerCase",
-    "look_tokens": 438,
+    "look_tokens": 439,
     "file_tokens": 448
    },
    {
@@ -16254,7 +16260,7 @@
    },
    {
     "symbol": "org::jsoup::internal::LineMap::addLineStart",
-    "look_tokens": 249,
+    "look_tokens": 250,
     "file_tokens": 595
    },
    {
@@ -16264,17 +16270,17 @@
    },
    {
     "symbol": "org::jsoup::nodes::Element::lastElementChild",
-    "look_tokens": 287,
+    "look_tokens": 288,
     "file_tokens": 21092
    },
    {
     "symbol": "org::jsoup::parser::Parser::isTrackErrors",
-    "look_tokens": 235,
+    "look_tokens": 236,
     "file_tokens": 3857
    },
    {
     "symbol": "org::jsoup::internal::LegacyMatching::attributeMatches",
-    "look_tokens": 343,
+    "look_tokens": 344,
     "file_tokens": 1068
    },
    {
@@ -16314,7 +16320,7 @@
    },
    {
     "symbol": "org::jsoup::nodes::Attribute::getValidKey",
-    "look_tokens": 479,
+    "look_tokens": 480,
     "file_tokens": 3027
    },
    {
@@ -16338,10 +16344,10 @@
     "file_tokens": 4377
    }
   ],
-  "seconds": 121,
+  "seconds": 147,
   "summary": {
    "callers_recall": 0.996,
-   "callers_precision": 0.988,
+   "callers_precision": 0.996,
    "callers_checked": 49,
    "blind_recall": 0.966,
    "blind_checked": 35,
@@ -16352,7 +16358,7 @@
    "rename_ok": 0.959,
    "rename_checked": 49,
    "tests_recall": 0.264,
-   "tests_precision": 0.697,
+   "tests_precision": 0.703,
    "tests_top10_precision": 0.692,
    "tests_top10_best": 0.773,
    "tests_caught": 0.905,
@@ -16362,7 +16368,7 @@
   "summary_seeds": {
    "7": {
     "callers_recall": 1.0,
-    "callers_precision": 0.98,
+    "callers_precision": 1.0,
     "callers_checked": 20,
     "blind_recall": 1.0,
     "blind_checked": 10,
@@ -16373,7 +16379,7 @@
     "rename_ok": 0.9,
     "rename_checked": 20,
     "tests_recall": 0.112,
-    "tests_precision": 0.653,
+    "tests_precision": 0.667,
     "tests_top10_precision": 0.629,
     "tests_top10_best": 0.741,
     "tests_caught": 0.875,
@@ -16402,7 +16408,7 @@
    },
    "9": {
     "callers_recall": 0.99,
-    "callers_precision": 0.97,
+    "callers_precision": 0.99,
     "callers_checked": 20,
     "blind_recall": 0.987,
     "blind_checked": 15,
@@ -16418,7 +16424,7 @@
     "tests_top10_best": 0.891,
     "tests_caught": 1.0,
     "tests_checked": 8,
-    "look_vs_file": 0.127
+    "look_vs_file": 0.126
    }
   },
   "noise": {
@@ -16437,17 +16443,17 @@
     "threshold": 0.03
    },
    "callers_precision": {
-    "mean": 0.988,
+    "mean": 0.996,
     "functions": 49,
-    "boot_lo": 0.971,
+    "boot_lo": 0.988,
     "boot_hi": 1.0,
-    "boot_half": 0.014,
+    "boot_half": 0.006,
     "seeds": [
-     0.98,
+     1.0,
      0.99,
-     0.97
+     0.99
     ],
-    "seed_sd": 0.01,
+    "seed_sd": 0.006,
     "threshold": 0.03
    },
    "blind_recall": {
@@ -16535,17 +16541,17 @@
     "threshold": 0.13
    },
    "tests_precision": {
-    "mean": 0.697,
+    "mean": 0.703,
     "functions": 21,
-    "boot_lo": 0.561,
-    "boot_hi": 0.823,
-    "boot_half": 0.131,
+    "boot_lo": 0.565,
+    "boot_hi": 0.828,
+    "boot_half": 0.132,
     "seeds": [
-     0.653,
+     0.667,
      0.65,
      0.826
     ],
-    "seed_sd": 0.101,
+    "seed_sd": 0.097,
     "threshold": 0.14
    },
    "tests_top10_precision": {
@@ -16599,7 +16605,7 @@
     "seeds": [
      0.198,
      0.152,
-     0.127
+     0.126
     ],
     "seed_sd": 0.036,
     "threshold": 0.06
@@ -19177,7 +19183,7 @@
    },
    {
     "symbol": "org::json::XMLParserConfiguration::withKeepBooleanAsString",
-    "look_tokens": 423,
+    "look_tokens": 424,
     "file_tokens": 4976
    },
    {
@@ -19212,7 +19218,7 @@
    },
    {
     "symbol": "org::json::XMLTokener::nextMeta",
-    "look_tokens": 670,
+    "look_tokens": 671,
     "file_tokens": 3760
    },
    {
@@ -19237,7 +19243,7 @@
    },
    {
     "symbol": "org::json::JSONTokener::nextString",
-    "look_tokens": 837,
+    "look_tokens": 838,
     "file_tokens": 5435
    },
    {
@@ -19262,7 +19268,7 @@
    },
    {
     "symbol": "org::json::XMLParserConfiguration::getForceList",
-    "look_tokens": 268,
+    "look_tokens": 269,
     "file_tokens": 4976
    },
    {
@@ -19282,7 +19288,7 @@
    },
    {
     "symbol": "org::json::JSONTokener::dehexchar",
-    "look_tokens": 315,
+    "look_tokens": 316,
     "file_tokens": 5435
    },
    {
@@ -19297,7 +19303,7 @@
    },
    {
     "symbol": "org::json::JSONObject::accumulate",
-    "look_tokens": 596,
+    "look_tokens": 597,
     "file_tokens": 34912
    },
    {
@@ -19336,7 +19342,7 @@
     "file_tokens": 3760
    }
   ],
-  "seconds": 20,
+  "seconds": 22,
   "summary": {
    "callers_recall": 1.0,
    "callers_precision": 1.0,

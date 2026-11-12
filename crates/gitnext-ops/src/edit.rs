@@ -320,6 +320,11 @@ pub fn rename(root: &Path, g: &Graph, i: usize, new_name: &str, dry_run: bool) -
         }
         let only_target = res.iter().all(|x| twins.contains(x));
         let loc = format!("{file}:{}", e.line);
+        if g.foreign_receiver_for_rename(file, e) {
+            // `c.Flags().HasFlags()` with `Flags() *pflag.FlagSet`: the library's method of the same name
+            report.skipped.push(format!("{loc} `{}` (the receiver is a library type)", e.to));
+            continue;
+        }
         if !only_target {
             report.skipped.push(format!("{loc} `{}` (ambiguous: {} candidates)", e.to, res.len()));
             continue;

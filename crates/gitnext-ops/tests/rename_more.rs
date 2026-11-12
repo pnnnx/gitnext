@@ -150,3 +150,45 @@ fn python_uses_that_are_not_plain_calls() {
     }
     assert!(read(&dir, "tests/test_y.py").contains("'strip_ansi', pkg.compat.plain)"));
 }
+
+/// cobra: `c.Flags().HasFlags()` is `pflag.FlagSet.HasFlags`, not the repo's `Command.HasFlags`.
+#[test]
+fn go_method_of_a_library_result_is_left_alone() {
+    let dir = project(
+        "go-library",
+        &[
+            ("go.mod", "module example.com/demo\n\ngo 1.21\n"),
+            (
+                "command.go",
+                "package demo\n\nimport flag \"github.com/spf13/pflag\"\n\ntype Command struct {\n\tflags *flag.FlagSet\n}\n\nfunc (c *Command) Flags() *flag.FlagSet {\n\treturn c.flags\n}\n\nfunc (c *Command) HasFlags() bool {\n\treturn c.Flags().HasFlags()\n}\n\nfunc (c *Command) Show() bool {\n\treturn c.HasFlags()\n}\n",
+            ),
+        ],
+    );
+    let g = graph(&dir);
+    let i = g.find("HasFlags")[0];
+    let r = edit::rename(&dir, &g, i, "HasAnyFlags", false).unwrap();
+    let text = read(&dir, "command.go");
+    assert!(text.contains("func (c *Command) HasAnyFlags() bool {\n\treturn c.Flags().HasFlags()\n}"), "{text}");
+    assert!(text.contains("return c.HasAnyFlags()"), "{text}");
+    assert!(r.skipped.iter().any(|s| s.contains("library type")), "{:?}", r.skipped);
+}
+
+/// jsoup: a library call that hands a repo object on is still a use of the repo's method.
+#[test]
+fn java_method_reached_through_a_library_call_is_renamed() {
+    let dir = project(
+        "java-through",
+        &[
+            ("src/main/java/demo/TextNode.java", "package demo;\n\npublic class TextNode {\n    public String getWholeText() {\n        return \"\";\n    }\n}\n"),
+            (
+                "src/test/java/demo/TextNodeTest.java",
+                "package demo;\n\nimport static org.junit.jupiter.api.Assertions.assertInstanceOf;\nimport java.util.List;\n\npublic class TextNodeTest {\n    void whole(Object n, List<TextNode> nodes) {\n        String a = assertInstanceOf(TextNode.class, n).getWholeText();\n        String b = nodes.get(0).getWholeText();\n    }\n}\n",
+            ),
+        ],
+    );
+    let g = graph(&dir);
+    edit::rename(&dir, &g, g.find("getWholeText")[0], "wholeText", false).unwrap();
+    let text = read(&dir, "src/test/java/demo/TextNodeTest.java");
+    assert!(text.contains("assertInstanceOf(TextNode.class, n).wholeText()") && text.contains("nodes.get(0).wholeText()"), "{text}");
+}
+

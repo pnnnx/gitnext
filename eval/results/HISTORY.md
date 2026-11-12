@@ -40,6 +40,17 @@ whose type gitnext does not know, inside a macro or as a value in an object lite
 that is data (`'warn'` in a union type) — 2; TypeScript `YAML.parseDocument(…)` through a namespace import — 2;
 tests fail and the cause is not looked at yet (cobra 3, click 2, sqlparse 4) — 9.
 
+**After that, measured in pairs** (`--compare`: both versions on the same functions, the difference taken
+per function). Two guards against wrongly "sure" callers were tried and thrown out — "several types of that name →
+maybe" (shared names recall −1.5, worse) and "unknown receiver → maybe even when the name is unique" (callers recall
+−2.9, picked blind −8.9, worse). What stays: `f().m()` where `f` returns a library type is "maybe"
+(`c.PersistentFlags().HasFlags()`, `r.Context().Value(…)`): callers precision 98.6% → 99.4% (+0.8, interval
++0.2 … +1.6), Go 96.3% → 98.2% (+2.0, +0.2 … +4.2), nothing else moves. `rename` leaves such a call alone where it
+is known — `f` is a repo function with a library result, or a Go package function (`template.New(…).Execute`):
+cobra `Execute` and `HasFlags` fixed, rename ok 90.8% → 91.4% (Go 90% → 93%). A wider rule also skipped
+`assertInstanceOf(TextNode.class, n).getWholeText()` and broke one jsoup rename — a library call can hand a repo
+object on. 29 of 338 renames still fail.
+
 ## Run 6 · a sample large enough to tell a change from noise
 
 The measurement changed, so these numbers are a new starting point. `a → b` below: the code of run 5

@@ -10,8 +10,8 @@
 /// (language family, share of "sure" callers that are real, share of failing tests the
 /// call graph finds) — in percent; `None` = not measured for that language.
 const MEASURED: &[(&str, Option<u8>, Option<u8>)] = &[
-    ("go", Some(96), Some(79)),
-    ("java", Some(99), Some(49)),
+    ("go", Some(98), Some(79)),
+    ("java", Some(100), Some(49)),
     ("js", Some(100), Some(3)),
     ("rust", Some(100), Some(53)),
     ("python", None, Some(36)),

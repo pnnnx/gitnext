@@ -1,9 +1,9 @@
 {
  "config": "n20-m8-seeds7,8,9",
- "seconds": 289,
+ "seconds": 241,
  "truth": {
-  "cached": 1220,
-  "asked": 20
+  "cached": 1240,
+  "asked": 0
  },
  "scopes": {
   "all": {
@@ -22,17 +22,17 @@
     "threshold": 0.01
    },
    "callers_precision": {
-    "mean": 0.986,
+    "mean": 0.994,
     "functions": 232,
-    "boot_lo": 0.975,
-    "boot_hi": 0.995,
-    "boot_half": 0.01,
+    "boot_lo": 0.987,
+    "boot_hi": 0.999,
+    "boot_half": 0.006,
     "seeds": [
-     0.981,
+     0.989,
      0.998,
-     0.981
+     0.992
     ],
-    "seed_sd": 0.01,
+    "seed_sd": 0.005,
     "threshold": 0.01
    },
    "blind_recall": {
@@ -92,45 +92,45 @@
     "threshold": 0.02
    },
    "rename_ok": {
-    "mean": 0.908,
+    "mean": 0.914,
     "functions": 338,
-    "boot_lo": 0.882,
-    "boot_hi": 0.935,
-    "boot_half": 0.027,
+    "boot_lo": 0.891,
+    "boot_hi": 0.938,
+    "boot_half": 0.024,
     "seeds": [
-     0.916,
+     0.922,
      0.934,
-     0.892
+     0.898
     ],
-    "seed_sd": 0.021,
+    "seed_sd": 0.018,
     "threshold": 0.03
    },
    "tests_recall": {
-    "mean": 0.467,
+    "mean": 0.468,
     "functions": 167,
-    "boot_lo": 0.413,
+    "boot_lo": 0.414,
     "boot_hi": 0.525,
     "boot_half": 0.056,
     "seeds": [
      0.436,
      0.507,
-     0.522
+     0.523
     ],
     "seed_sd": 0.046,
     "threshold": 0.06
    },
    "tests_precision": {
-    "mean": 0.482,
+    "mean": 0.483,
     "functions": 167,
-    "boot_lo": 0.431,
+    "boot_lo": 0.432,
     "boot_hi": 0.533,
     "boot_half": 0.051,
     "seeds": [
-     0.456,
+     0.458,
      0.496,
      0.539
     ],
-    "seed_sd": 0.041,
+    "seed_sd": 0.04,
     "threshold": 0.06
    },
    "tests_top10_precision": {
@@ -206,18 +206,18 @@
     "threshold": 0.02
    },
    "callers_precision": {
-    "mean": 0.963,
+    "mean": 0.982,
     "functions": 71,
-    "boot_lo": 0.929,
-    "boot_hi": 0.989,
-    "boot_half": 0.03,
+    "boot_lo": 0.961,
+    "boot_hi": 0.996,
+    "boot_half": 0.018,
     "seeds": [
-     0.947,
+     0.964,
      1.0,
-     0.951
+     0.978
     ],
-    "seed_sd": 0.029,
-    "threshold": 0.03
+    "seed_sd": 0.018,
+    "threshold": 0.02
    },
    "blind_recall": {
     "mean": 1.0,
@@ -276,29 +276,29 @@
     "threshold": 0.13
    },
    "rename_ok": {
-    "mean": 0.901,
+    "mean": 0.926,
     "functions": 81,
-    "boot_lo": 0.84,
-    "boot_hi": 0.951,
-    "boot_half": 0.056,
+    "boot_lo": 0.877,
+    "boot_hi": 0.975,
+    "boot_half": 0.049,
     "seeds": [
-     0.925,
+     0.95,
      0.975,
-     0.85
+     0.875
     ],
-    "seed_sd": 0.063,
-    "threshold": 0.06
+    "seed_sd": 0.052,
+    "threshold": 0.05
    },
    "tests_recall": {
-    "mean": 0.791,
+    "mean": 0.793,
     "functions": 37,
-    "boot_lo": 0.699,
-    "boot_hi": 0.877,
+    "boot_lo": 0.702,
+    "boot_hi": 0.879,
     "boot_half": 0.089,
     "seeds": [
      0.713,
      0.823,
-     0.767
+     0.771
     ],
     "seed_sd": 0.055,
     "threshold": 0.09
@@ -307,12 +307,12 @@
     "mean": 0.471,
     "functions": 37,
     "boot_lo": 0.364,
-    "boot_hi": 0.572,
+    "boot_hi": 0.571,
     "boot_half": 0.104,
     "seeds": [
      0.563,
      0.423,
-     0.508
+     0.507
     ],
     "seed_sd": 0.07,
     "threshold": 0.11
@@ -680,17 +680,17 @@
     "threshold": 0.02
    },
    "callers_precision": {
-    "mean": 0.993,
+    "mean": 0.998,
     "functions": 85,
-    "boot_lo": 0.984,
+    "boot_lo": 0.993,
     "boot_hi": 1.0,
-    "boot_half": 0.008,
+    "boot_half": 0.004,
     "seeds": [
-     0.99,
+     1.0,
      0.995,
-     0.985
+     0.995
     ],
-    "seed_sd": 0.005,
+    "seed_sd": 0.003,
     "threshold": 0.02
    },
    "blind_recall": {
@@ -768,7 +768,7 @@
     "functions": 43,
     "boot_lo": 0.376,
     "boot_hi": 0.599,
-    "boot_half": 0.111,
+    "boot_half": 0.112,
     "seeds": [
      0.433,
      0.597,
@@ -778,17 +778,17 @@
     "threshold": 0.12
    },
    "tests_precision": {
-    "mean": 0.608,
+    "mean": 0.611,
     "functions": 43,
-    "boot_lo": 0.513,
-    "boot_hi": 0.705,
-    "boot_half": 0.096,
+    "boot_lo": 0.514,
+    "boot_hi": 0.71,
+    "boot_half": 0.098,
     "seeds": [
-     0.594,
+     0.601,
      0.52,
      0.706
     ],
-    "seed_sd": 0.094,
+    "seed_sd": 0.093,
     "threshold": 0.1
    },
    "tests_top10_precision": {
@@ -841,7 +841,7 @@
     "boot_half": 0.03,
     "seeds": [
      0.143,
-     0.128,
+     0.129,
      0.125
     ],
     "seed_sd": 0.01,
