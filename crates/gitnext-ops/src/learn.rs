@@ -52,12 +52,19 @@ pub struct Learned {
 }
 
 /// file → for each line, the innermost function with a body around it (tests are not counted).
-/// The first line (`def …:`, `fn … {`) runs when the code is loaded, not when the function is
+/// In Python the first line (`def …:`) runs when the module is loaded, not when the function is
 /// called, so a body starts on the line after it.
 pub(crate) fn owners(g: &Graph) -> HashMap<&str, Vec<Option<usize>>> {
+    owners_at(g, false)
+}
+
+/// The same with the first line counted when `header`: in a compiled language (Go, Rust) coverage
+/// books the first block of a function to the line of its signature, and that line runs only when
+/// the function is called. One-line functions are then counted too.
+pub(crate) fn owners_at(g: &Graph, header: bool) -> HashMap<&str, Vec<Option<usize>>> {
     let mut by_file: HashMap<&str, Vec<usize>> = HashMap::new();
     for (i, s) in g.syms.iter().enumerate() {
-        if s.sym.kind.is_callable() && !s.sym.test && s.sym.end_line > s.sym.start_line {
+        if s.sym.kind.is_callable() && !s.sym.test && (header || s.sym.end_line > s.sym.start_line) {
             by_file.entry(s.file.as_str()).or_default().push(i);
         }
     }
@@ -67,7 +74,7 @@ pub(crate) fn owners(g: &Graph) -> HashMap<&str, Vec<Option<usize>>> {
         let last = syms.iter().map(|&i| g.syms[i].sym.end_line).max().unwrap_or(0) as usize;
         let mut lines = vec![None; last + 1];
         for &i in syms.iter() {
-            for l in g.syms[i].sym.start_line + 1..=g.syms[i].sym.end_line {
+            for l in g.syms[i].sym.start_line + u32::from(!header)..=g.syms[i].sym.end_line {
                 lines[l as usize] = Some(i);
             }
         }
