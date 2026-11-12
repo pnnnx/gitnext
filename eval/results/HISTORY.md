@@ -26,6 +26,9 @@ name. A coverage map per test file finds 100% on both TypeScript projects (`lear
 of its four `init` functions, which now have entries of their own), indexmap 358 / 3 837 (43 of its 192 tests are
 written inside a macro and are not symbols of the graph).
 
+**why with the map, Go** (`why-rank-go.md`, 17 seeded bugs in cobra and chi): the culprit is first in 35% from the
+call graph and in 82% with the map, and among the 8 printed in 100% (52% from the graph).
+
 **why with the map, Rust** (`why-rank-rust.md`, 20 seeded bugs): the culprit is first in 15% from the call graph and
 in 70% with the map; semver 10 of 10 (2 of 10 from the graph), indexmap 4 of 10 — its other 6 fail only in tests made
 by a macro. Two things found on the way: the first line of a function was not counted for Rust (one-line functions

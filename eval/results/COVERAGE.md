@@ -14,7 +14,7 @@ that the answer is right.
 | `rename` | the project still compiles and its tests pass | 91% ±3 (338) |
 | `tests-for` (and the tests part of `look`, `check`) | failing tests found; at least one of the first 10 fails | 49% ±6; 79% ±6 (167). TypeScript: 19% |
 | `learn-tests` (Python, Go, Rust) | the same with the learned map (`learn_tests.py`, `learn_tests_go.py`, `learn_tests_rust.py`) | 100% of the failing tests in all three (the graph: 19% on click, Go 78%, Rust 59%) |
-| `why`, `check <test>` | place of the function at fault for a seeded bug (`why_rank.py`, `why-rank.md`) | first in 10% from the call graph (37 bugs); with the learned map 90% (20 bugs, Python) and 70% (20 bugs, Rust) |
+| `why`, `check <test>` | place of the function at fault for a seeded bug (`why_rank.py`, `why-rank.md`) | with the learned map the culprit is first in 81% of 57 seeded bugs (Python 90%, Go 82%, Rust 70%); from the call graph alone in 18% |
 | the tools as a small model uses them | `agent.py`, Qwen 3.5 4B: find / callers / rename / fix | see the agent runs in `HISTORY.md` |
 
 ## 2. Unit tests (`cargo test --workspace`, 115 tests)

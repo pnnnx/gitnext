@@ -2,39 +2,6 @@
  {
   "repo": "cobra",
   "lang": "go",
-  "target": "main::Command::checkCommandGroups",
-  "variant": "static",
-  "test": "TestActiveHelpAlone",
-  "place": 1,
-  "listed": 106,
-  "named": true,
-  "learned": false
- },
- {
-  "repo": "cobra",
-  "lang": "go",
-  "target": "main::Command::checkCommandGroups",
-  "variant": "nochange",
-  "test": "TestActiveHelpAlone",
-  "place": 1,
-  "listed": 64,
-  "named": true,
-  "learned": true
- },
- {
-  "repo": "cobra",
-  "lang": "go",
-  "target": "main::Command::checkCommandGroups",
-  "variant": "default",
-  "test": "TestActiveHelpAlone",
-  "place": 1,
-  "listed": 64,
-  "named": true,
-  "learned": true
- },
- {
-  "repo": "cobra",
-  "lang": "go",
   "target": "main::Command::SetHelpTemplate",
   "variant": "static",
   "test": "TestSetHelpTemplate",
@@ -167,39 +134,6 @@
  {
   "repo": "cobra",
   "lang": "go",
-  "target": "main::Command::ErrPrefix",
-  "variant": "static",
-  "test": "TestRootAndSubErrPrefix",
-  "place": 2,
-  "listed": 106,
-  "named": false,
-  "learned": false
- },
- {
-  "repo": "cobra",
-  "lang": "go",
-  "target": "main::Command::ErrPrefix",
-  "variant": "nochange",
-  "test": "TestRootAndSubErrPrefix",
-  "place": 9,
-  "listed": 73,
-  "named": false,
-  "learned": true
- },
- {
-  "repo": "cobra",
-  "lang": "go",
-  "target": "main::Command::ErrPrefix",
-  "variant": "default",
-  "test": "TestRootAndSubErrPrefix",
-  "place": 1,
-  "listed": 73,
-  "named": false,
-  "learned": true
- },
- {
-  "repo": "cobra",
-  "lang": "go",
   "target": "main::Command::findNext",
   "variant": "static",
   "test": "TestAliasPrefixMatching",
@@ -297,39 +231,6 @@
   "learned": true
  },
  {
-  "repo": "cobra",
-  "lang": "go",
-  "target": "main::Command::getVersionTemplateFunc",
-  "variant": "static",
-  "test": "TestVersionFlagExecuted",
-  "place": 1,
-  "listed": 105,
-  "named": true,
-  "learned": false
- },
- {
-  "repo": "cobra",
-  "lang": "go",
-  "target": "main::Command::getVersionTemplateFunc",
-  "variant": "nochange",
-  "test": "TestVersionFlagExecuted",
-  "place": 1,
-  "listed": 35,
-  "named": true,
-  "learned": true
- },
- {
-  "repo": "cobra",
-  "lang": "go",
-  "target": "main::Command::getVersionTemplateFunc",
-  "variant": "default",
-  "test": "TestVersionFlagExecuted",
-  "place": 1,
-  "listed": 35,
-  "named": true,
-  "learned": true
- },
- {
   "repo": "chi",
   "lang": "go",
   "target": "main::Mux::Find",
@@ -347,7 +248,7 @@
   "variant": "nochange",
   "test": "TestGetHead",
   "place": 1,
-  "listed": 47,
+  "listed": 49,
   "named": true,
   "learned": true
  },
@@ -358,7 +259,7 @@
   "variant": "default",
   "test": "TestGetHead",
   "place": 1,
-  "listed": 47,
+  "listed": 49,
   "named": true,
   "learned": true
  },
@@ -413,7 +314,7 @@
   "variant": "nochange",
   "test": "TestRequestLogger",
   "place": 6,
-  "listed": 12,
+  "listed": 14,
   "named": false,
   "learned": true
  },
@@ -424,7 +325,7 @@
   "variant": "default",
   "test": "TestRequestLogger",
   "place": 1,
-  "listed": 12,
+  "listed": 14,
   "named": false,
   "learned": true
  },
@@ -446,7 +347,7 @@
   "variant": "nochange",
   "test": "TestCompressor",
   "place": 11,
-  "listed": 45,
+  "listed": 47,
   "named": false,
   "learned": true
  },
@@ -457,7 +358,7 @@
   "variant": "default",
   "test": "TestCompressor",
   "place": 1,
-  "listed": 45,
+  "listed": 47,
   "named": false,
   "learned": true
  },
@@ -512,7 +413,7 @@
   "variant": "nochange",
   "test": "TestAdvisory_GHSA_j6qf_3m9c_vwj3",
   "place": 5,
-  "listed": 37,
+  "listed": 39,
   "named": false,
   "learned": true
  },
@@ -523,7 +424,7 @@
   "variant": "default",
   "test": "TestAdvisory_GHSA_j6qf_3m9c_vwj3",
   "place": 1,
-  "listed": 37,
+  "listed": 39,
   "named": false,
   "learned": true
  },
@@ -545,7 +446,7 @@
   "variant": "nochange",
   "test": "TestCompressor",
   "place": 1,
-  "listed": 45,
+  "listed": 47,
   "named": true,
   "learned": true
  },
@@ -556,7 +457,7 @@
   "variant": "default",
   "test": "TestCompressor",
   "place": 1,
-  "listed": 45,
+  "listed": 47,
   "named": true,
   "learned": true
  },
@@ -578,7 +479,7 @@
   "variant": "nochange",
   "test": "TestClientIPFromXFF_SingleTrustedHop",
   "place": 1,
-  "listed": 38,
+  "listed": 40,
   "named": true,
   "learned": true
  },
@@ -589,7 +490,7 @@
   "variant": "default",
   "test": "TestClientIPFromXFF_SingleTrustedHop",
   "place": 1,
-  "listed": 38,
+  "listed": 40,
   "named": true,
   "learned": true
  },
@@ -611,7 +512,7 @@
   "variant": "nochange",
   "test": "TestContentCharset",
   "place": 1,
-  "listed": 31,
+  "listed": 33,
   "named": false,
   "learned": true
  },
@@ -622,7 +523,7 @@
   "variant": "default",
   "test": "TestContentCharset",
   "place": 1,
-  "listed": 31,
+  "listed": 33,
   "named": false,
   "learned": true
  },
@@ -644,7 +545,7 @@
   "variant": "nochange",
   "test": "TestBasicAuth",
   "place": 2,
-  "listed": 31,
+  "listed": 33,
   "named": true,
   "learned": true
  },
@@ -655,7 +556,7 @@
   "variant": "default",
   "test": "TestBasicAuth",
   "place": 2,
-  "listed": 31,
+  "listed": 33,
   "named": true,
   "learned": true
  }
