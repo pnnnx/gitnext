@@ -4,8 +4,11 @@ server), to measure what gitnext gives an agent — without loca or any other ha
 
 Modes (tools the model gets):
   base     list_dir, read_file, grep, edit_file, run, finish
-  gitnext  base + look, rename, replace_symbol, check, why (gitnext's own tools); a failing
-           command's long output comes back as its digest (what failed, where, the message)
+  gitnext  base + look, rename, replace_symbol, check (gitnext's own tools; `check` with a
+           test name tells why it fails); a failing command's long output comes back as its
+           digest (what failed, where, the message)
+  lite     only look, replace, add_after, rename, check and finish — the short list of
+           gitnext's lite MCP profile: does a small model choose better among six tools than eleven
   ctx      base, and `gitnext context` output appended to the task
   both     gitnext tools + context
   cmd      no tool-calling API at all: the context is in the task and the model answers with
@@ -27,7 +30,7 @@ and checked by the project itself:
   rename    "rename X to Y everywhere"     → it compiles and no old name is left
 
     python3 eval/agent.py --host http://127.0.0.1:8080 --repos click,cobra \\
-        --tasks find,callers,fix,rename --modes base,gitnext,verify --repeat 3
+        --tasks find,callers,fix,rename --modes base,gitnext,lite --repeat 3
 `--repeat N` gives N task sets per repo (other functions, another bug), every mode on each.
 Results: eval/results/agent-latest.json (+ .md; .trace.jsonl — every conversation).
 
@@ -81,8 +84,17 @@ GITNEXT_TOOLS = [
     tool("look", "gitnext: everything about a function, class, file or error in one call — its code, who calls it, what it calls, the tests that reach it and how to run them. Use this first.", {"what": S}, ["what"]),
     tool("rename", "gitnext: rename a function/class everywhere (definition, calls, imports, tests, comments).", {"old": S, "new": S}, ["old", "new"]),
     tool("replace_symbol", "gitnext: replace the whole code of one function/class by name, without reading the file.", {"symbol": S, "code": S}, ["symbol", "code"]),
-    tool("check", "gitnext: after a change — build the project and run the tests of what you changed; answers with a verdict.", {}, []),
-    tool("why", "gitnext: a test fails — runs it and returns the failure in a few lines and the code to look at, the most likely culprit first. Use this first when a test fails.", {"test": S}, ["test"]),
+    tool("check", "gitnext: run the tests. No arguments: after a change — builds the project, runs the tests of what you changed, answers with a verdict. "
+                  "With `test`: why that test fails — the failure in a few lines and the code to fix, the most likely culprit first.", {"test": S}, []),
+]
+# mode `lite`: these and nothing else — what gitnext's lite MCP profile gives a small model (plus `finish`)
+LITE_TOOLS = [
+    tool("look", "Look at code. what = a function or class name (shows its code, who calls it, its tests), a file or folder (lists what is in it), an error message, or words to find.", {"what": S}, ["what"]),
+    tool("replace", "Replace one whole function or class with new code. No need to read the file first.", {"symbol": S, "code": S}, ["symbol", "code"]),
+    tool("add_after", "Add new code (a new function) right after an existing function or class.", {"symbol": S, "code": S}, ["symbol", "code"]),
+    tool("rename", "Rename a function or class everywhere: definition, calls, imports, tests.", {"old": S, "new": S}, ["old", "new"]),
+    tool("check", "Run the tests. No arguments: after your change — says ok or what failed. With test: why that test fails and the code to fix.", {"test": S}, []),
+    tool("finish", "Finish the task with the final answer.", {"answer": S}, ["answer"]),
 ]
 
 
@@ -137,11 +149,11 @@ def call_tool(name: str, a: dict, root: Path, lang: str, short: bool = False) ->
         if name == "rename":
             return ev.gx(["rename", a["old"], a["new"], "--text"], root)[1][:MAX_OUT]
         if name == "check":
-            return ev.gx(["check"], root, timeout=900)[1][-MAX_OUT:]
-        if name == "why":
-            return ev.gx(["why", a["test"]], root, timeout=900)[1][:MAX_OUT]
-        if name == "replace_symbol":
-            p = subprocess.run([ev.GITNEXT, "edit", "replace", a["symbol"]], input=a["code"], cwd=root, capture_output=True, text=True)
+            test = (a.get("test") or "").strip()
+            return ev.gx(["check", test] if test else ["check"], root, timeout=900)[1][-MAX_OUT if not test else None:][:MAX_OUT]
+        if name in ("replace_symbol", "replace", "add_after"):
+            kind = "insert-after" if name == "add_after" else "replace"
+            p = subprocess.run([ev.GITNEXT, "edit", kind, a["symbol"]], input=a["code"], cwd=root, capture_output=True, text=True)
             return (p.stdout + p.stderr)[:MAX_OUT]
     except Exception as e:  # the model sees the error and can try again
         return f"error: {e}"
@@ -195,12 +207,15 @@ SYSTEM = ("You are a coding agent working in a software project. Use the tools t
           "Be brief. When done, call finish with the answer. Do not modify tests unless asked.")
 CMD_SYSTEM = ("You are a coding agent working in a software project. Answer with ONE shell command (or a short script) in a ```sh block "
               "and nothing else; you will get its output back. Useful commands: `gitnext look <function, class or file>` (its code, who calls it, "
-              "its tests — in one call), `gitnext why <test>` (a test fails: the failure in a few lines and the code to look at), "
+              "its tests — in one call), `gitnext check <test>` (a test fails: the failure in a few lines and the code to look at), "
               "`gitnext rename <old> <new> --text`, `gitnext check` (after a change: builds and runs the tests of what you changed), "
               "cat, grep, sed -i. "
               "When the task is done answer `DONE: <answer>`. Be brief. Do not modify tests unless asked.")
 TOKEN_BUDGET = int(os.environ.get("AGENT_TOKEN_BUDGET", "0"))  # prompt tokens per run, 0 = no limit
-GITNEXT_MODES = ("gitnext", "both", "verify")  # modes with the gitnext tools
+GITNEXT_MODES = ("gitnext", "both", "verify", "lite")  # modes with the gitnext tools
+LITE_SYSTEM = ("You are a coding agent working in a software project. You have five tools for the code: look (read: a function, a file, an error), "
+               "replace and add_after (change code), rename, check (run the tests; give `test` when a test fails). "
+               "Use them, be brief, and call finish with the answer when done. Do not modify tests unless asked.")
 
 
 class Gate:
@@ -244,7 +259,7 @@ def command_of(content: str) -> str | None:
 
 def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: int, deadline: float) -> dict:
     cmd = mode == "cmd"
-    tools = [] if cmd else BASE_TOOLS + (GITNEXT_TOOLS if mode in GITNEXT_MODES else [])
+    tools = [] if cmd else LITE_TOOLS if mode == "lite" else BASE_TOOLS + (GITNEXT_TOOLS if mode in GITNEXT_MODES else [])
     prompt = task["prompt"]
     if task.get("handoff"):  # a weaker model gave up on this task: what it tried
         prompt += "\n\nAn earlier attempt was stopped. Its notes:\n" + task["handoff"]
@@ -252,7 +267,7 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
         _, c = ev.gx(["context", task["prompt"]], root)
         if c.strip():
             prompt += "\n\n" + c.strip()
-    msgs = [{"role": "system", "content": CMD_SYSTEM if cmd else SYSTEM}, {"role": "user", "content": prompt}]
+    msgs = [{"role": "system", "content": CMD_SYSTEM if cmd else LITE_SYSTEM if mode == "lite" else SYSTEM}, {"role": "user", "content": prompt}]
     used = {"tokens_in": 0, "tokens_out": 0, "steps": 0, "tools": {}}
 
     def locate(err: str) -> str:  # where gitnext thinks an error comes from
@@ -490,7 +505,7 @@ def main() -> None:
     ap.add_argument("--host", default="http://127.0.0.1:8080")
     ap.add_argument("--repos", default="click,cobra")
     ap.add_argument("--tasks", default="find,callers,fix,rename")
-    ap.add_argument("--modes", default="base,gitnext,ctx,both,cmd,verify")
+    ap.add_argument("--modes", default="base,gitnext,lite")
     ap.add_argument("--escalate-host", default="", help="a stronger model's server: a run the loop guard stopped is handed to it with the notes")
     ap.add_argument("--repeat", type=int, default=1, help="task sets per repo: each takes other functions and another bug (seed, seed + 1, …)")
     ap.add_argument("--steps", type=int, default=25)
@@ -549,7 +564,7 @@ def main() -> None:
         if not rs:
             continue
         steps = sorted(r.get("steps") or 0 for r in rs)
-        gcalls = sum(sum(v for k, v in (r.get("tools") or {}).items() if k in ("look", "rename", "replace_symbol", "check", "why")) for r in rs)
+        gcalls = sum(sum(v for k, v in (r.get("tools") or {}).items() if k in ("look", "rename", "replace_symbol", "replace", "add_after", "check")) for r in rs)
         md.append(f"| {mode} | {sum(r['passed'] for r in rs)}/{len(rs)} | {steps[len(steps)//2]} | {sum(r.get('tokens_in') or 0 for r in rs)} | {gcalls} | {sum(r.get('text_calls') or 0 for r in rs)} | {sum(sum((r.get('guard') or {}).values()) for r in rs)} | {sum(1 for r in rs if r.get('stopped'))} | {sum(sum((r.get('gate') or {}).values()) for r in rs)} | {sum(1 for r in rs if r.get('escalated'))} |")
     Path(args.out).with_suffix(".md").write_text("\n".join(md) + "\n")
     print("\n".join(md))

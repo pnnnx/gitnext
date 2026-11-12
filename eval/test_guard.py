@@ -216,7 +216,7 @@ class Case(unittest.TestCase):
         g = self.root.parent / f"gitnext-{self.root.name}.sh"
         g.write_text("#!/bin/sh\nif [ \"$1\" = check ]; then grep -q 'a - b' calc.py && echo 'verdict: ok — builds, 1 test pass' || { grep -q 'a / b' calc.py && echo 'verdict: builds, but no test reaches the changed code' || { echo 'calc.py: test_add failed'; echo 'verdict: FAILED — tests (see the output above)'; }; }; fi\n"
                      "if [ \"$1\" = digest ]; then cat >/dev/null; echo 'tests: 1 failed'; echo '✗ test_add  calc.py:2'; fi\n"
-                     "if [ \"$1\" = why ]; then echo \"why: test_$2 — FAILS\"; fi\n")
+                     "if [ \"$1\" = check ] && [ -n \"$2\" ]; then echo \"why: test_$2 — FAILS\"; fi\n")
         g.chmod(0o755)
         self.addCleanup(g.unlink)
         self.addCleanup(setattr, agent.ev, "GITNEXT", agent.ev.GITNEXT)
@@ -268,12 +268,21 @@ class Case(unittest.TestCase):
         self.assertIn("short", s.seen())
         self.assertIn("399", s.seen())
 
-    def test_why_is_a_tool_of_the_gitnext_modes(self):
+    def test_check_with_a_test_name_tells_why_it_fails(self):
         self.fake_gitnext()
-        res, s = self.run_agent([call("why", test="add"), say("the bug is in add")], mode="gitnext")
+        res, s = self.run_agent([call("check", test="add"), say("the bug is in add")], mode="gitnext")
         self.assertIn("why: test_add — FAILS", s.seen())
-        self.assertEqual(res["tools"], {"why": 1})
-        self.assertNotIn("why", [t["function"]["name"] for t in self.run_agent([say("x")], mode="base")[1].requests[0]["tools"]])
+        self.assertEqual(res["tools"], {"check": 1})
+        self.assertNotIn("check", [t["function"]["name"] for t in self.run_agent([say("x")], mode="base")[1].requests[0]["tools"]])
+
+    def test_lite_mode_has_six_tools_and_they_work(self):
+        self.fake_gitnext()
+        res, s = self.run_agent([call("check", test="add"), call("check"), call("finish", answer="done")], mode="lite")
+        self.assertEqual([t["function"]["name"] for t in s.requests[0]["tools"]], ["look", "replace", "add_after", "rename", "check", "finish"])
+        self.assertIn("five tools", s.requests[0]["messages"][0]["content"])
+        self.assertIn("why: test_add — FAILS", s.seen())
+        self.assertIn("test_add failed", s.seen())  # `check` without a test: the verdict on the change
+        self.assertEqual(res["answer"], "done")
 
     def test_other_modes_have_no_gate(self):
         res, _ = self.run_agent([say("it is in calc.py")], mode="gitnext")

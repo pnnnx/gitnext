@@ -1,20 +1,20 @@
 #!/bin/sh
 # The plain agent (eval/agent.py) on a local model, without loca:
-# base tools vs + gitnext tools vs + gitnext tools with the check gate (`verify`), judged by
-# each project's own compiler and tests.
+# base tools vs + gitnext tools (eleven tools) vs only gitnext's short list (`lite`, six tools),
+# judged by each project's own compiler and tests.
 #
 #   1. model in another terminal:   ~/Developer/loca/bin/llama.sh   (any OpenAI-compatible server)
 #   2. sh eval/run_agent_mac.sh
 #
-# Options: REPOS=click,semver  TASKS=find,callers,fix,rename  MODES=base,gitnext,verify  REPEAT=3  PORT=8080
-#   (other modes: ctx, both, cmd; REPEAT=N is N different task sets per project)
+# Options: REPOS=click,semver  TASKS=find,callers,fix,rename  MODES=base,gitnext,lite  REPEAT=3  PORT=8080
+#   (other modes: verify, ctx, both, cmd; REPEAT=N is N different task sets per project)
 # Projects are cloned into eval/.work (pinned commits, see eval/repos.json); needs git, python3, cargo.
 # Results: eval/results/agent-<machine>-<date>.json / .md / .log / .trace.jsonl (every conversation)
 set -e
 GN=$(cd "$(dirname "$0")/.." && pwd)
 REPOS=${REPOS:-click,semver}
 TASKS=${TASKS:-find,callers,fix,rename}
-MODES=${MODES:-base,gitnext,verify}
+MODES=${MODES:-base,gitnext,lite}
 REPEAT=${REPEAT:-3}
 PORT=${PORT:-8080}
 

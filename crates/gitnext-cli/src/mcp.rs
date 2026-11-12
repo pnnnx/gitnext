@@ -104,6 +104,8 @@ fn tools() -> Value {
              json!({ "items": { "type": "array", "items": { "type": "object", "properties": { "symbol": { "type": "string" }, "summary": { "type": "string" } }, "required": ["symbol", "summary"] } } }), &["items"]),
         tool("locate", "Paste a compiler error, panic, test failure or traceback: returns the repo symbols at those file:line locations (innermost function/method) and the code of the top one.",
              json!({ "text": { "type": "string" } }), &["text"]),
+        tool("check", "After a change: builds the project and runs the tests of what changed, answers with a verdict (ok / what failed, where, the message). With `test`: the same as `why`.",
+             json!({ "test": { "type": "string", "description": "a failing test to explain instead of checking the change" } }), &[]),
         tool("why", "A test fails: runs it and returns the failure in a few lines (what, where, the message) and the code the test reaches, most likely culprit first, with the code of the top ones. Use this first when told that a test fails.",
              json!({ "test": { "type": "string", "description": "test name; `greater_than` finds `test_greater_than`" } }), &["test"]),
         tool("tests_for", "Tests that exercise a symbol: the 10 most likely to fail if it breaks (direct calls and tests named after it first) with the exact command to run them, plus one command for the whole test files.",
@@ -131,6 +133,12 @@ fn lite_tools() -> Value {
         { "name": "add_after",
           "description": "Add new code (e.g. a new function) right after an existing function or class.",
           "inputSchema": { "type": "object", "properties": { "symbol": str_("existing function or class"), "code": str_("the new code") }, "required": ["symbol", "code"] } },
+        { "name": "rename",
+          "description": "Rename a function or class everywhere: definition, calls, imports, tests.",
+          "inputSchema": { "type": "object", "properties": { "symbol": str_("current name"), "new_name": str_("new name") }, "required": ["symbol", "new_name"] } },
+        { "name": "check",
+          "description": "Run the tests. No arguments: after your change — says ok or what failed. With test: why that test fails and the code to fix.",
+          "inputSchema": { "type": "object", "properties": { "test": str_("a failing test (optional)") } } },
     ])
 }
 
@@ -284,7 +292,11 @@ impl Server {
                 s
             }
             "locate" => gitnext_ops::locate::render_locate(g, &root, s_arg(a, "text").ok_or("missing `text`")?, true),
-            "why" => {
+            "check" if s_arg(a, "test").is_none_or(|t| t.trim().is_empty()) => {
+                let c = gitnext_ops::check::check(&root, g, std::time::Duration::from_secs(600));
+                gitnext_ops::check::render(g, &c)
+            }
+            "why" | "check" => {
                 let name = s_arg(a, "test").ok_or("missing `test`")?;
                 let ids = gitnext_ops::why::find_tests(g, name);
                 if ids.is_empty() {
@@ -332,13 +344,14 @@ impl Server {
             }
             "overview" => gitnext_ops::insight::overview(self.ws.repo.as_ref(), g, &root),
             "entrypoints" => gitnext_ops::insight::render_entrypoints(&gitnext_ops::insight::entrypoints(g, &root)),
-            "rename_symbol" => {
-                let i = find_one(g, s_arg(a, "symbol").ok_or("missing `symbol`")?)?;
-                let new = s_arg(a, "new_name").ok_or("missing `new_name`")?;
+            "rename_symbol" | "rename" => {
+                let i = find_one(g, any_str(a, &["symbol", "old", "name"]).ok_or("missing `symbol`")?)?;
+                let new = a.get("new_name").or_else(|| a.get("new")).and_then(Value::as_str).ok_or("missing `new_name`")?;
                 let dry = a.get("dry_run").and_then(Value::as_bool).unwrap_or(false);
                 let _op = gitnext_ops::oplog::Group::start(&root, "rename", &format!("{} → {new}", g.syms[i].sym.qualified));
                 let mut r = edit::rename(&root, g, i, new, dry).map_err(|e| format!("{e:#}"))?;
-                if a.get("text").and_then(Value::as_bool).unwrap_or(false) {
+                // the short `rename` of the lite profile also follows the name into comments and strings
+                if name == "rename" || a.get("text").and_then(Value::as_bool).unwrap_or(false) {
                     edit::rename_leftover_text(&root, &mut r).map_err(|e| format!("{e:#}"))?;
                 }
                 edit::render_rename(&r)
@@ -387,7 +400,7 @@ impl Server {
         files.dedup();
         let file_tok: usize = files.iter().filter_map(|f| std::fs::metadata(self.ws.root.join(f)).ok()).map(|m| (m.len() as usize).div_ceil(4)).sum();
         let out_tokens = text.len().div_ceil(4);
-        let edit = matches!(tool, "replace_symbol" | "insert_after" | "delete_symbol" | "rename_symbol" | "replace" | "add_after");
+        let edit = matches!(tool, "replace_symbol" | "insert_after" | "delete_symbol" | "rename_symbol" | "replace" | "add_after" | "rename");
         // naive agent: read the involved files (and rewrite them for edits)
         let naive = match tool {
             "read" | "outline" | "show" | "map" | "callers" | "callees" | "impact" | "hierarchy" | "tests_for" | "history" | "look" => file_tok,
@@ -487,7 +500,7 @@ fn handle(server: &mut Server, msg: &Value) -> Option<Value> {
                 "capabilities": { "tools": { "listChanged": false } },
                 "serverInfo": { "name": "gitnext", "version": env!("CARGO_PKG_VERSION") },
                 "instructions": match server.profile {
-                    Profile::Lite => "Code tools: look(what) for any file, function, error or words; replace / add_after to change code. Don't read whole files.",
+                    Profile::Lite => "Code tools: look(what) for any file, function, error or words; replace / add_after / rename to change code; check to run the tests (check(test) when a test fails). Don't read whole files.",
                     Profile::Full => "Code navigation and editing for this repository. Start with look: one call gives a symbol's code, callers, callees, tests and impact (pass several targets at once). New here? overview. \
                                  Edit with replace_symbol / insert_after / rename_symbol instead of rewriting files. \
                                  Use impact / tests_for before changing signatures; locate turns errors into code. \
@@ -574,7 +587,9 @@ mod tests {
         let tools = list["result"]["tools"].as_array().unwrap();
         assert_eq!(tools.len(), agents::LITE_TOOLS.len());
         let size = serde_json::to_string(tools).unwrap().len();
-        assert!(size < 1400, "lite tool list is {size} bytes");
+        assert!(size < 2000, "lite tool list is {size} bytes");
+        let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
+        assert_eq!(names, agents::LITE_TOOLS);
         let call = |s: &mut Server, what: &str| -> String {
             let r = handle(s, &json!({"jsonrpc":"2.0","id":9,"method":"tools/call","params":{"name":"look","arguments":{"what":what}}})).unwrap();
             r["result"]["content"][0]["text"].as_str().unwrap().to_string()
@@ -588,5 +603,8 @@ mod tests {
         assert!(r["result"]["_meta"]["gitnext/naive_tokens"].as_u64().unwrap() > 0);
         let r = handle(&mut s, &json!({"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"overview","arguments":{}}})).unwrap();
         assert_eq!(r["result"]["isError"], true);
+        // `check` with a test name is `why`: it looks for the test (and here finds none) instead of checking the change
+        let r = handle(&mut s, &json!({"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"check","arguments":{"test":"no_such_test_zzz"}}})).unwrap();
+        assert!(r["result"]["content"][0]["text"].as_str().unwrap().contains("no test named `no_such_test_zzz`"), "{r}");
     }
 }

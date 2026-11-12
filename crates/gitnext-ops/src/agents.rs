@@ -49,7 +49,7 @@ impl Profile {
 }
 
 /// Tools of the lite profile: one way to look at anything, two ways to change code.
-pub const LITE_TOOLS: &[&str] = &["look", "replace", "add_after"];
+pub const LITE_TOOLS: &[&str] = &["look", "replace", "add_after", "rename", "check"];
 
 /// Instruction block for capable agents (CLAUDE.md, Cursor rules).
 pub fn instructions_full() -> String {
@@ -81,7 +81,10 @@ pub fn instructions_lite() -> String {
      - an error or traceback → the code where it happened\n\
      - words → where they appear: {\"what\": \"retry delay\"}\n\
      To change one function: `mcp__gitnext__replace` {\"symbol\": \"parse_date\", \"code\": \"<the whole new function>\"}.\n\
-     To add a new function after another: `mcp__gitnext__add_after` with the same fields.\n"
+     To add a new function after another: `mcp__gitnext__add_after` with the same fields.\n\
+     To rename everywhere: `mcp__gitnext__rename` {\"symbol\": \"parse_date\", \"new_name\": \"parse_day\"}.\n\
+     After a change run `mcp__gitnext__check` {} — it builds and runs the tests of what you changed.\n\
+     A test fails? `mcp__gitnext__check` {\"test\": \"test_parse_date\"} gives the failure and the code to fix.\n"
         .into()
 }
 

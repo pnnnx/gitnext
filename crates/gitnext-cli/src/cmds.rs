@@ -219,8 +219,11 @@ pub enum More {
         #[arg(long, default_value_t = 5)]
         max: usize,
     },
-    /// After a change: build the project and run the tests of what changed; prints a verdict (exit 1 if it fails)
+    /// After a change: build the project and run the tests of what changed; prints a verdict (exit 1 if it fails).
+    /// With test names: why they fail (the same as `gitnext why <test>`)
     Check {
+        /// Tests to explain instead of checking the change
+        names: Vec<String>,
         /// Seconds each command may take
         #[arg(long, default_value_t = 600)]
         timeout: u64,
@@ -238,6 +241,11 @@ pub enum More {
 
 pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
     let ws = Workspace::open(cwd)?;
+    // `check <test>` is `why <test>`
+    let m = match m {
+        More::Check { names, timeout } if !names.is_empty() => More::Why { names, timeout },
+        other => other,
+    };
     match m {
         More::Explain { path, provider, limit, dry_run } => {
             let g = ws.graph()?;
@@ -321,7 +329,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             };
             out.text(&gitnext_ops::digest::render(&gitnext_ops::digest::digest(&t), max));
         }
-        More::Check { timeout } => {
+        More::Check { timeout, .. } => {
             let g = ws.graph()?;
             let c = gitnext_ops::check::check(&ws.root, &g, std::time::Duration::from_secs(timeout));
             out.text(&gitnext_ops::check::render(&g, &c));
