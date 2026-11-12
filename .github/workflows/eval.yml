@@ -26,8 +26,28 @@ jobs:
         with: { python-version: "3.12" }
       - name: build gitnext
         run: cargo build --release -p gitnext-cli
+      # What the compilers and test suites said (eval/.work/truth.json) does not change while the
+      # repos stay on their commits: keep it between runs, so a run only asks gitnext again.
+      # A new key every run (a key cannot be overwritten), restored by its prefix.
+      - name: truth cache key
+        id: truth
+        run: echo "key=eval-truth-v$(python3 -c "import sys; sys.path.insert(0, 'eval'); import run; print(run.CACHE_VERSION)")-${{ hashFiles('eval/repos.json') }}" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache/restore@v4
+        with:
+          path: eval/.work/truth.json
+          key: ${{ steps.truth.outputs.key }}-${{ github.run_id }}
+          restore-keys: ${{ steps.truth.outputs.key }}-
+      # A small sample here (its own baseline in eval/baseline.json): with an empty cache it asks the compilers
+      # and test suites for about 50 minutes, one seed of 20 functions for about 110. The three seeds and the
+      # thresholds are run locally. The step stops before the job does, so what was asked so far is still saved.
       - name: eval
-        run: GITNEXT=$PWD/target/release/gitnext python3 eval/run.py --check
+        timeout-minutes: 100
+        run: GITNEXT=$PWD/target/release/gitnext python3 eval/run.py --seed 7 --n 8 --mutants 4 --check
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: eval/.work/truth.json
+          key: ${{ steps.truth.outputs.key }}-${{ github.run_id }}
       - name: results
         if: always()
         run: cat eval/results/latest.md >> "$GITHUB_STEP_SUMMARY"
