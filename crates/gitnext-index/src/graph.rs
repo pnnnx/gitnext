@@ -794,6 +794,25 @@ impl Graph {
             .collect()
     }
 
+    /// `f()::m` where `f` surely returns something the repo does not define: `f` is not in the repo
+    /// (`r.Context()`), or every candidate declares a result that is no repo type
+    /// (`PersistentFlags() *flag.FlagSet`). Not when the candidates disagree or declare nothing
+    /// (`el.tag()` with several `tag`s): then `m` may well be the repo's.
+    fn result_from_outside(&self, file: &str, e: &Edge, callee: &str) -> bool {
+        // Go's `make(T)` / `new(T)` return their argument's type, which may be the repo's
+        if matches!(last_segment(callee), "make" | "new") {
+            return false;
+        }
+        let targets = drop_decls(&self.syms, self.resolve_call_raw(file, &Edge { to: callee.to_string(), ..e.clone() }));
+        targets.iter().all(|&t| {
+            let s = &self.syms[t].sym;
+            !s.kind.is_type()
+                && s.returns.as_deref().and_then(result_type_name).is_some_and(|name| {
+                    !self.by_name.get(name).is_some_and(|v| v.iter().any(|&i| self.syms[i].sym.kind.is_type()))
+                })
+        })
+    }
+
     /// Names of the repo types a call returns, from the declared result type of what it
     /// resolves to: `Self::pool` → `SoftPool` for `SoftPool<char[]> pool()`. Empty when the
     /// callee is ambiguous, declares no result, or returns a built-in / library / generic type.
@@ -918,10 +937,13 @@ impl Graph {
                         if typed { tail2(q) } else { q }
                     })
                     .collect();
+                // `r.Context()::Value`, `c.PersistentFlags()::HasFlags`: the receiver is a library
+                // type, so the one repo method of that name is only a guess
+                let foreign = e.to.rsplit_once("()::").is_some_and(|(c, _)| self.result_from_outside(file, e, c));
                 for t in targets {
                     if t != src {
                         m.entry(t).or_default().push((src, e.kind, e.line));
-                        if distinct.len() > 1 {
+                        if distinct.len() > 1 || foreign {
                             guess.insert((src, t));
                         } else {
                             sure.insert((src, t));
