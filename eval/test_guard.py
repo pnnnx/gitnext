@@ -216,7 +216,9 @@ class Case(unittest.TestCase):
         g = self.root.parent / f"gitnext-{self.root.name}.sh"
         g.write_text("#!/bin/sh\nif [ \"$1\" = check ]; then grep -q 'a - b' calc.py && echo 'verdict: ok — builds, 1 test pass' || { grep -q 'a / b' calc.py && echo 'verdict: builds, but no test reaches the changed code' || { echo 'calc.py: test_add failed'; echo 'verdict: FAILED — tests (see the output above)'; }; }; fi\n"
                      "if [ \"$1\" = digest ]; then cat >/dev/null; echo 'tests: 1 failed'; echo '✗ test_add  calc.py:2'; fi\n"
-                     "if [ \"$1\" = check ] && [ -n \"$2\" ]; then echo \"why: test_$2 — FAILS\"; fi\n")
+                     "if [ \"$1\" = check ] && [ -n \"$2\" ]; then echo \"why: test_$2 — FAILS\"; fi\n"
+                     # `edit replace add`: the code on stdin replaces calc.py (the only function there); any other name is unknown
+                     "if [ \"$1\" = edit ]; then if [ \"$3\" = add ]; then cat > calc.py; echo 'ok calc.py:1-2'; else cat >/dev/null; echo \"error: symbol $3 not found\"; exit 1; fi; fi\n")
         g.chmod(0o755)
         self.addCleanup(g.unlink)
         self.addCleanup(setattr, agent.ev, "GITNEXT", agent.ev.GITNEXT)
@@ -277,15 +279,53 @@ class Case(unittest.TestCase):
 
     def test_lite_mode_has_six_tools_and_they_work(self):
         self.fake_gitnext()
-        res, s = self.run_agent([call("check", test="add"), call("check"), call("finish", answer="done")], mode="lite")
+        res, s = self.run_agent([call("check", test="add"), call("check"), call("finish", answer="done"), call("finish", answer="done")], mode="lite")
         self.assertEqual([t["function"]["name"] for t in s.requests[0]["tools"]], ["look", "replace", "add_after", "rename", "check", "finish"])
         self.assertIn("five tools", s.requests[0]["messages"][0]["content"])
         self.assertIn("why: test_add — FAILS", s.seen())
         self.assertIn("test_add failed", s.seen())  # `check` without a test: the verdict on the change
         self.assertEqual(res["answer"], "done")
+        self.assertEqual(res["gate"], {"nochange": 1})  # lite has the whole gate
 
-    def test_other_modes_have_no_gate(self):
-        res, _ = self.run_agent([say("it is in calc.py")], mode="gitnext")
+    def test_a_tool_name_written_as_the_answer_is_sent_back(self):
+        self.fake_gitnext()
+        res, s = self.run_agent([say("look"), say("`check`"), call("check"), call("finish", answer="add")], mode="gitnext")
+        self.assertEqual(res["gate"], {"bare": 2})
+        self.assertEqual(res["answer"], "add")
+        self.assertIn("`look` is a tool, not an answer: call it with its arguments.", s.seen())
+
+    def test_a_function_written_in_the_answer_is_put_in_place_and_checked(self):
+        self.fake_gitnext()
+        wrong = "The bug is in add. Fixed:\n```python\ndef add(a, b):\n    return a * b\n```\nThis should work."
+        right = "Sorry, here:\n```python\ndef add(a, b):\n    return a - b\n```"
+        res, s = self.run_agent([say(wrong), say(right), say("fixed add")], mode="gitnext")
+        self.assertEqual((self.root / "calc.py").read_text(), "def add(a, b):\n    return a - b\n")
+        self.assertEqual(res["text_code"], 2)
+        self.assertEqual(res["answer"], "fixed add")
+        seen = s.seen()
+        self.assertIn("The function `add` you wrote was put in place (calc.py:1-2)", seen)
+        self.assertIn("It failed: write the whole corrected function again.", seen)
+        self.assertIn("verdict: ok", seen)
+
+    def test_code_in_the_answer_is_left_alone_when_it_is_not_a_function_of_the_project(self):
+        self.fake_gitnext()
+        before = (self.root / "calc.py").read_text()
+        other = "Try this:\n```python\ndef brand_new(x):\n    return x\n```\nand this test:\n```python\ndef test_add():\n    assert add(1, 2) == 3\n```"
+        res, _ = self.run_agent([say(other), say(other)], mode="gitnext")
+        self.assertNotIn("text_code", res)
+        self.assertEqual((self.root / "calc.py").read_text(), before)
+        # and without gitnext nothing is applied at all
+        fix = "```python\ndef add(a, b):\n    return a - b\n```"
+        res, _ = self.run_agent([say(fix)], mode="base")
+        self.assertNotIn("text_code", res)
+        self.assertEqual((self.root / "calc.py").read_text(), before)
+
+    def test_other_modes_have_only_the_first_part_of_the_gate(self):
+        self.fake_gitnext()
+        res, s = self.run_agent([say("it is in calc.py"), call("grep", pattern="add"), say("calc.py")], mode="gitnext")
+        self.assertEqual(res["answer"], "calc.py")
+        self.assertEqual(res["gate"], {"tool": 1})  # no "No file was changed", no check
+        res, _ = self.run_agent([say("it is in calc.py")], mode="base")
         self.assertEqual(res["answer"], "it is in calc.py")
         self.assertNotIn("gate", res)
 

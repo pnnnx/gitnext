@@ -8,7 +8,8 @@ Modes (tools the model gets):
            test name tells why it fails); a failing command's long output comes back as its
            digest (what failed, where, the message)
   lite     only look, replace, add_after, rename, check and finish — the short list of
-           gitnext's lite MCP profile: does a small model choose better among six tools than eleven
+           gitnext's lite MCP profile (a small model chooses better among six tools than eleven) —
+           and the gate of `verify`
   ctx      base, and `gitnext context` output appended to the task
   both     gitnext tools + context
   cmd      no tool-calling API at all: the context is in the task and the model answers with
@@ -16,7 +17,8 @@ Modes (tools the model gets):
            models that write tool calls as text; `gitnext` is on PATH
   verify   gitnext tools, and the run may end only when the work is checked: an answer given
            without a look at the code, or a change that `gitnext check` does not pass, goes back
-           to the model (a small model stops after one step otherwise)
+           to the model (a small model stops after one step otherwise). Every mode with the
+           gitnext tools sends back an answer given before any tool was called
 
 Every run is watched by a loop guard (eval/guard.py): repeated calls, no progress, the same
 error again and again, see-saw edits, repeated text, step and token budgets. A stopped run
@@ -106,6 +108,35 @@ def digest(out: str) -> str | None:
     except (OSError, subprocess.SubprocessError):
         return None
     return d if d.strip() and not d.startswith(("not recognised", "no output")) else None
+
+
+DEFINES = re.compile(r"^[ \t]*(?:(?:pub(?:\([a-z]+\))?|async|export|default|static|public|private|protected|final|override|unsafe|const)\s+)*"
+                     r"(?:def|fn|func|function)\s+(?:\([^)]*\)\s*)?([A-Za-z_][\w]*)", re.M)
+TEXT_CODE_MAX = 3  # times per run a function written in the answer is put in place
+
+
+def code_as_text(text: str, root: Path) -> str | None:
+    """A small model finds the bug and writes the corrected function — in its answer, not as a
+    `replace` call. The function it wrote is put in place (when the project has a function of that
+    name, it is not a test, and the file still parses) and checked; the model gets the verdict.
+    The same idea as `text_calls`: what it meant is clear, only the form is wrong."""
+    for block in re.findall(r"```[A-Za-z0-9_+-]*[ \t]*\n(.*?)```", text, re.S):
+        m = DEFINES.search(block)
+        if not m or block.count("\n") < 1:
+            continue
+        name = m.group(1)
+        if name.lower().startswith("test"):
+            continue
+        code = block[m.start():].rstrip() + "\n"
+        p = subprocess.run([ev.GITNEXT, "edit", "replace", name], input=code, cwd=root, capture_output=True, text=True)
+        if p.returncode != 0:
+            continue
+        where = (p.stdout.strip().split("\n") or [""])[0].removeprefix("ok ").strip()
+        verdict = ev.gx(["check"], root, timeout=900)[1][-MAX_OUT:]
+        failed = "verdict: FAILED" in verdict
+        return (f"The function `{name}` you wrote was put in place ({where}). The check:\n{verdict}\n"
+                + ("It failed: write the whole corrected function again." if failed else "If the task is done, answer in one line."))
+    return None
 
 
 def call_tool(name: str, a: dict, root: Path, lang: str, short: bool = False) -> str:
@@ -219,21 +250,30 @@ LITE_SYSTEM = ("You are a coding agent working in a software project. You have f
 
 
 class Gate:
-    """Mode `verify`: the run may end only when the work is checked. A small model stops after one
-    step ("the bug is in X") or answers from memory; the gate sends it back, each kind once:
-    use a tool before answering; make the change you were asked for; and, as long as files are
-    changed, pass `gitnext check` (up to `CHECKS` times). Nothing here knows the task or its answer."""
+    """The run may end only when the work is checked. A small model stops after one step ("the bug
+    is in X") or answers from memory; the gate sends it back, each kind once: use a tool before
+    answering (and call a tool instead of writing its name); make the change you were asked for;
+    and, as long as files are changed, pass `gitnext check` (up to `CHECKS` times). Nothing here
+    knows the task or its answer. Modes `verify` and `lite` have the whole gate; the other modes
+    with the gitnext tools only its first part (`full=False`): 5 of the 5 runs lost in the
+    find/callers/rename measurement were answers given before any tool was called."""
     CHECKS = 3
 
-    def __init__(self, guard: Guard, check):
-        self.guard, self.check = guard, check
+    def __init__(self, guard: Guard, check, full: bool = True):
+        self.guard, self.check, self.full = guard, check, full
         self.start = guard.fingerprint()
         self.said: dict[str, int] = {}
 
-    def on_finish(self, tool_steps: int) -> str | None:
+    def on_finish(self, tool_steps: int, text: str = "", tools: tuple = ()) -> str | None:
+        bare = text.strip(" `\n.()")
+        if bare in tools and self.said.get("bare", 0) < 2:
+            self.said["bare"] = self.said.get("bare", 0) + 1
+            return f"`{bare}` is a tool, not an answer: call it with its arguments."
         if tool_steps == 0 and "tool" not in self.said:
             self.said["tool"] = 1
             return "You have not looked at the code yet. Use the tools to find the answer in the project, then answer."
+        if not self.full:
+            return None
         changed = self.guard.fingerprint() != self.start
         if not changed and "nochange" not in self.said:
             self.said["nochange"] = 1
@@ -277,7 +317,8 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
             return ""
 
     guard = Guard(root, max_steps, TOKEN_BUDGET, locate=locate)
-    gate = Gate(guard, lambda: call_tool("check", {}, root, lang)) if mode == "verify" else None
+    gate = Gate(guard, lambda: call_tool("check", {}, root, lang), full=mode in ("verify", "lite")) if mode in GITNEXT_MODES else None
+    names = tuple(t["function"]["name"] for t in tools) if tools else ()
     answer = ""
     for _ in range(max_steps):
         if time.time() > deadline:
@@ -315,7 +356,16 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
                 msgs.append({"role": "user", "content": "Answer with one command in a ```sh block, or `DONE: <answer>`." + (f"\n{note}" if note else "")})
                 continue
             answer = done.group(1).strip() if done else text
-            back = gate.on_finish(used["steps"]) if gate else None
+            if mode in GITNEXT_MODES and used.get("text_code", 0) < TEXT_CODE_MAX:
+                # the corrected function is in the answer instead of a `replace` call: put it in place
+                applied = code_as_text(text, root)
+                if applied:
+                    used["text_code"] = used.get("text_code", 0) + 1
+                    used["steps"] += 1
+                    guard.state = guard.fingerprint()
+                    msgs.append({"role": "user", "content": applied})
+                    continue
+            back = gate.on_finish(used["steps"], text, names) if gate else None
             if back is None:
                 break
             msgs.append({"role": "user", "content": back})
@@ -396,9 +446,15 @@ MUTATIONS = [(r"(?<![<>=!])<(?![<=])", "<="), (r" \+ 1\b", " - 1"), (r"(?<![=!<>
 MAX_SEED_RUNS = 30  # test-suite runs spent looking for a mutant that some test notices
 
 
+BROKEN_BEFORE: dict[str, set] = {}  # per project: the tests that fail on the untouched code (not ours to blame)
+
+
 def seed_bug(repo: dict, root: Path, syms: list[dict], rng: random.Random) -> dict | None:
-    """Change one operator inside a non-test function so that some test fails."""
+    """Change one operator inside a non-test function so that some test that passed starts failing."""
     L = ev.LANG[repo["lang"]]
+    if str(root) not in BROKEN_BEFORE:
+        BROKEN_BEFORE[str(root)] = set(L["failed"](ev.sh(L["tests"], root, timeout=1800)[1], root))
+    before = BROKEN_BEFORE[str(root)]
     funcs = [s for s in syms if s["kind"] in ("function", "method") and not s.get("test") and 4 <= s["end_line"] - s["start_line"] <= 40
              and not s["file"].startswith(("examples/", "example/", "docs/", "benches/", "bench/"))]  # rarely under test
     rng.shuffle(funcs)
@@ -424,7 +480,7 @@ def seed_bug(repo: dict, root: Path, syms: list[dict], rng: random.Random) -> di
                     failed = set()
                     if ccode == 0 or repo["lang"] == "python":
                         _, tout = ev.sh(L["tests"], root, timeout=1800)
-                        failed = L["failed"](tout, root)
+                        failed = set(L["failed"](tout, root)) - before
                     if failed:
                         patch = ev.sh("git diff", root)[1]
                         ev.restore(root)
@@ -505,6 +561,7 @@ def main() -> None:
     ap.add_argument("--host", default="http://127.0.0.1:8080")
     ap.add_argument("--repos", default="click,cobra")
     ap.add_argument("--tasks", default="find,callers,fix,rename")
+    ap.add_argument("--learn", action="store_true", help="Python projects: `gitnext learn-tests` on the untouched code before the `fix` tasks")
     ap.add_argument("--modes", default="base,gitnext,lite")
     ap.add_argument("--escalate-host", default="", help="a stronger model's server: a run the loop guard stopped is handed to it with the notes")
     ap.add_argument("--repeat", type=int, default=1, help="task sets per repo: each takes other functions and another bug (seed, seed + 1, …)")
@@ -524,6 +581,15 @@ def main() -> None:
     for repo in repos:
         root = ev.prepare(repo)
         ev.gx(["init"], root, timeout=1800)
+        if args.learn and "fix" in args.tasks.split(",") and repo["lang"] == "python" and any(m in GITNEXT_MODES for m in modes):
+            # what a project does once while its tests pass: `gitnext why` then knows what each test
+            # really runs and which of that code changed since (the bug is put in after this)
+            py = next((p for p in (".venv/bin/python", "venv/bin/python") if (root / p).exists()), "python3")
+            if subprocess.run([py, "-c", "import pytest_cov"], cwd=root, capture_output=True).returncode != 0:
+                subprocess.run([py, "-m", "pip", "install", "-q", "pytest-cov"], cwd=root, capture_output=True)
+            print(f"{repo['name']}: " + (ev.gx(["learn-tests"], root, timeout=3600)[1].strip().splitlines() or ["learn-tests said nothing"])[0], flush=True)
+        elif (root / ".gitnext" / "tests.db").exists():
+            (root / ".gitnext" / "tests.db").unlink()  # a map left by another run would change what is measured
         base = ev.sh("git rev-parse HEAD", root)[1].strip()
         clean = lambda: (ev.sh(f"git reset -q --hard {base}", root), ev.restore(root))  # noqa: E731
         for rep in range(args.repeat):
@@ -553,19 +619,19 @@ def main() -> None:
                         f.write(json.dumps({k: res.get(k) for k in ("repo", "task", "target", "mode", "repeat", "passed")} | {"messages": trace_of(res.pop("_msgs", []))}, ensure_ascii=False) + "\n")
                     rows.append(res)
                     print(f"{repo['name']:8} {task['kind']:8} {mode:8} {'✓' if res['passed'] else '✗'} steps {res.get('steps')} tok {res.get('tokens_in')}/{res.get('tokens_out')} {res['seconds']}s tools {res.get('tools')}"
-                          + (f" guard {res['guard']}" if res.get("guard") else "") + (f" gate {res['gate']}" if res.get("gate") else "") + (f" stopped: {res['stopped']}" if res.get("stopped") else "") + (" escalated" if res.get("escalated") else ""), flush=True)
+                          + (f" code-as-text {res['text_code']}" if res.get("text_code") else "") + (f" guard {res['guard']}" if res.get("guard") else "") + (f" gate {res['gate']}" if res.get("gate") else "") + (f" stopped: {res['stopped']}" if res.get("stopped") else "") + (" escalated" if res.get("escalated") else ""), flush=True)
                     Path(args.out).parent.mkdir(exist_ok=True)
                     Path(args.out).write_text(json.dumps(rows, ensure_ascii=False, indent=1))
         clean()
     # summary per mode
-    md = ["| mode | passed | median steps | tokens in (sum) | gitnext tool calls | calls written as text | guard stepped in | stopped by guard | sent back by the gate | escalated |", "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    md = ["| mode | passed | median steps | tokens in (sum) | gitnext tool calls | calls written as text | code written as text | guard stepped in | stopped by guard | sent back by the gate | escalated |", "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for mode in modes:
         rs = [r for r in rows if r["mode"] == mode]
         if not rs:
             continue
         steps = sorted(r.get("steps") or 0 for r in rs)
         gcalls = sum(sum(v for k, v in (r.get("tools") or {}).items() if k in ("look", "rename", "replace_symbol", "replace", "add_after", "check")) for r in rs)
-        md.append(f"| {mode} | {sum(r['passed'] for r in rs)}/{len(rs)} | {steps[len(steps)//2]} | {sum(r.get('tokens_in') or 0 for r in rs)} | {gcalls} | {sum(r.get('text_calls') or 0 for r in rs)} | {sum(sum((r.get('guard') or {}).values()) for r in rs)} | {sum(1 for r in rs if r.get('stopped'))} | {sum(sum((r.get('gate') or {}).values()) for r in rs)} | {sum(1 for r in rs if r.get('escalated'))} |")
+        md.append(f"| {mode} | {sum(r['passed'] for r in rs)}/{len(rs)} | {steps[len(steps)//2]} | {sum(r.get('tokens_in') or 0 for r in rs)} | {gcalls} | {sum(r.get('text_calls') or 0 for r in rs)} | {sum(r.get('text_code') or 0 for r in rs)} | {sum(sum((r.get('guard') or {}).values()) for r in rs)} | {sum(1 for r in rs if r.get('stopped'))} | {sum(sum((r.get('gate') or {}).values()) for r in rs)} | {sum(1 for r in rs if r.get('escalated'))} |")
     Path(args.out).with_suffix(".md").write_text("\n".join(md) + "\n")
     print("\n".join(md))
 
