@@ -18,15 +18,18 @@ jobs:
       matrix:
         include:
           - { os: macos-latest, target: aarch64-apple-darwin }
-          - { os: macos-13, target: x86_64-apple-darwin }
+          # Intel Macs: built on the arm runner (the macos-13 runners are retired; a job on them never starts)
+          - { os: macos-latest, target: x86_64-apple-darwin }
           - { os: ubuntu-latest, target: x86_64-unknown-linux-gnu }
           - { os: ubuntu-24.04-arm, target: aarch64-unknown-linux-gnu }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
       - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
       - name: build
         run: cargo build --release --locked --target ${{ matrix.target }} -p gitnext-cli
       - name: package
@@ -35,7 +38,7 @@ jobs:
           cd target/${{ matrix.target }}/release
           tar -czf gitnext-${{ matrix.target }}.tar.gz gitnext
           (command -v sha256sum >/dev/null && sha256sum gitnext-${{ matrix.target }}.tar.gz || shasum -a 256 gitnext-${{ matrix.target }}.tar.gz) > gitnext-${{ matrix.target }}.tar.gz.sha256
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: |
             target/${{ matrix.target }}/release/gitnext-${{ matrix.target }}.tar.gz
