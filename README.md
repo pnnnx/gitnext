@@ -8,6 +8,7 @@
 <p align="center">
   <a href="https://github.com/pnnnx/gitnext/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/pnnnx/gitnext/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <a href="https://zenodo.org/badge/latestdoi/1453025544"><img alt="DOI" src="https://zenodo.org/badge/1453025544.svg"></a>
   <img alt="Rust" src="https://img.shields.io/badge/written%20in-Rust-orange.svg">
 </p>
 
@@ -56,7 +57,7 @@ Most of an agent session is the system prompt re-sent on every step, so the win 
 
 ### What is checked, and what is not good yet
 
-- 115 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
+- 122 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
 - TypeScript: `tests-for` finds 19% of the failing test files (it was 3%); the coverage map exists for Python, Go and Rust only.
 - A rename breaks the build or the tests in 9% of cases — mostly dynamic access and names shared by unrelated types.
 - A 4B model rarely fixes a seeded bug yet: 3 of 12 on click.

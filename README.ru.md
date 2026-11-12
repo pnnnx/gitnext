@@ -8,6 +8,7 @@
 <p align="center">
   <a href="https://github.com/pnnnx/gitnext/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/pnnnx/gitnext/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <a href="https://zenodo.org/badge/latestdoi/1453025544"><img alt="DOI" src="https://zenodo.org/badge/1453025544.svg"></a>
   <img alt="Rust" src="https://img.shields.io/badge/written%20in-Rust-orange.svg">
 </p>
 
@@ -57,7 +58,7 @@ gitnext — спутник git (`gitnext` = `git` + индекс кода). Он
 
 ### Что проверено и что пока плохо
 
-- 115 модульных тестов; вывод парсеров закреплён эталонами на восьми языках; каждая команда и каждый MCP-инструмент — всего 86 — запускаются на каждом из десяти проектов (860 вызовов, ни один не падает). Чем проверена каждая функция: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
+- 122 модульных теста; вывод парсеров закреплён эталонами на восьми языках; каждая команда и каждый MCP-инструмент — всего 86 — запускаются на каждом из десяти проектов (860 вызовов, ни один не падает). Чем проверена каждая функция: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
 - TypeScript: `tests-for` находит 19% падающих файлов тестов (было 3%); карта покрытия есть только для Python, Go и Rust.
 - Переименование ломает сборку или тесты в 9% случаев — в основном динамический доступ и одинаковые имена у несвязанных типов.
 - Модель на 4B пока редко чинит подсаженную ошибку: 3 из 12 на click.

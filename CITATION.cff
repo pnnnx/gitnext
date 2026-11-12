@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use gitnext or its evaluation, please cite it."
+title: "gitnext: code navigation and symbol-level editing tools for AI agents"
+type: software
+authors:
+  - family-names: Kononenko
+    given-names: Leonid A.
+    orcid: "https://orcid.org/0009-0009-8407-9214"
+    affiliation: Independent researcher
+repository-code: "https://github.com/pnnnx/gitnext"
+license: MIT
+keywords:
+  - AI agents
+  - code navigation
+  - call graph
+  - tree-sitter
+  - evaluation
+  - small language models
