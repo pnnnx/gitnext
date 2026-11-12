@@ -8,7 +8,8 @@
 #
 # Options: REPOS=click,semver  TASKS=find,callers,fix,rename  MODES=base,gitnext,lite  REPEAT=3  PORT=8080  LEARN=1
 #   (other modes: verify, ctx, both, cmd; REPEAT=N is N different task sets per project;
-#    LEARN=0: no `gitnext learn-tests` before the `fix` tasks of a Python project)
+#    LEARN=0: no `gitnext learn-tests` before the `fix` tasks; a Rust project needs
+#    `rustup component add llvm-tools-preview` for it, a Python one pytest-cov — installed by the run)
 # Projects are cloned into eval/.work (pinned commits, see eval/repos.json); needs git, python3, cargo.
 # Results: eval/results/agent-<machine>-<date>.json / .md / .log / .trace.jsonl (every conversation)
 set -e

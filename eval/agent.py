@@ -575,7 +575,7 @@ def main() -> None:
     ap.add_argument("--host", default="http://127.0.0.1:8080")
     ap.add_argument("--repos", default="click,cobra")
     ap.add_argument("--tasks", default="find,callers,fix,rename")
-    ap.add_argument("--learn", action="store_true", help="Python projects: `gitnext learn-tests` on the untouched code before the `fix` tasks")
+    ap.add_argument("--learn", action="store_true", help="Python, Go and Rust projects: `gitnext learn-tests` on the untouched code before the `fix` tasks")
     ap.add_argument("--modes", default="base,gitnext,lite")
     ap.add_argument("--escalate-host", default="", help="a stronger model's server: a run the loop guard stopped is handed to it with the notes")
     ap.add_argument("--repeat", type=int, default=1, help="task sets per repo: each takes other functions and another bug (seed, seed + 1, …)")
@@ -595,12 +595,14 @@ def main() -> None:
     for repo in repos:
         root = ev.prepare(repo)
         ev.gx(["init"], root, timeout=1800)
-        if args.learn and "fix" in args.tasks.split(",") and repo["lang"] == "python" and any(m in GITNEXT_MODES for m in modes):
+        if args.learn and "fix" in args.tasks.split(",") and repo["lang"] in ("python", "go", "rust") and any(m in GITNEXT_MODES for m in modes):
             # what a project does once while its tests pass: `gitnext why` then knows what each test
             # really runs and which of that code changed since (the bug is put in after this)
-            py = next((p for p in (".venv/bin/python", "venv/bin/python") if (root / p).exists()), "python3")
-            if subprocess.run([py, "-c", "import pytest_cov"], cwd=root, capture_output=True).returncode != 0:
-                subprocess.run([py, "-m", "pip", "install", "-q", "pytest-cov"], cwd=root, capture_output=True)
+            if repo["lang"] == "python":
+                py = next((p for p in (".venv/bin/python", "venv/bin/python") if (root / p).exists()), "python3")
+                if subprocess.run([py, "-c", "import pytest_cov"], cwd=root, capture_output=True).returncode != 0:
+                    subprocess.run([py, "-m", "pip", "install", "-q", "pytest-cov"], cwd=root, capture_output=True)
+            # the first line: the size of the map, or why there is none (Rust: `rustup component add llvm-tools-preview`)
             print(f"{repo['name']}: " + (ev.gx(["learn-tests"], root, timeout=3600)[1].strip().splitlines() or ["learn-tests said nothing"])[0], flush=True)
         elif (root / ".gitnext" / "tests.db").exists():
             (root / ".gitnext" / "tests.db").unlink()  # a map left by another run would change what is measured
