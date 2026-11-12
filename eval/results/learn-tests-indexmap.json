@@ -1,0 +1,1483 @@
+{
+ "repo": "indexmap",
+ "lang": "rust",
+ "commit": "41a870887c4c",
+ "seed": 7,
+ "gitnext_commit": "08e599c",
+ "functions": [
+  {
+   "group": "pick",
+   "symbol": "indexmap::benches::bench::simple_sort",
+   "file": "benches/bench.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::inner::Core::get_index_of_raw",
+   "file": "src/inner.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 1,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::inner::Core::replace_index_unique",
+   "file": "src/inner.rs",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "replace_index",
+    "is_sorted"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.5,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.6666666666666666,
+     "predicted": 3,
+     "top_hits": 2,
+     "top_n": 3,
+     "top_precision": 0.6666666666666666,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::inner::Core::retain_in_order",
+   "file": "src/inner.rs",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "retain",
+    "retain_ordered"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.5,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.6666666666666666,
+     "predicted": 3,
+     "top_hits": 2,
+     "top_n": 3,
+     "top_precision": 0.6666666666666666,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::inner::Core::shift_insert_unique",
+   "file": "src/inner.rs",
+   "truth": 6,
+   "truth_doctests": 0,
+   "predicted_gitnext": 1,
+   "predicted_coverage": 8,
+   "missed_by_coverage": [],
+   "covered_not_failing": [
+    "insert_before_oob",
+    "shift_insert_oob"
+   ],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 2,
+   "top_coverage": [
+    "insert_before_oob",
+    "shift_insert_oob",
+    "insert_sorted",
+    "insert_sorted_by",
+    "insert_sorted_by_key",
+    "shift_insert",
+    "occupied_entry_shift_insert",
+    "raw_occupied_entry_shift_insert"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 1,
+     "top_hits": 0,
+     "top_n": 1,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 0.75,
+     "predicted": 8,
+     "top_hits": 6,
+     "top_n": 8,
+     "top_precision": 0.75,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.6666666666666666,
+     "predicted": 9,
+     "top_hits": 6,
+     "top_n": 9,
+     "top_precision": 0.6666666666666666,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::inner::Core::split_splice",
+   "file": "src/inner.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 1,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::inner::extract::ExtractCore::remaining",
+   "file": "src/inner/extract.rs",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "extract_if_odd",
+    "extract_if_odd_limit"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::map::IndexMap::contains_key",
+   "file": "src/map.rs",
+   "truth": 15,
+   "truth_doctests": 0,
+   "predicted_gitnext": 4,
+   "predicted_coverage": 15,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_lookup",
+    "test_string_str",
+    "drain_bounds",
+    "replace_index",
+    "vacant_replace_index",
+    "comparisons",
+    "from_array",
+    "extract_if_odd",
+    "retain_ordered",
+    "extract_if_odd_limit"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.26666666666666666,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 15,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 15,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::map::IndexMap::sort_keys",
+   "file": "src/map.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 6,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::map::IndexMap::sort_unstable_keys",
+   "file": "src/map.rs",
+   "truth": 1,
+   "truth_doctests": 0,
+   "predicted_gitnext": 7,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "sort_unstable"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.14285714285714285,
+     "predicted": 7,
+     "top_hits": 1,
+     "top_n": 7,
+     "top_precision": 0.14285714285714285,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.14285714285714285,
+     "predicted": 7,
+     "top_hits": 1,
+     "top_n": 7,
+     "top_precision": 0.14285714285714285,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::map::disjoint::get_disjoint_opt_mut",
+   "file": "src/map/disjoint.rs",
+   "truth": 8,
+   "truth_doctests": 0,
+   "predicted_gitnext": 9,
+   "predicted_coverage": 9,
+   "missed_by_coverage": [],
+   "covered_not_failing": [
+    "disjoint_mut_multi_fail_duplicate_panic"
+   ],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 1,
+   "top_coverage": [
+    "disjoint_mut_empty_map",
+    "disjoint_mut_empty_param",
+    "disjoint_mut_multi_fail_duplicate_panic",
+    "disjoint_mut_single_fail",
+    "disjoint_mut_single_success",
+    "disjoint_mut_multi_fail_missing",
+    "disjoint_mut_multi_success",
+    "disjoint_mut_multi_success_borrow_key",
+    "disjoint_mut_multi_success_unsized_key"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.8888888888888888,
+     "predicted": 9,
+     "top_hits": 8,
+     "top_n": 9,
+     "top_precision": 0.8888888888888888,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 0.8888888888888888,
+     "predicted": 9,
+     "top_hits": 8,
+     "top_n": 9,
+     "top_precision": 0.8888888888888888,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.8888888888888888,
+     "predicted": 9,
+     "top_hits": 8,
+     "top_n": 9,
+     "top_precision": 0.8888888888888888,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::map::raw_entry_v1::RawEntryBuilder::index_from_hash",
+   "file": "src/map/raw_entry_v1.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 1,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::map::raw_entry_v1::RawOccupiedEntryMut::into_key_value_mut",
+   "file": "src/map/raw_entry_v1.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 1,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::map::raw_entry_v1::RawVacantEntryMut::insert_hashed_nocheck",
+   "file": "src/map/raw_entry_v1.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 1,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::map::raw_entry_v1::RawVacantEntryMut::shift_insert_hashed_nocheck",
+   "file": "src/map/raw_entry_v1.rs",
+   "truth": 1,
+   "truth_doctests": 0,
+   "predicted_gitnext": 1,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "raw_occupied_entry_shift_insert"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 1,
+     "top_hits": 0,
+     "top_n": 1,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::map::slice::Slice::from_mut_slice",
+   "file": "src/map/slice.rs",
+   "truth": 13,
+   "truth_doctests": 0,
+   "predicted_gitnext": 12,
+   "predicted_coverage": 13,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "slice_new_mut",
+    "disjoint_indices_mut_empty",
+    "disjoint_indices_mut_fail_duplicate",
+    "disjoint_indices_mut_fail_oob",
+    "disjoint_indices_mut_success",
+    "get_range_mut",
+    "slice_get_index_mut",
+    "slice_split_first",
+    "slice_split_first_mut",
+    "slice_split_last"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.9230769230769231,
+     "precision": 1.0,
+     "predicted": 12,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 13,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 13,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::rayon::set::IndexSet::par_difference",
+   "file": "src/rayon/set.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 5,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::rayon::set::IndexSet::par_is_subset",
+   "file": "src/rayon/set.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 5,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::serde::cautious_capacity",
+   "file": "src/serde.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::set::IndexSet::contains",
+   "file": "src/set.rs",
+   "truth": 5,
+   "truth_doctests": 0,
+   "predicted_gitnext": 5,
+   "predicted_coverage": 5,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "comparisons",
+    "from_array",
+    "iter_comparisons",
+    "partial_eq_and_eq",
+    "ops"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.6,
+     "precision": 0.6,
+     "predicted": 5,
+     "top_hits": 3,
+     "top_n": 5,
+     "top_precision": 0.6,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 5,
+     "top_hits": 5,
+     "top_n": 5,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.7142857142857143,
+     "predicted": 7,
+     "top_hits": 5,
+     "top_n": 7,
+     "top_precision": 0.7142857142857143,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::set::IndexSet::difference",
+   "file": "src/set.rs",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 5,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "iter_comparisons",
+    "ops"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.5,
+     "precision": 0.2,
+     "predicted": 5,
+     "top_hits": 1,
+     "top_n": 5,
+     "top_precision": 0.2,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.3333333333333333,
+     "predicted": 6,
+     "top_hits": 2,
+     "top_n": 6,
+     "top_precision": 0.3333333333333333,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::set::IndexSet::intersection",
+   "file": "src/set.rs",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 5,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "iter_comparisons",
+    "ops"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.5,
+     "precision": 0.2,
+     "predicted": 5,
+     "top_hits": 1,
+     "top_n": 5,
+     "top_precision": 0.2,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.3333333333333333,
+     "predicted": 6,
+     "top_hits": 2,
+     "top_n": 6,
+     "top_precision": 0.3333333333333333,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::set::IndexSet::is_subset",
+   "file": "src/set.rs",
+   "truth": 4,
+   "truth_doctests": 0,
+   "predicted_gitnext": 5,
+   "predicted_coverage": 4,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "comparisons",
+    "from_array",
+    "partial_eq_and_eq",
+    "ops"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.5,
+     "precision": 0.4,
+     "predicted": 5,
+     "top_hits": 2,
+     "top_n": 5,
+     "top_precision": 0.4,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.5714285714285714,
+     "predicted": 7,
+     "top_hits": 4,
+     "top_n": 7,
+     "top_precision": 0.5714285714285714,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::set::IndexSet::swap_take",
+   "file": "src/set.rs",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 8,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "take",
+    "swap_take"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.25,
+     "predicted": 8,
+     "top_hits": 2,
+     "top_n": 8,
+     "top_precision": 0.25,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.25,
+     "predicted": 8,
+     "top_hits": 2,
+     "top_n": 8,
+     "top_precision": 0.25,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::set::IndexSet::union",
+   "file": "src/set.rs",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 5,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "iter_comparisons",
+    "ops"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.5,
+     "precision": 0.2,
+     "predicted": 5,
+     "top_hits": 1,
+     "top_n": 5,
+     "top_precision": 0.2,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.3333333333333333,
+     "predicted": 6,
+     "top_hits": 2,
+     "top_n": 6,
+     "top_precision": 0.3333333333333333,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::util::assert_index_le",
+   "file": "src/util.rs",
+   "truth": 6,
+   "truth_doctests": 0,
+   "predicted_gitnext": 8,
+   "predicted_coverage": 8,
+   "missed_by_coverage": [],
+   "covered_not_failing": [
+    "insert_before_oob",
+    "shift_insert_oob"
+   ],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 2,
+   "top_coverage": [
+    "insert_before_oob",
+    "shift_insert_oob",
+    "insert_sorted",
+    "insert_sorted_by",
+    "insert_sorted_by_key",
+    "shift_insert",
+    "split_off",
+    "insert_sorted_bad"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.75,
+     "predicted": 8,
+     "top_hits": 6,
+     "top_n": 8,
+     "top_precision": 0.75,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 0.75,
+     "predicted": 8,
+     "top_hits": 6,
+     "top_n": 8,
+     "top_precision": 0.75,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.75,
+     "predicted": 8,
+     "top_hits": 6,
+     "top_n": 8,
+     "top_precision": 0.75,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::util::simplify_range",
+   "file": "src/util.rs",
+   "truth": 6,
+   "truth_doctests": 0,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 6,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "drain_bounds",
+    "drain",
+    "drain_range",
+    "extract_if_odd",
+    "extract_if_odd_limit",
+    "drain_full"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::util::third",
+   "file": "src/util.rs",
+   "truth": 11,
+   "truth_doctests": 0,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 11,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_string_str",
+    "remove_to_empty",
+    "insert_remove",
+    "shift_remove",
+    "drain_full",
+    "equality",
+    "keys_values_mut",
+    "operations_i8",
+    "operations_string",
+    "keys_values"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 11,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 11,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "indexmap::util::try_simplify_range",
+   "file": "src/util.rs",
+   "truth": 3,
+   "truth_doctests": 0,
+   "predicted_gitnext": 3,
+   "predicted_coverage": 3,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "get_range_mut",
+    "get_range",
+    "slice_get_range"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 3,
+     "top_hits": 3,
+     "top_n": 3,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 3,
+     "top_hits": 3,
+     "top_n": 3,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 3,
+     "top_hits": 3,
+     "top_n": 3,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "indexmap::map::iter::IterMut::default",
+   "file": "src/map/iter.rs",
+   "truth": 1,
+   "truth_doctests": 0,
+   "predicted_gitnext": 4,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "iter_default"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.25,
+     "predicted": 4,
+     "top_hits": 1,
+     "top_n": 4,
+     "top_precision": 0.25,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.25,
+     "predicted": 4,
+     "top_hits": 1,
+     "top_n": 4,
+     "top_precision": 0.25,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "indexmap::rayon::set::IndexSet::par_sort_unstable_by_key",
+   "file": "src/rayon/set.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 5,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "random",
+   "symbol": "indexmap::map::slice::Slice::split_first",
+   "file": "src/map/slice.rs",
+   "truth": 1,
+   "truth_doctests": 0,
+   "predicted_gitnext": 10,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "slice_split_first"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.1,
+     "predicted": 10,
+     "top_hits": 1,
+     "top_n": 10,
+     "top_precision": 0.1,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.1,
+     "predicted": 10,
+     "top_hits": 1,
+     "top_n": 10,
+     "top_precision": 0.1,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "indexmap::inner::Core::move_index_inner",
+   "file": "src/inner.rs",
+   "truth": 7,
+   "truth_doctests": 0,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 7,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "map_move_index",
+    "shift_insert",
+    "indexed_entry_move_index",
+    "occupied_entry_move_index",
+    "set_move_index",
+    "raw_occupied_entry_move_index",
+    "insert_sorted_bad"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.14285714285714285,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 7,
+     "top_hits": 7,
+     "top_n": 7,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.875,
+     "predicted": 8,
+     "top_hits": 7,
+     "top_n": 8,
+     "top_precision": 0.875,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "indexmap::inner::update_index",
+   "file": "src/inner.rs",
+   "truth": 32,
+   "truth_doctests": 0,
+   "predicted_gitnext": 3,
+   "predicted_coverage": 32,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_string_str",
+    "swap_remove_index",
+    "shift_remove_full",
+    "shift_shift_remove_index",
+    "shift_remove_entry",
+    "insert_remove",
+    "insert_sorted",
+    "insert_sorted_by",
+    "drain_range",
+    "shift_remove_index"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0625,
+     "precision": 0.6666666666666666,
+     "predicted": 3,
+     "top_hits": 2,
+     "top_n": 3,
+     "top_precision": 0.6666666666666666,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 32,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9696969696969697,
+     "predicted": 33,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "indexmap::rayon::map::Slice::par_values",
+   "file": "src/rayon/map.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 6,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "random",
+   "symbol": "indexmap::map::iter::ExtractIf::next",
+   "file": "src/map/iter.rs",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "extract_if_odd",
+    "extract_if_odd_limit"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "indexmap::map::IndexMap::shift_remove_entry",
+   "file": "src/map.rs",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 8,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "shift_remove_entry",
+    "shift_take"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.25,
+     "predicted": 8,
+     "top_hits": 2,
+     "top_n": 8,
+     "top_precision": 0.25,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.25,
+     "predicted": 8,
+     "top_hits": 2,
+     "top_n": 8,
+     "top_precision": 0.25,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "indexmap::rayon::map::Slice::par_values_mut",
+   "file": "src/rayon/map.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 6,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "random",
+   "symbol": "indexmap::set::iter::Difference::clone",
+   "file": "src/set/iter.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "random",
+   "symbol": "indexmap::rayon::set::ParIntersection::fmt",
+   "file": "src/rayon/set.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "random",
+   "symbol": "indexmap::inner::Core::shrink_to",
+   "file": "src/inner.rs",
+   "truth": 4,
+   "truth_doctests": 0,
+   "predicted_gitnext": 3,
+   "predicted_coverage": 4,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "try_reserve_exact",
+    "shrink_to_fit",
+    "occupied_entry_shift_insert",
+    "raw_occupied_entry_shift_insert"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.5,
+     "precision": 0.6666666666666666,
+     "predicted": 3,
+     "top_hits": 2,
+     "top_n": 3,
+     "top_precision": 0.6666666666666666,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.8,
+     "predicted": 5,
+     "top_hits": 4,
+     "top_n": 5,
+     "top_precision": 0.8,
+     "caught": 1.0
+    }
+   }
+  }
+ ],
+ "summary": {
+  "pick": {
+   "gitnext": {
+    "recall": 0.515,
+    "precision": 0.402,
+    "top_precision": 0.402,
+    "caught": 0.737
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 0.968,
+    "top_precision": 0.968,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.675,
+    "top_precision": 0.675,
+    "caught": 1.0
+   },
+   "functions": 19
+  },
+  "random": {
+   "gitnext": {
+    "recall": 0.529,
+    "precision": 0.348,
+    "top_precision": 0.348,
+    "caught": 0.857
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.606,
+    "top_precision": 0.611,
+    "caught": 1.0
+   },
+   "functions": 7
+  },
+  "all": {
+   "gitnext": {
+    "recall": 0.519,
+    "precision": 0.387,
+    "top_precision": 0.387,
+    "caught": 0.769
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 0.976,
+    "top_precision": 0.976,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.656,
+    "top_precision": 0.657,
+    "caught": 1.0
+   },
+   "functions": 26
+  }
+ },
+ "cost": {
+  "build_s": 12.0,
+  "run_one_by_one_s": 4.1,
+  "export_s": 9.8,
+  "map_s": 25.9,
+  "map_without_build_s": 13.9,
+  "profiles_bytes": 40501624,
+  "test_binaries": 5,
+  "files_with_doctests": "7",
+  "repeat": 3,
+  "plain_s": 2.1,
+  "tests": 183,
+  "map_pairs": 5003,
+  "map_functions": 381,
+  "map_sqlite_bytes": 69632,
+  "functions_with_body": 739,
+  "functions_never_run": 345,
+  "fail_alone_not_together": [],
+  "fail_together_not_alone": [],
+  "slowdown_runs": 12.3
+ }
+}
