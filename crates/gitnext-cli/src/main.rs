@@ -105,6 +105,9 @@ enum Cmd {
         query: Vec<String>,
         #[arg(short = 'n', default_value_t = 20)]
         limit: usize,
+        /// Search the text of the files instead of names: every line that contains the query, with the function it is in
+        #[arg(long)]
+        text: bool,
     },
     /// List symbols in a file or directory (default: whole repo)
     Symbols {
@@ -117,7 +120,11 @@ enum Cmd {
         public: bool,
     },
     /// Who calls this function/method (or instantiates this class)
-    Callers { symbol: String },
+    Callers {
+        /// One or more functions / methods / classes
+        #[arg(required = true)]
+        symbols: Vec<String>,
+    },
     /// What this function/method calls
     Callees { symbol: String },
     /// What breaks if this symbol changes: reverse dependencies, files, tests
@@ -154,6 +161,9 @@ enum Cmd {
         /// Also rename the old name where it is only text: comments, strings, docs
         #[arg(long)]
         text: bool,
+        /// Then build and run the tests of what changed, and print the verdict (as `gitnext check`)
+        #[arg(long)]
+        check: bool,
     },
     #[command(flatten)]
     More(cmds::More),
@@ -162,7 +172,7 @@ enum Cmd {
         /// Write/merge .mcp.json in the repository root instead of serving
         #[arg(long)]
         install: bool,
-        /// full (every tool) or lite (7 tools, terse, small outputs — for local 3–14B models)
+        /// full (every tool) or lite (5 tools, terse, small outputs — for local 3–14B models)
         #[arg(long, default_value = "full")]
         profile: String,
     },
@@ -221,7 +231,7 @@ fn run() -> Result<()> {
     let out = Out {
         json: cli.json,
         pretty: cli.pretty,
-        opts: Opts { verbose: color_on(), tests: cli.tests, all: false, full_doc: cli.full },
+        opts: Opts { verbose: color_on(), tests: cli.tests, all: false, full_doc: cli.full, lite: false },
     };
     let Some(cmd) = cli.cmd else {
         return gitnext_tui::run(&Workspace::open(&cwd)?);
@@ -429,10 +439,18 @@ fn run() -> Result<()> {
                 out.text(&render::show(&g, i, out.opts));
             }
         }
-        Cmd::Search { query, limit } => {
+        Cmd::Search { query, limit, text } => {
             let ws = Workspace::open(&cwd)?;
             let g = ws.graph()?;
             let q = query.join(" ");
+            if text {
+                let hits = gitnext_ops::look::text_hits(&g, &ws.root, &q, limit);
+                if out.json {
+                    return out.json(&hits);
+                }
+                out.text(&if hits.is_empty() { format!("no line contains `{q}`\n") } else { hits.join("\n") + "\n" });
+                return Ok(());
+            }
             if out.json {
                 let v: Vec<_> = g.search(&q, limit).into_iter().map(|i| g.sym_ref(i)).collect();
                 return out.json(&v);
@@ -457,15 +475,25 @@ fn run() -> Result<()> {
             }
             out.text(&render::symbols(&g, &p, kind, public, out.opts));
         }
-        Cmd::Callers { symbol } => {
+        Cmd::Callers { symbols } => {
             let ws = Workspace::open(&cwd)?;
             let g = ws.graph()?;
-            let ids = lookup(&g, &symbol)?;
+            // several names in one run: the graph is loaded once (it is the slow part on a big repo)
+            let mut ids = Vec::new();
+            for symbol in &symbols {
+                ids.extend(lookup(&g, symbol)?);
+            }
             if out.json {
                 let v: Vec<_> = ids
                     .iter()
-                    .map(|&i| serde_json::json!({ "symbol": g.sym_ref(i),
-                        "callers": g.callers(i).into_iter().filter(|(c, _)| out.opts.tests || !g.syms[*c].sym.test).map(|(c, l)| (g.sym_ref(c), l)).collect::<Vec<_>>() }))
+                    .map(|&i| {
+                        // `maybe`: a call on a value of unknown type that could reach this method
+                        let (sure, maybe): (Vec<_>, Vec<_>) =
+                            g.callers(i).into_iter().filter(|(c, _)| out.opts.tests || !g.syms[*c].sym.test).partition(|(c, _)| !g.is_guess(*c, i));
+                        serde_json::json!({ "symbol": g.sym_ref(i),
+                            "callers": sure.into_iter().map(|(c, l)| (g.sym_ref(c), l)).collect::<Vec<_>>(),
+                            "maybe": maybe.into_iter().map(|(c, l)| (g.sym_ref(c), l)).collect::<Vec<_>>() })
+                    })
                     .collect();
                 return out.json(&v);
             }
@@ -555,10 +583,11 @@ fn run() -> Result<()> {
             let ws = Workspace::open(&cwd)?;
             cmds::edit(&ws, op, out.json)?;
         }
-        Cmd::Rename { symbol, new_name, dry_run, text } => {
+        Cmd::Rename { symbol, new_name, dry_run, text, check } => {
             let ws = Workspace::open(&cwd)?;
             let g = ws.graph()?;
             let i = one(&g, &symbol)?;
+            let _op = gitnext_ops::oplog::Group::start(&ws.root, "rename", &format!("{} → {new_name}", g.syms[i].sym.qualified));
             let mut r = gitnext_ops::edit::rename(&ws.root, &g, i, &new_name, dry_run)?;
             if text {
                 gitnext_ops::edit::rename_leftover_text(&ws.root, &mut r)?;
@@ -567,6 +596,14 @@ fn run() -> Result<()> {
                 return out.json(&r);
             }
             out.text(&gitnext_ops::edit::render_rename(&r));
+            if check && !dry_run {
+                let g = ws.graph()?; // the files changed: index them again
+                let c = gitnext_ops::check::check(&ws.root, &g, std::time::Duration::from_secs(600));
+                out.text(&gitnext_ops::check::render(&g, &c));
+                if !c.ok() {
+                    std::process::exit(1);
+                }
+            }
         }
         Cmd::More(m) => cmds::more(&cwd, m, &out)?,
         Cmd::Tui => gitnext_tui::run(&Workspace::open(&cwd)?)?,

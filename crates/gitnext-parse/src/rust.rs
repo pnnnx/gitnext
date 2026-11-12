@@ -1,6 +1,7 @@
 //! Rust extractor: walks the tree-sitter CST and emits symbols and edges.
 
 use crate::{name_pos, CrateHint, first_sentence, hash_hex, Edge, EdgeKind, FileAnalysis, Kind, Param, Symbol};
+use std::collections::HashMap;
 use std::path::{Component, Path};
 use tree_sitter::{Node, Parser};
 
@@ -16,7 +17,7 @@ pub fn analyze(rel: &Path, src: &str, krate: Option<&CrateHint>) -> anyhow::Resu
         None => module_path(rel),
     };
 
-    let mut ex = Extractor { src: src.as_bytes(), out: FileAnalysis::default() };
+    let mut ex = Extractor { src: src.as_bytes(), out: FileAnalysis::default(), vars: HashMap::new(), fields: field_types(root, src.as_bytes()), owner_ty: None };
     ex.out.module_doc = inner_doc(root, ex.src);
 
     // File-level module symbol: anchor for `use` edges and the file's purpose.
@@ -106,6 +107,14 @@ struct Ctx {
 struct Extractor<'a> {
     src: &'a [u8],
     out: FileAnalysis,
+    /// local variable → its type, inside the function being read (`req: &VersionReq`,
+    /// `let v = Version::parse(s)?`): `v.matches()` then means `Version::matches`
+    vars: HashMap<String, String>,
+    /// struct of this file → its fields with a repo type (`identifier: Identifier`, `core: Core<K, V>`);
+    /// `None` when two definitions of the struct (cfg variants) disagree. `self.core.drain()` → `Core::drain`
+    fields: HashMap<String, HashMap<String, Option<String>>>,
+    /// name of the type whose `impl` the current function is in (`Self` in field lookups)
+    owner_ty: Option<String>,
 }
 
 impl<'a> Extractor<'a> {
@@ -224,6 +233,16 @@ impl<'a> Extractor<'a> {
         // trait bounds: `fn largest<S: Shape>(…)`, `where T: Into<Id>`
         self.bound_uses(&sym.qualified, n);
         if let Some(b) = body {
+            self.owner_ty = ctx.owner.as_deref().map(|o| o.rsplit("::").next().unwrap_or(o).to_string());
+            let in_impl = self.owner_ty.is_some();
+            // `rhs: &Self` → `rhs.as_str()` is `Self::as_str`, like `self.as_str()`
+            self.vars = sym
+                .params
+                .iter()
+                .filter(|p| p.name != "self")
+                .filter_map(|p| Some((p.name.clone(), repo_type(&p.ty).or_else(|| (in_impl && is_self_type(&p.ty)).then(|| "Self".to_string()))?)))
+                .collect();
+            self.let_types(b);
             // types named inside the body (`let x: T`, `T::new()`, `T { .. }`)
             self.type_uses(&sym.qualified, b);
             let mut calls = Vec::new();
@@ -233,6 +252,8 @@ impl<'a> Extractor<'a> {
             for (to, line, col) in calls {
                 self.out.edges.push(Edge { from: sym.qualified.clone(), to, kind: EdgeKind::Calls, line, col });
             }
+            self.vars.clear();
+            self.owner_ty = None;
         }
         self.out.symbols.push(sym);
     }
@@ -357,6 +378,29 @@ impl<'a> Extractor<'a> {
             sym.returns = Some(collapse(self.text(t)));
             self.type_uses(&sym.qualified, t);
         }
+        // `macro_rules! indexset { (..) => { $crate::IndexSet::with_capacity(..) } }`: what the rules expand to
+        if kind == Kind::Macro {
+            let mut calls = Vec::new();
+            let mut cur = n.walk();
+            for rule in n.named_children(&mut cur).filter(|r| r.kind() == "macro_rule") {
+                if let Some(right) = rule.child_by_field_name("right") {
+                    self.collect_calls(right, &mut calls);
+                }
+            }
+            for (to, line, col) in calls {
+                self.out.edges.push(Edge { from: sym.qualified.clone(), to, kind: EdgeKind::Calls, line, col });
+            }
+        }
+        // `const EMPTY: Self = Prerelease { identifier: Identifier::empty() }`: the initializer calls
+        if matches!(kind, Kind::Const | Kind::Static) {
+            if let Some(v) = n.child_by_field_name("value") {
+                let mut calls = Vec::new();
+                self.collect_calls(v, &mut calls);
+                for (to, line, col) in calls {
+                    self.out.edges.push(Edge { from: sym.qualified.clone(), to, kind: EdgeKind::Calls, line, col });
+                }
+            }
+        }
         self.out.symbols.push(sym);
     }
 
@@ -420,6 +464,45 @@ impl<'a> Extractor<'a> {
         }
     }
 
+    fn callee_name(&self, f: Node) -> Option<String> {
+        match f.kind() {
+            "identifier" => Some(self.text(f).to_string()),
+            "scoped_identifier" => Some(collapse(self.text(f))),
+            "field_expression" => {
+                let field = self.text(f.child_by_field_name("field")?);
+                let value = f.child_by_field_name("value")?;
+                if value.kind() == "self" {
+                    return Some(format!("Self::{field}")); // self.method() → own type
+                }
+                // `v.matches()` with `v: Version`; `self.core.drain()` / `rhs.pre.is_empty()`: the field's type
+                match self.recv_type(value) {
+                    Some(ty) => Some(format!("{ty}::{field}")),
+                    None => Some(format!(".{field}")),
+                }
+            }
+            "generic_function" => f.child_by_field_name("function").and_then(|x| self.callee_name(x)),
+            _ => None,
+        }
+    }
+
+    /// Type of a method receiver, as far as this file tells: a typed local or parameter, or a
+    /// field (chain) of a struct defined here — `self.map.core` with `map: IndexMap` and
+    /// `IndexMap { core: Core }` in the same file → `Core`. `Self` stays `Self` for the index.
+    fn recv_type(&self, v: Node) -> Option<String> {
+        match v.kind() {
+            "identifier" => self.vars.get(self.text(v)).cloned(),
+            "self" => Some("Self".to_string()),
+            "parenthesized_expression" | "reference_expression" => self.recv_type(v.named_child(0)?),
+            "field_expression" => {
+                let base = self.recv_type(v.child_by_field_name("value")?)?;
+                let base = if base == "Self" { self.owner_ty.clone()? } else { base };
+                let field = self.text(v.child_by_field_name("field")?);
+                self.fields.get(&base)?.get(field)?.clone()
+            }
+            _ => None,
+        }
+    }
+
     fn collect_calls(&self, n: Node, out: &mut Vec<(String, u32, u32)>) {
         if n.kind() == "token_tree" {
             // Macro bodies (vec![..], println!(..)) are unparsed token streams:
@@ -429,7 +512,7 @@ impl<'a> Extractor<'a> {
         }
         if n.kind() == "call_expression" {
             if let Some(f) = n.child_by_field_name("function") {
-                if let Some(name) = callee_name(f, self.src) {
+                if let Some(name) = self.callee_name(f) {
                     let (l, c) = name_pos(f);
                     out.push((name, l, c));
                 }
@@ -464,6 +547,7 @@ impl Extractor<'_> {
         let mut pos = (0u32, 0u32);
         let mut method = false;
         let mut self_recv = false;
+        let mut recv_ty: Option<String> = None;
         let (mut prev, mut prev2) = (String::new(), String::new());
         let mut cur = tt.walk();
         for c in tt.children(&mut cur) {
@@ -477,6 +561,7 @@ impl Extractor<'_> {
                     } else {
                         method = prev == ".";
                         self_recv = method && prev2 == "self";
+                        recv_ty = if method { self.vars.get(prev2.as_str()).cloned() } else { None };
                         path = text.to_string();
                     }
                 }
@@ -485,6 +570,8 @@ impl Extractor<'_> {
                     if !path.is_empty() && text.starts_with('(') {
                         let name = if self_recv {
                             format!("Self::{path}")
+                        } else if let Some(t) = recv_ty.as_ref().filter(|_| method) {
+                            format!("{t}::{path}")
                         } else if method {
                             format!(".{path}")
                         } else {
@@ -502,22 +589,146 @@ impl Extractor<'_> {
     }
 }
 
-fn callee_name(f: Node, src: &[u8]) -> Option<String> {
-    let t = |n: Node| n.utf8_text(src).unwrap_or("").to_string();
-    match f.kind() {
-        "identifier" => Some(t(f)),
-        "scoped_identifier" => Some(collapse(&t(f))),
-        "field_expression" => {
-            let field = f.child_by_field_name("field").map(t)?;
-            match f.child_by_field_name("value").map(|v| v.kind()) {
-                Some("self") => Some(format!("Self::{field}")), // self.method() → own type
-                _ => Some(format!(".{field}")),
+
+impl Extractor<'_> {
+    /// `let x: T = …`, `let x = T::new(…)`, `let x = T::parse(s)?`, `let x = T { … }`.
+    fn let_types(&mut self, n: Node) {
+        if n.kind() == "let_declaration" {
+            let name = n.child_by_field_name("pattern").filter(|p| p.kind() == "identifier").map(|p| self.text(p).to_string());
+            let ty = n
+                .child_by_field_name("type")
+                .and_then(|t| repo_type(&collapse(self.text(t))))
+                .or_else(|| n.child_by_field_name("value").and_then(|v| self.value_type(v)));
+            if let (Some(name), Some(ty)) = (name, ty) {
+                self.vars.insert(name, ty);
             }
         }
-        "generic_function" => f.child_by_field_name("function").and_then(|x| callee_name(x, src)),
-        _ => None,
+        let mut cur = n.walk();
+        for c in n.named_children(&mut cur) {
+            if !matches!(c.kind(), "function_item" | "impl_item" | "mod_item" | "trait_item") {
+                self.let_types(c);
+            }
+        }
+    }
+
+    fn value_type(&self, v: Node) -> Option<String> {
+        match v.kind() {
+            "try_expression" | "reference_expression" | "parenthesized_expression" => v.named_child(0).and_then(|x| self.value_type(x)),
+            "struct_expression" => repo_type(&collapse(self.text(v.child_by_field_name("name")?))),
+            "call_expression" => {
+                let f = v.child_by_field_name("function")?;
+                match f.kind() {
+                    // `T::parse(s).unwrap()`, `.expect(..)`, `.clone()`
+                    "field_expression" => {
+                        let m = self.text(f.child_by_field_name("field")?);
+                        if matches!(m, "unwrap" | "expect" | "clone" | "to_owned" | "unwrap_or_default") {
+                            self.value_type(f.child_by_field_name("value")?)
+                        } else {
+                            None
+                        }
+                    }
+                    "scoped_identifier" => {
+                        let ty = self.text(f.child_by_field_name("path")?);
+                        let m = self.text(f.child_by_field_name("name")?);
+                        let ctor = matches!(m, "new" | "parse" | "default" | "empty" | "builder" | "create" | "open" | "from_str")
+                            || m.starts_with("from")
+                            || m.starts_with("with")
+                            || m.starts_with("try_from");
+                        if ctor { repo_type(ty) } else { None }
+                    }
+                    _ => None,
+                }
+            }
+            _ => None,
+        }
     }
 }
+
+/// A type worth tracking for method calls: `&mut a::Foo<T>` → `Foo`; not std, not generic params.
+fn repo_type(t: &str) -> Option<String> {
+    let t = strip_ref(t).trim_start_matches("dyn ").trim_start_matches("impl ");
+    let base = t.split(['<', ' ', '+', '[']).next()?;
+    let last = base.rsplit("::").next()?;
+    let first = last.chars().next()?;
+    let single_letter = last.len() == 1;
+    if !first.is_uppercase() || single_letter || last == "Self" || PRIMITIVE_OR_STD.contains(&last) || STD_TRAITS.contains(&last) {
+        return None;
+    }
+    Some(last.to_string())
+}
+
+/// `&'a mut T` → `T`: references, lifetimes and `mut` in front of a type.
+fn strip_ref(t: &str) -> &str {
+    let mut t = t.trim();
+    loop {
+        let before = t;
+        t = t.trim_start_matches(['&', ' ']);
+        if let Some(rest) = t.strip_prefix('\'') {
+            t = rest.trim_start_matches(|c: char| c.is_alphanumeric() || c == '_');
+        }
+        t = t.strip_prefix("mut ").unwrap_or(t);
+        if t == before {
+            return t;
+        }
+    }
+}
+
+/// `Self`, `&Self`, `&'a mut Self`.
+fn is_self_type(t: &str) -> bool {
+    strip_ref(t) == "Self"
+}
+
+/// Field types of the structs (and unions) a file defines, by struct name: named fields and
+/// tuple fields (`0`, `1`…). Only repo types are kept; two definitions of one name (cfg
+/// variants) that disagree on a field leave it unknown.
+fn field_types(root: Node, src: &[u8]) -> HashMap<String, HashMap<String, Option<String>>> {
+    let mut out: HashMap<String, HashMap<String, Option<String>>> = HashMap::new();
+    let mut stack = vec![root];
+    while let Some(n) = stack.pop() {
+        if matches!(n.kind(), "struct_item" | "union_item") {
+            let (Some(name), Some(body)) = (n.child_by_field_name("name"), n.child_by_field_name("body")) else { continue };
+            let t = |x: Node| x.utf8_text(src).unwrap_or("");
+            let mut found: Vec<(String, Option<String>)> = Vec::new();
+            let mut cur = body.walk();
+            let mut idx = 0;
+            for f in body.named_children(&mut cur) {
+                if f.kind() == "field_declaration" {
+                    if let (Some(fname), Some(ty)) = (f.child_by_field_name("name"), f.child_by_field_name("type")) {
+                        found.push((t(fname).to_string(), repo_type(&collapse(t(ty)))));
+                    }
+                } else if f.kind() != "attribute_item" && f.kind() != "visibility_modifier" && f.kind() != "line_comment" && f.kind() != "block_comment" {
+                    found.push((idx.to_string(), repo_type(&collapse(t(f)))));
+                    idx += 1;
+                }
+            }
+            let entry = out.entry(t(name).to_string()).or_default();
+            for (fname, ty) in found {
+                match entry.get(&fname) {
+                    Some(prev) if *prev != ty => {
+                        entry.insert(fname, None);
+                    }
+                    Some(_) => {}
+                    None => {
+                        entry.insert(fname, ty);
+                    }
+                }
+            }
+            continue;
+        }
+        let mut cur = n.walk();
+        for c in n.named_children(&mut cur) {
+            stack.push(c);
+        }
+    }
+    out
+}
+
+/// `impl Into<String>`, `&dyn Display`: std traits — their methods are not repo code.
+const STD_TRAITS: &[&str] = &[
+    "Into", "From", "AsRef", "AsMut", "Borrow", "Fn", "FnMut", "FnOnce", "Iterator", "IntoIterator", "Display", "Debug",
+    "ToString", "Clone", "Default", "Hash", "Hasher", "Read", "Write", "BufRead", "Error", "Any", "Send", "Sync", "Deref",
+    "PartialEq", "Eq", "PartialOrd", "Ord", "Future", "Formatter", "Result",
+];
 
 const PRIMITIVE_OR_STD: &[&str] = &[
     "Self", "String", "str", "Vec", "Option", "Box", "Rc", "Arc", "HashMap", "HashSet",

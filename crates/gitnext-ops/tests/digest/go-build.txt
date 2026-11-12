@@ -1,0 +1,2 @@
+# github.com/spf13/cobra
+./command.go:1678:11: c.parnt undefined (type *Command has no field or method parnt)

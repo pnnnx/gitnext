@@ -1,0 +1,940 @@
+{
+ "repo": "semver",
+ "lang": "rust",
+ "commit": "280ebcb6edac",
+ "seed": 7,
+ "gitnext_commit": "08e599c",
+ "functions": [
+  {
+   "group": "pick",
+   "symbol": "semver::eval::matches_comparator",
+   "file": "src/eval.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "semver::eval::matches_req",
+   "file": "src/eval.rs",
+   "truth": 11,
+   "truth_doctests": 0,
+   "predicted_gitnext": 11,
+   "predicted_coverage": 11,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_any",
+    "test_cargo3202",
+    "test_pre",
+    "test_wildcard",
+    "test_basic",
+    "test_caret",
+    "test_tilde",
+    "test_exact",
+    "test_greater_than",
+    "test_less_than"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 11,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 11,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 11,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "semver::identifier::Identifier::empty",
+   "file": "src/identifier.rs",
+   "skipped": "mutant does not compile",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 29
+  },
+  {
+   "group": "pick",
+   "symbol": "semver::identifier::Identifier::new_unchecked",
+   "file": "src/identifier.rs",
+   "truth": 24,
+   "truth_doctests": 0,
+   "predicted_gitnext": 22,
+   "predicted_coverage": 24,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_prerelease",
+    "test_eq",
+    "test_leading_digit_in_pre_and_build",
+    "test_ne",
+    "test_wildcard_and_another",
+    "test_parse",
+    "test_align",
+    "test_display",
+    "test_new",
+    "test_ge"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.8333333333333334,
+     "precision": 0.9090909090909091,
+     "predicted": 22,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 24,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9230769230769231,
+     "predicted": 26,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "semver::identifier::Identifier::ptr_eq",
+   "file": "src/identifier.rs",
+   "truth": 20,
+   "truth_doctests": 0,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 20,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_eq_hash",
+    "test_eq",
+    "test_ne",
+    "test_cargo3202",
+    "test_new",
+    "test_ge",
+    "test_gt",
+    "test_le",
+    "test_lt",
+    "test_pre"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "semver::identifier::Identifier::clone",
+   "file": "src/identifier.rs",
+   "truth": 1,
+   "truth_doctests": 0,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_new"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "semver::eval::matches_tilde",
+   "file": "src/eval.rs",
+   "truth": 1,
+   "truth_doctests": 0,
+   "predicted_gitnext": 11,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_tilde"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.09090909090909091,
+     "predicted": 11,
+     "top_hits": 1,
+     "top_n": 10,
+     "top_precision": 0.1,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.09090909090909091,
+     "predicted": 11,
+     "top_hits": 1,
+     "top_n": 10,
+     "top_precision": 0.1,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "semver::identifier::decode_len",
+   "file": "src/identifier.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 4
+  },
+  {
+   "group": "random",
+   "symbol": "semver::eval::matches_exact",
+   "file": "src/eval.rs",
+   "truth": 7,
+   "truth_doctests": 0,
+   "predicted_gitnext": 11,
+   "predicted_coverage": 7,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_cargo3202",
+    "test_pre",
+    "test_wildcard",
+    "test_exact",
+    "test_greater_than",
+    "test_less_than",
+    "test_multiple"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.6363636363636364,
+     "predicted": 11,
+     "top_hits": 6,
+     "top_n": 10,
+     "top_precision": 0.6,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 7,
+     "top_hits": 7,
+     "top_n": 7,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.6363636363636364,
+     "predicted": 11,
+     "top_hits": 7,
+     "top_n": 10,
+     "top_precision": 0.7,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "semver::impls::VersionReq::from_iter",
+   "file": "src/impls.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "random",
+   "symbol": "semver::eval::matches_impl",
+   "file": "src/eval.rs",
+   "truth": 10,
+   "truth_doctests": 0,
+   "predicted_gitnext": 11,
+   "predicted_coverage": 10,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_cargo3202",
+    "test_pre",
+    "test_wildcard",
+    "test_basic",
+    "test_caret",
+    "test_tilde",
+    "test_exact",
+    "test_greater_than",
+    "test_less_than",
+    "test_multiple"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.9090909090909091,
+     "predicted": 11,
+     "top_hits": 9,
+     "top_n": 10,
+     "top_precision": 0.9,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 10,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9090909090909091,
+     "predicted": 11,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "semver::display::Version::fmt",
+   "file": "src/display.rs",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_align",
+    "test_display"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "semver::parse::BuildMetadata::from_str",
+   "file": "src/parse.rs",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_eq",
+    "test_parse"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "semver::serde::Version::deserialize",
+   "file": "src/serde.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "random",
+   "symbol": "semver::eval::pre_is_compatible",
+   "file": "src/eval.rs",
+   "truth": 8,
+   "truth_doctests": 0,
+   "predicted_gitnext": 11,
+   "predicted_coverage": 8,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_pre",
+    "test_basic",
+    "test_caret",
+    "test_tilde",
+    "test_exact",
+    "test_greater_than",
+    "test_less_than",
+    "test_multiple"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.7272727272727273,
+     "predicted": 11,
+     "top_hits": 8,
+     "top_n": 10,
+     "top_precision": 0.8,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 8,
+     "top_hits": 8,
+     "top_n": 8,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.7272727272727273,
+     "predicted": 11,
+     "top_hits": 8,
+     "top_n": 10,
+     "top_precision": 0.8,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "semver::parse::identifier",
+   "file": "src/parse.rs",
+   "truth": 24,
+   "truth_doctests": 0,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 24,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_prerelease",
+    "test_eq",
+    "test_leading_digit_in_pre_and_build",
+    "test_ne",
+    "test_wildcard_and_another",
+    "test_parse",
+    "test_align",
+    "test_display",
+    "test_new",
+    "test_ge"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 24,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 24,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "semver::identifier::Identifier::is_empty",
+   "file": "src/identifier.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 29
+  },
+  {
+   "group": "random",
+   "symbol": "semver::error::Error::fmt",
+   "file": "src/error.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 9
+  },
+  {
+   "group": "random",
+   "symbol": "semver::parse::Prerelease::from_str",
+   "file": "src/parse.rs",
+   "truth": 4,
+   "truth_doctests": 0,
+   "predicted_gitnext": 4,
+   "predicted_coverage": 4,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_prerelease",
+    "test_eq",
+    "test_new",
+    "test_parse"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "semver::parse::build_identifier",
+   "file": "src/parse.rs",
+   "truth": 11,
+   "truth_doctests": 0,
+   "predicted_gitnext": 20,
+   "predicted_coverage": 11,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_eq",
+    "test_leading_digit_in_pre_and_build",
+    "test_ne",
+    "test_display",
+    "test_ge",
+    "test_gt",
+    "test_le",
+    "test_lt",
+    "test_comparator_parse",
+    "test_parse"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.8181818181818182,
+     "precision": 0.45,
+     "predicted": 20,
+     "top_hits": 8,
+     "top_n": 10,
+     "top_precision": 0.8,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 11,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 22,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "semver::serde::VersionReq::deserialize",
+   "file": "src/serde.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "random",
+   "symbol": "semver::Version::cmp_precedence",
+   "file": "src/lib.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "random",
+   "symbol": "semver::identifier::Identifier::is_empty_or_inline",
+   "file": "src/identifier.rs",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 29
+  },
+  {
+   "group": "random",
+   "symbol": "semver::parse::version_req",
+   "file": "src/parse.rs",
+   "truth": 17,
+   "truth_doctests": 0,
+   "predicted_gitnext": 17,
+   "predicted_coverage": 17,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_digit_after_wildcard",
+    "test_eq_hash",
+    "test_logical_or",
+    "test_whitespace_delimited_comparator_sets",
+    "test_leading_digit_in_pre_and_build",
+    "test_wildcard_and_another",
+    "test_parse",
+    "test_cargo3202",
+    "test_pre",
+    "test_wildcard"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 17,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 17,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 17,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "semver::parse::prerelease_identifier",
+   "file": "src/parse.rs",
+   "truth": 24,
+   "truth_doctests": 0,
+   "predicted_gitnext": 22,
+   "predicted_coverage": 24,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "test_prerelease",
+    "test_eq",
+    "test_leading_digit_in_pre_and_build",
+    "test_ne",
+    "test_wildcard_and_another",
+    "test_parse",
+    "test_align",
+    "test_display",
+    "test_new",
+    "test_ge"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.8333333333333334,
+     "precision": 0.9090909090909091,
+     "predicted": 22,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 24,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9230769230769231,
+     "predicted": 26,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  }
+ ],
+ "summary": {
+  "pick": {
+   "gitnext": {
+    "recall": 0.611,
+    "precision": 0.636,
+    "top_precision": 0.667,
+    "caught": 0.667
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.974,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "functions": 3
+  },
+  "random": {
+   "gitnext": {
+    "recall": 0.721,
+    "precision": 0.56,
+    "top_precision": 0.6,
+    "caught": 0.75
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.816,
+    "top_precision": 0.883,
+    "caught": 1.0
+   },
+   "functions": 12
+  },
+  "all": {
+   "gitnext": {
+    "recall": 0.699,
+    "precision": 0.575,
+    "top_precision": 0.613,
+    "caught": 0.733
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.847,
+    "top_precision": 0.907,
+    "caught": 1.0
+   },
+   "functions": 15
+  }
+ },
+ "cost": {
+  "build_s": 20.6,
+  "run_one_by_one_s": 0.3,
+  "export_s": 0.6,
+  "map_s": 21.5,
+  "map_without_build_s": 0.9,
+  "profiles_bytes": 341456,
+  "test_binaries": 5,
+  "files_with_doctests": "2",
+  "repeat": 3,
+  "plain_s": 0.4,
+  "tests": 34,
+  "map_pairs": 782,
+  "map_functions": 70,
+  "map_sqlite_bytes": 20480,
+  "functions_with_body": 85,
+  "functions_never_run": 11,
+  "fail_alone_not_together": [],
+  "fail_together_not_alone": [],
+  "slowdown_runs": 53.8
+ }
+}

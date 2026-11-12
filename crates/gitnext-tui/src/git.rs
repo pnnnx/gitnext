@@ -279,7 +279,8 @@ impl App<'_> {
     }
 
     pub(crate) fn draw_changes(&self, f: &mut Frame, sel: usize) {
-        let area = popup(f.area(), 90, 90);
+        // a screen of its own: nothing of the panes behind it shows through
+        let area = screen_area(f.area());
         f.render_widget(Clear, area);
         let Some(cv) = &self.cv else { return };
         let [head, body] = Layout::vertical([Constraint::Length(2), Constraint::Min(1)]).areas(area.inner(ratatui::layout::Margin { horizontal: 1, vertical: 1 }));
@@ -379,7 +380,7 @@ impl App<'_> {
     }
 
     pub(crate) fn draw_split(&self, f: &mut Frame, title: &str, rows: &[DiffRow], scroll: u16) {
-        let area = popup(f.area(), 96, 92);
+        let area = screen_area(f.area());
         f.render_widget(Clear, area);
         f.render_widget(pane_block(&format!("{title}· esc back "), true), area);
         let inner = area.inner(ratatui::layout::Margin { horizontal: 1, vertical: 1 });

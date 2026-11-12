@@ -1,0 +1,7 @@
+src/parse.c: In function 'parse_line':
+src/parse.c:42:17: error: 'cursor' undeclared (first use in this function)
+   42 |     while (*cursor) {
+      |             ^~~~~~
+src/parse.c:42:17: note: each undeclared identifier is reported only once for each function it appears in
+src/parse.c:57:9: warning: unused variable 'n' [-Wunused-variable]
+make: *** [Makefile:12: parse.o] Error 1

@@ -10,6 +10,9 @@
 //!
 //! - `name` — a plain call; `Self::name` — a method of the enclosing type;
 //!   `.name` — a method on a value of unknown type;
+//! - `getPool()::release` — a method of whatever `getPool` returns (`x := getPool();
+//!   x.release()`, `getPool().release()`): the declared result type lives in another
+//!   file, so the index resolves it once everything is parsed;
 //! - `module::name` — through an import (`fs.readFile` with `import * as fs
 //!   from "node:fs"` → `node:fs::readFile`), so calls into a library carry the
 //!   library's name.
@@ -79,6 +82,10 @@ pub(crate) struct Ctx {
     pub in_test: bool,
     /// Go: the receiver's name (`s` in `func (s *Store)`) means "this object".
     pub recv: Option<String>,
+    /// Local values whose type is known: parameters `c *Command`, `x := &Store{}`,
+    /// `Store s = new Store()` — `c.Execute()` is then `Command::Execute`, not a guess.
+    /// `x := getPool()` is kept as `getPool()`: the type `getPool` returns.
+    pub vars: HashMap<String, String>,
 }
 
 pub(crate) fn analyze(spec: &Spec, rel: &Path, src: &str, pkg: Option<&CrateHint>) -> anyhow::Result<FileAnalysis> {
@@ -91,7 +98,7 @@ pub(crate) fn analyze(spec: &Spec, rel: &Path, src: &str, pkg: Option<&CrateHint
     let module = (spec.module)(&rel_s, root, b, pkg);
     let in_test = is_test_path(&rel_s);
     let imports = (spec.imports)(root, b, &rel_s, &module, pkg);
-    let mut ex = Ex { spec, src: b, out: FileAnalysis::default(), aliases: imports.aliases };
+    let mut ex = Ex { spec, src: b, out: FileAnalysis::default(), aliases: imports.aliases, fields: HashMap::new() };
     for (to, line) in imports.edges {
         ex.out.edges.push(Edge { from: module.clone(), to, kind: EdgeKind::Imports, line, col: 0 });
     }
@@ -115,7 +122,7 @@ pub(crate) fn analyze(spec: &Spec, rel: &Path, src: &str, pkg: Option<&CrateHint
         body_hash: hash_hex(b),
         inferred: false,
     });
-    let ctx = Ctx { module: module.clone(), owner: None, func: None, in_test, recv: None };
+    let ctx = Ctx { module: module.clone(), owner: None, func: None, in_test, recv: None, vars: HashMap::new() };
     let locals = HashSet::new();
     ex.walk(root, &ctx, &locals);
     Ok(ex.out)
@@ -126,6 +133,8 @@ struct Ex<'a> {
     src: &'a [u8],
     out: FileAnalysis,
     aliases: HashMap<String, String>,
+    /// type (qualified) → its fields with a known type: `pool SoftPool`, `parent *Command`
+    fields: HashMap<String, HashMap<String, String>>,
 }
 
 impl<'a> Ex<'a> {
@@ -139,6 +148,46 @@ impl<'a> Ex<'a> {
             return;
         }
         self.reference(n, ctx, locals);
+        // Java `new Evaluator() { @Override … }`: an anonymous subclass — its methods override
+        // the base type's (a rename of the base method must reach them)
+        if n.kind() == "object_creation_expression" {
+            let body = (0..n.named_child_count()).filter_map(|i| n.named_child(i as _)).find(|x| x.kind() == "class_body");
+            if let (Some(body), Some(ty)) = (body, n.child_by_field_name("type")) {
+                let base = self.text(ty).split('<').next().unwrap_or("").to_string();
+                let q = format!("{}::{base}$anon{}", ctx.owner.as_deref().unwrap_or(&ctx.module), line(n));
+                self.out.symbols.push(Symbol {
+                    kind: Kind::Class,
+                    name: format!("{base}$anon{}", line(n)),
+                    qualified: q.clone(),
+                    parent: ctx.owner.clone().or_else(|| Some(ctx.module.clone())),
+                    trait_impl: None,
+                    start_line: line(n),
+                    end_line: n.end_position().row as u32 + 1,
+                    signature: format!("new {base}() {{ … }}"),
+                    params: vec![],
+                    returns: None,
+                    doc: None,
+                    summary: None,
+                    visibility: None,
+                    test: ctx.in_test,
+                    decl: false,
+                    body_hash: hash_hex(&self.src[n.start_byte()..n.end_byte()]),
+                    inferred: false,
+                });
+                let (l, col) = name_pos(ty);
+                self.out.edges.push(Edge { from: q.clone(), to: self.map_alias(&base.replace('.', "::")), kind: EdgeKind::Inherits, line: l, col });
+                let inner = Ctx { module: ctx.module.clone(), owner: Some(q), func: None, in_test: ctx.in_test, recv: None, vars: HashMap::new() };
+                let mut c2 = n.walk();
+                for ch in n.named_children(&mut c2) {
+                    if ch.id() == body.id() {
+                        self.walk(ch, &inner, &HashSet::new());
+                    } else {
+                        self.walk(ch, ctx, locals);
+                    }
+                }
+                return;
+            }
+        }
         let mut c = n.walk();
         for ch in n.named_children(&mut c) {
             self.walk(ch, ctx, locals);
@@ -182,6 +231,7 @@ impl<'a> Ex<'a> {
         } else if kind.is_type() {
             params = self.fields(n, &mut types);
         }
+        let vars = if kind.is_callable() { self.var_types(func, &params) } else { HashMap::new() };
         let parent = owner.clone().or_else(|| Some(ctx.module.clone()));
         self.out.symbols.push(Symbol {
             kind,
@@ -208,21 +258,29 @@ impl<'a> Ex<'a> {
         }
         if kind.is_type() {
             self.heritage(n, &qualified);
+            let typed: HashMap<String, String> = self.out.symbols.last().map(|s| s.params.iter().filter_map(|p| Some((p.name.clone(), self.base_type(&p.ty)?))).collect()).unwrap_or_default();
+            if !typed.is_empty() {
+                self.fields.insert(qualified.clone(), typed);
+            }
         }
         // inside: a type's members belong to it; a function's body makes calls from it
         let recv = (n.kind() == "method_declaration" && self.spec.lang == Lang::Go)
             .then(|| n.child_by_field_name("receiver")?.named_child(0)?.child_by_field_name("name").map(|x| self.text(x).to_string()))
             .flatten();
         let inner = if kind.is_type() {
-            Ctx { module: ctx.module.clone(), owner: Some(qualified.clone()), func: None, in_test: test, recv: None }
+            Ctx { module: ctx.module.clone(), owner: Some(qualified.clone()), func: None, in_test: test, recv: None, vars: HashMap::new() }
         } else {
-            Ctx { module: ctx.module.clone(), owner: owner.clone(), func: Some(qualified.clone()), in_test: test, recv }
+            Ctx { module: ctx.module.clone(), owner: owner.clone(), func: Some(qualified.clone()), in_test: test, recv, vars }
         };
         // a type alias is a type expression: nothing inside it is a definition or a call
         if kind == Kind::TypeAlias {
             return;
         }
         let locals = if kind.is_callable() { self.locals(func) } else { HashSet::new() };
+        let mut inner = inner;
+        if kind.is_callable() {
+            self.call_vars(func, &mut inner, &locals);
+        }
         let mut c = func.walk();
         let kids: Vec<Node> = func.named_children(&mut c).collect();
         for ch in kids {
@@ -370,15 +428,19 @@ impl<'a> Ex<'a> {
     fn reference(&mut self, n: Node, ctx: &Ctx, locals: &HashSet<String>) {
         let from = ctx.func.clone().unwrap_or_else(|| ctx.module.clone());
         if let Some(&(_, field)) = self.spec.calls.iter().find(|(k, _)| *k == n.kind()) {
-            // Java `obj.m()` keeps object and name on the call node itself
-            let target = if n.child_by_field_name("object").is_some() && n.kind() == "method_invocation" {
-                self.member_target(n.child_by_field_name("object").unwrap(), n.child_by_field_name("name"), ctx, locals)
-            } else {
-                n.child_by_field_name(field).and_then(|f| self.callee(f, ctx, locals))
-            };
-            if let Some(to) = target {
+            if let Some(to) = self.call_target(n, ctx, locals) {
                 let (l, c) = name_pos(n.child_by_field_name(field).unwrap_or(n));
                 self.out.edges.push(Edge { from, to, kind: EdgeKind::Calls, line: l, col: c });
+            }
+        } else if n.kind() == "method_reference" {
+            // Java `StringUtil::isAsciiLetter`, `this::visit`: the method is used (passed, not called here)
+            let mut c = n.walk();
+            let kids: Vec<Node> = n.named_children(&mut c).collect();
+            if let (Some(obj), Some(m)) = (kids.first(), kids.last().filter(|m| m.kind() == "identifier")) {
+                if let Some(to) = self.member_target(*obj, Some(*m), ctx, locals) {
+                    let (l, c) = name_pos(*m);
+                    self.out.edges.push(Edge { from, to, kind: EdgeKind::Calls, line: l, col: c });
+                }
             }
         } else if let Some(&(_, field)) = self.spec.new.iter().find(|(k, _)| *k == n.kind()) {
             if let Some(t) = n.child_by_field_name(field) {
@@ -390,6 +452,96 @@ impl<'a> Ex<'a> {
                     let (l, c) = name_pos(t);
                     self.out.edges.push(Edge { from, to, kind: EdgeKind::Calls, line: l, col: c });
                 }
+            }
+        }
+    }
+
+    /// What a call expression calls, in edge notation (`Self::load`, `fs::open`, `.get`).
+    fn call_target(&self, n: Node, ctx: &Ctx, locals: &HashSet<String>) -> Option<String> {
+        let &(_, field) = self.spec.calls.iter().find(|(k, _)| *k == n.kind())?;
+        // Java `obj.m()` keeps object and name on the call node itself
+        if n.kind() == "method_invocation" {
+            if let Some(obj) = n.child_by_field_name("object") {
+                return self.member_target(obj, n.child_by_field_name("name"), ctx, locals);
+            }
+        }
+        n.child_by_field_name(field).and_then(|f| self.callee(f, ctx, locals))
+    }
+
+    /// Type of the value an expression makes. Known here: `new Store()`, `&Command{}`, a typed
+    /// local. Known to the index only: `getPool()` → `getPool()`, "what `getPool` returns".
+    fn value_type(&self, e: Node, ctx: &Ctx, locals: &HashSet<String>) -> Option<String> {
+        if let Some(t) = self.expr_type(e) {
+            return Some(t);
+        }
+        match e.kind() {
+            "parenthesized_expression" | "await_expression" | "non_null_expression" | "unary_expression" => self.value_type(e.child_by_field_name("operand").or_else(|| e.named_child(0))?, ctx, locals),
+            // `((Element) node).text()`, `(x as Store).load()`: the type it is cast to
+            "cast_expression" => self.base_type(self.text(e.child_by_field_name("type")?)),
+            "as_expression" | "satisfies_expression" => self.base_type(self.text(e.named_child(1)?)),
+            "identifier" => ctx.vars.get(self.text(e)).cloned(),
+            k if self.spec.calls.iter().any(|(c, _)| *c == k) => {
+                let t = self.call_target(e, ctx, locals)?;
+                // long chains (`a().b().c().d()`) are builders: every step returns the same thing
+                (t.matches("()").count() < 4).then(|| format!("{t}()"))
+            }
+            _ => None,
+        }
+    }
+
+    /// Locals initialised from a call (`x := getPool()`, `var s = repo.find(id)`,
+    /// `const st = createStore()`): their type is the callee's result, in source order so that
+    /// `y := x.child()` builds on `x`.
+    fn call_vars(&self, func: Node, ctx: &mut Ctx, locals: &HashSet<String>) {
+        let mut found: Vec<(Node, Node)> = Vec::new();
+        let mut stack = vec![func];
+        while let Some(n) = stack.pop() {
+            match n.kind() {
+                // Go: `x := f()`, `x, err := f()` (the first result), `a, b := f(), g()`
+                "short_var_declaration" => {
+                    if let (Some(l), Some(r)) = (n.child_by_field_name("left"), n.child_by_field_name("right")) {
+                        let (mut c1, mut c2) = (l.walk(), r.walk());
+                        let names: Vec<Node> = l.named_children(&mut c1).collect();
+                        let vals: Vec<Node> = r.named_children(&mut c2).collect();
+                        if vals.len() == 1 {
+                            found.extend(names.first().map(|nm| (*nm, vals[0])));
+                        } else {
+                            found.extend(names.iter().copied().zip(vals.iter().copied()));
+                        }
+                    }
+                }
+                // Go `for _, c := range cmd.Commands()`: the element of what the call returns
+                "range_clause" => {
+                    if let (Some(l), Some(r)) = (n.child_by_field_name("left"), n.child_by_field_name("right")) {
+                        let mut c1 = l.walk();
+                        let names: Vec<Node> = l.named_children(&mut c1).collect();
+                        if names.len() == 2 {
+                            found.push((names[1], r));
+                        }
+                    }
+                }
+                // Go `var x = f()`; TS `const x = f()`; Java `var x = f();`
+                "var_spec" | "variable_declarator" => {
+                    if let (Some(nm), Some(val)) = (n.child_by_field_name("name"), n.child_by_field_name("value")) {
+                        let val = if val.kind() == "expression_list" { val.named_child(0).unwrap_or(val) } else { val };
+                        found.push((nm, val));
+                    }
+                }
+                _ => {}
+            }
+            let mut c = n.walk();
+            for ch in n.named_children(&mut c) {
+                stack.push(ch);
+            }
+        }
+        found.sort_by_key(|(nm, _)| nm.start_byte());
+        for (nm, val) in found {
+            let name = self.text(nm);
+            if nm.kind() != "identifier" || name == "_" || ctx.vars.contains_key(name) {
+                continue;
+            }
+            if let Some(t) = self.value_type(val, ctx, locals) {
+                ctx.vars.insert(name.to_string(), t);
             }
         }
     }
@@ -428,6 +580,34 @@ impl<'a> Ex<'a> {
         if self.spec.this.contains(&o) || self.spec.this.contains(&obj.kind()) || ctx.recv.as_deref() == Some(o) {
             return Some(format!("Self::{m}"));
         }
+        if obj.kind() == "identifier" {
+            if let Some(t) = ctx.vars.get(o) {
+                return Some(format!("{t}::{m}"));
+            }
+            // Java: a bare field name is `this.field`
+            if self.spec.bare_is_self && !locals.contains(o) {
+                if let Some(t) = ctx.owner.as_ref().and_then(|w| self.fields.get(w)).and_then(|f| f.get(o)) {
+                    return Some(format!("{t}::{m}"));
+                }
+            }
+        }
+        // `getPool().release()`, `new Store().load()`: a method of what the expression makes
+        if obj.kind() != "identifier" {
+            if let Some(t) = self.value_type(obj, ctx, locals) {
+                return Some(format!("{t}::{m}"));
+            }
+        }
+        // `this.pool.release()`, Go `s.parent.Find()`: a field of this object with a known type
+        if let Some(&(_, of, mf)) = self.spec.member.iter().find(|(k, _, _)| *k == obj.kind()) {
+            if let (Some(base), Some(field)) = (obj.child_by_field_name(of), obj.child_by_field_name(mf)) {
+                let b = self.text(base);
+                if self.spec.this.contains(&b) || self.spec.this.contains(&base.kind()) || ctx.recv.as_deref() == Some(b) {
+                    if let Some(t) = ctx.owner.as_ref().and_then(|w| self.fields.get(w)).and_then(|f| f.get(self.text(field))) {
+                        return Some(format!("{t}::{m}"));
+                    }
+                }
+            }
+        }
         if obj.kind() == "identifier" || obj.kind() == "package_identifier" {
             if let Some(a) = self.aliases.get(o) {
                 if !locals.contains(o) {
@@ -454,6 +634,101 @@ impl<'a> Ex<'a> {
             }
         }
         name.to_string()
+    }
+
+    /// Named type of a type expression: `*Command` → `Command`, `List<Task>` → `List`,
+    /// `pkg.Type` → through the import. Built-ins and literals give nothing.
+    fn base_type(&self, t: &str) -> Option<String> {
+        let t = t.trim().trim_start_matches(':').trim();
+        let t = t.trim_start_matches(['*', '&', ' ']);
+        let t = t.strip_prefix("[]").unwrap_or(t);
+        let t = t.split(['<', '[', '(', '|', ' ', '{', ',', '?']).next()?.trim_end_matches("[]");
+        let first = t.chars().next()?;
+        if t.is_empty() || !(first.is_alphabetic() || first == '_') || self.spec.builtin_types.contains(&t) || matches!(t, "map" | "chan" | "func" | "var" | "const" | "let") {
+            return None;
+        }
+        Some(self.map_alias(&t.replace('.', "::")))
+    }
+
+    /// Type of the value an expression makes: `&Command{}`, `new Store()`, `NewCommand()`, `new(T)`.
+    fn expr_type(&self, e: Node) -> Option<String> {
+        match e.kind() {
+            "composite_literal" | "object_creation_expression" => self.base_type(self.text(e.child_by_field_name("type")?)),
+            "new_expression" => self.base_type(self.text(e.child_by_field_name("constructor")?)),
+            "unary_expression" | "parenthesized_expression" | "await_expression" => self.expr_type(e.child_by_field_name("operand").or_else(|| e.named_child(0))?),
+            "call_expression" => {
+                let f = e.child_by_field_name("function")?;
+                let name = self.text(f.child_by_field_name("field").or_else(|| f.child_by_field_name("property")).unwrap_or(f));
+                if name == "new" {
+                    return self.base_type(self.text(e.child_by_field_name("arguments")?.named_child(0)?));
+                }
+                // Go constructors by convention: NewCommand() → Command (keep a package prefix: pkg.NewX → pkg::X)
+                let rest = name.strip_prefix("New").filter(|r| r.chars().next().is_some_and(char::is_uppercase))?;
+                let pkg = f.child_by_field_name("operand").map(|o| format!("{}.", self.text(o))).unwrap_or_default();
+                self.base_type(&format!("{pkg}{rest}"))
+            }
+            _ => None,
+        }
+    }
+
+    /// Local names with a known type inside one function.
+    fn var_types(&self, func: Node, params: &[Param]) -> HashMap<String, String> {
+        let mut v = HashMap::new();
+        for p in params {
+            if let Some(t) = self.base_type(&p.ty) {
+                v.insert(p.name.clone(), t);
+            }
+        }
+        let mut stack = vec![func];
+        while let Some(n) = stack.pop() {
+            match n.kind() {
+                // Go: a, b := X{}, NewY()
+                "short_var_declaration" => {
+                    if let (Some(l), Some(r)) = (n.child_by_field_name("left"), n.child_by_field_name("right")) {
+                        let (mut c1, mut c2) = (l.walk(), r.walk());
+                        let names: Vec<Node> = l.named_children(&mut c1).collect();
+                        let vals: Vec<Node> = r.named_children(&mut c2).collect();
+                        for (nm, val) in names.iter().zip(vals.iter()) {
+                            if let Some(t) = self.expr_type(*val) {
+                                v.insert(self.text(*nm).to_string(), t);
+                            }
+                        }
+                    }
+                }
+                // Go `var x T`; TS `let x: T` / `const x = new T()`
+                "var_spec" | "variable_declarator" => {
+                    let t = n.child_by_field_name("type").and_then(|t| self.base_type(self.text(t))).or_else(|| n.child_by_field_name("value").and_then(|x| self.expr_type(x)));
+                    if let (Some(t), Some(nm)) = (t, n.child_by_field_name("name")) {
+                        if nm.kind() == "identifier" {
+                            v.insert(self.text(nm).to_string(), t);
+                        }
+                    }
+                }
+                // Java `for (Element el : els)`
+                "enhanced_for_statement" => {
+                    if let (Some(t), Some(nm)) = (n.child_by_field_name("type").and_then(|t| self.base_type(self.text(t))), n.child_by_field_name("name")) {
+                        v.insert(self.text(nm).to_string(), t);
+                    }
+                }
+                // Java `Store s = …;` / `var s = new Store();`
+                "local_variable_declaration" => {
+                    let declared = n.child_by_field_name("type").map(|t| self.text(t)).unwrap_or("");
+                    let mut c = n.walk();
+                    for d in n.children_by_field_name("declarator", &mut c) {
+                        let t = if declared == "var" { d.child_by_field_name("value").and_then(|x| self.expr_type(x)) } else { self.base_type(declared) };
+                        if let (Some(t), Some(nm)) = (t, d.child_by_field_name("name")) {
+                            v.insert(self.text(nm).to_string(), t);
+                        }
+                    }
+                }
+                _ => {}
+            }
+            let mut c = n.walk();
+            for ch in n.named_children(&mut c) {
+                stack.push(ch);
+            }
+        }
+        v
     }
 
     /// Names bound inside a function: parameters, variables, loop variables, lambda parameters.

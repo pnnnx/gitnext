@@ -139,7 +139,7 @@ edges:
   L82 calls crate::rust::shapes::total_area -> .area
   L82 calls crate::rust::shapes::total_area -> .map
   L82 calls crate::rust::shapes::total_area -> .sum
-  L82 calls crate::rust::shapes::total_area -> .values
+  L82 calls crate::rust::shapes::total_area -> Registry::values
   L86 uses crate::rust::shapes::largest -> Shape
   L86 uses crate::rust::shapes::largest -> Sized
   L87 calls crate::rust::shapes::largest -> .area

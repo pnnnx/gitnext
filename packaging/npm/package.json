@@ -1,0 +1,15 @@
+{
+  "name": "gitnext",
+  "version": "0.3.0",
+  "description": "git that understands code: code map, symbol graph and plain-language git for AI agents and people",
+  "license": "MIT",
+  "homepage": "https://github.com/pnnnx/gitnext",
+  "repository": { "type": "git", "url": "git+https://github.com/pnnnx/gitnext.git" },
+  "keywords": ["git", "mcp", "ai-agents", "code-graph", "tree-sitter", "claude", "cursor", "codex"],
+  "bin": { "gitnext": "bin/gitnext.js" },
+  "scripts": { "postinstall": "node install.js --quiet || true" },
+  "files": ["bin/", "install.js", "README.md"],
+  "os": ["darwin", "linux"],
+  "cpu": ["x64", "arm64"],
+  "engines": { "node": ">=18" }
+}

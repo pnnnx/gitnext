@@ -9,7 +9,7 @@
 //! TypeScript, JavaScript, Go and Java.
 
 /// Bump when extractor output changes; the index re-parses everything on mismatch.
-pub const PARSER_VERSION: u32 = 21;
+pub const PARSER_VERSION: u32 = 31;
 
 mod cfamily;
 mod generic;
@@ -596,6 +596,129 @@ pub fn cargo_package_name(toml: &str) -> Option<String> {
         }
     }
     None
+}
+
+/// Byte ranges of comments and string literals in a source file — where a name is
+/// only text. `None` for files without a parser (all of it is text).
+pub fn text_spans(rel: &Path, src: &str) -> Option<Vec<(usize, usize)>> {
+    let lang = lang_for(rel)?;
+    let mut parser = tree_sitter::Parser::new();
+    parser.set_language(&lang.grammar()).ok()?;
+    let tree = parser.parse(src, None)?;
+    let mut out = Vec::new();
+    let mut stack = vec![tree.root_node()];
+    while let Some(n) = stack.pop() {
+        let k = n.kind();
+        if k.contains("comment") || k.contains("string") || k == "char_literal" || k == "character_literal" || k == "rune_literal" || k == "template_literal" {
+            out.push((n.start_byte(), n.end_byte()));
+            continue;
+        }
+        let mut c = n.walk();
+        for ch in n.children(&mut c) {
+            stack.push(ch);
+        }
+    }
+    Some(out)
+}
+
+/// Byte ranges of names inside import / export statements (`import { a as b } from …`,
+/// `export { a } from …`, Java `import static p.C.m;`): where a rename must follow
+/// the name even though no call edge points there.
+pub fn import_name_spans(rel: &Path, src: &str) -> Vec<(usize, usize)> {
+    let Some(lang) = lang_for(rel) else { return vec![] };
+    let mut parser = tree_sitter::Parser::new();
+    if parser.set_language(&lang.grammar()).is_err() {
+        return vec![];
+    }
+    let Some(tree) = parser.parse(src, None) else { return vec![] };
+    let mut out = Vec::new();
+    let mut stack = vec![tree.root_node()];
+    while let Some(n) = stack.pop() {
+        match n.kind() {
+            "import_specifier" | "export_specifier" => {
+                if let Some(x) = n.child_by_field_name("name") {
+                    out.push((x.start_byte(), x.end_byte()));
+                }
+                continue;
+            }
+            // Java: the last identifier of `import [static] a.b.C.m;`
+            "import_declaration" if lang == Lang::Java => {
+                let mut c = n.walk();
+                if let Some(p) = n.named_children(&mut c).find(|x| x.kind() == "scoped_identifier") {
+                    if let Some(x) = p.child_by_field_name("name") {
+                        out.push((x.start_byte(), x.end_byte()));
+                    }
+                }
+                continue;
+            }
+            _ => {}
+        }
+        let mut c = n.walk();
+        for ch in n.named_children(&mut c) {
+            stack.push(ch);
+        }
+    }
+    out
+}
+
+/// Rust: byte range of every name a `use` brings in, with the first segment of its path —
+/// `use crate::util::{third, slice_eq as eq};` gives `third` and `slice_eq`, both from `crate`.
+/// A rename follows the name here even inside a group, where no edge points at it.
+pub fn rust_use_names(src: &str) -> Vec<(usize, usize, String)> {
+    fn walk(n: tree_sitter::Node, src: &[u8], first: Option<&str>, out: &mut Vec<(usize, usize, String)>) {
+        let head = |p: tree_sitter::Node| p.utf8_text(src).unwrap_or("").split("::").next().unwrap_or("").trim().to_string();
+        match n.kind() {
+            "scoped_identifier" => {
+                if let (Some(path), Some(name)) = (n.child_by_field_name("path"), n.child_by_field_name("name")) {
+                    let f = first.map(str::to_string).unwrap_or_else(|| head(path));
+                    out.push((name.start_byte(), name.end_byte(), f));
+                }
+            }
+            "identifier" => {
+                if let Some(f) = first {
+                    out.push((n.start_byte(), n.end_byte(), f.to_string()));
+                }
+            }
+            "use_as_clause" => {
+                if let Some(p) = n.child_by_field_name("path") {
+                    walk(p, src, first, out);
+                }
+            }
+            "scoped_use_list" => {
+                let f = first.map(str::to_string).or_else(|| n.child_by_field_name("path").map(head));
+                if let Some(list) = n.child_by_field_name("list") {
+                    walk(list, src, f.as_deref(), out);
+                }
+            }
+            "use_list" => {
+                let mut c = n.walk();
+                for ch in n.named_children(&mut c) {
+                    walk(ch, src, first, out);
+                }
+            }
+            _ => {}
+        }
+    }
+    let mut parser = tree_sitter::Parser::new();
+    if parser.set_language(&Lang::Rust.grammar()).is_err() {
+        return vec![];
+    }
+    let Some(tree) = parser.parse(src, None) else { return vec![] };
+    let mut out = Vec::new();
+    let mut stack = vec![tree.root_node()];
+    while let Some(n) = stack.pop() {
+        if n.kind() == "use_declaration" {
+            if let Some(a) = n.child_by_field_name("argument") {
+                walk(a, src.as_bytes(), None, &mut out);
+            }
+            continue;
+        }
+        let mut c = n.walk();
+        for ch in n.named_children(&mut c) {
+            stack.push(ch);
+        }
+    }
+    out
 }
 
 /// Positions (1-based line, 0-based col) of syntax errors in a source file.

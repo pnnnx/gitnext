@@ -46,6 +46,6 @@ edges:
   L30 calls go::Store::Save -> strings::ToUpper
   L31 calls go::Store::Save -> github.com/gin-gonic/gin::Default
   L33 calls go::Store::Save -> len
-  L36 calls go::TestSave -> .Save
   L36 calls go::TestSave -> New
+  L36 calls go::TestSave -> New()::Save
   L36 uses go::TestSave -> testing::T

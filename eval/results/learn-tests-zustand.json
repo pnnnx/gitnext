@@ -1,0 +1,1023 @@
+{
+ "repo": "zustand",
+ "lang": "typescript",
+ "commit": "9fed2eb2f3af",
+ "seed": 7,
+ "gitnext_commit": "92dc87d",
+ "functions": [
+  {
+   "group": "pick",
+   "symbol": "src::middleware::persist::createJSONStorage",
+   "file": "src/middleware/persist.ts",
+   "truth": 6,
+   "truth_doctests": 6,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 6,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/persistPromiseLike.test.ts",
+    "tests/persistSync.test.tsx",
+    "tests/persistAsync.test.tsx",
+    "tests/middlewareTypes.test.tsx",
+    "tests/types.test.tsx",
+    "tests/devtools.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.3333333333333333,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::devtools::setStateFromDevtools",
+   "file": "src/middleware/devtools.ts",
+   "truth": 1,
+   "truth_doctests": 1,
+   "predicted_gitnext": 1,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/devtools.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::persist::persistImpl",
+   "file": "src/middleware/persist.ts",
+   "truth": 6,
+   "truth_doctests": 6,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 6,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/persistPromiseLike.test.ts",
+    "tests/persistSync.test.tsx",
+    "tests/persistAsync.test.tsx",
+    "tests/middlewareTypes.test.tsx",
+    "tests/types.test.tsx",
+    "tests/devtools.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::persist::parse",
+   "file": "src/middleware/persist.ts",
+   "truth": 3,
+   "truth_doctests": 3,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 5,
+   "missed_by_coverage": [],
+   "covered_not_failing": [
+    "tests/middlewareTypes.test.tsx",
+    "tests/types.test.tsx"
+   ],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 2,
+   "top_coverage": [
+    "tests/persistPromiseLike.test.ts",
+    "tests/persistSync.test.tsx",
+    "tests/persistAsync.test.tsx",
+    "tests/middlewareTypes.test.tsx",
+    "tests/types.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 0.6,
+     "predicted": 5,
+     "top_hits": 3,
+     "top_n": 5,
+     "top_precision": 0.6,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.6,
+     "predicted": 5,
+     "top_hits": 3,
+     "top_n": 5,
+     "top_precision": 0.6,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::devtools::maskToRegex",
+   "file": "src/middleware/devtools.ts",
+   "truth": 1,
+   "truth_doctests": 1,
+   "predicted_gitnext": 1,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/devtools.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::vanilla::subscribe",
+   "file": "src/vanilla.ts",
+   "truth": 7,
+   "truth_doctests": 7,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 7,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/vanilla/subscribe.test.tsx",
+    "tests/vanilla/basic.test.ts",
+    "tests/subscribe.test.tsx",
+    "tests/ssr.test.tsx",
+    "tests/basic.test.tsx",
+    "tests/persistAsync.test.tsx",
+    "tests/shallow.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 7,
+     "top_hits": 7,
+     "top_n": 7,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 7,
+     "top_hits": 7,
+     "top_n": 7,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::vanilla::shallow::shallow",
+   "file": "src/vanilla/shallow.ts",
+   "truth": 2,
+   "truth_doctests": 2,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/vanilla/shallow.test.tsx",
+    "tests/shallow.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::react::shallow::useShallow",
+   "file": "src/react/shallow.ts",
+   "truth": 1,
+   "truth_doctests": 1,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/shallow.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::devtools::parseDropdownArgs",
+   "file": "src/middleware/devtools.ts",
+   "truth": 1,
+   "truth_doctests": 1,
+   "predicted_gitnext": 1,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/devtools.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::react::createImpl",
+   "file": "src/react.ts",
+   "truth": 9,
+   "truth_doctests": 9,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 9,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/immer.test.tsx",
+    "tests/subscribe.test.tsx",
+    "tests/ssr.test.tsx",
+    "tests/basic.test.tsx",
+    "tests/persistSync.test.tsx",
+    "tests/persistAsync.test.tsx",
+    "tests/shallow.test.tsx",
+    "tests/middlewareTypes.test.tsx",
+    "tests/types.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.2222222222222222,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 9,
+     "top_hits": 9,
+     "top_n": 9,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 9,
+     "top_hits": 9,
+     "top_n": 9,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::vanilla::createStoreImpl",
+   "file": "src/vanilla.ts",
+   "truth": 13,
+   "truth_doctests": 13,
+   "predicted_gitnext": 4,
+   "predicted_coverage": 13,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/vanilla/basic.test.ts",
+    "tests/vanilla/subscribe.test.tsx",
+    "tests/immer.test.tsx",
+    "tests/subscribe.test.tsx",
+    "tests/ssr.test.tsx",
+    "tests/basic.test.tsx",
+    "tests/persistPromiseLike.test.ts",
+    "tests/persistSync.test.tsx",
+    "tests/persistAsync.test.tsx",
+    "tests/shallow.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.3076923076923077,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 13,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 13,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::devtools::getTrackedConnectionState",
+   "file": "src/middleware/devtools.ts",
+   "truth": 1,
+   "truth_doctests": 1,
+   "predicted_gitnext": 1,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/devtools.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::vanilla::shallow::compareIterables",
+   "file": "src/vanilla/shallow.ts",
+   "truth": 1,
+   "truth_doctests": 1,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [
+    "tests/shallow.test.tsx"
+   ],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 1,
+   "top_coverage": [
+    "tests/vanilla/shallow.test.tsx",
+    "tests/shallow.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::traditional::createWithEqualityFnImpl",
+   "file": "src/traditional.ts",
+   "truth": 2,
+   "truth_doctests": 2,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/basic.test.tsx",
+    "tests/shallow.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::devtools::getParamNames",
+   "file": "src/middleware/devtools.ts",
+   "truth": 1,
+   "truth_doctests": 1,
+   "predicted_gitnext": 1,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/devtools.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::persist::toSyncThenable",
+   "file": "src/middleware/persist.ts",
+   "skipped": "mutant does not compile",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "random",
+   "symbol": "src::vanilla::shallow::hasIterableEntries",
+   "file": "src/vanilla/shallow.ts",
+   "skipped": "mutant does not compile",
+   "predicted_gitnext": 2,
+   "predicted_coverage": 2
+  },
+  {
+   "group": "random",
+   "symbol": "src::vanilla::shallow::compareEntries",
+   "file": "src/vanilla/shallow.ts",
+   "truth": 2,
+   "truth_doctests": 2,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/vanilla/shallow.test.tsx",
+    "tests/shallow.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::redux::reduxImpl",
+   "file": "src/middleware/redux.ts",
+   "truth": 2,
+   "truth_doctests": 2,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 3,
+   "missed_by_coverage": [],
+   "covered_not_failing": [
+    "tests/types.test.tsx"
+   ],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 1,
+   "top_coverage": [
+    "tests/middlewareTypes.test.tsx",
+    "tests/types.test.tsx",
+    "tests/devtools.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 0.6666666666666666,
+     "predicted": 3,
+     "top_hits": 2,
+     "top_n": 3,
+     "top_precision": 0.6666666666666666,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.6666666666666666,
+     "predicted": 3,
+     "top_hits": 2,
+     "top_n": 3,
+     "top_precision": 0.6666666666666666,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::persist::toThenable",
+   "file": "src/middleware/persist.ts",
+   "truth": 6,
+   "truth_doctests": 6,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 6,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/persistPromiseLike.test.ts",
+    "tests/persistSync.test.tsx",
+    "tests/persistAsync.test.tsx",
+    "tests/middlewareTypes.test.tsx",
+    "tests/types.test.tsx",
+    "tests/devtools.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::persist::hydrate",
+   "file": "src/middleware/persist.ts",
+   "truth": 6,
+   "truth_doctests": 6,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 6,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/persistPromiseLike.test.ts",
+    "tests/persistSync.test.tsx",
+    "tests/persistAsync.test.tsx",
+    "tests/middlewareTypes.test.tsx",
+    "tests/types.test.tsx",
+    "tests/devtools.test.tsx"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  }
+ ],
+ "summary": {
+  "pick": {
+   "gitnext": {
+    "recall": 0.333,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "functions": 1
+  },
+  "random": {
+   "gitnext": {
+    "recall": 0.529,
+    "precision": 0.556,
+    "top_precision": 0.556,
+    "caught": 0.611
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 0.931,
+    "top_precision": 0.931,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.904,
+    "top_precision": 0.904,
+    "caught": 1.0
+   },
+   "functions": 18
+  },
+  "all": {
+   "gitnext": {
+    "recall": 0.519,
+    "precision": 0.579,
+    "top_precision": 0.579,
+    "caught": 0.632
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 0.935,
+    "top_precision": 0.935,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.909,
+    "top_precision": 0.909,
+    "caught": 1.0
+   },
+   "functions": 19
+  }
+ },
+ "cost": {
+  "run_one_by_one_s": 31.9,
+  "map_s": 31.9,
+  "whole_suite_coverage_s": 16.7,
+  "coverage_json_bytes": 1770510,
+  "test_files": 14,
+  "repeat": 3,
+  "plain_s": 14.1,
+  "tests": 14,
+  "map_pairs": 163,
+  "map_functions": 47,
+  "map_sqlite_bytes": 12288,
+  "functions_with_body": 55,
+  "functions_never_run": 7,
+  "fail_alone_not_together": [],
+  "fail_together_not_alone": [],
+  "slowdown_runs": 2.3
+ }
+}

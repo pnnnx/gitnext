@@ -59,7 +59,17 @@ pub fn look(ws: &Workspace, g: &Graph, what: &str, lite: bool) -> String {
         _ => what,
     };
     let name = name.trim_end_matches("()").trim_end_matches(':');
-    let ids = g.find(name);
+    let mut ids = g.find(name);
+    // a bare name that is also somebody's full name (C `main`) must not hide its namesakes
+    // (`run::main`, `cli::main`): picking one silently sends the agent to the wrong code
+    if !ids.is_empty() && !name.contains("::") && !name.contains('.') && !name.contains('@') {
+        for i in g.named(name) {
+            let k = g.syms[i].sym.kind;
+            if !ids.contains(&i) && (k.is_callable() || k.is_type()) {
+                ids.push(i);
+            }
+        }
+    }
     if !ids.is_empty() {
         let first = g.syms[ids[0]].sym.qualified.clone();
         if ids.iter().all(|&i| g.syms[i].sym.qualified == first) {
@@ -68,7 +78,10 @@ pub fn look(ws: &Workspace, g: &Graph, what: &str, lite: bool) -> String {
         let mut s = format!("{} things are called `{name}` — look at one by its full name (or several at once):\n", ids.len());
         for &i in ids.iter().take(12) {
             let r = &g.syms[i];
-            let _ = writeln!(s, "  {} ({}) {}:{}", g.short_name(i), r.sym.kind.as_str(), r.file, r.sym.start_line);
+            // a name that would only bring this list back is pinned by its line: `main@78`
+            let short = g.short_name(i);
+            let label = if g.find(short).iter().all(|&x| g.syms[x].sym.qualified == r.sym.qualified) && short != name { short.to_string() } else { format!("{}@{}", r.sym.name, r.sym.start_line) };
+            let _ = writeln!(s, "  {label} ({}) {}:{}", r.sym.kind.as_str(), r.file, r.sym.start_line);
         }
         return s;
     }
@@ -104,13 +117,17 @@ fn symbol(ws: &Workspace, g: &Graph, ids: &[usize], lite: bool) -> String {
     if !sure.is_empty() || !maybe.is_empty() {
         let list: Vec<String> = sure.iter().take(12).map(|(c, l)| format!("{} {}:{l}", g.short_name(*c), short_file(&g.syms[*c].file))).collect();
         let more = sure.len().saturating_sub(12);
+        // how far to trust the list: measured share of real callers among the sure ones;
+        // a small model is not shown the doubtful ones at all
+        let trust = crate::trust::callers_sure(&r.file);
         let _ = writeln!(
             s,
-            "called by ({}): {}{}{}",
+            "called by ({}{}): {}{}{}",
             sure.len(),
+            if trust.is_empty() || sure.is_empty() { String::new() } else { format!(", {trust}") },
             if list.is_empty() { "—".to_string() } else { list.join(", ") },
             if more > 0 { format!(" +{more}") } else { String::new() },
-            if maybe.is_empty() { String::new() } else { format!(" · maybe {} more via calls on objects of unknown type", maybe.len()) }
+            if maybe.is_empty() || lite { String::new() } else { format!(" · maybe {} more via calls on objects of unknown type", maybe.len()) }
         );
     } else if r.sym.kind.is_callable() {
         let _ = writeln!(s, "called by: nothing in the repo{}", if tests.is_empty() { "" } else { " except tests" });
@@ -139,21 +156,21 @@ fn symbol(ws: &Workspace, g: &Graph, ids: &[usize], lite: bool) -> String {
         }
     }
     // tests that reach it, and how to run exactly those
-    let t = locate::tests_for(g, i, 4);
+    let (t, source) = locate::tests_for_at(g, root, i, 4);
     if t.is_empty() {
         let _ = writeln!(s, "tests: none reach it through the call graph");
     } else {
-        let names: Vec<String> = t.iter().take(8).map(|x| g.short_name(x.symbol).to_string()).collect();
-        let _ = writeln!(s, "tests ({}): {}{}", t.len(), names.join(", "), if t.len() > 8 { " …" } else { "" });
-        let mut files: Vec<&str> = t.iter().map(|x| g.syms[x.symbol].file.as_str()).collect();
-        files.sort_unstable();
-        files.dedup();
-        if t.len() > 8 && files.iter().all(|f| f.ends_with(".py")) {
-            // too many to name one by one: the files that hold them
-            let _ = writeln!(s, "  run: python3 -m pytest -q {}", files.join(" "));
-        } else {
-            for cmd in locate::run_commands(g, root, &t).into_iter().take(2) {
-                let _ = writeln!(s, "  run: {cmd}");
+        // most likely to fail first: name those, one command for them and one for the rest
+        let top = &t[..t.len().min(locate::TOP_TESTS)];
+        let names: Vec<String> = top.iter().take(8).map(|x| g.short_name(x.symbol).to_string()).collect();
+        let trust = if source == locate::Source::Graph { crate::trust::tests_short(&r.file) } else { "; from a coverage run".to_string() };
+        let _ = writeln!(s, "tests ({}{trust}): {}{}", t.len(), names.join(", "), if t.len() > 8 { " …" } else { "" });
+        for cmd in locate::run_commands(g, root, top).into_iter().take(2) {
+            let _ = writeln!(s, "  run: {cmd}");
+        }
+        if top.len() < t.len() {
+            if let Some(cmd) = locate::file_commands(g, root, &t).into_iter().next() {
+                let _ = writeln!(s, "  all of them: {cmd}");
             }
         }
     }
@@ -178,6 +195,31 @@ fn short_file(p: &str) -> &str {
     p.rsplit('/').next().unwrap_or(p)
 }
 
+/// Lines that contain `what` (any text: a string literal, an operator, a message), each with
+/// the function it sits in — "who builds this string" answered without grep.
+pub fn text_hits(g: &Graph, root: &std::path::Path, what: &str, limit: usize) -> Vec<String> {
+    let low = what.to_lowercase();
+    let mut hits = Vec::new();
+    'files: for f in g.files.iter().filter(|f| f.lines < 20_000) {
+        let Ok(t) = std::fs::read_to_string(root.join(&f.path)) else { continue };
+        for (n, line) in t.lines().enumerate() {
+            if line.to_lowercase().contains(&low) {
+                let ln = n as u32 + 1;
+                // the innermost function / type around the line
+                let owner = (0..g.syms.len())
+                    .filter(|&i| g.syms[i].file == f.path && g.syms[i].sym.start_line <= ln && g.syms[i].sym.end_line >= ln && (g.syms[i].sym.kind.is_callable() || g.syms[i].sym.kind.is_type()))
+                    .min_by_key(|&i| g.syms[i].sym.end_line - g.syms[i].sym.start_line);
+                let within = owner.map(|i| format!(" (in {})", g.short_name(i))).unwrap_or_default();
+                hits.push(format!("  {}:{ln}{within}: {}", f.path, line.trim().chars().take(120).collect::<String>()));
+                if hits.len() >= limit {
+                    break 'files;
+                }
+            }
+        }
+    }
+    hits
+}
+
 fn words_hits(g: &Graph, root: &std::path::Path, what: &str) -> String {
     let mut s = String::new();
     let hits = g.search(what, 10);
@@ -189,19 +231,7 @@ fn words_hits(g: &Graph, root: &std::path::Path, what: &str) -> String {
             let _ = writeln!(s, "  {} ({}) {}:{}{sum}", g.short_name(i), r.sym.kind.as_str(), r.file, r.sym.start_line);
         }
     }
-    let low = what.to_lowercase();
-    let mut text_hits = Vec::new();
-    'files: for f in g.files.iter().filter(|f| f.lines < 20_000) {
-        let Ok(t) = std::fs::read_to_string(root.join(&f.path)) else { continue };
-        for (n, line) in t.lines().enumerate() {
-            if line.to_lowercase().contains(&low) {
-                text_hits.push(format!("  {}:{}: {}", f.path, n + 1, line.trim().chars().take(120).collect::<String>()));
-                if text_hits.len() >= 20 {
-                    break 'files;
-                }
-            }
-        }
-    }
+    let text_hits = text_hits(g, root, what, 20);
     if !text_hits.is_empty() {
         s.push_str("text:\n");
         s.push_str(&text_hits.join("\n"));

@@ -56,14 +56,14 @@ edges:
   L10 calls ts::store::Store::save -> Self::flush
   L10 calls ts::store::Store::save -> node:fs::writeFileSync
   L10 calls ts::store::Store::save -> ts::util::fmt::fmt
-  L16 calls ts::store::load -> .save
   L16 calls ts::store::load -> Store
+  L16 calls ts::store::load -> Store::save
   L16 uses ts::store::load -> Opts
   L16 uses ts::store::load -> Store
-  L18 calls ts::store -> .then
   L18 calls ts::store -> axios::get
-  L19 calls ts::store -> .toBeTruthy
+  L18 calls ts::store -> axios::get()::then
   L19 calls ts::store -> describe
   L19 calls ts::store -> expect
+  L19 calls ts::store -> expect()::toBeTruthy
   L19 calls ts::store -> it
   L19 calls ts::store -> load

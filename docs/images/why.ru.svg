@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="446" viewBox="0 0 1000 446" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-label="Доля подсаженных ошибок, где gitnext why называет виновную функцию первой: 18% по графу вызовов, 81% с картой покрытия">
+<title>Доля подсаженных ошибок, где gitnext why называет виновную функцию первой: 18% по графу вызовов, 81% с картой покрытия</title>
+<rect width="1000" height="446" rx="14" fill="#fbfcfa" stroke="#d5dad3"/>
+<text x="28" y="40" font-size="19" font-weight="700" fill="#1c2433">Тест упал: стоит ли виновная функция первой в списке?</text>
+<text x="28" y="64" font-size="13" fill="#5e6b78">57 подсаженных ошибок в 6 проектах: в функции меняется один оператор, затем спрашиваем gitnext why &lt;упавший тест&gt;</text>
+<rect x="28" y="82" width="12" height="12" rx="3" fill="#eb6834"/><text x="46" y="93" font-size="13" fill="#1c2433">только по графу вызовов</text>
+<rect x="237.6" y="82" width="12" height="12" rx="3" fill="#2a78d6"/><text x="255.6" y="93" font-size="13" fill="#1c2433">после gitnext learn-tests (один прогон тестов с покрытием)</text>
+<path d="M330 114V364" stroke="#d5dad3" stroke-width="1"/>
+<text x="28" y="137" font-size="14" font-weight="600" fill="#1c2433">Python</text>
+<text x="28" y="155" font-size="12" fill="#5e6b78">click, sqlparse</text>
+<path d="M330 122h19.5a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-19.5z" fill="#eb6834"/>
+<text x="363.5" y="135.5" font-size="13" font-weight="400" fill="#1c2433">5%  ·  1 из 20</text>
+<path d="M330 142h419.0a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-419.0z" fill="#2a78d6"/>
+<text x="763.0" y="155.5" font-size="13" font-weight="700" fill="#1c2433">90%  ·  18 из 20</text>
+<text x="28" y="201" font-size="14" font-weight="600" fill="#1c2433">Go</text>
+<text x="28" y="219" font-size="12" fill="#5e6b78">cobra, chi</text>
+<path d="M330 186h161.9a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-161.9z" fill="#eb6834"/>
+<text x="505.9" y="199.5" font-size="13" font-weight="400" fill="#1c2433">35%  ·  6 из 17</text>
+<path d="M330 206h383.1a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-383.1z" fill="#2a78d6"/>
+<text x="727.1" y="219.5" font-size="13" font-weight="700" fill="#1c2433">82%  ·  14 из 17</text>
+<text x="28" y="265" font-size="14" font-weight="600" fill="#1c2433">Rust</text>
+<text x="28" y="283" font-size="12" fill="#5e6b78">semver, indexmap</text>
+<path d="M330 250h66.5a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-66.5z" fill="#eb6834"/>
+<text x="410.5" y="263.5" font-size="13" font-weight="400" fill="#1c2433">15%  ·  3 из 20</text>
+<path d="M330 270h325.0a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-325.0z" fill="#2a78d6"/>
+<text x="669.0" y="283.5" font-size="13" font-weight="700" fill="#1c2433">70%  ·  14 из 20</text>
+<text x="28" y="329" font-size="14" font-weight="600" fill="#1c2433">Все шесть проектов</text>
+<path d="M330 314h78.5a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-78.5z" fill="#eb6834"/>
+<text x="422.5" y="327.5" font-size="13" font-weight="400" fill="#1c2433">18%  ·  10 из 57</text>
+<path d="M330 334h375.3a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-375.3z" fill="#2a78d6"/>
+<text x="719.3" y="347.5" font-size="13" font-weight="700" fill="#1c2433">81%  ·  46 из 57</text>
+<text x="28" y="392" font-size="12.5" fill="#5e6b78">С картой why показывает то, что тест на деле запускал, ставит первым код, изменённый с тех пор, как тесты проходили, и сами изменённые строки.</text>
+<text x="28" y="412" font-size="12.5" fill="#5e6b78">Воспроизвести: python3 eval/why_rank.py --learn --variants static,default — таблицы в eval/results/why-rank*.md</text>
+</svg>

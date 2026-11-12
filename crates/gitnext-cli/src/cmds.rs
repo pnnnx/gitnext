@@ -173,8 +173,18 @@ pub enum More {
     },
     /// Check that everything is in place for agents (binary on PATH, index, map, agent configs, model server)
     Doctor,
-    /// Take back the last commit; its changes stay staged (refuses if already pushed)
-    Undo,
+    /// Take back the last commit; its changes stay staged (refuses if already pushed).
+    /// `--op N` undoes one gitnext edit instead (see `gitnext ops`)
+    Undo {
+        /// operation number from `gitnext ops`; other changes stay as they are
+        #[arg(long)]
+        op: Option<u64>,
+    },
+    /// Edits made through gitnext (CLI and MCP), newest first: who, what, which files; `undo --op N` takes one back
+    Ops {
+        #[arg(short = 'n', default_value_t = 20)]
+        n: usize,
+    },
     /// Branches: ahead / behind and what each one changes
     Branches,
     /// Every earlier point of HEAD (commits, resets, checkouts); `--to N` goes back to one
@@ -189,16 +199,53 @@ pub enum More {
     Msg,
     /// Hooks for agent harnesses (reads the hook JSON on stdin): `read`, `session-start`
     Hook { event: String },
-    /// Tests that exercise a symbol, with the command to run just those
+    /// Run the tests once with coverage and remember which test runs which function (Python: pytest-cov; Go: go test -cover; Rust: llvm-tools);
+    /// `tests-for`, `look` and `check` then name the tests that really execute a function
+    LearnTests,
+    /// A test fails: run it and get the failure in a few lines and the code it reaches, the most likely
+    /// culprit first (exit 1 while it fails). `greater_than` finds `test_greater_than`
+    Why {
+        /// Test names
+        names: Vec<String>,
+        /// Seconds the test command may take
+        #[arg(long, default_value_t = 600)]
+        timeout: u64,
+    },
+    /// Build or test output (stdin, or the arguments) in a few lines: what failed, where, the message —
+    /// `cargo test 2>&1 | gitnext digest`
+    Digest {
+        text: Vec<String>,
+        /// Failures printed in full; the rest are counted and named
+        #[arg(long, default_value_t = 5)]
+        max: usize,
+    },
+    /// After a change: build the project and run the tests of what changed; prints a verdict (exit 1 if it fails).
+    /// With test names: why they fail (the same as `gitnext why <test>`)
+    Check {
+        /// Tests to explain instead of checking the change
+        names: Vec<String>,
+        /// Seconds each command may take
+        #[arg(long, default_value_t = 600)]
+        timeout: u64,
+    },
+    /// Tests that exercise a symbol: the 10 most likely to fail first, with the command to run them
     TestsFor {
         symbol: String,
         #[arg(short, long, default_value_t = 4)]
         depth: usize,
+        /// Name every test, not only the 10 most likely
+        #[arg(short, long)]
+        all: bool,
     },
 }
 
 pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
     let ws = Workspace::open(cwd)?;
+    // `check <test>` is `why <test>`
+    let m = match m {
+        More::Check { names, timeout } if !names.is_empty() => More::Why { names, timeout },
+        other => other,
+    };
     match m {
         More::Explain { path, provider, limit, dry_run } => {
             let g = ws.graph()?;
@@ -248,10 +295,56 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             };
             out.text(&gitnext_ops::locate::render_locate(&g, &ws.root, &t, !no_code));
         }
-        More::TestsFor { symbol, depth } => {
+        More::LearnTests => {
+            let g = ws.graph()?;
+            out.text(&gitnext_ops::learn::render(&gitnext_ops::learn::learn(&ws.root, &g)?));
+        }
+        More::Why { names, timeout } => {
+            let g = ws.graph()?;
+            if names.is_empty() {
+                bail!("which test? `gitnext why <test name>`");
+            }
+            let mut ids: Vec<usize> = Vec::new();
+            for t in &names {
+                let found = gitnext_ops::why::find_tests(&g, t);
+                if found.is_empty() {
+                    let near: Vec<&str> = gitnext_ops::why::similar_tests(&g, t).into_iter().map(|i| g.syms[i].sym.name.as_str()).collect();
+                    bail!("no test named `{t}`{}", if near.is_empty() { String::new() } else { format!("; close: {}", near.join(", ")) });
+                }
+                ids.extend(found.into_iter().filter(|i| !ids.contains(i)).collect::<Vec<_>>());
+            }
+            let w = gitnext_ops::why::why(&ws.root, &g, &ids, std::time::Duration::from_secs(timeout));
+            if out.json {
+                out.json(&gitnext_ops::why::json(&g, &w))?;
+            } else {
+                out.text(&gitnext_ops::why::render(&g, &ws.root, &w));
+            }
+            if w.failed() {
+                std::process::exit(1);
+            }
+        }
+        More::Digest { text, max } => {
+            let t = if text.is_empty() {
+                let mut s = String::new();
+                std::io::stdin().read_to_string(&mut s)?;
+                s
+            } else {
+                text.join(" ")
+            };
+            out.text(&gitnext_ops::digest::render(&gitnext_ops::digest::digest(&t), max));
+        }
+        More::Check { timeout, .. } => {
+            let g = ws.graph()?;
+            let c = gitnext_ops::check::check(&ws.root, &g, std::time::Duration::from_secs(timeout));
+            out.text(&gitnext_ops::check::render(&g, &c));
+            if !c.ok() {
+                std::process::exit(1);
+            }
+        }
+        More::TestsFor { symbol, depth, all } => {
             let g = ws.graph()?;
             for i in lookup(&g, &symbol)? {
-                out.text(&gitnext_ops::locate::render_tests_for(&g, &ws.root, i, depth));
+                out.text(&gitnext_ops::locate::render_tests_for(&g, &ws.root, i, depth, all));
             }
         }
         More::Lsp { lang, limit, all } => {
@@ -378,7 +471,21 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
                 println!("  tip: `gitnext setup claude --hooks` also answers whole reads of big code files with an outline");
             }
         }
-        More::Undo => {
+        More::Undo { op: Some(id) } => {
+            let r = gitnext_ops::oplog::undo(&ws.root, id)?;
+            if out.json {
+                return out.json(&r);
+            }
+            out.text(&gitnext_ops::oplog::render_undo(&r));
+        }
+        More::Ops { n } => {
+            let ops = gitnext_ops::oplog::load(&ws.root);
+            if out.json {
+                return out.json(&ops.iter().rev().take(n).collect::<Vec<_>>());
+            }
+            out.text(&gitnext_ops::oplog::render(&ops, n));
+        }
+        More::Undo { op: None } => {
             let c = ws.repo()?.undo_commit().map_err(|e| anyhow::anyhow!(gitnext_ops::changes::humanize(&e)))?;
             println!("✓ took back {} “{}” — its changes are staged; edit and `gitnext commit` again", c.short, c.summary);
             println!("  (to redo it as it was: `gitnext timeline --to 1`)");

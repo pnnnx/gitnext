@@ -1,0 +1,37 @@
+   Compiling semver v1.0.28 (/home/claude/gitnext/eval/.work/semver)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.34s
+     Running tests/test_version_req.rs (target/debug/deps/test_version_req-2c31cbdbac62c14b)
+
+running 1 test
+test test_greater_than ... FAILED
+
+failures:
+
+---- test_greater_than stdout ----
+
+thread 'test_greater_than' (344) panicked at tests/test_version_req.rs:82:5:
+did not match 2.0.0
+stack backtrace:
+   0: __rustc::rust_begin_unwind
+             at /rustc/2d8144b7880597b6e6d3dfd63a9a9efae3f533d3/library/std/src/panicking.rs:689:5
+   1: core::panicking::panic_fmt
+             at /rustc/2d8144b7880597b6e6d3dfd63a9a9efae3f533d3/library/core/src/panicking.rs:80:14
+   2: test_version_req::assert_match_all
+             at ./tests/test_version_req.rs:25:9
+   3: test_version_req::test_greater_than
+             at ./tests/test_version_req.rs:82:5
+   4: test_version_req::test_greater_than::{closure#0}
+             at ./tests/test_version_req.rs:79:27
+   5: <test_version_req::test_greater_than::{closure#0} as core::ops::function::FnOnce<()>>::call_once
+             at /rustc/2d8144b7880597b6e6d3dfd63a9a9efae3f533d3/library/core/src/ops/function.rs:250:5
+   6: <fn() -> core::result::Result<(), alloc::string::String> as core::ops::function::FnOnce<()>>::call_once
+             at /rustc/2d8144b7880597b6e6d3dfd63a9a9efae3f533d3/library/core/src/ops/function.rs:250:5
+note: Some details are omitted, run with `RUST_BACKTRACE=full` for a verbose backtrace.
+
+
+failures:
+    test_greater_than
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.11s
+
+error: test failed, to rerun pass `--test test_version_req`

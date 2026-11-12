@@ -1,0 +1,1759 @@
+{
+ "repo": "yaml",
+ "lang": "typescript",
+ "commit": "528ef30d6ded",
+ "seed": 7,
+ "gitnext_commit": "92dc87d",
+ "functions": [
+  {
+   "group": "pick",
+   "symbol": "src::compose::compose_collection::composeCollection",
+   "file": "src/compose/compose-collection.ts",
+   "truth": 17,
+   "truth_doctests": 17,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 17,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/line-counter.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts",
+    "tests/cli.ts",
+    "tests/doc/foldFlowLines.ts",
+    "tests/properties.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 17,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 17,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::compose_doc::composeDoc",
+   "file": "src/compose/compose-doc.ts",
+   "truth": 18,
+   "truth_doctests": 18,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 18,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/doc/YAML-1.1.spec.ts",
+    "tests/line-counter.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts",
+    "tests/cli.ts",
+    "tests/doc/foldFlowLines.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.05555555555555555,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 18,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9473684210526315,
+     "predicted": 19,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::compose_scalar::composeScalar",
+   "file": "src/compose/compose-scalar.ts",
+   "truth": 18,
+   "truth_doctests": 18,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 18,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/doc/YAML-1.1.spec.ts",
+    "tests/line-counter.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts",
+    "tests/cli.ts",
+    "tests/doc/foldFlowLines.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 18,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 18,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::composer::Composer::compose",
+   "file": "src/compose/composer.ts",
+   "truth": 17,
+   "truth_doctests": 17,
+   "predicted_gitnext": 1,
+   "predicted_coverage": 17,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/doc/YAML-1.1.spec.ts",
+    "tests/line-counter.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts",
+    "tests/doc/foldFlowLines.ts",
+    "tests/properties.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 1,
+     "top_hits": 0,
+     "top_n": 1,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 17,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9444444444444444,
+     "predicted": 18,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::resolve_block_seq::resolveBlockSeq",
+   "file": "src/compose/resolve-block-seq.ts",
+   "truth": 13,
+   "truth_doctests": 13,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 13,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts",
+    "tests/doc/foldFlowLines.ts",
+    "tests/properties.ts",
+    "tests/doc/comments.ts",
+    "tests/doc/anchors.ts",
+    "tests/doc/stringify.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 13,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 13,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::resolve_end::resolveEnd",
+   "file": "src/compose/resolve-end.ts",
+   "truth": 19,
+   "truth_doctests": 19,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 19,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/cst.ts",
+    "tests/doc/YAML-1.1.spec.ts",
+    "tests/line-counter.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts",
+    "tests/cli.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.05263157894736842,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 19,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.95,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::resolve_flow_scalar::resolveFlowScalar",
+   "file": "src/compose/resolve-flow-scalar.ts",
+   "skipped": "mutant does not compile",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 19
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::util_contains_newline::containsNewline",
+   "file": "src/compose/util-contains-newline.ts",
+   "truth": 17,
+   "truth_doctests": 17,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 17,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/line-counter.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts",
+    "tests/cli.ts",
+    "tests/doc/foldFlowLines.ts",
+    "tests/properties.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 17,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 17,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::util_flow_indent_check::flowIndentCheck",
+   "file": "src/compose/util-flow-indent-check.ts",
+   "truth": 1,
+   "truth_doctests": 1,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/compat.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::doc::Document::Document::setSchema",
+   "file": "src/doc/Document.ts",
+   "truth": 20,
+   "truth_doctests": 20,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 20,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/rawJSON.ts",
+    "tests/doc/createNode.ts",
+    "tests/doc/YAML-1.1.spec.ts",
+    "tests/line-counter.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::doc::NodeCreator::NodeCreator::setAnchors",
+   "file": "src/doc/NodeCreator.ts",
+   "truth": 20,
+   "truth_doctests": 20,
+   "predicted_gitnext": 1,
+   "predicted_coverage": 20,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/rawJSON.ts",
+    "tests/doc/createNode.ts",
+    "tests/doc/YAML-1.1.spec.ts",
+    "tests/line-counter.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.05,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::doc::directives::Directives::atDocument",
+   "file": "src/doc/directives.ts",
+   "truth": 18,
+   "truth_doctests": 18,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 18,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/doc/YAML-1.1.spec.ts",
+    "tests/line-counter.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts",
+    "tests/cli.ts",
+    "tests/doc/foldFlowLines.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 18,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 18,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::nodes::YAMLMap::YAMLMap::#stringifyFlowMap",
+   "file": "src/nodes/YAMLMap.ts",
+   "truth": 8,
+   "truth_doctests": 8,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 8,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/doc/createNode.ts",
+    "tests/cli.ts",
+    "tests/doc/comments.ts",
+    "tests/doc/anchors.ts",
+    "tests/doc/stringify.ts",
+    "tests/doc/parse.ts",
+    "tests/doc/YAML-1.2.spec.ts",
+    "tests/doc/types.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 8,
+     "top_hits": 8,
+     "top_n": 8,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 8,
+     "top_hits": 8,
+     "top_n": 8,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::nodes::YAMLSeq::YAMLSeq::#stringifyBlockSeq",
+   "file": "src/nodes/YAMLSeq.ts",
+   "truth": 12,
+   "truth_doctests": 12,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 12,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/rawJSON.ts",
+    "tests/doc/createNode.ts",
+    "tests/visit.ts",
+    "tests/doc/foldFlowLines.ts",
+    "tests/properties.ts",
+    "tests/doc/comments.ts",
+    "tests/collection-access.ts",
+    "tests/doc/anchors.ts",
+    "tests/doc/stringify.ts",
+    "tests/doc/parse.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 12,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 12,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::nodes::YAMLSet::YAMLSet::#stringifyBlockSet",
+   "file": "src/nodes/YAMLSet.ts",
+   "truth": 2,
+   "truth_doctests": 2,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/doc/YAML-1.2.spec.ts",
+    "tests/doc/types.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::nodes::YAMLSet::YAMLSet::#stringifyFlowSet",
+   "file": "src/nodes/YAMLSet.ts",
+   "truth": 1,
+   "truth_doctests": 1,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/doc/types.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::nodes::toJS::ToJSContext::resolveAlias",
+   "file": "src/nodes/toJS.ts",
+   "truth": 6,
+   "truth_doctests": 6,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 6,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/node-to-js.ts",
+    "tests/cli.ts",
+    "tests/doc/anchors.ts",
+    "tests/doc/parse.ts",
+    "tests/doc/YAML-1.2.spec.ts",
+    "tests/doc/types.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::nodes::toJS::ToJSContext::setAnchor",
+   "file": "src/nodes/toJS.ts",
+   "truth": 6,
+   "truth_doctests": 6,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 6,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/node-to-js.ts",
+    "tests/cli.ts",
+    "tests/doc/anchors.ts",
+    "tests/doc/parse.ts",
+    "tests/doc/YAML-1.2.spec.ts",
+    "tests/doc/types.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::parse::cst::tokenType",
+   "file": "src/parse/cst.ts",
+   "truth": 19,
+   "truth_doctests": 19,
+   "predicted_gitnext": 3,
+   "predicted_coverage": 19,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/cst.ts",
+    "tests/doc/YAML-1.1.spec.ts",
+    "tests/line-counter.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts",
+    "tests/cli.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.10526315789473684,
+     "precision": 0.6666666666666666,
+     "predicted": 3,
+     "top_hits": 2,
+     "top_n": 3,
+     "top_precision": 0.6666666666666666,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 19,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.95,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::parse::lexer::Lexer::flow",
+   "file": "src/parse/lexer.ts",
+   "truth": 15,
+   "truth_doctests": 15,
+   "predicted_gitnext": 3,
+   "predicted_coverage": 15,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/lexer.ts",
+    "tests/cst.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts",
+    "tests/cli.ts",
+    "tests/properties.ts",
+    "tests/doc/comments.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.13333333333333333,
+     "precision": 0.6666666666666666,
+     "predicted": 3,
+     "top_hits": 2,
+     "top_n": 3,
+     "top_precision": 0.6666666666666666,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 15,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9375,
+     "predicted": 16,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::public_api::parseAllDocuments",
+   "file": "src/public-api.ts",
+   "truth": 4,
+   "truth_doctests": 4,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 4,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/doc/YAML-1.1.spec.ts",
+    "tests/doc/errors.ts",
+    "tests/doc/parse.ts",
+    "tests/doc/YAML-1.2.spec.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::schema::yaml_1_1::pairs::resolvePairs",
+   "file": "src/schema/yaml-1.1/pairs.ts",
+   "truth": 4,
+   "truth_doctests": 4,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 4,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/doc/anchors.ts",
+    "tests/doc/parse.ts",
+    "tests/doc/YAML-1.2.spec.ts",
+    "tests/doc/types.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::nodes::YAMLSeq::YAMLSeq::toJS",
+   "file": "src/nodes/YAMLSeq.ts",
+   "truth": 8,
+   "truth_doctests": 8,
+   "predicted_gitnext": 1,
+   "predicted_coverage": 8,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/doc/foldFlowLines.ts",
+    "tests/properties.ts",
+    "tests/collection-access.ts",
+    "tests/doc/anchors.ts",
+    "tests/doc/stringify.ts",
+    "tests/doc/parse.ts",
+    "tests/doc/YAML-1.2.spec.ts",
+    "tests/doc/types.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.125,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 8,
+     "top_hits": 8,
+     "top_n": 8,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 8,
+     "top_hits": 8,
+     "top_n": 8,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::nodes::Alias::Alias::toJS",
+   "file": "src/nodes/Alias.ts",
+   "truth": 6,
+   "truth_doctests": 6,
+   "predicted_gitnext": 1,
+   "predicted_coverage": 6,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/node-to-js.ts",
+    "tests/cli.ts",
+    "tests/doc/anchors.ts",
+    "tests/doc/parse.ts",
+    "tests/doc/YAML-1.2.spec.ts",
+    "tests/doc/types.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.16666666666666666,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::doc::anchors::anchorIsValid",
+   "file": "src/doc/anchors.ts",
+   "truth": 8,
+   "truth_doctests": 8,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 8,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/doc/createNode.ts",
+    "tests/clone.ts",
+    "tests/collection-access.ts",
+    "tests/doc/anchors.ts",
+    "tests/doc/stringify.ts",
+    "tests/doc/parse.ts",
+    "tests/doc/YAML-1.2.spec.ts",
+    "tests/doc/types.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 8,
+     "top_hits": 8,
+     "top_n": 8,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 8,
+     "top_hits": 8,
+     "top_n": 8,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::schema::core::float::couldBeFloat",
+   "file": "src/schema/core/float.ts",
+   "truth": 18,
+   "truth_doctests": 18,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 18,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/doc/createNode.ts",
+    "tests/line-counter.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts",
+    "tests/cli.ts",
+    "tests/doc/foldFlowLines.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 18,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 18,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::schema::yaml_1_1::pairs::createPairs",
+   "file": "src/schema/yaml-1.1/pairs.ts",
+   "truth": 3,
+   "truth_doctests": 3,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 3,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/collection-access.ts",
+    "tests/doc/stringify.ts",
+    "tests/doc/types.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 3,
+     "top_hits": 3,
+     "top_n": 3,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 3,
+     "top_hits": 3,
+     "top_n": 3,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::doc::Document::Document::set",
+   "file": "src/doc/Document.ts",
+   "truth": 5,
+   "truth_doctests": 5,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 5,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/clone.ts",
+    "tests/collection-access.ts",
+    "tests/doc/stringify.ts",
+    "tests/doc/parse.ts",
+    "tests/doc/types.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 5,
+     "top_hits": 5,
+     "top_n": 5,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 5,
+     "top_hits": 5,
+     "top_n": 5,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::nodes::util_clone_map_or_set::cloneMapOrSet",
+   "file": "src/nodes/util-clone-map-or-set.ts",
+   "truth": 1,
+   "truth_doctests": 1,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/clone.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::parse::lexer::Lexer::indicators",
+   "file": "src/parse/lexer.ts",
+   "truth": 20,
+   "truth_doctests": 20,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 20,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/lexer.ts",
+    "tests/cst.ts",
+    "tests/doc/YAML-1.1.spec.ts",
+    "tests/line-counter.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.1,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::stringify::stringify::getResolvedOptions",
+   "file": "src/stringify/stringify.ts",
+   "truth": 17,
+   "truth_doctests": 17,
+   "predicted_gitnext": 1,
+   "predicted_coverage": 17,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/rawJSON.ts",
+    "tests/doc/createNode.ts",
+    "tests/doc/YAML-1.1.spec.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/visit.ts",
+    "tests/compat.ts",
+    "tests/cli.ts",
+    "tests/doc/foldFlowLines.ts",
+    "tests/properties.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 1,
+     "top_hits": 0,
+     "top_n": 1,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 17,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9444444444444444,
+     "predicted": 18,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::stringify::stringifyNumber::stringifyNumber",
+   "file": "src/stringify/stringifyNumber.ts",
+   "truth": 11,
+   "truth_doctests": 11,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 11,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/doc/createNode.ts",
+    "tests/visit.ts",
+    "tests/cli.ts",
+    "tests/properties.ts",
+    "tests/doc/comments.ts",
+    "tests/collection-access.ts",
+    "tests/doc/anchors.ts",
+    "tests/doc/stringify.ts",
+    "tests/doc/parse.ts",
+    "tests/doc/YAML-1.2.spec.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 11,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 11,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::parse::cst_scalar::createScalarToken",
+   "file": "src/parse/cst-scalar.ts",
+   "skipped": "mutant does not compile",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 1
+  },
+  {
+   "group": "random",
+   "symbol": "src::parse::lexer::lex",
+   "file": "src/parse/lexer.ts",
+   "truth": 20,
+   "truth_doctests": 20,
+   "predicted_gitnext": 3,
+   "predicted_coverage": 20,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "tests/lexer.ts",
+    "tests/cst.ts",
+    "tests/doc/YAML-1.1.spec.ts",
+    "tests/line-counter.ts",
+    "tests/node-to-js.ts",
+    "tests/directives.ts",
+    "tests/clone.ts",
+    "tests/doc/errors.ts",
+    "tests/visit.ts",
+    "tests/compat.ts"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.1,
+     "precision": 0.6666666666666666,
+     "predicted": 3,
+     "top_hits": 2,
+     "top_n": 3,
+     "top_precision": 0.6666666666666666,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9523809523809523,
+     "predicted": 21,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  }
+ ],
+ "summary": {
+  "pick": {
+   "gitnext": {
+    "recall": 0.019,
+    "precision": 0.159,
+    "top_precision": 0.159,
+    "caught": 0.238
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.987,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "functions": 21
+  },
+  "random": {
+   "gitnext": {
+    "recall": 0.045,
+    "precision": 0.333,
+    "top_precision": 0.333,
+    "caught": 0.364
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.991,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "functions": 11
+  },
+  "all": {
+   "gitnext": {
+    "recall": 0.028,
+    "precision": 0.219,
+    "top_precision": 0.219,
+    "caught": 0.281
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.988,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "functions": 32
+  }
+ },
+ "cost": {
+  "run_one_by_one_s": 48.6,
+  "map_s": 48.6,
+  "whole_suite_coverage_s": 9.2,
+  "coverage_json_bytes": 24735036,
+  "test_files": 24,
+  "repeat": 3,
+  "plain_s": 7.8,
+  "tests": 24,
+  "map_pairs": 2919,
+  "map_functions": 284,
+  "map_sqlite_bytes": 40960,
+  "functions_with_body": 306,
+  "functions_never_run": 21,
+  "fail_alone_not_together": [],
+  "fail_together_not_alone": [],
+  "slowdown_runs": 6.2
+ }
+}

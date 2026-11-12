@@ -81,6 +81,8 @@ struct App<'w> {
     agent_marks: HashMap<String, char>,
     status: Vec<StatusEntry>,
     changed: HashSet<String>,
+    /// Fully staged: everything changed in the file is in the next commit.
+    staged: HashSet<String>,
     branch: String,
     repo_name: String,
     expanded: HashSet<String>,
@@ -117,6 +119,7 @@ impl<'w> App<'w> {
             agent_marks: gitnext_ops::journal::last_session_marks(&gitnext_ops::journal::load(&ws.root)),
             status: vec![],
             changed: HashSet::new(),
+            staged: HashSet::new(),
             branch: String::new(),
             repo_name,
             expanded,
@@ -160,6 +163,7 @@ impl<'w> App<'w> {
             self.branch = repo.branch();
             self.status = repo.status().unwrap_or_default();
             self.changed = self.status.iter().map(|e| e.path.clone()).collect();
+            self.staged = self.status.iter().filter(|e| e.staged.is_some() && e.unstaged.is_none()).map(|e| e.path.clone()).collect();
         } else {
             self.branch = "(no git)".into();
         }
@@ -416,7 +420,9 @@ impl<'w> App<'w> {
                 let links = self.current_symbol().map(|i| self.symbol_detail(i).1).unwrap_or_default();
                 if !links.is_empty() && delta.abs() == 1 {
                     self.link_sel = step(self.link_sel, links.len());
-                    let line = links[self.link_sel].0 as u16;
+                    let lines = self.current_symbol().map(|i| self.symbol_detail(i).0).unwrap_or_default();
+                    let (_, rows) = wrap_hanging(lines, self.detail_width as usize);
+                    let line = rows.get(links[self.link_sel].0).copied().unwrap_or(links[self.link_sel].0) as u16;
                     let h = self.detail_height.saturating_sub(3);
                     if line < self.detail_scroll || line >= self.detail_scroll + h {
                         self.detail_scroll = line.saturating_sub(h / 3);
@@ -685,12 +691,10 @@ impl<'w> App<'w> {
             Mode::Split { title, rows, scroll, .. } => self.draw_split(f, title, rows, *scroll),
             Mode::Timeline { entries, sel } => self.draw_timeline(f, entries, *sel),
             Mode::Page { title, lines, scroll } => {
-                let area = popup(f.area(), 84, 86);
+                let area = screen_area(f.area());
                 f.render_widget(Clear, area);
-                let p = Paragraph::new(Text::from(lines.clone()))
-                    .block(pane_block(title, true))
-                    .wrap(Wrap { trim: false })
-                    .scroll((*scroll, 0));
+                let (lines, _) = wrap_hanging(lines.clone(), area.width.saturating_sub(2) as usize);
+                let p = Paragraph::new(Text::from(lines)).block(pane_block(title, true)).scroll((*scroll, 0));
                 f.render_widget(p, area);
             }
         }
@@ -727,20 +731,29 @@ impl<'w> App<'w> {
             Some((m, false)) => Line::from(Span::styled(format!(" {m}"), Style::new().fg(Color::Green))),
             None => {
                 let keys: &[(&str, &str)] = match self.mode {
-                    Mode::Changes { .. } => &[("space", "stage / unstage file or function"), ("enter", "before/after"), ("a", "stage all"), ("u", "unstage all"), ("c", "commit"), ("U", "undo commit"), ("esc", "close")],
+                    Mode::Changes { .. } => &[("space", "stage file / function"), ("enter", "before/after"), ("c", "commit"), ("U", "undo commit"), ("esc", "close")],
                     Mode::Commit { .. } => &[("enter", "commit"), ("ctrl-u", "clear"), ("ctrl-a", "toggle stage all"), ("esc", "cancel")],
                     Mode::Split { .. } => &[("jk", "scroll"), ("esc", "back")],
+                    Mode::Page { .. } => &[("jk", "scroll"), ("pgup/pgdn", "page"), ("any other key", "close")],
                     Mode::Timeline { .. } => &[("jk", "move"), ("enter", "go back to this point"), ("esc", "close")],
                     Mode::Palette { .. } => &[("type", "filter"), ("enter", "run"), ("esc", "close")],
                     Mode::Confirm { .. } => &[("y", "yes"), ("n", "no")],
                     Mode::Search { .. } => &[("↑↓", "select"), ("enter", "jump"), ("esc", "cancel")],
-                    _ if self.focus == Pane::Detail => &[("jk", "links"), ("enter", "jump"), ("b", "back"), ("pgup/pgdn", "scroll"), ("h", "symbols"), ("/", "search"), ("q", "quit")],
-                    _ => &[("ctrl-p", "all commands"), ("tab", "pane"), ("/", "search"), ("s", "changes"), ("c", "commit"), ("B", "branches"), ("U", "undo"), ("o", "overview"), ("a", "agent"), ("q", "quit")],
+                    _ if self.focus == Pane::Detail => &[("jk", "links"), ("enter", "jump"), ("b", "back"), ("/", "search"), ("ctrl-p", "all")],
+                    _ if self.focus == Pane::Symbols => &[("enter", "details"), ("/", "search"), ("s", "changes"), ("c", "commit"), ("ctrl-p", "all")],
+                    _ => &[("enter", "open"), ("/", "search"), ("s", "changes"), ("o", "overview"), ("ctrl-p", "all")],
                 };
                 let mut spans = vec![Span::raw(" ")];
                 for (k, v) in keys {
                     spans.push(Span::styled(*k, Style::new().fg(ACCENT)));
                     spans.push(Span::styled(format!(" {v}   "), Style::new().fg(DIM)));
+                }
+                // the tree marks, where they are visible
+                if matches!(self.mode, Mode::Normal) && self.focus == Pane::Files && !self.changed.is_empty() {
+                    spans.push(Span::styled("+", Style::new().fg(Color::Green)));
+                    spans.push(Span::styled(" staged  ", Style::new().fg(DIM)));
+                    spans.push(Span::styled("•", Style::new().fg(Color::Yellow)));
+                    spans.push(Span::styled(" changed", Style::new().fg(DIM)));
                 }
                 Line::from(spans)
             }
@@ -763,7 +776,12 @@ impl<'w> App<'w> {
                 let name_style = if r.is_dir { Style::new().bold() } else { Style::new() };
                 spans.push(Span::styled(r.name.clone(), name_style));
                 if changed {
-                    spans.push(Span::styled(" ●", Style::new().fg(Color::Yellow)));
+                    // + staged (goes into the next commit) · • changed, not staged
+                    if !r.is_dir && self.staged.contains(&r.path) {
+                        spans.push(Span::styled(" +", Style::new().fg(Color::Green)));
+                    } else {
+                        spans.push(Span::styled(" •", Style::new().fg(Color::Yellow)));
+                    }
                 }
                 ListItem::new(Line::from(spans))
             })
@@ -781,11 +799,13 @@ impl<'w> App<'w> {
             .map(|&i| {
                 let s = &self.g.syms[i].sym;
                 let nested = s.kind == Kind::Method || s.parent.as_deref().is_some_and(|p| p.contains("::") && self.g.syms.iter().any(|x| x.sym.qualified == p && x.sym.kind != Kind::Module));
+                // one kind column for every row; members are indented under their type by name
                 let indent = if nested { "  " } else { "" };
                 let style = if s.is_public() { Style::new() } else { Style::new().fg(DIM) };
+                let style = if s.kind.is_type() { style.bold() } else { style };
                 let mut spans = vec![
-                    Span::raw(indent),
                     Span::styled(format!("{:<7}", views::kind_word(s.kind)), Style::new().fg(DIM)),
+                    Span::raw(indent),
                     Span::styled(s.name.clone(), style),
                 ];
                 match self.agent_marks.get(&s.qualified) {
@@ -804,7 +824,7 @@ impl<'w> App<'w> {
     }
 
     fn draw_detail(&self, f: &mut Frame, area: Rect) {
-        let (title, text) = if let Some(i) = self.current_symbol() {
+        if let Some(i) = self.current_symbol() {
             let (mut lines, links) = self.symbol_detail(i);
             if self.focus == Pane::Detail {
                 if let Some(&(li, _)) = links.get(self.link_sel) {
@@ -814,8 +834,13 @@ impl<'w> App<'w> {
                 }
             }
             let title = if self.history.is_empty() { " detail ".to_string() } else { format!(" detail · b back ({}) ", self.history.len()) };
-            (title, Text::from(lines))
-        } else if let Some(r) = self.selected_row() {
+            // wrapped here, not by the Paragraph: continuation lines keep the indent
+            let (lines, _) = wrap_hanging(lines, area.width.saturating_sub(2) as usize);
+            let p = Paragraph::new(Text::from(lines)).block(pane_block(&title, self.focus == Pane::Detail)).scroll((self.detail_scroll, 0));
+            f.render_widget(p, area);
+            return;
+        }
+        let (title, text) = if let Some(r) = self.selected_row() {
             if r.is_dir {
                 (" map ".to_string(), self.dir_detail(&r.path))
             } else {
@@ -824,10 +849,8 @@ impl<'w> App<'w> {
         } else {
             (" detail ".to_string(), Text::from("empty repository — add some files".fg(DIM)))
         };
-        let p = Paragraph::new(text)
-            .block(pane_block(&title, self.focus == Pane::Detail))
-            .wrap(Wrap { trim: false })
-            .scroll((self.detail_scroll, 0));
+        let (lines, _) = wrap_hanging(text.lines, area.width.saturating_sub(2) as usize);
+        let p = Paragraph::new(Text::from(lines)).block(pane_block(&title, self.focus == Pane::Detail)).scroll((self.detail_scroll, 0));
         f.render_widget(p, area);
     }
 
@@ -1170,6 +1193,93 @@ fn hl(focused: bool) -> Style {
     }
 }
 
+/// Wrap lines to `width` columns. A continuation keeps the line's indent (its
+/// leading spaces, a line-number gutter and the code's own indentation) and
+/// starts with `↪`, so wrapped signatures and code stay readable. Returns the
+/// lines and, for each input line, the index of its first output row.
+fn wrap_hanging(lines: Vec<Line<'static>>, width: usize) -> (Vec<Line<'static>>, Vec<usize>) {
+    use unicode_width::UnicodeWidthChar;
+    let mut out = Vec::with_capacity(lines.len());
+    let mut rows = Vec::with_capacity(lines.len());
+    for line in lines {
+        rows.push(out.len());
+        let total: usize = line.spans.iter().map(|s| s.width()).sum();
+        if width < 12 || total <= width {
+            out.push(line);
+            continue;
+        }
+        let line_style = line.style;
+        // (char, style) cells
+        let cells: Vec<(char, Style)> = line.spans.iter().flat_map(|s| s.content.chars().map(move |c| (c, s.style))).collect();
+        // hanging indent: leading spaces, an optional line-number gutter, then code indentation
+        let text: String = cells.iter().map(|c| c.0).collect();
+        let mut indent = text.len() - text.trim_start().len();
+        let rest = &text[indent..];
+        let digits = rest.chars().take_while(|c| c.is_ascii_digit()).count();
+        if digits > 0 && rest[digits..].starts_with(' ') {
+            indent += digits;
+            indent += text[indent..].len() - text[indent..].trim_start().len();
+        }
+        let indent = indent.min(width / 2);
+        let mut start = 0;
+        let mut first = true;
+        while start < cells.len() {
+            let avail = if first { width } else { width.saturating_sub(indent + 2) };
+            // take cells up to `avail` columns
+            let (mut end, mut w) = (start, 0);
+            while end < cells.len() {
+                let cw = cells[end].0.width().unwrap_or(0);
+                if w + cw > avail {
+                    break;
+                }
+                w += cw;
+                end += 1;
+            }
+            // break after the last space in the chunk when the line continues
+            if end < cells.len() {
+                if let Some(sp) = (start + 1..end).rev().find(|&k| cells[k].0 == ' ') {
+                    if sp > start + avail / 3 {
+                        end = sp + 1;
+                    }
+                }
+            }
+            if end == start {
+                end = start + 1;
+            }
+            let mut spans: Vec<Span<'static>> = Vec::new();
+            if !first {
+                spans.push(Span::raw(" ".repeat(indent)));
+                spans.push(Span::styled("↪ ", Style::new().fg(DIM)));
+            }
+            let mut buf = String::new();
+            let mut cur = cells[start].1;
+            let skip_lead = !first;
+            for (k, &(c, st)) in cells[start..end].iter().enumerate() {
+                if skip_lead && k == 0 && c == ' ' {
+                    continue;
+                }
+                if st != cur && !buf.is_empty() {
+                    spans.push(Span::styled(std::mem::take(&mut buf), cur));
+                }
+                cur = st;
+                buf.push(c);
+            }
+            if !buf.is_empty() {
+                spans.push(Span::styled(buf, cur));
+            }
+            out.push(Line::from(spans).style(line_style));
+            start = end;
+            first = false;
+        }
+    }
+    (out, rows)
+}
+
+/// Everything between the top bar and the key hints: for screens that replace the panes.
+fn screen_area(area: Rect) -> Rect {
+    Rect { x: area.x, y: area.y + 1, width: area.width, height: area.height.saturating_sub(2) }
+}
+
 fn popup(area: Rect, pw: u16, ph: u16) -> Rect {
     let w = area.width * pw / 100;
     let h = area.height * ph / 100;
@@ -1188,6 +1298,8 @@ mod tests {
         let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
         let ws = Workspace::open(&root).unwrap();
         let mut app = App::new(&ws).unwrap();
+        // the first-run welcome page covers the panes: close it like a user would
+        app.on_key(KeyEvent::new(KeyCode::Esc, KeyModifiers::NONE));
         let mut term = Terminal::new(TestBackend::new(140, 40)).unwrap();
         term.draw(|f| app.draw(f)).unwrap();
         let buf = format!("{:?}", term.backend().buffer());
@@ -1214,6 +1326,25 @@ mod snapshot {
             out.push('\n');
         }
         out
+    }
+
+    #[test]
+    fn wrapped_lines_keep_their_indent() {
+        let lines = vec![
+            Line::from("  takes    path  impl AsRef<Path> and some more words that do not fit"),
+            Line::from("short"),
+            Line::from("  19      pub fn open(path: impl AsRef<Path>) -> Result<Self> {"),
+        ];
+        let (out, rows) = wrap_hanging(lines, 30);
+        let text: Vec<String> = out.iter().map(|l| l.spans.iter().map(|s| s.content.as_ref()).collect()).collect();
+        assert!(text.len() > 3, "{text:?}");
+        assert!(text.iter().all(|t| unicode_width::UnicodeWidthStr::width(t.as_str()) <= 30), "{text:?}");
+        // continuation of the first line: its 2-space indent, then the mark
+        assert!(text[1].starts_with("  ↪ "), "{text:?}");
+        // the code line continues under its code, past the line-number gutter
+        let code = rows[2];
+        assert!(text[code + 1].starts_with(&format!("{}↪ ", " ".repeat(10))), "{text:?}");
+        assert_eq!(text[rows[1]], "short");
     }
 
     #[test]

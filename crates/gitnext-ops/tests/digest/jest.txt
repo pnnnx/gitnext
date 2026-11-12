@@ -1,0 +1,16 @@
+ FAIL  tests/vanilla/basic.test.ts
+  ● vanilla store › can set the store
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: 2
+    Received: 1
+
+      41 |     setState({ count: 1 })
+      42 |     expect(getState().count).toEqual(2)
+         |                              ^
+      at Object.<anonymous> (tests/vanilla/basic.test.ts:42:30)
+      at processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+Test Suites: 1 failed, 4 passed, 5 total
+Tests:       1 failed, 62 passed, 63 total

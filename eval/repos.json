@@ -1,0 +1,22 @@
+[
+ {"name": "cobra", "lang": "go", "url": "https://github.com/spf13/cobra", "commit": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+  "setup": "go mod download"},
+ {"name": "chi", "lang": "go", "url": "https://github.com/go-chi/chi", "commit": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+  "setup": "go mod download"},
+ {"name": "click", "lang": "python", "url": "https://github.com/pallets/click", "commit": "8abb77a8432e03ed14a95f972b44f905279415a7",
+  "setup": "PY=$(command -v python3.13 || command -v python3.12 || command -v python3.11 || command -v python3.10 || echo python3) && rm -rf .venv && $PY -m venv .venv && .venv/bin/python -m pip -q install --upgrade pip && .venv/bin/pip -q install -e . pytest"},
+ {"name": "sqlparse", "lang": "python", "url": "https://github.com/andialbrecht/sqlparse", "commit": "09dbe1eec31ed1b3cd05366748865f11ba427d32",
+  "setup": "PY=$(command -v python3.13 || command -v python3.12 || command -v python3.11 || command -v python3.10 || echo python3) && rm -rf .venv && $PY -m venv .venv && .venv/bin/python -m pip -q install --upgrade pip && .venv/bin/pip -q install -e . pytest"},
+ {"name": "zustand", "lang": "typescript", "url": "https://github.com/pmndrs/zustand", "commit": "9fed2eb2f3af672da9f7bf694b996df3831fc207",
+  "setup": "npm install --ignore-scripts --no-audit --no-fund --loglevel=error"},
+ {"name": "yaml", "lang": "typescript", "url": "https://github.com/eemeli/yaml", "commit": "528ef30d6ded4bd9f2c3521b670eb2b29d503c5c",
+  "setup": "npm install --ignore-scripts --no-audit --no-fund --loglevel=error"},
+ {"name": "jsoup", "lang": "java", "url": "https://github.com/jhy/jsoup", "commit": "d90d57521d931db7bf7ee464a4c0a1a9293db088",
+  "setup": "mvn -q -B test -Dtest=StringUtilTest -Dsurefire.failIfNoSpecifiedTests=false"},
+ {"name": "json-java", "lang": "java", "url": "https://github.com/stleary/JSON-java", "commit": "2cd0a8c2112a3bc17d33ba8546c54ecb613613f1",
+  "setup": "mvn -q -B test -Dtest=JSONObjectTest -Dsurefire.failIfNoSpecifiedTests=false"},
+ {"name": "semver", "lang": "rust", "url": "https://github.com/dtolnay/semver", "commit": "280ebcb6edac3aa4cdc545dbff8a26c5ac4861fe",
+  "setup": "cargo fetch -q"},
+ {"name": "indexmap", "lang": "rust", "url": "https://github.com/indexmap-rs/indexmap", "commit": "41a870887c4c77adf665886e63df08f406bfe37a",
+  "setup": "cargo fetch -q"}
+]

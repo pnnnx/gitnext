@@ -23,6 +23,9 @@ pub struct Graph {
     /// target symbol → (referring symbol, edge kind, line); built lazily from all edges.
     rev: OnceLock<(RevIndex, Guesses)>,
     short: OnceLock<Vec<String>>,
+    /// Python module → name it imports → where from: packages re-export through `__init__`
+    /// (`from .termui import style`), and callers write `click.style(...)`.
+    reexports: OnceLock<HashMap<String, HashMap<String, Vec<String>>>>,
     /// Inferred purposes of directories (`dir:<path>` notes).
     pub dir_notes: HashMap<String, String>,
     /// Language-server answers: (file, line, col) → (target file, target line); "" = external.
@@ -182,7 +185,7 @@ impl Graph {
                 break;
             }
         }
-        Graph { files, syms, edges, by_name, by_qual, crate_roots, visible, dir_graph: OnceLock::new(), rev: OnceLock::new(), short: OnceLock::new(), dir_notes: HashMap::new(), links: HashMap::new() }
+        Graph { files, syms, edges, by_name, by_qual, crate_roots, visible, dir_graph: OnceLock::new(), rev: OnceLock::new(), short: OnceLock::new(), reexports: OnceLock::new(), dir_notes: HashMap::new(), links: HashMap::new() }
     }
 
     pub fn sym_ref(&self, i: usize) -> SymRef {
@@ -257,7 +260,28 @@ impl Graph {
         &all[i]
     }
 
+    /// A name for symbol `i` that no other symbol has: its qualified name, and with `#2`, `#3`…
+    /// for the later ones of several that share it (`impl Display for T` and `impl Debug for T`
+    /// both define `T::fmt`). Used where one symbol has to be found again by name: the learned test map.
+    pub fn unique_name(&self, i: usize) -> String {
+        let q = &self.syms[i].sym.qualified;
+        let mut same: Vec<usize> = self.by_qual.get(q).map(|v| v.iter().copied().filter(|&k| self.syms[k].sym.kind == self.syms[i].sym.kind).collect()).unwrap_or_default();
+        if same.len() < 2 {
+            return q.clone();
+        }
+        same.sort_by_key(|&k| (self.syms[k].file.as_str(), self.syms[k].sym.start_line));
+        match same.iter().position(|&k| k == i) {
+            Some(0) | None => q.clone(),
+            Some(n) => format!("{q}#{}", n + 1),
+        }
+    }
+
     /// Find symbols by exact qualified name, `::`-suffix, or bare name.
+    /// Every symbol with this bare name, whatever it belongs to (`main` of each program).
+    pub fn named(&self, name: &str) -> Vec<usize> {
+        self.by_name.get(name).cloned().unwrap_or_default()
+    }
+
     pub fn find(&self, q: &str) -> Vec<usize> {
         let q = q.trim();
         // `name@123` / `name:L123` pins an overload / duplicate by its start line.
@@ -389,7 +413,8 @@ impl Graph {
             .filter(|&i| {
                 // tests/, examples/, benches/ are separate targets: only visible to themselves.
                 let f = &self.syms[i].file;
-                !is_aux_target(f) || f == from_file || dir_of(f) == dir_of(from_file)
+                // … and their `mod util;` folders (tests/util/mod.rs is part of tests/x.rs)
+                !is_aux_target(f) || f == from_file || dir_of(f) == dir_of(from_file) || dir_of(f).strip_prefix(dir_of(from_file)).is_some_and(|r| r.starts_with('/'))
             })
             .collect()
     }
@@ -445,7 +470,12 @@ impl Graph {
             EdgeKind::Imports => {
                 let mut out = Vec::new();
                 let from_root = e.from.split("::").next().unwrap_or("");
+                let krate = crate_prefix(file, &e.from);
                 for path in flatten_use(&e.to) {
+                    let path = match (path.strip_prefix("crate::"), &krate) {
+                        (Some(rest), Some(k)) => format!("{k}::{rest}"),
+                        _ => path,
+                    };
                     out.extend(self.resolve_import(&path, from_root, file));
                 }
                 out.sort_unstable();
@@ -485,7 +515,7 @@ impl Graph {
             if f != file || e.kind != EdgeKind::Imports {
                 continue;
             }
-            let root = e.from.split("::").next().unwrap_or("");
+            let root = crate_prefix(file, &e.from).unwrap_or_else(|| e.from.split("::").next().unwrap_or("").to_string());
             for p in flatten_use(&e.to) {
                 out.insert(match p.strip_prefix("crate::") {
                     Some(rest) => format!("{root}::{rest}"),
@@ -524,10 +554,25 @@ impl Graph {
     }
 
     fn resolve_call_raw(&self, file: &str, e: &Edge) -> Vec<usize> {
+        // `getPool()::release`: a method of whatever `getPool` returns
+        if let Some((callee, method)) = e.to.rsplit_once("()::") {
+            let mut out: Vec<usize> = Vec::new();
+            for ty in self.returned_types(file, e, callee) {
+                out.extend(self.resolve_call_raw(file, &Edge { to: format!("{ty}::{method}"), ..e.clone() }));
+            }
+            if !out.is_empty() {
+                out.sort_unstable();
+                out.dedup();
+                return out;
+            }
+            // result type unknown (not declared, generic, from a library): an unknown receiver
+            return self.resolve_call_raw(file, &Edge { to: format!(".{method}"), ..e.clone() });
+        }
         let name = last_segment(&e.to);
         let Some(all) = self.by_name.get(name) else { return vec![] };
         let cands: Vec<usize> = all.iter().copied().filter(|&i| self.syms[i].sym.kind.is_callable()).collect();
         let cands = self.visible_only(&e.from, file, cands);
+        let cands_all = cands.clone();
         let caller = self.source_of(file, e).map(|i| &self.syms[i]);
         let caller_owner = caller.and_then(|c| c.sym.parent.clone()).unwrap_or_default();
         let qual = qualifier(&e.to);
@@ -615,7 +660,12 @@ impl Graph {
                 .collect();
             if own.is_empty() {
                 // inherited: walk base classes / implemented traits of the owner
-                self.inherited(&caller_owner, name, file)
+                let inh = self.inherited(&caller_owner, name, file);
+                if inh.is_empty() && file.ends_with(".rs") {
+                    self.same_type_other_module(&caller_owner, &cands)
+                } else {
+                    inh
+                }
             } else {
                 own
             }
@@ -634,7 +684,50 @@ impl Graph {
                 })
                 .collect()
         };
-        if picked.is_empty() && gitnext_parse::lang_for(std::path::Path::new(file)).is_some_and(gitnext_parse::Lang::is_generic) && !qual.is_empty() && qual != "Self" {
+        if picked.is_empty() && file.ends_with(".py") && !qual.is_empty() && qual != "Self" {
+            // `click.style(...)`: `click` is a package of the repo and its `__init__` imports `style`
+            let via = self.py_reexported(e.to.rsplit_once("::").map_or("", |x| x.0), name, 0);
+            if !via.is_empty() {
+                return via;
+            }
+        }
+        let rust = file.ends_with(".rs");
+        if picked.is_empty() && (rust || gitnext_parse::lang_for(std::path::Path::new(file)).is_some_and(gitnext_parse::Lang::is_generic)) && !qual.is_empty() && qual != "Self" {
+            // `Type::method` with Type a repo type but the method defined above it (base class,
+            // embedded struct, interface default): inherited first, else any method of that name
+            let types: Vec<usize> = self.by_name.get(qual).map(|v| v.iter().copied().filter(|&i| self.syms[i].sym.kind.is_type()).collect()).unwrap_or_default();
+            if !types.is_empty() {
+                for &t in &types {
+                    let inh = self.inherited(&self.syms[t].sym.qualified, name, file);
+                    if !inh.is_empty() {
+                        return inh;
+                    }
+                }
+                // Rust: a std trait method on a repo type (`v.to_string()`) is not a repo method
+                if rust && COMMON_METHODS.contains(&name) {
+                    return vec![];
+                }
+                return cands_all.into_iter().filter(|&i| self.syms[i].sym.kind == Kind::Method).collect();
+            }
+            if rust {
+                return vec![];
+            }
+            // `Owner::field::method` (Java `import static Owner.field`): the field's declared type
+            let segs: Vec<&str> = e.to.split("::").collect();
+            if segs.len() >= 3 {
+                let owner = segs[segs.len() - 3];
+                let fty = self.by_name.get(owner).into_iter().flatten().filter(|&&i| self.syms[i].sym.kind.is_type()).find_map(|&i| {
+                    let p = self.syms[i].sym.params.iter().find(|p| p.name == qual)?;
+                    let t = p.ty.trim_start_matches(['*', '&', ' ', ':']).split(['<', '[', '(', ' ', '{', ',', '?']).next()?;
+                    Some(t.rsplit(['.', ':']).next()?.to_string()).filter(|t| !t.is_empty())
+                });
+                if let Some(t) = fty {
+                    let m: Vec<usize> = cands_all.iter().copied().filter(|&i| self.syms[i].sym.kind == Kind::Method && self.syms[i].sym.parent.as_deref().is_some_and(|p| last_segment(p) == t)).collect();
+                    if !m.is_empty() {
+                        return m;
+                    }
+                }
+            }
             // `pkg::index::create` where the index file only re-exports `create`: in-repo path → by name
             let first = e.to.split("::").next().unwrap_or("");
             if self.is_repo_root(first) {
@@ -647,6 +740,140 @@ impl Graph {
             }
         }
         prefer_same_file(&self.syms, picked, file)
+    }
+
+    /// What a Python module hands on under `name`: the function or class its own imports bring in
+    /// (followed through a chain of re-exporting modules).
+    fn py_reexported(&self, module: &str, name: &str, depth: usize) -> Vec<usize> {
+        let table = self.reexports.get_or_init(|| {
+            let mut m: HashMap<String, HashMap<String, Vec<String>>> = HashMap::new();
+            for (file, e) in &self.edges {
+                if e.kind != EdgeKind::Imports || !file.ends_with(".py") {
+                    continue;
+                }
+                for path in flatten_use(&e.to) {
+                    m.entry(e.from.clone()).or_default().entry(last_segment(&path).to_string()).or_default().push(path);
+                }
+            }
+            m
+        });
+        let is_module = |i: &usize| self.syms[*i].sym.kind == Kind::Module && self.syms[*i].file.ends_with(".py");
+        let mut modules: Vec<usize> = self.by_qual.get(module).into_iter().flatten().copied().filter(|i| is_module(i)).collect();
+        if modules.is_empty() {
+            modules = self.by_name.get(last_segment(module)).into_iter().flatten().copied().filter(|i| is_module(i)).collect();
+        }
+        let mut out = Vec::new();
+        for m in modules {
+            for path in table.get(&self.syms[m].sym.qualified).and_then(|t| t.get(name)).into_iter().flatten() {
+                let direct: Vec<usize> = self.by_qual.get(path).into_iter().flatten().copied().filter(|&i| self.syms[i].sym.kind != Kind::Module).collect();
+                if !direct.is_empty() {
+                    out.extend(direct);
+                } else if depth < 3 {
+                    if let Some((inner, _)) = path.rsplit_once("::") {
+                        out.extend(self.py_reexported(inner, name, depth + 1));
+                    }
+                }
+            }
+        }
+        out.sort_unstable();
+        out.dedup();
+        out
+    }
+
+    /// Rust `self.as_str()` in `impl Display for BuildMetadata` (display.rs): the owner is
+    /// `semver::display::BuildMetadata`, the method sits in the `impl` next to the struct,
+    /// `semver::BuildMetadata`. Methods of the same type name in the same crate — only when the
+    /// crate defines one type of that name; with two (`map::Slice`, `set::Slice`) it stays unknown.
+    fn same_type_other_module(&self, owner: &str, cands: &[usize]) -> Vec<usize> {
+        let ty = last_segment(owner);
+        let krate = owner.split("::").next().unwrap_or("");
+        let in_crate = |q: &str| q.split("::").next() == Some(krate);
+        let defs: HashSet<&str> = self
+            .by_name
+            .get(ty)
+            .into_iter()
+            .flatten()
+            .map(|&i| &self.syms[i].sym)
+            .filter(|s| s.kind.is_type() && in_crate(&s.qualified))
+            .map(|s| s.qualified.as_str())
+            .collect();
+        if defs.len() != 1 {
+            return vec![];
+        }
+        cands
+            .iter()
+            .copied()
+            .filter(|&i| {
+                let s = &self.syms[i].sym;
+                s.kind == Kind::Method && s.parent.as_deref().is_some_and(|p| last_segment(p) == ty && in_crate(p))
+            })
+            .collect()
+    }
+
+    /// `f()::m` where `f` surely returns something the repo does not define: `f` is not in the repo
+    /// (`r.Context()`), or every candidate declares a result that is no repo type
+    /// (`PersistentFlags() *flag.FlagSet`). Not when the candidates disagree or declare nothing
+    /// (`el.tag()` with several `tag`s): then `m` may well be the repo's.
+    fn result_from_outside(&self, file: &str, e: &Edge, callee: &str, known_only: bool) -> bool {
+        // Go's `make(T)` / `new(T)` return their argument's type, which may be the repo's
+        if matches!(last_segment(callee), "make" | "new") {
+            return false;
+        }
+        let targets = drop_decls(&self.syms, self.resolve_call_raw(file, &Edge { to: callee.to_string(), ..e.clone() }));
+        if targets.is_empty() && known_only {
+            // not a repo function: known only for `pkg.Func(…)` in Go, where a package function
+            // that returns the caller's own type is rare
+            return file.ends_with(".go") && !callee.contains("()::") && !callee.starts_with('.') && !matches!(qualifier(callee), "" | "Self");
+        }
+        targets.iter().all(|&t| {
+            let s = &self.syms[t].sym;
+            !s.kind.is_type()
+                && s.returns.as_deref().and_then(result_type_name).is_some_and(|name| {
+                    // `T`, `K2`: a type parameter stands for whatever the caller passes
+                    let param = name.len() <= 2 && name.starts_with(|c: char| c.is_ascii_uppercase());
+                    !param && !self.by_name.get(name).is_some_and(|v| v.iter().any(|&i| self.syms[i].sym.kind.is_type()))
+                })
+        })
+    }
+
+    /// A call written as `f().m()` whose receiver is hardly a repo type: whatever repo method is
+    /// called `m`, this call is not known to be it — `callers` says "maybe".
+    pub fn foreign_receiver(&self, file: &str, e: &Edge) -> bool {
+        e.to.rsplit_once("()::").is_some_and(|(c, _)| self.result_from_outside(file, e, c, false))
+    }
+
+    /// The same for `rename`, which breaks the build when it is wrong either way, so only what is
+    /// known: `f` is a repo function that declares a library result, or (Go) a function of an
+    /// imported package (`template.New(…).Execute`). A library call that hands a repo object on
+    /// (`assertInstanceOf(TextNode.class, n).getWholeText()`, `nodes.get(0).text()`) is not that.
+    pub fn foreign_receiver_for_rename(&self, file: &str, e: &Edge) -> bool {
+        e.to.rsplit_once("()::").is_some_and(|(c, _)| self.result_from_outside(file, e, c, true))
+    }
+
+    /// Names of the repo types a call returns, from the declared result type of what it
+    /// resolves to: `Self::pool` → `SoftPool` for `SoftPool<char[]> pool()`. Empty when the
+    /// callee is ambiguous, declares no result, or returns a built-in / library / generic type.
+    fn returned_types(&self, file: &str, e: &Edge, callee: &str) -> Vec<String> {
+        let targets = drop_decls(&self.syms, self.resolve_call_raw(file, &Edge { to: callee.to_string(), ..e.clone() }));
+        let mut out: Vec<String> = Vec::new();
+        for &t in &targets {
+            let s = &self.syms[t].sym;
+            // `Circle(…)`, `new Circle(…)`: the call made an instance of the type itself
+            let name = if s.kind.is_type() { Some(s.name.as_str()) } else { s.returns.as_deref().and_then(result_type_name) };
+            let Some(name) = name else { return vec![] };
+            if !self.by_name.get(name).is_some_and(|v| v.iter().any(|&i| self.syms[i].sym.kind.is_type())) {
+                return vec![];
+            }
+            if !out.iter().any(|n| n == name) {
+                out.push(name.to_string());
+            }
+        }
+        // overloads and implementations of one interface method agree on the type; if the
+        // candidates return different things, the callee itself was a guess
+        if out.len() > 1 {
+            return vec![];
+        }
+        out
     }
 
     /// Whether the repo defines a method with this name (for LSP site selection).
@@ -736,11 +963,24 @@ impl Graph {
                 }
                 let Some(src) = self.source_of(file, e) else { continue };
                 let targets = self.resolve(file, e);
-                let distinct: HashSet<&str> = targets.iter().map(|&t| self.syms[t].sym.qualified.as_str()).collect();
+                // `Type::m` with the type named: same-named types in other modules (cfg variants,
+                // test doubles) all count as sure; only an unknown receiver (`.m`) is a guess
+                // (`f()::m` — the receiver is what `f` returns — may have ended as such a guess)
+                let typed = !e.to.starts_with('.') && e.to.contains("::") && !e.to.contains("()::");
+                let distinct: HashSet<&str> = targets
+                    .iter()
+                    .map(|&t| {
+                        let q = self.syms[t].sym.qualified.as_str();
+                        if typed { tail2(q) } else { q }
+                    })
+                    .collect();
+                // `r.Context()::Value`, `c.PersistentFlags()::HasFlags`: the receiver is a library
+                // type, so the one repo method of that name is only a guess
+                let foreign = self.foreign_receiver(file, e);
                 for t in targets {
                     if t != src {
                         m.entry(t).or_default().push((src, e.kind, e.line));
-                        if distinct.len() > 1 {
+                        if distinct.len() > 1 || foreign {
                             guess.insert((src, t));
                         } else {
                             sure.insert((src, t));
@@ -842,9 +1082,14 @@ impl Graph {
             if e.kind != EdgeKind::Calls || e.from != s.sym.qualified || *file != s.file {
                 continue;
             }
+            // `f()::m` that stayed unresolved reads as a call on an unknown receiver
+            let written = match e.to.rsplit_once("()::") {
+                Some((_, m)) => format!(".{m}"),
+                None => e.to.clone(),
+            };
             match self.resolve(file, e)[..] {
                 [] => {
-                    external.insert(e.to.clone());
+                    external.insert(written);
                 }
                 [i] => {
                     if seen.insert(i) {
@@ -852,8 +1097,8 @@ impl Graph {
                     }
                 }
                 ref many => {
-                    if !out.ambiguous.iter().any(|(n, _)| *n == e.to) {
-                        out.ambiguous.push((e.to.clone(), many.to_vec()));
+                    if !out.ambiguous.iter().any(|(n, _)| *n == written) {
+                        out.ambiguous.push((written, many.to_vec()));
                     }
                 }
             }
@@ -1033,6 +1278,29 @@ fn param_key(ps: &[gitnext_parse::Param]) -> String {
         .join(",")
 }
 
+/// The named type of a declared result: `*Command` → `Command`, `(*Store, error)` → `Store`,
+/// `[]*Command` → `Command` (what a loop over it yields), `Promise<Store>` → `Store`,
+/// `pkg.Type` → `Type`. Type parameters and containers of other things give their own name
+/// (`List<Element>` → `List`), which is then simply not a repo type.
+fn result_type_name(ret: &str) -> Option<&str> {
+    let mut t = ret.trim().trim_start_matches('(').trim();
+    t = t.split(',').next().unwrap_or(t).trim();
+    loop {
+        let before = t;
+        t = t.trim_start_matches(['*', '&', ' ']);
+        t = t.strip_prefix("[]").unwrap_or(t);
+        for wrap in ["Promise<", "Awaited<", "Optional<", "readonly "] {
+            t = t.strip_prefix(wrap).unwrap_or(t);
+        }
+        if t == before {
+            break;
+        }
+    }
+    let t = t.split(['<', '[', ' ', '|', '?', ')', '>', '{']).next().unwrap_or("");
+    let t = t.rsplit(['.', ':']).next().unwrap_or(t);
+    t.chars().next().is_some_and(|c| c.is_alphabetic() || c == '_').then_some(t)
+}
+
 /// If both a prototype and its definition matched, keep only the definition.
 fn drop_decls(syms: &[SymbolRow], c: Vec<usize>) -> Vec<usize> {
     if c.len() < 2 {
@@ -1044,6 +1312,30 @@ fn drop_decls(syms: &[SymbolRow], c: Vec<usize>) -> Vec<usize> {
 
 /// What another file can import: exported, non-test definitions (a test file's
 /// helpers are its own). Keeps everything when nothing qualifies.
+/// `crate::` inside a Cargo test / bench / example target (`tests/foo.rs` is its own crate
+/// root, its `mod util;` is `tests/util/mod.rs`): the module of that directory, `semver::tests`.
+fn crate_prefix(file: &str, from: &str) -> Option<String> {
+    let (dir, name) = file.rsplit_once('/')?;
+    let d = dir.rsplit('/').next()?;
+    if !matches!(d, "tests" | "benches" | "examples") || !name.ends_with(".rs") {
+        return None;
+    }
+    let stem = name.strip_suffix(".rs")?;
+    let segs: Vec<&str> = from.split("::").collect();
+    let i = segs.iter().position(|s| *s == stem)?;
+    (i > 0).then(|| segs[..i].join("::"))
+}
+
+/// `a::b::Type::m` → `Type::m`.
+fn tail2(q: &str) -> &str {
+    let mut it = q.rmatch_indices("::");
+    it.next();
+    match it.next() {
+        Some((i, _)) => &q[i + 2..],
+        None => q,
+    }
+}
+
 fn importable(syms: &[SymbolRow], c: Vec<usize>, file: &str) -> Vec<usize> {
     let ok: Vec<usize> = c.iter().copied().filter(|&i| syms[i].file == file || (syms[i].sym.visibility.is_some() && !syms[i].sym.test)).collect();
     if ok.is_empty() { c } else { ok }

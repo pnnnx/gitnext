@@ -5,11 +5,13 @@
 
 mod graph;
 pub mod libs;
+mod testmap;
 pub mod notes;
 pub mod semdiff;
 
 pub use graph::{flatten_use, Callees, DirDeps, Graph, Hierarchy, ImpactNode, SymRef};
 pub use libs::{Dep, LibUse};
+pub use testmap::{read_coverage, Covering, TestMap};
 
 use anyhow::{Context, Result};
 use gitnext_parse::{analyze_in, find_crate, file_type_label, hash_hex, lang_for, Edge, EdgeKind, FileAnalysis, Kind, Param, Symbol};
@@ -109,6 +111,23 @@ pub struct SymbolRow {
     pub sym: Symbol,
 }
 
+/// How long one opener waits for another that holds the database.
+const BUSY_WAIT: std::time::Duration = std::time::Duration::from_secs(30);
+
+/// Run `f` again while the database is locked by another connection (up to [`BUSY_WAIT`]):
+/// for the few operations where SQLite reports "busy" at once instead of waiting.
+fn wait_while_busy<T>(mut f: impl FnMut() -> rusqlite::Result<T>) -> rusqlite::Result<T> {
+    let start = std::time::Instant::now();
+    loop {
+        match f() {
+            Err(rusqlite::Error::SqliteFailure(e, _)) if matches!(e.code, rusqlite::ErrorCode::DatabaseBusy | rusqlite::ErrorCode::DatabaseLocked) && start.elapsed() < BUSY_WAIT => {
+                std::thread::sleep(std::time::Duration::from_millis(20));
+            }
+            r => return r,
+        }
+    }
+}
+
 impl Index {
     /// Open (or create) the index for a repository root.
     pub fn open(root: &Path) -> Result<Self> {
@@ -117,10 +136,12 @@ impl Index {
         ensure_gitignore(&dir)?;
         let conn = Connection::open(dir.join("index.db"))?;
         // several processes may open one repo at once (agent server, TUI, CLI): wait, don't fail
-        conn.busy_timeout(std::time::Duration::from_secs(30))?;
-        conn.execute_batch("PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA foreign_keys=ON;")?;
+        conn.busy_timeout(BUSY_WAIT)?;
+        // switching a new database to WAL takes an exclusive lock that SQLite does not wait
+        // for (the busy timeout is not consulted): two openers of a fresh repo collide here
+        wait_while_busy(|| conn.execute_batch("PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA foreign_keys=ON;"))?;
         let mut idx = Index { conn, root: root.to_path_buf(), skip: skipped_dirs(root) };
-        idx.migrate()?;
+        wait_while_busy(|| idx.migrate())?;
         Ok(idx)
     }
 
@@ -128,7 +149,7 @@ impl Index {
         &self.root
     }
 
-    fn migrate(&mut self) -> Result<()> {
+    fn migrate(&mut self) -> rusqlite::Result<()> {
         self.conn.execute_batch(
             "CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT);
              CREATE TABLE IF NOT EXISTS lsp_links (
@@ -136,7 +157,7 @@ impl Index {
                PRIMARY KEY (file, line, col));",
         )?;
         let want = format!("{SCHEMA_VERSION}.{}", gitnext_parse::PARSER_VERSION);
-        let current = |c: &Connection| -> Result<Option<String>> { Ok(c.query_row("SELECT value FROM meta WHERE key='schema'", [], |r| r.get(0)).optional()?) };
+        let current = |c: &Connection| -> rusqlite::Result<Option<String>> { c.query_row("SELECT value FROM meta WHERE key='schema'", [], |r| r.get(0)).optional() };
         if current(&self.conn)?.as_deref() == Some(want.as_str()) {
             return Ok(());
         }
@@ -253,7 +274,7 @@ impl Index {
         let removed: Vec<&String> = known.keys().filter(|k| !found_set.contains(k.as_str())).collect();
 
         // 3. Write in one transaction.
-        let tx = self.conn.transaction()?;
+        let tx = self.conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
         for r in &removed {
             tx.execute("DELETE FROM files WHERE path=?1", [r])?;
         }
@@ -362,7 +383,7 @@ impl Index {
 
     /// Cache language-server answers: call site → definition (`""` target = outside the repo).
     pub fn store_links(&mut self, links: &[(String, u32, u32, String, u32)]) -> Result<()> {
-        let tx = self.conn.transaction()?;
+        let tx = self.conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
         {
             let mut st = tx.prepare(
                 "INSERT OR REPLACE INTO lsp_links(file, line, col, file_hash, target_file, target_line)
@@ -419,7 +440,7 @@ fn ensure_gitignore(dir: &Path) -> Result<()> {
     let gi = dir.join(".gitignore");
     let mut text = std::fs::read_to_string(&gi).unwrap_or_else(|_| "# local state — map/ and notes.tsv are meant to be committed\n".into());
     let mut changed = !gi.exists();
-    for line in ["index.db", "index.db-*", "journal.jsonl", "hook-seen.tsv", "tui-welcomed", ".fuse_hidden*"] {
+    for line in ["index.db", "index.db-*", "tests.db", "tests.db-*", "coverage.db*", "journal.jsonl", "ops.jsonl", "hook-seen.tsv", "tui-welcomed", ".fuse_hidden*"] {
         if !text.lines().any(|l| l.trim() == line) {
             text.push_str(line);
             text.push('\n');

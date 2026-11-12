@@ -11,17 +11,23 @@ use serde::Serialize;
 pub mod agents;
 pub mod bench;
 pub mod changes;
+pub mod check;
+pub mod digest;
 pub mod context;
 pub mod edit;
 pub mod explain;
 pub mod history;
 pub mod insight;
 pub mod journal;
+pub mod learn;
 pub mod libs;
 pub mod locate;
 pub mod look;
 pub mod lsp;
+pub mod oplog;
 pub mod render;
+pub mod trust;
+pub mod why;
 
 use std::path::{Path, PathBuf};
 

@@ -1,0 +1,1458 @@
+{
+ "repo": "chi",
+ "lang": "go",
+ "commit": "c64ed7d6635f",
+ "seed": 7,
+ "gitnext_commit": "08e599c",
+ "functions": [
+  {
+   "group": "pick",
+   "symbol": "_examples::fileserver::FileServer",
+   "file": "_examples/fileserver/main.go",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "_examples::rest::ErrInvalidRequest",
+   "file": "_examples/rest/main.go",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "_examples::rest::NewArticleListResponse",
+   "file": "_examples/rest/main.go",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "_examples::rest::NewUserPayloadResponse",
+   "file": "_examples/rest/main.go",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "main::Chain",
+   "file": "chain.go",
+   "truth": 11,
+   "truth_doctests": 0,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 12,
+   "missed_by_coverage": [],
+   "covered_not_failing": [
+    "TestMountingSelf"
+   ],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 1,
+   "top_coverage": [
+    "TestMountingSelf",
+    "TestRouterFromMuxWith",
+    "TestMuxMiddlewareStack",
+    "TestWalkInlineMiddlewaresAcrossSubrouter",
+    "TestMuxRouteGroups",
+    "TestMuxWith",
+    "TestWalkMiddlewaresAcrossGroupAndRoute",
+    "TestWalker",
+    "TestNestedGroups",
+    "TestMuxComplicatedNotFound"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.18181818181818182,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 0.9166666666666666,
+     "predicted": 12,
+     "top_hits": 9,
+     "top_n": 10,
+     "top_precision": 0.9,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9166666666666666,
+     "predicted": 12,
+     "top_hits": 9,
+     "top_n": 10,
+     "top_precision": 0.9,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "main::Middlewares::HandlerFunc",
+   "file": "chain.go",
+   "truth": 1,
+   "truth_doctests": 0,
+   "predicted_gitnext": 0,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestMuxNestedNotFound"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "main::Mux::MethodNotAllowedHandler",
+   "file": "mux.go",
+   "truth": 4,
+   "truth_doctests": 0,
+   "predicted_gitnext": 41,
+   "predicted_coverage": 4,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestMethodNotAllowed",
+    "TestQueryHTTPMethod",
+    "TestMuxNestedMethodNotAllowed",
+    "TestMuxBasic"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.0975609756097561,
+     "predicted": 41,
+     "top_hits": 4,
+     "top_n": 10,
+     "top_precision": 0.4,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.0975609756097561,
+     "predicted": 41,
+     "top_hits": 4,
+     "top_n": 10,
+     "top_precision": 0.4,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "main::Mux::NotFoundHandler",
+   "file": "mux.go",
+   "truth": 14,
+   "truth_doctests": 0,
+   "predicted_gitnext": 43,
+   "predicted_coverage": 14,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestMuxEmptyRoutes",
+    "TestMuxPlain",
+    "TestServeHTTPExistingContext",
+    "TestMuxMissingParams",
+    "TestStripPrefix",
+    "TestMuxTrailingSlash",
+    "TestSupressNotFoundMount",
+    "TestMuxComplicatedNotFound",
+    "TestGetHead",
+    "TestMuxBig"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.6428571428571429,
+     "precision": 0.20930232558139536,
+     "predicted": 43,
+     "top_hits": 3,
+     "top_n": 10,
+     "top_precision": 0.3,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 14,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.2916666666666667,
+     "predicted": 48,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "main::NewMux",
+   "file": "mux.go",
+   "truth": 101,
+   "truth_doctests": 0,
+   "predicted_gitnext": 104,
+   "predicted_coverage": 106,
+   "missed_by_coverage": [],
+   "covered_not_failing": [
+    "TestMiddlewarePanicOnLateUse",
+    "TestMountingExistingPath",
+    "TestMountingSelf",
+    "TestMuxWildcardRoute",
+    "TestMuxWildcardRouteCheckTwo"
+   ],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 5,
+   "top_coverage": [
+    "TestMuxMatch_DoesNotHaveBasePath",
+    "TestMuxWildcardRoute",
+    "TestMuxWildcardRouteCheckTwo",
+    "TestMiddlewarePanicOnLateUse",
+    "TestMountingExistingPath",
+    "TestHeartbeat",
+    "TestNew",
+    "TestMountingSelf",
+    "TestMuxEmptyRoutes",
+    "TestMuxMatch_HasBasePath"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.9801980198019802,
+     "precision": 0.9519230769230769,
+     "predicted": 104,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 0.9528301886792453,
+     "predicted": 106,
+     "top_hits": 5,
+     "top_n": 10,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9528301886792453,
+     "predicted": 106,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "main::RouteContext",
+   "file": "context.go",
+   "truth": 31,
+   "truth_doctests": 0,
+   "predicted_gitnext": 27,
+   "predicted_coverage": 31,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestRedirectSlashes_PreventBackslashRelativeOpenRedirect",
+    "TestStripSlashesWithNilContext",
+    "TestSingleHandler",
+    "TestMuxRegexp2",
+    "TestCleanPath",
+    "TestEscapedURLParams",
+    "TestMuxEmptyParams",
+    "TestPattern",
+    "TestSupressNotFoundRoutePattern",
+    "TestMuxRegexp"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.7419354838709677,
+     "precision": 0.8518518518518519,
+     "predicted": 27,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 31,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.8857142857142857,
+     "predicted": 35,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "main::URLParamFromCtx",
+   "file": "context.go",
+   "truth": 20,
+   "truth_doctests": 0,
+   "predicted_gitnext": 23,
+   "predicted_coverage": 20,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestSingleHandler",
+    "TestMuxRegexp2",
+    "TestEscapedURLParams",
+    "TestMuxEmptyParams",
+    "TestMuxRegexp",
+    "TestMuxMissingParams",
+    "TestMuxMounts",
+    "TestMuxSubroutesBasic",
+    "TestStripPrefix",
+    "TestMuxSubrouterWildcardParam"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.8695652173913043,
+     "predicted": 23,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.8695652173913043,
+     "predicted": 23,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "main::Walk",
+   "file": "tree.go",
+   "truth": 5,
+   "truth_doctests": 0,
+   "predicted_gitnext": 5,
+   "predicted_coverage": 5,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestWalkRouteWithHandlerAndSubrouter",
+    "TestWalkInlineMiddlewaresAcrossSubrouter",
+    "TestWalkMiddlewaresAcrossGroupAndRoute",
+    "TestWalker",
+    "TestCustomHTTPMethod"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 5,
+     "top_hits": 5,
+     "top_n": 5,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 5,
+     "top_hits": 5,
+     "top_n": 5,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 5,
+     "top_hits": 5,
+     "top_n": 5,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "main::endpoints::Value",
+   "file": "tree.go",
+   "truth": 105,
+   "truth_doctests": 0,
+   "predicted_gitnext": 43,
+   "predicted_coverage": 108,
+   "missed_by_coverage": [],
+   "covered_not_failing": [
+    "TestMiddlewarePanicOnLateUse",
+    "TestMountingExistingPath",
+    "TestMountingSelf"
+   ],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 3,
+   "top_coverage": [
+    "TestTreeFindPattern",
+    "TestMiddlewarePanicOnLateUse",
+    "TestTreeRegexMatchWholeParam",
+    "TestTreeRegexp",
+    "TestTreeRegexpRecursive",
+    "TestTreeMoar",
+    "TestMountingExistingPath",
+    "TestHeartbeat",
+    "TestNew",
+    "TestMountingSelf"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.38095238095238093,
+     "precision": 0.9302325581395349,
+     "predicted": 43,
+     "top_hits": 9,
+     "top_n": 10,
+     "top_precision": 0.9,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 0.9722222222222222,
+     "predicted": 108,
+     "top_hits": 7,
+     "top_n": 10,
+     "top_precision": 0.7,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9459459459459459,
+     "predicted": 111,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "middleware::GetClientIPAddr",
+   "file": "middleware/client_ip.go",
+   "truth": 24,
+   "truth_doctests": 0,
+   "predicted_gitnext": 19,
+   "predicted_coverage": 24,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestGetClientIPAddr_Unset",
+    "TestRequestLogger",
+    "TestRequestLoggerReadFrom",
+    "TestClientIPFromRemoteAddr",
+    "TestClientIPFromRemoteAddr_V4MappedIsUnmapped",
+    "Example_clientIPFromXFFTrustedProxies",
+    "TestClientIPFromXFFTrustedProxies",
+    "TestGetClientIPAddr_RoundTrip",
+    "TestClientIPFromHeader",
+    "TestClientIPFromHeader_MultiValueLastWins"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.7916666666666666,
+     "precision": 1.0,
+     "predicted": 19,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 24,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 24,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "middleware::GetLogEntry",
+   "file": "middleware/logger.go",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestRecoverer",
+    "TestRecovererNoColor"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 2,
+     "top_hits": 0,
+     "top_n": 2,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 4,
+     "top_hits": 2,
+     "top_n": 4,
+     "top_precision": 0.5,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "middleware::GetReqID",
+   "file": "middleware/request_id.go",
+   "truth": 4,
+   "truth_doctests": 0,
+   "predicted_gitnext": 1,
+   "predicted_coverage": 4,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestRequestLogger",
+    "TestRequestLoggerReadFrom",
+    "TestRequestID",
+    "TestRecovererNoColor"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.25,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "middleware::HeaderRoute::IsMatch",
+   "file": "middleware/route_headers.go",
+   "truth": 1,
+   "truth_doctests": 0,
+   "predicted_gitnext": 2,
+   "predicted_coverage": 1,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestRouteHeaders"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "middleware::NewCompressor",
+   "file": "middleware/compress.go",
+   "truth": 3,
+   "truth_doctests": 0,
+   "predicted_gitnext": 3,
+   "predicted_coverage": 3,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestCompressorWildcards",
+    "TestCompressorDefaultTextTypes",
+    "TestCompressor"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 3,
+     "top_hits": 3,
+     "top_n": 3,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 3,
+     "top_hits": 3,
+     "top_n": 3,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 3,
+     "top_hits": 3,
+     "top_n": 3,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "middleware::NewWrapResponseWriter",
+   "file": "middleware/wrap_writer.go",
+   "truth": 5,
+   "truth_doctests": 0,
+   "predicted_gitnext": 8,
+   "predicted_coverage": 5,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestWrapWriterHTTP2",
+    "TestWrapResponseWriterReadFromStatus",
+    "TestRequestLogger",
+    "TestRequestLoggerReadFrom",
+    "TestRecovererNoColor"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.6,
+     "precision": 0.375,
+     "predicted": 8,
+     "top_hits": 3,
+     "top_n": 8,
+     "top_precision": 0.375,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 5,
+     "top_hits": 5,
+     "top_n": 5,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 10,
+     "top_hits": 5,
+     "top_n": 10,
+     "top_precision": 0.5,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "middleware::RequestLogger",
+   "file": "middleware/logger.go",
+   "skipped": "mutant does not compile",
+   "predicted_gitnext": 3,
+   "predicted_coverage": 83
+  },
+  {
+   "group": "pick",
+   "symbol": "middleware::Throttle",
+   "file": "middleware/throttle.go",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 7,
+   "predicted_coverage": 0
+  },
+  {
+   "group": "pick",
+   "symbol": "middleware::compressResponseWriter::Close",
+   "file": "middleware/compress.go",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 46,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestCompressorDefaultTextTypes",
+    "TestCompressor"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.043478260869565216,
+     "predicted": 46,
+     "top_hits": 2,
+     "top_n": 10,
+     "top_precision": 0.2,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.043478260869565216,
+     "predicted": 46,
+     "top_hits": 2,
+     "top_n": 10,
+     "top_precision": 0.2,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "middleware::ContentCharset",
+   "file": "middleware/content_charset.go",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 4,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestContentCharset",
+    "TestContentCharsetMediaParameters"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 4,
+     "top_hits": 2,
+     "top_n": 4,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 4,
+     "top_hits": 2,
+     "top_n": 4,
+     "top_precision": 0.5,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "middleware::matchAcceptEncoding",
+   "file": "middleware/compress.go",
+   "truth": 2,
+   "truth_doctests": 0,
+   "predicted_gitnext": 3,
+   "predicted_coverage": 2,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestCompressorDefaultTextTypes",
+    "TestCompressor"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.6666666666666666,
+     "predicted": 3,
+     "top_hits": 2,
+     "top_n": 3,
+     "top_precision": 0.6666666666666666,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.6666666666666666,
+     "predicted": 3,
+     "top_hits": 2,
+     "top_n": 3,
+     "top_precision": 0.6666666666666666,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "middleware::init",
+   "file": "middleware/terminal.go",
+   "skipped": "mutant does not compile",
+   "predicted_gitnext": 4,
+   "predicted_coverage": 83
+  },
+  {
+   "group": "random",
+   "symbol": "middleware::init",
+   "file": "middleware/request_id.go",
+   "skipped": "mutant does not compile",
+   "predicted_gitnext": 4,
+   "predicted_coverage": 83
+  },
+  {
+   "group": "random",
+   "symbol": "main::Context::URLParam",
+   "file": "context.go",
+   "truth": 20,
+   "truth_doctests": 0,
+   "predicted_gitnext": 23,
+   "predicted_coverage": 20,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestSingleHandler",
+    "TestMuxRegexp2",
+    "TestEscapedURLParams",
+    "TestMuxEmptyParams",
+    "TestMuxRegexp",
+    "TestMuxMissingParams",
+    "TestMuxMounts",
+    "TestMuxSubroutesBasic",
+    "TestStripPrefix",
+    "TestMuxSubrouterWildcardParam"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 0.8695652173913043,
+     "predicted": 23,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.8695652173913043,
+     "predicted": 23,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "middleware::ThrottleWithOpts",
+   "file": "middleware/throttle.go",
+   "truth": 6,
+   "truth_doctests": 0,
+   "predicted_gitnext": 6,
+   "predicted_coverage": 6,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestThrottleBacklog",
+    "TestThrottleClientTimeout",
+    "TestThrottleCustomStatusCode",
+    "TestThrottleRetryAfter",
+    "TestThrottleMaximum",
+    "TestThrottleTriggerGatewayTimeout"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "main::node::setEndpoint",
+   "file": "tree.go",
+   "truth": 105,
+   "truth_doctests": 0,
+   "predicted_gitnext": 8,
+   "predicted_coverage": 108,
+   "missed_by_coverage": [],
+   "covered_not_failing": [
+    "TestMiddlewarePanicOnLateUse",
+    "TestMountingExistingPath",
+    "TestMountingSelf"
+   ],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 3,
+   "top_coverage": [
+    "TestTreeFindPattern",
+    "TestMiddlewarePanicOnLateUse",
+    "TestTreeRegexMatchWholeParam",
+    "TestTreeRegexp",
+    "TestTreeRegexpRecursive",
+    "TestTreeMoar",
+    "TestMountingExistingPath",
+    "TestHeartbeat",
+    "TestNew",
+    "TestMountingSelf"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0761904761904762,
+     "precision": 1.0,
+     "predicted": 8,
+     "top_hits": 8,
+     "top_n": 8,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 0.9722222222222222,
+     "predicted": 108,
+     "top_hits": 7,
+     "top_n": 10,
+     "top_precision": 0.7,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9722222222222222,
+     "predicted": 108,
+     "top_hits": 8,
+     "top_n": 10,
+     "top_precision": 0.8,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "main::node::getEdge",
+   "file": "tree.go",
+   "truth": 105,
+   "truth_doctests": 0,
+   "predicted_gitnext": 8,
+   "predicted_coverage": 110,
+   "missed_by_coverage": [],
+   "covered_not_failing": [
+    "TestMiddlewarePanicOnLateUse",
+    "TestMountingExistingPath",
+    "TestMountingSelf",
+    "TestMuxWildcardRoute",
+    "TestMuxWildcardRouteCheckTwo"
+   ],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 5,
+   "top_coverage": [
+    "TestMuxWildcardRoute",
+    "TestMuxWildcardRouteCheckTwo",
+    "TestTreeFindPattern",
+    "TestMiddlewarePanicOnLateUse",
+    "TestTreeRegexMatchWholeParam",
+    "TestTreeRegexp",
+    "TestTreeRegexpRecursive",
+    "TestTreeMoar",
+    "TestMountingExistingPath",
+    "TestHeartbeat"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.0761904761904762,
+     "precision": 1.0,
+     "predicted": 8,
+     "top_hits": 8,
+     "top_n": 8,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 0.9545454545454546,
+     "predicted": 110,
+     "top_hits": 6,
+     "top_n": 10,
+     "top_precision": 0.6,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9545454545454546,
+     "predicted": 110,
+     "top_hits": 8,
+     "top_n": 10,
+     "top_precision": 0.8,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "middleware::mustParsePrefixes",
+   "file": "middleware/client_ip.go",
+   "truth": 16,
+   "truth_doctests": 0,
+   "predicted_gitnext": 18,
+   "predicted_coverage": 18,
+   "missed_by_coverage": [],
+   "covered_not_failing": [
+    "TestClientIPFromHeader_PanicsOnBadPrefix",
+    "TestClientIPFromXFF_PanicsOnBadPrefix"
+   ],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 2,
+   "top_coverage": [
+    "TestClientIPFromHeader_PanicsOnBadPrefix",
+    "TestClientIPFromXFF_PanicsOnBadPrefix",
+    "TestClientIPFromHeader",
+    "TestClientIPFromHeader_MultiValueLastWins",
+    "TestGetClientIPAddr_RoundTrip",
+    "Example_clientIP",
+    "TestAdvisory_GHSA_j6qf_3m9c_vwj3",
+    "TestAdvisory_GHSA_9g5q_2w5x_hmxf",
+    "TestClientIPFromXFF_SingleTrustedHop",
+    "TestClientIPFromXFF_TrustedPrefixes"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.9375,
+     "precision": 0.8333333333333334,
+     "predicted": 18,
+     "top_hits": 7,
+     "top_n": 10,
+     "top_precision": 0.7,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 0.8888888888888888,
+     "predicted": 18,
+     "top_hits": 8,
+     "top_n": 10,
+     "top_precision": 0.8,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.8421052631578947,
+     "predicted": 19,
+     "top_hits": 8,
+     "top_n": 10,
+     "top_precision": 0.8,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "main::walk",
+   "file": "tree.go",
+   "truth": 5,
+   "truth_doctests": 0,
+   "predicted_gitnext": 5,
+   "predicted_coverage": 5,
+   "missed_by_coverage": [],
+   "covered_not_failing": [],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 0,
+   "top_coverage": [
+    "TestWalkRouteWithHandlerAndSubrouter",
+    "TestWalkInlineMiddlewaresAcrossSubrouter",
+    "TestWalkMiddlewaresAcrossGroupAndRoute",
+    "TestWalker",
+    "TestCustomHTTPMethod"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 5,
+     "top_hits": 5,
+     "top_n": 5,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 5,
+     "top_hits": 5,
+     "top_n": 5,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 5,
+     "top_hits": 5,
+     "top_n": 5,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "main::chain",
+   "file": "chain.go",
+   "truth": 100,
+   "truth_doctests": 0,
+   "predicted_gitnext": 3,
+   "predicted_coverage": 105,
+   "missed_by_coverage": [],
+   "covered_not_failing": [
+    "TestMiddlewarePanicOnLateUse",
+    "TestMountingExistingPath",
+    "TestMountingSelf",
+    "TestMuxWildcardRoute",
+    "TestMuxWildcardRouteCheckTwo"
+   ],
+   "missed_by_coverage_n": 0,
+   "covered_not_failing_n": 5,
+   "top_coverage": [
+    "TestMuxWildcardRoute",
+    "TestMuxWildcardRouteCheckTwo",
+    "TestMiddlewarePanicOnLateUse",
+    "TestMountingExistingPath",
+    "TestHeartbeat",
+    "TestNew",
+    "TestMountingSelf",
+    "TestMuxEmptyRoutes",
+    "TestMuxMatch_HasBasePath",
+    "TestRoutesHidesMountStub"
+   ],
+   "score": {
+    "gitnext": {
+     "recall": 0.03,
+     "precision": 1.0,
+     "predicted": 3,
+     "top_hits": 3,
+     "top_n": 3,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "coverage": {
+     "recall": 1.0,
+     "precision": 0.9523809523809523,
+     "predicted": 105,
+     "top_hits": 5,
+     "top_n": 10,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "union": {
+     "recall": 1.0,
+     "precision": 0.9523809523809523,
+     "predicted": 105,
+     "top_hits": 5,
+     "top_n": 10,
+     "top_precision": 0.5,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "middleware::PageRoute",
+   "file": "middleware/page_route.go",
+   "skipped": "no test fails when it throws",
+   "predicted_gitnext": 0,
+   "predicted_coverage": 0
+  }
+ ],
+ "summary": {
+  "pick": {
+   "gitnext": {
+    "recall": 0.661,
+    "precision": 0.614,
+    "top_precision": 0.667,
+    "caught": 0.875
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 0.99,
+    "top_precision": 0.944,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.719,
+    "top_precision": 0.812,
+    "caught": 1.0
+   },
+   "functions": 16
+  },
+  "random": {
+   "gitnext": {
+    "recall": 0.68,
+    "precision": 0.874,
+    "top_precision": 0.874,
+    "caught": 1.0
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 0.974,
+    "top_precision": 0.844,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.862,
+    "top_precision": 0.785,
+    "caught": 1.0
+   },
+   "functions": 9
+  },
+  "all": {
+   "gitnext": {
+    "recall": 0.668,
+    "precision": 0.708,
+    "top_precision": 0.742,
+    "caught": 0.92
+   },
+   "coverage": {
+    "recall": 1.0,
+    "precision": 0.984,
+    "top_precision": 0.908,
+    "caught": 1.0
+   },
+   "union": {
+    "recall": 1.0,
+    "precision": 0.77,
+    "top_precision": 0.803,
+    "caught": 1.0
+   },
+   "functions": 25
+  }
+ },
+ "cost": {
+  "build_s": 1.2,
+  "run_one_by_one_s": 29.7,
+  "map_s": 30.9,
+  "profiles_bytes": 5994063,
+  "packages": 2,
+  "testmain_packages": [],
+  "repeat": 3,
+  "plain_s": 26.8,
+  "tests": 140,
+  "map_pairs": 3826,
+  "map_functions": 164,
+  "map_sqlite_bytes": 53248,
+  "functions_with_body": 189,
+  "functions_never_run": 23,
+  "fail_alone_not_together": [],
+  "fail_together_not_alone": [],
+  "slowdown_runs": 1.2
+ }
+}

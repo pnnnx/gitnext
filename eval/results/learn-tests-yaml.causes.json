@@ -1,0 +1,2836 @@
+{
+ "repo": "yaml",
+ "package": "yaml",
+ "test_files": 24,
+ "test_functions_by_file": {
+  "tests/_utils.ts": 6,
+  "tests/artifacts/cli-singlequote.js": 1,
+  "tests/artifacts/cli-unstyle.cjs": 2,
+  "tests/cli.ts": 2,
+  "tests/clone.ts": 2,
+  "tests/cst.ts": 1,
+  "tests/doc/YAML-1.1.spec.ts": 1,
+  "tests/doc/YAML-1.2.spec.ts": 21,
+  "tests/doc/stringify.ts": 5,
+  "tests/doc/types.ts": 5,
+  "tests/json-test-suite.ts": 2,
+  "tests/visit.ts": 3,
+  "tests/yaml-test-suite.ts": 3
+ },
+ "functions": [
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_8": 15,
+    "sure_or_possible_4": [],
+    "named_sure_or_possible_4": 0,
+    "sure_or_possible_8": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_8": 15
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "sure_or_possible": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure": 21,
+    "named_sure_or_possible": 21,
+    "ancestors_sure": 11,
+    "ancestors_all": 11
+   },
+   "symbol": "src::compose::compose_collection::composeCollection",
+   "file": "src/compose/compose-collection.ts",
+   "truth": 17,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/cli.ts",
+     "reach": "package subpath `yaml/cli`; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/clone.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/collection-access.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/compat.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/directives.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/errors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/foldFlowLines.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/line-counter.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/properties.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/visit.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 3
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_4": 13,
+    "sure_8": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_8": 15,
+    "sure_or_possible_4": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_4": 13,
+    "sure_or_possible_8": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_8": 15
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "sure_or_possible": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure": 21,
+    "named_sure_or_possible": 21,
+    "ancestors_sure": 9,
+    "ancestors_all": 9
+   },
+   "symbol": "src::compose::compose_doc::composeDoc",
+   "file": "src/compose/compose-doc.ts",
+   "truth": 18,
+   "named_files": 2,
+   "hit": 1,
+   "named": [
+    "tests/cli.ts",
+    "tests/json-test-suite.ts"
+   ],
+   "named_how": [
+    "3 hops",
+    "4 hops"
+   ],
+   "missed": [
+    {
+     "test": "tests/clone.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/collection-access.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/compat.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/directives.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/YAML-1.1.spec.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 1
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/errors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/foldFlowLines.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/line-counter.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/properties.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/visit.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 3
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_8": 15,
+    "sure_or_possible_4": [],
+    "named_sure_or_possible_4": 0,
+    "sure_or_possible_8": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_8": 15
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "sure_or_possible": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure": 21,
+    "named_sure_or_possible": 21,
+    "ancestors_sure": 12,
+    "ancestors_all": 12
+   },
+   "symbol": "src::compose::compose_scalar::composeScalar",
+   "file": "src/compose/compose-scalar.ts",
+   "truth": 18,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/cli.ts",
+     "reach": "package subpath `yaml/cli`; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/clone.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/collection-access.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/compat.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/directives.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/YAML-1.1.spec.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 1
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/errors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/foldFlowLines.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/line-counter.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/properties.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/visit.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 3
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_4": 14,
+    "sure_8": [
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_8": 14,
+    "sure_or_possible_4": [
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_4": 14,
+    "sure_or_possible_8": [
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_8": 14
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "sure_or_possible": [
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure": 20,
+    "named_sure_or_possible": 20,
+    "ancestors_sure": 5,
+    "ancestors_all": 5
+   },
+   "symbol": "src::compose::composer::Composer::compose",
+   "file": "src/compose/composer.ts",
+   "truth": 17,
+   "named_files": 1,
+   "hit": 0,
+   "named": [
+    "tests/json-test-suite.ts"
+   ],
+   "named_how": [
+    "2 hops"
+   ],
+   "missed": [
+    {
+     "test": "tests/clone.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/collection-access.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/compat.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/directives.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/YAML-1.1.spec.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 1
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/errors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/foldFlowLines.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/line-counter.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/properties.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/visit.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 3
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/node-to-js.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_8": 13,
+    "sure_or_possible_4": [],
+    "named_sure_or_possible_4": 0,
+    "sure_or_possible_8": [
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/node-to-js.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_8": 13
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "sure_or_possible": [
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure": 21,
+    "named_sure_or_possible": 21,
+    "ancestors_sure": 13,
+    "ancestors_all": 13
+   },
+   "symbol": "src::compose::resolve_block_seq::resolveBlockSeq",
+   "file": "src/compose/resolve-block-seq.ts",
+   "truth": 13,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/compat.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/directives.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/errors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/foldFlowLines.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/properties.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/visit.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 3
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_4": 13,
+    "sure_8": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_8": 15,
+    "sure_or_possible_4": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_4": 13,
+    "sure_or_possible_8": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_8": 15
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "sure_or_possible": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure": 21,
+    "named_sure_or_possible": 21,
+    "ancestors_sure": 19,
+    "ancestors_all": 19
+   },
+   "symbol": "src::compose::resolve_end::resolveEnd",
+   "file": "src/compose/resolve-end.ts",
+   "truth": 19,
+   "named_files": 2,
+   "hit": 1,
+   "named": [
+    "tests/cli.ts",
+    "tests/json-test-suite.ts"
+   ],
+   "named_how": [
+    "3 hops",
+    "4 hops"
+   ],
+   "missed": [
+    {
+     "test": "tests/clone.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/collection-access.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/compat.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/cst.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 1
+    },
+    {
+     "test": "tests/directives.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/YAML-1.1.spec.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 1
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/errors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/foldFlowLines.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/line-counter.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/properties.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/visit.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 3
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [
+     "tests/cli.ts",
+     "tests/doc/parse.ts"
+    ],
+    "named_sure_8": 2,
+    "sure_or_possible_4": [],
+    "named_sure_or_possible_4": 0,
+    "sure_or_possible_8": [
+     "tests/cli.ts",
+     "tests/doc/parse.ts"
+    ],
+    "named_sure_or_possible_8": 2
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/visit.ts"
+    ],
+    "sure_or_possible": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure": 19,
+    "named_sure_or_possible": 19,
+    "ancestors_sure": 15,
+    "ancestors_all": 15
+   },
+   "symbol": "src::compose::util_contains_newline::containsNewline",
+   "file": "src/compose/util-contains-newline.ts",
+   "truth": 17,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/cli.ts",
+     "reach": "package subpath `yaml/cli`; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/clone.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/collection-access.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/compat.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/directives.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/errors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/foldFlowLines.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/line-counter.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/properties.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/visit.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 3
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 2,
+    "sure_or_possible_4": [],
+    "named_sure_or_possible_4": 0,
+    "sure_or_possible_8": [],
+    "named_sure_or_possible_8": 2
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/compat.ts"
+    ],
+    "sure_or_possible": [
+     "tests/compat.ts"
+    ],
+    "named_sure": 19,
+    "named_sure_or_possible": 19,
+    "ancestors_sure": 13,
+    "ancestors_all": 13
+   },
+   "symbol": "src::compose::util_flow_indent_check::flowIndentCheck",
+   "file": "src/compose/util-flow-indent-check.ts",
+   "truth": 1,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/compat.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/doc/types.ts"
+    ],
+    "named_sure_4": 1,
+    "sure_8": [
+     "tests/doc/types.ts"
+    ],
+    "named_sure_8": 1,
+    "sure_or_possible_4": [
+     "tests/doc/types.ts"
+    ],
+    "named_sure_or_possible_4": 1,
+    "sure_or_possible_8": [
+     "tests/doc/types.ts"
+    ],
+    "named_sure_or_possible_8": 1
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/doc/types.ts"
+    ],
+    "sure_or_possible": [
+     "tests/doc/types.ts"
+    ],
+    "named_sure": 1,
+    "named_sure_or_possible": 1,
+    "ancestors_sure": 2,
+    "ancestors_all": 2
+   },
+   "symbol": "src::doc::Document::Document::setSchema",
+   "file": "src/doc/Document.ts",
+   "truth": 20,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/cli.ts",
+     "reach": "package subpath `yaml/cli`; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/clone.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/collection-access.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/compat.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/directives.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/YAML-1.1.spec.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 1
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/createNode.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/errors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/foldFlowLines.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/line-counter.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/properties.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/rawJSON.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/visit.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 3
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_4": 7,
+    "sure_8": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_8": 12,
+    "sure_or_possible_4": [
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/properties.ts",
+     "tests/rawJSON.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_4": 10,
+    "sure_or_possible_8": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/rawJSON.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_8": 23
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/rawJSON.ts",
+     "tests/visit.ts"
+    ],
+    "sure_or_possible": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/rawJSON.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure": 23,
+    "named_sure_or_possible": 23,
+    "ancestors_sure": 63,
+    "ancestors_all": 98
+   },
+   "symbol": "src::doc::NodeCreator::NodeCreator::setAnchors",
+   "file": "src/doc/NodeCreator.ts",
+   "truth": 20,
+   "named_files": 1,
+   "hit": 1,
+   "named": [
+    "tests/visit.ts"
+   ],
+   "named_how": [
+    "2 hops"
+   ],
+   "missed": [
+    {
+     "test": "tests/cli.ts",
+     "reach": "package subpath `yaml/cli`; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/clone.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/collection-access.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/compat.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/directives.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/YAML-1.1.spec.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 1
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/createNode.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/errors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/foldFlowLines.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/line-counter.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/properties.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/rawJSON.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 0,
+    "sure_or_possible_4": [],
+    "named_sure_or_possible_4": 0,
+    "sure_or_possible_8": [],
+    "named_sure_or_possible_8": 0
+   },
+   "simulated_file_as_test": {
+    "sure": [],
+    "sure_or_possible": [],
+    "named_sure": 0,
+    "named_sure_or_possible": 0,
+    "ancestors_sure": 2,
+    "ancestors_all": 2
+   },
+   "symbol": "src::doc::directives::Directives::atDocument",
+   "file": "src/doc/directives.ts",
+   "truth": 18,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/cli.ts",
+     "reach": "package subpath `yaml/cli`; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/clone.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/collection-access.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/compat.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/directives.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/YAML-1.1.spec.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 1
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/errors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/foldFlowLines.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/line-counter.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/properties.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/visit.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 3
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 0,
+    "sure_or_possible_4": [
+     "tests/cli.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts"
+    ],
+    "named_sure_or_possible_4": 12,
+    "sure_or_possible_8": [
+     "tests/cli.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts"
+    ],
+    "named_sure_or_possible_8": 19
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/doc/comments.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts"
+    ],
+    "sure_or_possible": [
+     "tests/cli.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts"
+    ],
+    "named_sure": 8,
+    "named_sure_or_possible": 20,
+    "ancestors_sure": 2,
+    "ancestors_all": 22
+   },
+   "symbol": "src::nodes::YAMLMap::YAMLMap::#stringifyFlowMap",
+   "file": "src/nodes/YAMLMap.ts",
+   "truth": 8,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/cli.ts",
+     "reach": "package subpath `yaml/cli`; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/createNode.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 0,
+    "sure_or_possible_4": [
+     "tests/collection-access.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/properties.ts",
+     "tests/rawJSON.ts"
+    ],
+    "named_sure_or_possible_4": 12,
+    "sure_or_possible_8": [
+     "tests/collection-access.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/properties.ts",
+     "tests/rawJSON.ts"
+    ],
+    "named_sure_or_possible_8": 19
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/collection-access.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts"
+    ],
+    "sure_or_possible": [
+     "tests/collection-access.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/createNode.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/properties.ts",
+     "tests/rawJSON.ts"
+    ],
+    "named_sure": 8,
+    "named_sure_or_possible": 20,
+    "ancestors_sure": 2,
+    "ancestors_all": 22
+   },
+   "symbol": "src::nodes::YAMLSeq::YAMLSeq::#stringifyBlockSeq",
+   "file": "src/nodes/YAMLSeq.ts",
+   "truth": 12,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/collection-access.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/createNode.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/foldFlowLines.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/properties.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/rawJSON.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/visit.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 3
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 0,
+    "sure_or_possible_4": [
+     "tests/doc/types.ts"
+    ],
+    "named_sure_or_possible_4": 12,
+    "sure_or_possible_8": [
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/types.ts"
+    ],
+    "named_sure_or_possible_8": 19
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/doc/types.ts"
+    ],
+    "sure_or_possible": [
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/types.ts"
+    ],
+    "named_sure": 8,
+    "named_sure_or_possible": 20,
+    "ancestors_sure": 2,
+    "ancestors_all": 22
+   },
+   "symbol": "src::nodes::YAMLSet::YAMLSet::#stringifyBlockSet",
+   "file": "src/nodes/YAMLSet.ts",
+   "truth": 2,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 0,
+    "sure_or_possible_4": [
+     "tests/doc/types.ts"
+    ],
+    "named_sure_or_possible_4": 12,
+    "sure_or_possible_8": [
+     "tests/doc/types.ts"
+    ],
+    "named_sure_or_possible_8": 19
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/doc/types.ts"
+    ],
+    "sure_or_possible": [
+     "tests/doc/types.ts"
+    ],
+    "named_sure": 8,
+    "named_sure_or_possible": 20,
+    "ancestors_sure": 2,
+    "ancestors_all": 22
+   },
+   "symbol": "src::nodes::YAMLSet::YAMLSet::#stringifyFlowSet",
+   "file": "src/nodes/YAMLSet.ts",
+   "truth": 1,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 0,
+    "sure_or_possible_4": [
+     "tests/cli.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/node-to-js.ts"
+    ],
+    "named_sure_or_possible_4": 14,
+    "sure_or_possible_8": [
+     "tests/cli.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/node-to-js.ts"
+    ],
+    "named_sure_or_possible_8": 14
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/node-to-js.ts"
+    ],
+    "sure_or_possible": [
+     "tests/cli.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/node-to-js.ts"
+    ],
+    "named_sure": 14,
+    "named_sure_or_possible": 15,
+    "ancestors_sure": 4,
+    "ancestors_all": 8
+   },
+   "symbol": "src::nodes::toJS::ToJSContext::resolveAlias",
+   "file": "src/nodes/toJS.ts",
+   "truth": 6,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/cli.ts",
+     "reach": "package subpath `yaml/cli`; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 0,
+    "sure_or_possible_4": [
+     "tests/cli.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/node-to-js.ts"
+    ],
+    "named_sure_or_possible_4": 14,
+    "sure_or_possible_8": [
+     "tests/cli.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/node-to-js.ts"
+    ],
+    "named_sure_or_possible_8": 14
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/node-to-js.ts"
+    ],
+    "sure_or_possible": [
+     "tests/cli.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/node-to-js.ts"
+    ],
+    "named_sure": 14,
+    "named_sure_or_possible": 15,
+    "ancestors_sure": 2,
+    "ancestors_all": 9
+   },
+   "symbol": "src::nodes::toJS::ToJSContext::setAnchor",
+   "file": "src/nodes/toJS.ts",
+   "truth": 6,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/cli.ts",
+     "reach": "package subpath `yaml/cli`; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_4": 14,
+    "sure_8": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_8": 16,
+    "sure_or_possible_4": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_4": 14,
+    "sure_or_possible_8": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_8": 16
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "sure_or_possible": [
+     "tests/cli.ts",
+     "tests/clone.ts",
+     "tests/collection-access.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/foldFlowLines.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/line-counter.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure": 21,
+    "named_sure_or_possible": 21,
+    "ancestors_sure": 8,
+    "ancestors_all": 8
+   },
+   "symbol": "src::parse::cst::tokenType",
+   "file": "src/parse/cst.ts",
+   "truth": 19,
+   "named_files": 3,
+   "hit": 2,
+   "named": [
+    "tests/cst.ts",
+    "tests/cli.ts",
+    "tests/json-test-suite.ts"
+   ],
+   "named_how": [
+    "3 hops",
+    "4 hops"
+   ],
+   "missed": [
+    {
+     "test": "tests/clone.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/collection-access.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/compat.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/directives.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/YAML-1.1.spec.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 1
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/errors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/foldFlowLines.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/line-counter.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/properties.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/visit.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 3
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/cli.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/lexer.ts",
+     "tests/node-to-js.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_4": 15,
+    "sure_8": [
+     "tests/cli.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/lexer.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_8": 17,
+    "sure_or_possible_4": [
+     "tests/cli.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/lexer.ts",
+     "tests/node-to-js.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_4": 15,
+    "sure_or_possible_8": [
+     "tests/cli.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts",
+     "tests/lexer.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure_or_possible_8": 17
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/cli.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/lexer.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "sure_or_possible": [
+     "tests/cli.ts",
+     "tests/compat.ts",
+     "tests/cst.ts",
+     "tests/directives.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/anchors.ts",
+     "tests/doc/comments.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/stringify.ts",
+     "tests/doc/types.ts",
+     "tests/lexer.ts",
+     "tests/node-to-js.ts",
+     "tests/properties.ts",
+     "tests/visit.ts"
+    ],
+    "named_sure": 22,
+    "named_sure_or_possible": 22,
+    "ancestors_sure": 8,
+    "ancestors_all": 8
+   },
+   "symbol": "src::parse::lexer::Lexer::flow",
+   "file": "src/parse/lexer.ts",
+   "truth": 15,
+   "named_files": 3,
+   "hit": 2,
+   "named": [
+    "tests/cli.ts",
+    "tests/cst.ts",
+    "tests/json-test-suite.ts"
+   ],
+   "named_how": [
+    "3 hops",
+    "4 hops"
+   ],
+   "missed": [
+    {
+     "test": "tests/compat.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/directives.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/comments.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/errors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/stringify.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/lexer.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/node-to-js.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/properties.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/visit.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 3
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/doc/YAML-1.1.spec.ts"
+    ],
+    "named_sure_4": 2,
+    "sure_8": [
+     "tests/doc/YAML-1.1.spec.ts"
+    ],
+    "named_sure_8": 2,
+    "sure_or_possible_4": [
+     "tests/doc/YAML-1.1.spec.ts"
+    ],
+    "named_sure_or_possible_4": 2,
+    "sure_or_possible_8": [
+     "tests/doc/YAML-1.1.spec.ts"
+    ],
+    "named_sure_or_possible_8": 2
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/parse.ts"
+    ],
+    "sure_or_possible": [
+     "tests/doc/YAML-1.1.spec.ts",
+     "tests/doc/YAML-1.2.spec.ts",
+     "tests/doc/errors.ts",
+     "tests/doc/parse.ts"
+    ],
+    "named_sure": 5,
+    "named_sure_or_possible": 5,
+    "ancestors_sure": 2,
+    "ancestors_all": 2
+   },
+   "symbol": "src::public_api::parseAllDocuments",
+   "file": "src/public-api.ts",
+   "truth": 4,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/doc/YAML-1.1.spec.ts",
+     "reach": "helper `tests/_utils`; package name (vitest alias) → index re-export",
+     "test_symbols": 1
+    },
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/errors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 0,
+    "sure_or_possible_4": [
+     "tests/doc/parse.ts"
+    ],
+    "named_sure_or_possible_4": 1,
+    "sure_or_possible_8": [
+     "tests/doc/parse.ts"
+    ],
+    "named_sure_or_possible_8": 1
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts"
+    ],
+    "sure_or_possible": [
+     "tests/doc/anchors.ts",
+     "tests/doc/parse.ts",
+     "tests/doc/types.ts"
+    ],
+    "named_sure": 6,
+    "named_sure_or_possible": 6,
+    "ancestors_sure": 2,
+    "ancestors_all": 2
+   },
+   "symbol": "src::schema::yaml_1_1::pairs::resolvePairs",
+   "file": "src/schema/yaml-1.1/pairs.ts",
+   "truth": 4,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/doc/YAML-1.2.spec.ts",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 21
+    },
+    {
+     "test": "tests/doc/anchors.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/parse.ts",
+     "reach": "package name (vitest alias) → index re-export; helper `tests/_utils`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/doc/types.ts",
+     "reach": "package name (vitest alias) → index re-export; package subpath `yaml/util`; helper `tests/_utils`",
+     "test_symbols": 5
+    }
+   ]
+  }
+ ]
+}
