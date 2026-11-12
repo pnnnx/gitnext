@@ -1,0 +1,29 @@
+FF.                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_param_sum[1-2-Error: Invalid value for '-a': Value must be an iterable.] _
+
+a = 1, b = 2
+message = "Error: Invalid value for '-a': Value must be an iterable."
+
+    @pytest.mark.parametrize(("a", "b", "message"), [(1, 2, "Error: Invalid value for '-a': Value must be an iterable."), (2, 3, "x"), (3, 3, "ok")])
+    def test_param_sum(a, b, message):
+>       assert a == b, message
+E       AssertionError: Error: Invalid value for '-a': Value must be an iterable.
+E       assert 1 == 2
+
+tests/test_zz_param.py:6: AssertionError
+____________________________ test_param_sum[2-3-x] _____________________________
+
+a = 2, b = 3, message = 'x'
+
+    @pytest.mark.parametrize(("a", "b", "message"), [(1, 2, "Error: Invalid value for '-a': Value must be an iterable."), (2, 3, "x"), (3, 3, "ok")])
+    def test_param_sum(a, b, message):
+>       assert a == b, message
+E       AssertionError: x
+E       assert 2 == 3
+
+tests/test_zz_param.py:6: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_zz_param.py::test_param_sum[1-2-Error: Invalid value for '-a': Value must be an iterable.]
+FAILED tests/test_zz_param.py::test_param_sum[2-3-x] - AssertionError: x
+2 failed, 1 passed in 0.02s

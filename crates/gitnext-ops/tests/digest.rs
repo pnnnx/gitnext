@@ -42,6 +42,17 @@ fn pytest_assertion_with_the_failing_line() {
 }
 
 #[test]
+fn pytest_cases_of_one_parametrized_test_are_one_failure() {
+    let d = of("pytest-param.txt");
+    assert_eq!(d.failures.len(), 1, "{:?}", d.failures);
+    let f = &d.failures[0];
+    assert_eq!((f.what.as_str(), f.file.as_deref(), f.line, f.count), ("test_param_sum", Some("tests/test_zz_param.py"), Some(6), 2));
+    assert_eq!(f.message[..2], ["> assert a == b, message", "AssertionError: Error: Invalid value for '-a': Value must be an iterable."]);
+    let text = render(&d, 5);
+    assert!(text.starts_with("tests: 2 failed — 2 failed, 1 passed in") && text.contains("✗ test_param_sum  tests/test_zz_param.py:6  (2 cases)"), "{text}");
+}
+
+#[test]
 fn pytest_that_cannot_import_the_project() {
     let d = of("pytest-syntax.txt");
     let (what, file, line, msg) = first(&d);

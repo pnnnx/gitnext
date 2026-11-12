@@ -187,9 +187,10 @@ fn cargo_test(lines: &[String], out: &mut Vec<Failure>, summary: &mut Option<Str
 
 fn pytest(lines: &[String], out: &mut Vec<Failure>, summary: &mut Option<String>) {
     let header = |l: &str| -> Option<String> {
+        // `____ test_x ____`; a long name leaves one underscore on each side: `_ test_x[a long id] _`
         let t = l.trim();
         let inner = t.trim_matches('_');
-        (t.starts_with("___") && t.ends_with("___") && inner.starts_with(' ') && inner.ends_with(' ')).then(|| inner.trim().to_string())
+        (t.starts_with('_') && t.ends_with('_') && inner.len() > 2 && inner.starts_with(' ') && inner.ends_with(' ')).then(|| inner.trim().to_string())
     };
     let e_line = |l: &str| l.strip_prefix('E').filter(|r| r.is_empty() || r.starts_with(' ')).map(|r| r.trim().to_string());
     let py_loc = |l: &str| location(l).filter(|(f, _, rest)| f.ends_with(".py") && rest.starts_with(": ")).map(|(f, n, _)| (f, n));
@@ -508,11 +509,26 @@ pub fn digest(text: &str) -> Digest {
             None => merged.push(f),
         }
     }
-    // one test reported twice (a summary line and its section) is one failure
+    // one test reported twice (a summary line and its section) is one failure, and the cases of
+    // one parametrized test (`test_x[1-2]`, `test_x[2-3]`) are one failure with a count
     let mut seen: Vec<Failure> = Vec::new();
-    for f in tests {
-        if !seen.iter().any(|s| s.what == f.what && s.file == f.file) {
-            seen.push(f);
+    let mut ids: Vec<Vec<String>> = Vec::new();
+    for mut f in tests {
+        let id = f.what.clone();
+        if let Some((base, _)) = f.what.split_once('[').filter(|(b, _)| !b.is_empty() && f.what.ends_with(']')) {
+            f.what = base.to_string();
+        }
+        match seen.iter().position(|s| s.what == f.what && s.file == f.file) {
+            Some(k) => {
+                if !ids[k].contains(&id) {
+                    ids[k].push(id);
+                    seen[k].count += 1;
+                }
+            }
+            None => {
+                seen.push(f);
+                ids.push(vec![id]);
+            }
         }
     }
     if !seen.is_empty() {
@@ -545,7 +561,7 @@ pub fn render(d: &Digest, max: usize) -> String {
     }
     let total: usize = d.failures.iter().map(|f| f.count).sum();
     let head = match d.kind {
-        "tests" => format!("tests: {} failed", d.failures.len()),
+        "tests" => format!("tests: {total} failed"),
         _ => format!("build: {}", crate::changes::plural(total, "error")),
     };
     match &d.summary {
@@ -562,7 +578,11 @@ pub fn render(d: &Digest, max: usize) -> String {
             (Some(p), None) => format!("  {p}"),
             _ => String::new(),
         };
-        let times = if f.count > 1 { format!("  (×{})", f.count) } else { String::new() };
+        let times = match (f.count, d.kind) {
+            (0 | 1, _) => String::new(),
+            (n, "tests") => format!("  ({n} cases)"),
+            (n, _) => format!("  (×{n})"),
+        };
         let _ = writeln!(s, "✗ {}{at}{times}", f.what);
         for m in &f.message {
             let _ = writeln!(s, "    {m}");
