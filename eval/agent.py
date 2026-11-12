@@ -7,6 +7,13 @@ Modes (tools the model gets):
   gitnext  base + look, rename, replace_symbol (gitnext's own tools)
   ctx      base, and `gitnext context` output appended to the task
   both     gitnext tools + context
+  cmd      no tool-calling API at all: the context is in the task and the model answers with
+           one shell command (or a short script) in a ```sh block, or `DONE: answer` — for
+           models that write tool calls as text; `gitnext` is on PATH
+
+Every run is watched by a loop guard (eval/guard.py): repeated calls, no progress, the same
+error again and again, see-saw edits, repeated text, step and token budgets. A stopped run
+leaves a hand-off note; with --escalate-host a stronger model gets the task and that note.
 
 Tasks are generated from the eval repos (eval/repos.json, set up by eval/run.py)
 and checked by the project itself:
@@ -16,7 +23,7 @@ and checked by the project itself:
   rename    "rename X to Y everywhere"     → it compiles and no old name is left
 
     python3 eval/agent.py --host http://127.0.0.1:8080 --repos click,cobra \\
-        --tasks find,callers,fix,rename --modes base,gitnext,ctx --repeat 2
+        --tasks find,callers,fix,rename --modes base,gitnext,ctx,cmd --repeat 2
 Results: eval/results/agent-latest.json (+ .md).
 """
 from __future__ import annotations
@@ -32,6 +39,7 @@ import urllib.request
 from pathlib import Path
 
 import run as ev  # eval/run.py: repos, languages, compiler / test plumbing
+from guard import Guard, compress, trim_repeats
 
 HERE = Path(__file__).resolve().parent
 MAX_OUT = 6000  # chars of tool output shown to the model
@@ -86,8 +94,9 @@ def call_tool(name: str, a: dict, root: Path, lang: str) -> str:
                 return f"error: old text occurs {t.count(a['old'])} times (must be exactly once)"
             f.write_text(t.replace(a["old"], a["new"]))
             return "ok"
-        if name == "run":
-            code, out = ev.sh(a["command"], root, timeout=600)
+        if name in ("run", "sh"):
+            # `gitnext` on PATH: in `cmd` mode the model calls it like any other command
+            code, out = ev.sh(f'PATH="{Path(ev.GITNEXT).resolve().parent}:$PATH"; ' + a["command"], root, timeout=600)
             return f"exit {code}\n{out[-MAX_OUT:]}"
         if name == "look":
             return ev.gx(["look", a["what"]], root)[1][:MAX_OUT]
@@ -104,9 +113,12 @@ def call_tool(name: str, a: dict, root: Path, lang: str) -> str:
 # ---------------------------------------------------------------- model
 
 def chat(host: str, messages: list, tools: list, max_tokens: int) -> dict:
-    body = json.dumps({"model": "local", "messages": messages, "tools": tools, "temperature": 0.2, "max_tokens": max_tokens,
-                       "chat_template_kwargs": {"enable_thinking": False}}).encode()
-    req = urllib.request.Request(f"{host}/v1/chat/completions", data=body, headers={"Content-Type": "application/json"})
+    body = {"model": "local", "messages": messages, "temperature": 0.2, "max_tokens": max_tokens,
+            "repeat_penalty": 1.1,  # llama.cpp: a small model loops on one line without it
+            "chat_template_kwargs": {"enable_thinking": False}}
+    if tools:
+        body["tools"] = tools
+    req = urllib.request.Request(f"{host}/v1/chat/completions", data=json.dumps(body).encode(), headers={"Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=1800) as r:
         return json.loads(r.read())
 
@@ -143,41 +155,82 @@ def text_calls(content: str, names: set[str]) -> list[dict]:
 
 SYSTEM = ("You are a coding agent working in a software project. Use the tools to inspect and change the code. "
           "Be brief. When done, call finish with the answer. Do not modify tests unless asked.")
+CMD_SYSTEM = ("You are a coding agent working in a software project. Answer with ONE shell command (or a short script) in a ```sh block "
+              "and nothing else; you will get its output back. Useful commands: `gitnext look <function, class or file>` (its code, who calls it, "
+              "its tests — in one call), `gitnext rename <old> <new> --text`, cat, grep, sed -i, and the project's test command. "
+              "When the task is done answer `DONE: <answer>`. Be brief. Do not modify tests unless asked.")
+TOKEN_BUDGET = int(os.environ.get("AGENT_TOKEN_BUDGET", "0"))  # prompt tokens per run, 0 = no limit
+
+
+def command_of(content: str) -> str | None:
+    """The shell command of a `cmd`-mode answer: the first fenced block, or a `$ command` line."""
+    m = re.search(r"```(?:sh|bash|shell|console|zsh)?[ \t]*\n(.*?)```", content, re.S)
+    if m:
+        return "\n".join(l[2:] if l.startswith("$ ") else l for l in m.group(1).strip().split("\n")) or None
+    m = re.search(r"^\$ (.+)$", content, re.M)
+    return m.group(1) if m else None
 
 
 def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: int, deadline: float) -> dict:
-    tools = BASE_TOOLS + (GITNEXT_TOOLS if mode in ("gitnext", "both") else [])
+    cmd = mode == "cmd"
+    tools = [] if cmd else BASE_TOOLS + (GITNEXT_TOOLS if mode in ("gitnext", "both") else [])
     prompt = task["prompt"]
-    if mode in ("ctx", "both"):
-        _, c = ev.gx(["context", prompt], root)
+    if task.get("handoff"):  # a weaker model gave up on this task: what it tried
+        prompt += "\n\nAn earlier attempt was stopped. Its notes:\n" + task["handoff"]
+    if mode in ("ctx", "both", "cmd"):
+        _, c = ev.gx(["context", task["prompt"]], root)
         if c.strip():
             prompt += "\n\n" + c.strip()
-    msgs = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": prompt}]
+    msgs = [{"role": "system", "content": CMD_SYSTEM if cmd else SYSTEM}, {"role": "user", "content": prompt}]
     used = {"tokens_in": 0, "tokens_out": 0, "steps": 0, "tools": {}}
+
+    def locate(err: str) -> str:  # where gitnext thinks an error comes from
+        try:
+            return subprocess.run([ev.GITNEXT, "locate"], input=err, cwd=root, capture_output=True, text=True, timeout=60).stdout
+        except (OSError, subprocess.SubprocessError):
+            return ""
+
+    guard = Guard(root, max_steps, TOKEN_BUDGET, locate=locate)
     answer = ""
     for _ in range(max_steps):
         if time.time() > deadline:
             used["timeout"] = True
             break
-        fit(msgs)
+        compress(msgs, CTX_CHARS)
         r = chat(host, msgs, tools, 1024)
         u = r.get("usage", {})
         used["tokens_in"] += u.get("prompt_tokens", 0)
         used["tokens_out"] += u.get("completion_tokens", 0)
         m = r["choices"][0]["message"]
+        text, cut = trim_repeats(m.get("content") or "")
+        if cut:
+            guard.stats["trimmed"] += 1
+            m = {**m, "content": text}
         calls = m.get("tool_calls") or []
-        if not calls:
+        done = None
+        if cmd:
+            done = re.search(r"^\s*DONE:\s*(.*)", text, re.S | re.M)
+            command = None if done else command_of(text)
+            calls = [{"id": "sh", "function": {"name": "sh", "arguments": json.dumps({"command": command})}}] if command else []
+        elif not calls:
             # the model wrote the call as text (the server's chat template did not parse it)
-            calls = text_calls(m.get("content") or "", {t["function"]["name"] for t in tools})
+            calls = text_calls(text, {t["function"]["name"] for t in tools})
             if calls:
                 used["text_calls"] = used.get("text_calls", 0) + len(calls)
                 m = {"role": "assistant", "content": "", "tool_calls": calls}
-        msgs.append({k: v for k, v in m.items() if k in ("role", "content", "tool_calls")})
+        msgs.append({k: v for k, v in m.items() if k in ("role", "content") or (k == "tool_calls" and not cmd)})
         if not calls:
-            answer = m.get("content") or ""
+            if cmd and not done:  # neither a command nor an answer: say what is expected
+                used["steps"] += 1
+                note = guard.end_step(used["steps"], used["tokens_in"])
+                if guard.stop:
+                    break
+                msgs.append({"role": "user", "content": "Answer with one command in a ```sh block, or `DONE: <answer>`." + (f"\n{note}" if note else "")})
+                continue
+            answer = done.group(1).strip() if done else text
             break
         used["steps"] += 1
-        done = False
+        finished = False
         for c in calls:
             name = c["function"]["name"]
             try:
@@ -186,25 +239,26 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
                 a = {}
             used["tools"][name] = used["tools"].get(name, 0) + 1
             if name == "finish":
-                answer, done = a.get("answer", ""), True
+                answer, finished = a.get("answer", ""), True
                 out = "ok"
             else:
-                out = call_tool(name, a, root, lang)
-            msgs.append({"role": "tool", "tool_call_id": c.get("id", name), "content": out})
-        if done:
+                out = guard.before_call(used["steps"], name, a)
+                if out is None:
+                    out = guard.after_call(used["steps"], name, a, call_tool(name, a, root, lang))
+            msgs.append({"role": "user", "content": out} if cmd else {"role": "tool", "tool_call_id": c.get("id", name), "content": out})
+        if finished:
             break
+        note = guard.end_step(used["steps"], used["tokens_in"])
+        if guard.stop:
+            break
+        if note:
+            msgs.append({"role": "user", "content": note})
     used["answer"] = answer[:500]
+    used["guard"] = {k: v for k, v in guard.stats.items() if v}
+    if guard.stop or (not answer and used["steps"] >= max_steps):
+        used["stopped"] = guard.stop or "steps"
+        used["handoff"] = guard.handoff(task["prompt"])
     return used
-
-
-def fit(msgs: list) -> None:
-    """Shorten the oldest tool results until the conversation fits the context (same for every mode)."""
-    size = lambda: sum(len(m.get("content") or "") + len(json.dumps(m.get("tool_calls") or "")) for m in msgs)
-    for m in msgs:
-        if size() <= CTX_CHARS:
-            return
-        if m["role"] == "tool" and len(m["content"]) > 400:
-            m["content"] = m["content"][:300] + "\n… (cut: old output)"
 
 
 # ---------------------------------------------------------------- tasks
@@ -307,7 +361,8 @@ def main() -> None:
     ap.add_argument("--host", default="http://127.0.0.1:8080")
     ap.add_argument("--repos", default="click,cobra")
     ap.add_argument("--tasks", default="find,callers,fix,rename")
-    ap.add_argument("--modes", default="base,gitnext,ctx,both")
+    ap.add_argument("--modes", default="base,gitnext,ctx,both,cmd")
+    ap.add_argument("--escalate-host", default="", help="a stronger model's server: a run the loop guard stopped is handed to it with the notes")
     ap.add_argument("--repeat", type=int, default=1)
     ap.add_argument("--steps", type=int, default=25)
     ap.add_argument("--minutes", type=float, default=20, help="time limit per run")
@@ -332,23 +387,29 @@ def main() -> None:
                     try:
                         res = agent(task, mode, root, repo["lang"], args.host, args.steps, t0 + args.minutes * 60)
                         res["passed"] = check(task, repo, root, res)
+                        if res.get("stopped") and not res["passed"] and args.escalate_host:
+                            # the small model got stuck: the stronger one continues from the files as they are, with its notes
+                            up = agent({**task, "handoff": res["handoff"]}, mode, root, repo["lang"], args.escalate_host, args.steps, time.time() + args.minutes * 60)
+                            res["escalated"] = {"steps": up["steps"], "tokens_in": up["tokens_in"], "answer": up["answer"], "passed": check(task, repo, root, up)}
+                            res["passed"] = res["escalated"]["passed"]
                     except Exception as e:
                         res = {"passed": False, "error": str(e)[:300]}
                     res.update({"repo": repo["name"], "task": task["kind"], "mode": mode, "repeat": rep, "seconds": round(time.time() - t0)})
                     rows.append(res)
-                    print(f"{repo['name']:8} {task['kind']:8} {mode:8} {'✓' if res['passed'] else '✗'} steps {res.get('steps')} tok {res.get('tokens_in')}/{res.get('tokens_out')} {res['seconds']}s tools {res.get('tools')}", flush=True)
+                    print(f"{repo['name']:8} {task['kind']:8} {mode:8} {'✓' if res['passed'] else '✗'} steps {res.get('steps')} tok {res.get('tokens_in')}/{res.get('tokens_out')} {res['seconds']}s tools {res.get('tools')}"
+                          + (f" guard {res['guard']}" if res.get("guard") else "") + (f" stopped: {res['stopped']}" if res.get("stopped") else "") + (" escalated" if res.get("escalated") else ""), flush=True)
                     Path(args.out).parent.mkdir(exist_ok=True)
                     Path(args.out).write_text(json.dumps(rows, ensure_ascii=False, indent=1))
         ev.restore(root)
     # summary per mode
-    md = ["| mode | passed | median steps | tokens in (sum) | gitnext tool calls | calls written as text |", "|---|---:|---:|---:|---:|---:|"]
+    md = ["| mode | passed | median steps | tokens in (sum) | gitnext tool calls | calls written as text | guard stepped in | stopped by guard | escalated |", "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for mode in modes:
         rs = [r for r in rows if r["mode"] == mode]
         if not rs:
             continue
         steps = sorted(r.get("steps") or 0 for r in rs)
         gcalls = sum(sum(v for k, v in (r.get("tools") or {}).items() if k in ("look", "rename", "replace_symbol")) for r in rs)
-        md.append(f"| {mode} | {sum(r['passed'] for r in rs)}/{len(rs)} | {steps[len(steps)//2]} | {sum(r.get('tokens_in') or 0 for r in rs)} | {gcalls} | {sum(r.get('text_calls') or 0 for r in rs)} |")
+        md.append(f"| {mode} | {sum(r['passed'] for r in rs)}/{len(rs)} | {steps[len(steps)//2]} | {sum(r.get('tokens_in') or 0 for r in rs)} | {gcalls} | {sum(r.get('text_calls') or 0 for r in rs)} | {sum(sum((r.get('guard') or {}).values()) for r in rs)} | {sum(1 for r in rs if r.get('stopped'))} | {sum(1 for r in rs if r.get('escalated'))} |")
     Path(args.out).with_suffix(".md").write_text("\n".join(md) + "\n")
     print("\n".join(md))
 
