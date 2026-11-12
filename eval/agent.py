@@ -25,6 +25,15 @@ and checked by the project itself:
     python3 eval/agent.py --host http://127.0.0.1:8080 --repos click,cobra \\
         --tasks find,callers,fix,rename --modes base,gitnext,ctx,cmd --repeat 2
 Results: eval/results/agent-latest.json (+ .md).
+
+One task of your own, on any repository (a "task card" for a small model):
+
+    python3 eval/agent.py --task card.json --mode cmd
+    card.json: {"repo": "/path/to/project", "prompt": "what to do", "accept": "gitnext check"}
+
+The run passes when the `accept` command exits 0 (default: `gitnext check`). Next to the card
+it writes card.result.json (passed, steps, tokens, what the loop guard did, the hand-off note
+if it was stopped) and card.patch (the change, as `git diff`).
 """
 from __future__ import annotations
 
@@ -360,8 +369,35 @@ def check(task: dict, repo: dict, root: Path, res: dict) -> bool:
     return False
 
 
+def run_card(card_path: Path, mode: str, host: str, steps: int, minutes: float, escalate_host: str) -> dict:
+    """One task from a card file: run the agent in the card's repository, judge by the card's
+    `accept` command, leave the result and the patch next to the card."""
+    card = json.loads(card_path.read_text())
+    root = Path(card["repo"]).expanduser().resolve()
+    accept = card.get("accept") or "gitnext check"
+    lang = card.get("lang", "")
+    ev.gx(["index"], root)
+    t0 = time.time()
+    res = agent({"prompt": card["prompt"]}, mode, root, lang, host, steps, t0 + minutes * 60)
+    judge = lambda: call_tool("run", {"command": accept}, root, lang)  # noqa: E731
+    verdict = judge()
+    res["passed"] = verdict.startswith("exit 0")
+    if not res["passed"] and escalate_host and res.get("stopped"):
+        up = agent({"prompt": card["prompt"], "handoff": res["handoff"]}, mode, root, lang, escalate_host, steps, time.time() + minutes * 60)
+        verdict = judge()
+        res["escalated"] = {"steps": up["steps"], "tokens_in": up["tokens_in"], "answer": up["answer"], "passed": verdict.startswith("exit 0")}
+        res["passed"] = res["escalated"]["passed"]
+    res.update({"mode": mode, "seconds": round(time.time() - t0), "accept": accept, "verdict": verdict[-1500:]})
+    patch = subprocess.run(["git", "diff", "HEAD"], cwd=root, capture_output=True, text=True, errors="replace").stdout
+    card_path.with_suffix(".patch").write_text(patch)
+    card_path.with_suffix(".result.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
+    return res
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--task", default="", help="a task card (JSON: repo, prompt, accept) instead of the generated eval tasks")
+    ap.add_argument("--mode", default="cmd", help="with --task: the mode to run it in")
     ap.add_argument("--host", default="http://127.0.0.1:8080")
     ap.add_argument("--repos", default="click,cobra")
     ap.add_argument("--tasks", default="find,callers,fix,rename")
@@ -373,6 +409,11 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=11)
     ap.add_argument("--out", default=str(HERE / "results" / "agent-latest.json"))
     args = ap.parse_args()
+    if args.task:
+        res = run_card(Path(args.task), args.mode, args.host, args.steps, args.minutes, args.escalate_host)
+        print(f"{'✓ passed' if res['passed'] else '✗ failed'} · steps {res['steps']} · tokens {res['tokens_in']}/{res['tokens_out']} · {res['seconds']}s"
+              + (f" · guard {res['guard']}" if res.get("guard") else "") + (f" · stopped: {res['stopped']}" if res.get("stopped") else "") + (" · escalated" if res.get("escalated") else ""))
+        raise SystemExit(0 if res["passed"] else 1)
     repos = [r for r in json.loads((HERE / "repos.json").read_text()) if r["name"] in args.repos.split(",")]
     modes = args.modes.split(",")
     rows = []

@@ -209,5 +209,30 @@ class Case(unittest.TestCase):
         self.assertEqual(res["answer"], "two lines")
 
 
+    # ---- a task card
+
+    def test_task_card_is_judged_by_its_accept_command(self):
+        card = self.root.parent / f"card-{self.root.name}.json"
+        card.write_text(json.dumps({"repo": str(self.root), "prompt": "make add subtract", "accept": "grep -q 'a - b' calc.py"}))
+        s = Script([say("```sh\nsed -i 's/a + b/a - b/' calc.py\n```"), say("DONE: changed")])
+        try:
+            res = agent.run_card(card, "cmd", s.host, 10, 2, "")
+        finally:
+            s.close()
+        self.assertTrue(res["passed"])
+        self.assertIn("-    return a + b", card.with_suffix(".patch").read_text())
+        self.assertTrue(json.loads(card.with_suffix(".result.json").read_text())["passed"])
+        # the same card with a model that does nothing fails the accept command
+        subprocess.run(["git", "checkout", "-q", "--", "."], cwd=self.root, check=True)
+        s = Script([say("DONE: nothing to do")])
+        try:
+            res = agent.run_card(card, "cmd", s.host, 10, 2, "")
+        finally:
+            s.close()
+        self.assertFalse(res["passed"])
+        for f in (card, card.with_suffix(".patch"), card.with_suffix(".result.json")):
+            f.unlink()
+
+
 if __name__ == "__main__":
     unittest.main()
