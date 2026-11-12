@@ -32,12 +32,21 @@ pub struct Suspect {
     pub overlap: usize,
     /// the failure's own output names a line inside it: position among those lines, first = 0
     pub in_failure: Option<usize>,
+    /// how many tests ran it in the learned coverage run (0 without a map): code that few tests
+    /// run and this failing one does is likelier at fault than what every test runs
+    pub tests: usize,
+    /// the learned map (`gitnext learn-tests`) says the test really ran it
+    pub ran: bool,
+    /// its code is not what it was when the map was learned
+    pub changed: bool,
 }
 
 pub struct Why {
     pub tests: Vec<usize>,
     pub steps: Vec<Step>,
     pub suspects: Vec<Suspect>,
+    /// the suspects are what the test ran in the learned coverage run, not what the call graph reaches
+    pub learned: bool,
 }
 
 impl Why {
@@ -46,13 +55,28 @@ impl Why {
     }
 }
 
+/// Tests run at once when a name fits several (`test_basic` of five files): the ones that fail are kept.
+const SAME_NAME: usize = 6;
+
 /// Runnable tests by name. `greater_than` finds `test_greater_than` / `TestGreaterThan` when no
-/// test has exactly that name; at most three, the shortest names first.
+/// test has exactly that name (at most three, the shortest names first). The id a test runner
+/// prints is taken as it is: `tests/test_x.py::TestA::test_b[case]`, `TestRun/subtest`.
 pub fn find_tests(g: &Graph, name: &str) -> Vec<usize> {
     let runnable = |i: &usize| g.syms[*i].sym.test && locate::is_runnable(g, *i);
-    let exact: Vec<usize> = g.find(name).into_iter().filter(runnable).collect();
+    let name = name.trim().split('[').next().unwrap_or(name);
+    // `path/to/test_x.py::rest`: the file narrows the search
+    let (file, name) = match name.split_once("::") {
+        Some((f, rest)) if f.contains('.') && g.files.iter().any(|x| x.path == f || x.path.ends_with(&format!("/{f}"))) => (Some(f), rest),
+        _ => (None, name),
+    };
+    let in_file = |i: &usize| file.is_none_or(|f| g.syms[*i].file == f || g.syms[*i].file.ends_with(&format!("/{f}")));
+    let mut exact: Vec<usize> = g.find(name).into_iter().filter(runnable).filter(in_file).collect();
+    if exact.is_empty() && name.contains('/') && !name.contains("::") {
+        // Go's `TestRun/subtest`
+        exact = g.find(name.split('/').next().unwrap_or(name)).into_iter().filter(runnable).collect();
+    }
     if !exact.is_empty() {
-        return exact.into_iter().take(3).collect();
+        return exact.into_iter().take(SAME_NAME).collect();
     }
     let bare = name.rsplit("::").next().unwrap_or(name).rsplit('.').next().unwrap_or(name);
     let want: Vec<String> = locate::name_words(bare).into_iter().filter(|w| w != "test" && w != "tests").collect();
@@ -61,6 +85,7 @@ pub fn find_tests(g: &Graph, name: &str) -> Vec<usize> {
     }
     let mut hits: Vec<usize> = (0..g.syms.len())
         .filter(runnable)
+        .filter(in_file)
         .filter(|&i| {
             let have: Vec<String> = locate::name_words(&g.syms[i].sym.name).into_iter().filter(|w| w != "test" && w != "tests").collect();
             have == want
@@ -83,8 +108,8 @@ pub fn similar_tests(g: &Graph, name: &str) -> Vec<usize> {
     v.into_iter().take(5).map(|(_, i)| i).collect()
 }
 
-/// Non-test functions reachable from the tests through calls, with the shortest distance.
-fn reached(g: &Graph, tests: &[usize]) -> Vec<(usize, usize)> {
+/// symbol → what it calls (resolved through the call graph).
+fn calls(g: &Graph) -> HashMap<usize, Vec<usize>> {
     let mut forward: HashMap<usize, Vec<usize>> = HashMap::new();
     for t in 0..g.syms.len() {
         for &(src, kind, _) in g.referrers(t) {
@@ -93,6 +118,11 @@ fn reached(g: &Graph, tests: &[usize]) -> Vec<(usize, usize)> {
             }
         }
     }
+    forward
+}
+
+/// Non-test functions reachable from the tests through calls, with the shortest distance.
+fn reached(g: &Graph, forward: &HashMap<usize, Vec<usize>>, tests: &[usize]) -> Vec<(usize, usize)> {
     let mut depth: HashMap<usize, usize> = tests.iter().map(|&t| (t, 0)).collect();
     let mut queue: VecDeque<usize> = tests.iter().copied().collect();
     while let Some(i) = queue.pop_front() {
@@ -121,7 +151,7 @@ pub fn why(root: &Path, g: &Graph, tests: &[usize], timeout: Duration) -> Why {
 
 /// The same from runs already made: which code to look at, given how the tests failed.
 pub fn explain(root: &Path, g: &Graph, tests: &[usize], steps: Vec<Step>) -> Why {
-    let mut w = Why { tests: tests.to_vec(), steps, suspects: Vec::new() };
+    let mut w = Why { tests: tests.to_vec(), steps, suspects: Vec::new(), learned: false };
     if !w.failed() {
         return w;
     }
@@ -144,6 +174,22 @@ pub fn explain(root: &Path, g: &Graph, tests: &[usize], steps: Vec<Step>) -> Why
             add(fr.symbol);
         }
     }
+    // several tests were run (one name, several files): the code to look at is what the failing ones use
+    let whats: Vec<(&str, Option<&str>)> =
+        w.steps.iter().filter(|s| !s.ok).flat_map(|s| s.digest.failures.iter()).map(|f| (f.what.split('[').next().unwrap_or(&f.what), f.file.as_deref())).collect();
+    let failing = |strict: bool| -> Vec<usize> {
+        let hit = |t: &usize| {
+            let r = &g.syms[*t];
+            whats.iter().any(|(x, file)| {
+                let name = x.rsplit("::").next().unwrap_or(x).rsplit('.').next().unwrap_or(x);
+                name == r.sym.name && (!strict || x.contains(r.file.as_str()) || file.is_some_and(|f| f == r.file || f.ends_with(&format!("/{}", r.file))))
+            })
+        };
+        tests.iter().copied().filter(hit).collect()
+    };
+    let narrowed = [failing(true), failing(false)].into_iter().find(|v| !v.is_empty()).unwrap_or_else(|| tests.to_vec());
+    let tests = narrowed.as_slice();
+    w.tests = narrowed.clone();
     let test_words: HashSet<String> =
         tests.iter().flat_map(|&t| locate::name_words(&g.syms[t].sym.name)).filter(|x| !matches!(x.as_str(), "test" | "tests" | "should" | "it" | "the" | "a")).collect();
     let overlap = |i: usize| -> usize {
@@ -154,15 +200,60 @@ pub fn explain(root: &Path, g: &Graph, tests: &[usize], steps: Vec<Step>) -> Why
         }
         words.iter().filter(|x| test_words.contains(*x)).count()
     };
+    let rank = std::env::var("GITNEXT_WHY_RANK").unwrap_or_default();
     let mut by: HashMap<usize, Suspect> = HashMap::new();
-    for (i, d) in reached(g, tests) {
-        by.insert(i, Suspect { symbol: i, depth: d, overlap: overlap(i), in_failure: None });
+    // what the tests really ran, when a coverage run was learned and knows them: a call through a
+    // CLI runner, a decorator or a trait is in it, and code on a branch the test never takes is not
+    if rank != "static" {
+        if let Some(map) = gitnext_index::TestMap::open_existing(root) {
+            let by_qual: HashMap<&str, usize> =
+                g.syms.iter().enumerate().filter(|(_, r)| !r.sym.test && r.sym.kind.is_callable() && !r.sym.decl).map(|(i, r)| (r.sym.qualified.as_str(), i)).collect();
+            for &t in tests {
+                let r = &g.syms[t];
+                let class = r.sym.parent.as_deref().map(|p| p.rsplit("::").next().unwrap_or(p));
+                let mut ran = class.map(|c| map.ran_by(&r.file, &format!("{c}::{}", r.sym.name))).unwrap_or_default();
+                if ran.is_empty() {
+                    ran = map.ran_by(&r.file, &r.sym.name);
+                }
+                for (q, hash, n) in ran {
+                    let Some(&i) = by_qual.get(q.as_str()) else { continue }; // renamed or removed since
+                    let changed = g.syms[i].sym.body_hash != hash;
+                    by.entry(i).or_insert(Suspect { symbol: i, depth: 0, overlap: overlap(i), in_failure: None, tests: n as usize, ran: true, changed });
+                }
+            }
+        }
     }
-    for (pos, &i) in named.iter().enumerate() {
-        by.entry(i).or_insert(Suspect { symbol: i, depth: DEPTH + 1, overlap: overlap(i), in_failure: None }).in_failure = Some(pos);
+    w.learned = !by.is_empty();
+    if w.learned {
+        for (pos, &i) in named.iter().enumerate() {
+            by.entry(i).or_insert(Suspect { symbol: i, depth: 0, overlap: overlap(i), in_failure: None, tests: 0, ran: false, changed: false }).in_failure = Some(pos);
+        }
+    } else {
+        let forward = calls(g);
+        for (i, d) in reached(g, &forward, tests) {
+            by.insert(i, Suspect { symbol: i, depth: d, overlap: overlap(i), in_failure: None, tests: 0, ran: false, changed: false });
+        }
+        for (pos, &i) in named.iter().enumerate() {
+            by.entry(i).or_insert(Suspect { symbol: i, depth: DEPTH + 1, overlap: overlap(i), in_failure: None, tests: 0, ran: false, changed: false }).in_failure = Some(pos);
+        }
     }
     let mut v: Vec<Suspect> = by.into_values().collect();
-    v.sort_by_key(|s| (s.in_failure.is_none(), s.in_failure.unwrap_or(0), std::cmp::Reverse(s.overlap), s.depth, g.syms[s.symbol].file.clone(), g.syms[s.symbol].sym.start_line));
+    let learned = w.learned;
+    v.sort_by_key(|s| {
+        let named = (s.in_failure.is_none(), s.in_failure.unwrap_or(0));
+        let place = (g.syms[s.symbol].file.clone(), g.syms[s.symbol].sym.start_line);
+        let words = usize::MAX - s.overlap;
+        if learned {
+            // code that changed since the test last passed under coverage, then what few other tests run
+            // (20 seeded bugs in click and sqlparse: the culprit is first in 90%; without the "changed"
+            // mark first in 20%, among the first 8 in 80%; the call graph alone: 5% and 20%)
+            let same = !s.changed || rank == "nochange";
+            return (named, usize::from(same), s.tests, words, 0, place);
+        }
+        // measured on 40 seeded bugs: counting the tests that reach a function through the call
+        // graph does not help (almost every test reaches the same code), the distance does a little
+        (named, words, s.depth, 0, 0, place)
+    });
     w.suspects = v;
     w
 }
@@ -173,6 +264,20 @@ fn source_line(g: &Graph, root: &Path, file: &str, line: u32) -> Option<(String,
     let text = std::fs::read_to_string(root.join(&f)).ok()?;
     let l = text.lines().nth(line.checked_sub(1)? as usize)?.trim().to_string();
     (!l.is_empty()).then_some((f, l))
+}
+
+/// Everything the ranking knows, for scripts (`gitnext why <test> --json`).
+pub fn json(g: &Graph, w: &Why) -> serde_json::Value {
+    serde_json::json!({
+        "tests": w.tests.iter().map(|&t| g.syms[t].sym.qualified.as_str()).collect::<Vec<_>>(),
+        "failed": w.failed(),
+        "learned": w.learned,
+        "failures": w.steps.iter().flat_map(|s| s.digest.failures.iter()).map(|f| serde_json::json!({ "what": f.what, "file": f.file, "line": f.line, "message": f.message, "count": f.count })).collect::<Vec<_>>(),
+        "suspects": w.suspects.iter().map(|x| {
+            let r = &g.syms[x.symbol];
+            serde_json::json!({ "symbol": r.sym.qualified, "file": r.file, "line": r.sym.start_line, "depth": x.depth, "overlap": x.overlap, "tests": x.tests, "named": x.in_failure.is_some(), "ran": x.ran, "changed": x.changed })
+        }).collect::<Vec<_>>(),
+    })
 }
 
 pub fn render(g: &Graph, root: &Path, w: &Why) -> String {
@@ -222,11 +327,14 @@ pub fn render(g: &Graph, root: &Path, w: &Why) -> String {
         return s;
     }
     let total = w.suspects.len();
-    let _ = writeln!(s, "\ncode the test reaches, most likely first ({} of {total}):", total.min(LISTED));
+    let what = if w.learned { "code the test ran (learned coverage)" } else { "code the test reaches" };
+    let _ = writeln!(s, "\n{what}, most likely first ({} of {total}):", total.min(LISTED));
     for (k, x) in w.suspects.iter().take(LISTED).enumerate() {
         let r = &g.syms[x.symbol];
         let how = match x.in_failure {
             Some(_) => "named in the failure".to_string(),
+            None if x.changed => "changed since `learn-tests`".to_string(),
+            None if x.ran => format!("run by {}", crate::changes::plural(x.tests, "test")),
             None => format!("{} from the test", crate::changes::plural(x.depth, "call")),
         };
         let _ = writeln!(s, "{:>2}. {}  {}:{}  ({how})", k + 1, g.short_name(x.symbol), r.file, r.sym.start_line);
@@ -234,7 +342,7 @@ pub fn render(g: &Graph, root: &Path, w: &Why) -> String {
     let _ = writeln!(s);
     // the code of the first; of the second only when something points at it too
     for (k, x) in w.suspects.iter().take(SHOWN).enumerate() {
-        if k > 0 && x.in_failure.is_none() && x.overlap == 0 {
+        if k > 0 && x.in_failure.is_none() && x.overlap == 0 && !x.changed {
             break;
         }
         let r = &g.syms[x.symbol];

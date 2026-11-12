@@ -314,7 +314,11 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
                 ids.extend(found.into_iter().filter(|i| !ids.contains(i)).collect::<Vec<_>>());
             }
             let w = gitnext_ops::why::why(&ws.root, &g, &ids, std::time::Duration::from_secs(timeout));
-            out.text(&gitnext_ops::why::render(&g, &ws.root, &w));
+            if out.json {
+                out.json(&gitnext_ops::why::json(&g, &w))?;
+            } else {
+                out.text(&gitnext_ops::why::render(&g, &ws.root, &w));
+            }
             if w.failed() {
                 std::process::exit(1);
             }

@@ -28,7 +28,8 @@ fn rustc_error_with_its_place() {
     let d = of("cargo-build.txt");
     assert_eq!(d.kind, "build");
     assert_eq!(d.failures.len(), 1, "{:?}", d.failures);
-    assert_eq!(first(&d), ("E0609", Some("src/eval.rs"), Some(63), "no field `majr` on type `&Comparator`".into()));
+    // the message, the line of code, and what the compiler wrote under it
+    assert_eq!(first(&d), ("E0609", Some("src/eval.rs"), Some(63), "no field `majr` on type `&Comparator` | > if ver.major != cmp.majr { | unknown field".into()));
 }
 
 #[test]

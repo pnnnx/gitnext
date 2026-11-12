@@ -117,3 +117,89 @@ fn a_passing_test_needs_no_explanation() {
     assert!(!w.failed() && w.suspects.is_empty());
     assert!(why::render(&g, &dir, &w).starts_with("why: test_exact — passes"));
 }
+
+/// A learned map for the Rust project: `test_greater_than` ran all three functions, `test_exact` two.
+fn learn(dir: &Path, g: &Graph, stale: &str) {
+    let q = |name: &str| {
+        let s = &g.syms[g.find(name)[0]].sym;
+        (s.qualified.clone(), if name == stale { "old".to_string() } else { s.body_hash.clone() })
+    };
+    let mut pairs = Vec::new();
+    for (test, ran) in [("test_greater_than", &["matches", "matches_exact", "matches_greater"][..]), ("test_exact", &["matches", "matches_exact"][..])] {
+        for f in ran {
+            let (qualified, hash) = q(f);
+            pairs.push((qualified, hash, "tests/test_req.rs".to_string(), test.to_string()));
+        }
+    }
+    gitnext_ops::gitnext_index::TestMap::write(dir, "test", &pairs).unwrap();
+}
+
+#[test]
+fn with_a_learned_map_the_code_only_this_test_ran_comes_first() {
+    let dir = rust_project("learned");
+    let g = graph(&dir);
+    learn(&dir, &g, "");
+    let t = why::find_tests(&g, "test_exact");
+    // nothing in the name or the output points anywhere: `test_exact` ran two functions, one of them every test runs
+    let w = why::explain(&dir, &g, &t, vec![failed(&g, &dir, "test test_exact ... FAILED\n")]);
+    assert!(w.learned);
+    let names: Vec<&str> = w.suspects.iter().map(|s| g.syms[s.symbol].sym.name.as_str()).collect();
+    assert_eq!(names, ["matches_exact", "matches"]);
+    let t = why::find_tests(&g, "test_greater_than");
+    let w = why::explain(&dir, &g, &t, vec![failed(&g, &dir, "test test_greater_than ... FAILED\n")]);
+    let names: Vec<&str> = w.suspects.iter().map(|s| g.syms[s.symbol].sym.name.as_str()).collect();
+    assert_eq!(names, ["matches_greater", "matches", "matches_exact"], "run by this test only, then what both tests run");
+    let text = why::render(&g, &dir, &w);
+    assert!(text.contains("code the test ran (learned coverage)") && text.contains("(run by 1 test)"), "{text}");
+    let _ = std::fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn code_changed_since_the_map_was_learned_comes_before_the_rest() {
+    let dir = rust_project("changed");
+    let g = graph(&dir);
+    learn(&dir, &g, "matches");
+    let t = why::find_tests(&g, "test_greater_than");
+    let w = why::explain(&dir, &g, &t, vec![failed(&g, &dir, "test test_greater_than ... FAILED\n")]);
+    assert_eq!(g.syms[w.suspects[0].symbol].sym.name, "matches");
+    assert!(w.suspects[0].changed && !w.suspects[1].changed);
+    assert!(why::render(&g, &dir, &w).contains("(changed since `learn-tests`)"));
+    let _ = std::fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn a_test_the_map_does_not_know_falls_back_to_the_call_graph() {
+    let dir = rust_project("unknown");
+    let g = graph(&dir);
+    gitnext_ops::gitnext_index::TestMap::write(&dir, "test", &[("demo::eval::unrelated".into(), "h".into(), "tests/other.rs".into(), "test_other".into())]).unwrap();
+    let t = why::find_tests(&g, "test_greater_than");
+    let w = why::explain(&dir, &g, &t, vec![failed(&g, &dir, "test test_greater_than ... FAILED\n")]);
+    assert!(!w.learned && w.suspects.iter().any(|s| g.syms[s.symbol].sym.name == "matches_greater"));
+    let _ = std::fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn of_several_tests_with_one_name_the_failing_one_is_explained() {
+    let dir = project(
+        "samename",
+        &[
+            ("pkg/__init__.py", ""),
+            ("pkg/a.py", "def alpha():\n    return 1\n"),
+            ("pkg/b.py", "def beta():\n    return 2\n"),
+            ("tests/test_a.py", "from pkg.a import alpha\n\n\ndef test_basic():\n    assert alpha() == 1\n"),
+            ("tests/test_b.py", "from pkg.b import beta\n\n\ndef test_basic():\n    assert beta() == 3\n"),
+        ],
+    );
+    let g = graph(&dir);
+    let both = why::find_tests(&g, "test_basic");
+    assert_eq!(both.len(), 2);
+    // the id as pytest prints it names the file, and a parameter is not part of the name
+    let one = why::find_tests(&g, "tests/test_b.py::test_basic[case0]");
+    assert_eq!(one.iter().map(|&i| g.syms[i].file.as_str()).collect::<Vec<_>>(), ["tests/test_b.py"]);
+    let out = "F.                                                                       [100%]\n=================================== FAILURES ===================================\n__________________________________ test_basic __________________________________\n\n    def test_basic():\n>       assert beta() == 3\nE       assert 2 == 3\nE        +  where 2 = beta()\n\ntests/test_b.py:5: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_b.py::test_basic - assert 2 == 3\n1 failed, 1 passed in 0.02s\n";
+    let w = why::explain(&dir, &g, &both, vec![failed(&g, &dir, out)]);
+    let names: Vec<&str> = w.suspects.iter().map(|s| g.syms[s.symbol].sym.name.as_str()).collect();
+    assert_eq!(names, ["beta"], "{}", why::render(&g, &dir, &w));
+    assert_eq!(w.tests.len(), 1);
+    let _ = std::fs::remove_dir_all(&dir);
+}

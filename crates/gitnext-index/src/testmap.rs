@@ -88,6 +88,21 @@ impl TestMap {
         run().unwrap_or_default()
     }
 
+    /// What a test ran when the map was learned: (function, its code hash then, how many tests ran it).
+    /// `name` is `test_b` or `TestA::test_b`; a bare name matches the test of any class in the file.
+    pub fn ran_by(&self, file: &str, name: &str) -> Vec<(String, String, u32)> {
+        let run = || -> rusqlite::Result<Vec<(String, String, u32)>> {
+            let mut st = self.conn.prepare(
+                "SELECT c.symbol, c.body_hash, (SELECT count(*) FROM covers x WHERE x.symbol = c.symbol)
+                 FROM covers c JOIN tests t ON t.id = c.test
+                 WHERE t.file = ?1 AND (t.name = ?2 OR substr(t.name, -length(?3)) = ?3) GROUP BY c.symbol ORDER BY c.symbol",
+            )?;
+            let rows = st.query_map(params![file, name, format!("::{name}")], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?;
+            rows.collect()
+        };
+        run().unwrap_or_default()
+    }
+
     /// (functions with at least one test, tests, pairs)
     pub fn size(&self) -> (usize, usize, usize) {
         let n = |sql: &str| self.conn.query_row(sql, [], |r| r.get::<_, i64>(0)).unwrap_or(0) as usize;

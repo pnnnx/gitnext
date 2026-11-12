@@ -5,6 +5,30 @@ Runs 1–5: five repos (one per language), one sample (seed 7, 8 functions, 4 mu
 From run 6 on: ten repos, 20 functions and 8 mutants per repo, three seeds, and a threshold next to every number.
 Since the run after run 4, a rename only counts as ok if the project's tests still pass too.
 
+## `why` · where the function at fault is in the list (37 seeded bugs)
+
+`eval/why_rank.py`: one operator is changed inside a function (as `eval/agent.py` does for its `fix` tasks), a test
+that passed starts failing, and `gitnext why <that test> --json` is asked. Known answer: the changed function.
+Table: `why-rank.md`. `GITNEXT=… python3 eval/why_rank.py --repos click,sqlparse,semver,cobra --bugs 10 --learn --variants static,nochange,default`.
+
+| what `why` ranks | projects | bugs | first | in the first 3 | in the first 8 (what is printed) | in the list |
+|---|---|---:|---:|---:|---:|---:|
+| the call graph | all four | 37 | 4 (10%) | 6 (16%) | 11 (29%) | 22 |
+| the call graph | click, sqlparse | 20 | 1 (5%) | 2 (10%) | 4 (20%) | 9 |
+| learned coverage, rarest first | click, sqlparse | 20 | 4 (20%) | 10 (50%) | 16 (80%) | 20 |
+| learned coverage + "changed since `learn-tests`" | click, sqlparse | 20 | 18 (90%) | 19 (95%) | 20 (100%) | 20 |
+
+- The call graph alone is not enough to name the culprit: almost every test of a project reaches the same code, so
+  counting the tests that reach a function ("rare first") moved nothing (3 → 3 → 2 first of 40 in the three orders
+  tried), and in 15 of 37 the culprit is not reachable through the graph at all (a CLI runner, a filter stack, `format!`).
+- Coverage of the failing test contains the culprit every time (20 of 20) and the list is short enough for 8 lines in 80%.
+- "Changed since the map was learned" is what puts it first. It is fair for the common case — the tests passed when
+  the map was learned and something was changed since — and says nothing about a bug that was always there:
+  that case is the "rarest first" row.
+- Go and Rust have no map yet (`learn-tests` knows Python): cobra 1 of 7 first, semver 2 of 10.
+- 3 of the 10 cobra bugs had only a test that fails on the untouched code as well (it expects a permission error and
+  the eval runs as root): `seed_bug` now leaves such tests out.
+
 ## Run 7 · the renames that broke the code
 
 Run 6 showed that 58 of 337 renames left a project that does not build or pass its tests. This run fixes the

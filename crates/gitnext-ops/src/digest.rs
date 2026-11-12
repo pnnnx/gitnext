@@ -145,7 +145,16 @@ fn rustc(lines: &[String], out: &mut Vec<Failure>) {
         if loc.is_none() && code == "error" {
             continue; // not rustc's: some other tool's line that starts with `error:`
         }
-        push(out, code, loc, vec![msg.to_string()]);
+        // the line of code and what the compiler wrote under it: `^^^^ expected `u64`, found `Option<u64>``
+        let mut msg = vec![msg.to_string()];
+        let shown: Vec<&String> = lines[i + 1..].iter().take(12).take_while(|n| !n.starts_with("error") && !n.starts_with("warning")).collect();
+        if let Some(src) = shown.iter().find_map(|n| n.split_once(" | ").filter(|(num, _)| !num.trim().is_empty() && num.trim().chars().all(|c| c.is_ascii_digit())).map(|x| x.1.trim())) {
+            msg.push(format!("> {src}"));
+        }
+        if let Some(label) = shown.iter().find_map(|n| n.split_once('^').map(|x| x.1.trim_start_matches(['^', '-']).trim()).filter(|t| !t.is_empty())) {
+            msg.push(label.to_string());
+        }
+        push(out, code, loc, msg);
     }
 }
 
