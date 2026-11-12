@@ -301,7 +301,7 @@ pub enum Source {
 /// A map answer is the tests that really ran the code, narrowest first.
 pub fn tests_for_at(g: &Graph, root: &Path, i: usize, depth: usize) -> (Vec<TestRef>, Source) {
     let r = &g.syms[i];
-    let covering = gitnext_index::TestMap::open_existing(root).map(|m| m.tests_of(&r.sym.qualified)).unwrap_or_default();
+    let covering = gitnext_index::TestMap::open_existing(root).map(|m| m.tests_of(&g.unique_name(i))).unwrap_or_default();
     if covering.is_empty() {
         return (tests_for(g, i, depth), Source::Graph);
     }

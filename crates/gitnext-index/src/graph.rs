@@ -260,6 +260,22 @@ impl Graph {
         &all[i]
     }
 
+    /// A name for symbol `i` that no other symbol has: its qualified name, and with `#2`, `#3`…
+    /// for the later ones of several that share it (`impl Display for T` and `impl Debug for T`
+    /// both define `T::fmt`). Used where one symbol has to be found again by name: the learned test map.
+    pub fn unique_name(&self, i: usize) -> String {
+        let q = &self.syms[i].sym.qualified;
+        let mut same: Vec<usize> = self.by_qual.get(q).map(|v| v.iter().copied().filter(|&k| self.syms[k].sym.kind == self.syms[i].sym.kind).collect()).unwrap_or_default();
+        if same.len() < 2 {
+            return q.clone();
+        }
+        same.sort_by_key(|&k| (self.syms[k].file.as_str(), self.syms[k].sym.start_line));
+        match same.iter().position(|&k| k == i) {
+            Some(0) | None => q.clone(),
+            Some(n) => format!("{q}#{}", n + 1),
+        }
+    }
+
     /// Find symbols by exact qualified name, `::`-suffix, or bare name.
     /// Every symbol with this bare name, whatever it belongs to (`main` of each program).
     pub fn named(&self, name: &str) -> Vec<usize> {

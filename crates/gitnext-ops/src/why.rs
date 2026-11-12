@@ -209,8 +209,8 @@ pub fn explain(root: &Path, g: &Graph, tests: &[usize], steps: Vec<Step>) -> Why
     if rank != "static" {
         if let Some(map) = gitnext_index::TestMap::open_existing(root) {
             w.since = map.meta("commit");
-            let by_qual: HashMap<&str, usize> =
-                g.syms.iter().enumerate().filter(|(_, r)| !r.sym.test && r.sym.kind.is_callable() && !r.sym.decl).map(|(i, r)| (r.sym.qualified.as_str(), i)).collect();
+            // by the name the map knows a function under (two `fmt` of one type are two names)
+            let by_qual: HashMap<String, usize> = g.syms.iter().enumerate().filter(|(_, r)| !r.sym.test && r.sym.kind.is_callable() && !r.sym.decl).map(|(i, _)| (g.unique_name(i), i)).collect();
             for &t in tests {
                 let r = &g.syms[t];
                 let class = r.sym.parent.as_deref().map(|p| p.rsplit("::").next().unwrap_or(p));
@@ -219,7 +219,7 @@ pub fn explain(root: &Path, g: &Graph, tests: &[usize], steps: Vec<Step>) -> Why
                     ran = map.ran_by(&r.file, &r.sym.name);
                 }
                 for (q, hash, n) in ran {
-                    let Some(&i) = by_qual.get(q.as_str()) else { continue }; // renamed or removed since
+                    let Some(&i) = by_qual.get(&q) else { continue }; // renamed or removed since
                     let changed = g.syms[i].sym.body_hash != hash;
                     by.entry(i).or_insert(Suspect { symbol: i, depth: 0, overlap: overlap(i), in_failure: None, tests: n as usize, ran: true, changed });
                 }

@@ -14,7 +14,7 @@ use std::time::{Duration, Instant};
 use anyhow::{bail, Context, Result};
 use gitnext_index::Graph;
 
-use super::{owners, Run};
+use super::{owners_at, Run};
 
 /// One test may run this long; then it is stopped and counted as failed.
 const TEST_TIMEOUT: Duration = Duration::from_secs(300);
@@ -350,7 +350,7 @@ pub(super) fn run(root: &Path, g: &Graph) -> Result<Run> {
     })?;
     drop(scratch);
 
-    let owner_of = owners(g);
+    let owner_of = owners_at(g, true);
     let mut pairs: BTreeSet<(usize, String, String)> = BTreeSet::new();
     let mut silent = Vec::new();
     for (k, files) in &lines {

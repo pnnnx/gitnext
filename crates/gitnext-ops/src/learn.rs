@@ -100,7 +100,7 @@ pub fn learn(root: &Path, g: &Graph) -> Result<Learned> {
         bail!("{}", errors.join("\n"));
     }
     let rows: Vec<(String, String, String, String)> =
-        runs.iter().flat_map(|r| r.pairs.iter()).map(|(i, f, n)| (g.syms[*i].sym.qualified.clone(), g.syms[*i].sym.body_hash.clone(), f.clone(), n.clone())).collect();
+        runs.iter().flat_map(|r| r.pairs.iter()).map(|(i, f, n)| (g.unique_name(*i), g.syms[*i].sym.body_hash.clone(), f.clone(), n.clone())).collect();
     let map = TestMap::write(root, &runs.iter().map(|r| r.source).collect::<Vec<_>>().join("+"), &rows)?;
     // the commit the tests ran on: `why` shows what changed in a function since then
     if let Ok(out) = std::process::Command::new("git").args(["rev-parse", "HEAD"]).current_dir(root).output() {

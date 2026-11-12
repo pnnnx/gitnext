@@ -234,3 +234,23 @@ fn what_changed_in_the_culprit_since_the_map_was_learned_is_shown() {
     assert!(text.contains("changed in matches_greater since `learn-tests` (- as it was, + as it is now):\n  - v < req\n  + v <= req\n"), "{text}");
     let _ = std::fs::remove_dir_all(&dir);
 }
+
+#[test]
+fn two_functions_with_one_name_are_two_entries_of_the_map() {
+    // `impl Display` and `impl Debug` of one type both define `Version::fmt`
+    let lib = "use std::fmt;\n\npub struct Version(pub u32);\n\nimpl fmt::Display for Version {\n    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {\n        write!(f, \"{}\", self.0)\n    }\n}\n\nimpl fmt::Debug for Version {\n    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {\n        write!(f, \"v{}\", self.0)\n    }\n}\n";
+    let dir = project("namesakes", &[("Cargo.toml", "[package]\nname = \"demo\"\nversion = \"0.1.0\"\nedition = \"2021\"\n"), ("src/lib.rs", lib), ("tests/t.rs", "#[test]\nfn test_show() {\n    assert_eq!(format!(\"{}\", demo::Version(1)), \"1\");\n}\n")]);
+    let g = graph(&dir);
+    let fmts: Vec<usize> = (0..g.syms.len()).filter(|&i| g.syms[i].sym.name == "fmt").collect();
+    assert_eq!(fmts.len(), 2);
+    let names: Vec<String> = fmts.iter().map(|&i| g.unique_name(i)).collect();
+    assert!(names[0] != names[1] && names.iter().any(|n| n.ends_with("#2")), "{names:?}");
+    // the test ran both; neither was changed since
+    let pairs: Vec<_> = fmts.iter().map(|&i| (g.unique_name(i), g.syms[i].sym.body_hash.clone(), "tests/t.rs".to_string(), "test_show".to_string())).collect();
+    gitnext_ops::gitnext_index::TestMap::write(&dir, "test", &pairs).unwrap();
+    let t = why::find_tests(&g, "test_show");
+    let w = why::explain(&dir, &g, &t, vec![failed(&g, &dir, "test test_show ... FAILED\n")]);
+    assert_eq!(w.suspects.len(), 2);
+    assert!(w.suspects.iter().all(|s| !s.changed), "one `fmt` must not be compared with the code of the other");
+    let _ = std::fs::remove_dir_all(&dir);
+}
