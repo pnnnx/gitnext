@@ -1,0 +1,1221 @@
+{
+ "repo": "zustand",
+ "package": "zustand",
+ "test_files": 14,
+ "test_functions_by_file": {
+  "tests/basic.test.tsx": 37,
+  "tests/devtools.test.tsx": 31,
+  "tests/middlewareTypes.test.tsx": 27,
+  "tests/persistAsync.test.tsx": 26,
+  "tests/persistPromiseLike.test.ts": 4,
+  "tests/persistSync.test.tsx": 8,
+  "tests/shallow.test.tsx": 5,
+  "tests/ssr.test.tsx": 2,
+  "tests/test-utils.ts": 4,
+  "tests/types.test.tsx": 8,
+  "tests/vanilla/basic.test.ts": 1,
+  "tests/vanilla/shallow.test.tsx": 3,
+  "tests/vanilla/subscribe.test.tsx": 1
+ },
+ "functions": [
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_4": 1,
+    "sure_8": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_8": 1,
+    "sure_or_possible_4": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_or_possible_4": 1,
+    "sure_or_possible_8": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_or_possible_8": 1
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/devtools.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure": 1,
+    "named_sure_or_possible": 1,
+    "ancestors_sure": 4,
+    "ancestors_all": 4
+   },
+   "symbol": "src::middleware::devtools::getParamNames",
+   "file": "src/middleware/devtools.ts",
+   "truth": 1,
+   "named_files": 1,
+   "hit": 1,
+   "named": [
+    "tests/devtools.test.tsx"
+   ],
+   "named_how": [
+    "its test file"
+   ],
+   "missed": []
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_4": 1,
+    "sure_8": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_8": 1,
+    "sure_or_possible_4": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_or_possible_4": 1,
+    "sure_or_possible_8": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_or_possible_8": 1
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/devtools.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure": 1,
+    "named_sure_or_possible": 1,
+    "ancestors_sure": 2,
+    "ancestors_all": 2
+   },
+   "symbol": "src::middleware::devtools::getTrackedConnectionState",
+   "file": "src/middleware/devtools.ts",
+   "truth": 1,
+   "named_files": 1,
+   "hit": 1,
+   "named": [
+    "tests/devtools.test.tsx"
+   ],
+   "named_how": [
+    "its test file"
+   ],
+   "missed": []
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_4": 1,
+    "sure_8": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_8": 1,
+    "sure_or_possible_4": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_or_possible_4": 1,
+    "sure_or_possible_8": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_or_possible_8": 1
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/devtools.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure": 1,
+    "named_sure_or_possible": 1,
+    "ancestors_sure": 3,
+    "ancestors_all": 3
+   },
+   "symbol": "src::middleware::devtools::maskToRegex",
+   "file": "src/middleware/devtools.ts",
+   "truth": 1,
+   "named_files": 1,
+   "hit": 1,
+   "named": [
+    "tests/devtools.test.tsx"
+   ],
+   "named_how": [
+    "its test file"
+   ],
+   "missed": []
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_4": 1,
+    "sure_8": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_8": 1,
+    "sure_or_possible_4": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_or_possible_4": 1,
+    "sure_or_possible_8": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_or_possible_8": 1
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/devtools.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure": 1,
+    "named_sure_or_possible": 1,
+    "ancestors_sure": 2,
+    "ancestors_all": 2
+   },
+   "symbol": "src::middleware::devtools::parseDropdownArgs",
+   "file": "src/middleware/devtools.ts",
+   "truth": 1,
+   "named_files": 1,
+   "hit": 1,
+   "named": [
+    "tests/devtools.test.tsx"
+   ],
+   "named_how": [
+    "its test file"
+   ],
+   "missed": []
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_4": 1,
+    "sure_8": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_8": 1,
+    "sure_or_possible_4": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_or_possible_4": 1,
+    "sure_or_possible_8": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure_or_possible_8": 1
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/devtools.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/devtools.test.tsx"
+    ],
+    "named_sure": 1,
+    "named_sure_or_possible": 1,
+    "ancestors_sure": 1,
+    "ancestors_all": 1
+   },
+   "symbol": "src::middleware::devtools::setStateFromDevtools",
+   "file": "src/middleware/devtools.ts",
+   "truth": 1,
+   "named_files": 1,
+   "hit": 1,
+   "named": [
+    "tests/devtools.test.tsx"
+   ],
+   "named_how": [
+    "its test file"
+   ],
+   "missed": []
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/persistAsync.test.tsx",
+     "tests/persistPromiseLike.test.ts",
+     "tests/persistSync.test.tsx"
+    ],
+    "named_sure_4": 3,
+    "sure_8": [
+     "tests/persistAsync.test.tsx",
+     "tests/persistPromiseLike.test.ts",
+     "tests/persistSync.test.tsx"
+    ],
+    "named_sure_8": 3,
+    "sure_or_possible_4": [
+     "tests/persistAsync.test.tsx",
+     "tests/persistPromiseLike.test.ts",
+     "tests/persistSync.test.tsx"
+    ],
+    "named_sure_or_possible_4": 3,
+    "sure_or_possible_8": [
+     "tests/persistAsync.test.tsx",
+     "tests/persistPromiseLike.test.ts",
+     "tests/persistSync.test.tsx"
+    ],
+    "named_sure_or_possible_8": 3
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/persistAsync.test.tsx",
+     "tests/persistPromiseLike.test.ts",
+     "tests/persistSync.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/persistAsync.test.tsx",
+     "tests/persistPromiseLike.test.ts",
+     "tests/persistSync.test.tsx"
+    ],
+    "named_sure": 3,
+    "named_sure_or_possible": 3,
+    "ancestors_sure": 2,
+    "ancestors_all": 2
+   },
+   "symbol": "src::middleware::persist::createJSONStorage",
+   "file": "src/middleware/persist.ts",
+   "truth": 6,
+   "named_files": 2,
+   "hit": 2,
+   "named": [
+    "tests/persistAsync.test.tsx",
+    "tests/persistSync.test.tsx"
+   ],
+   "named_how": [
+    "direct"
+   ],
+   "missed": [
+    {
+     "test": "tests/devtools.test.tsx",
+     "reach": "package subpath `zustand/middleware`; package subpath `zustand/vanilla`",
+     "test_symbols": 31
+    },
+    {
+     "test": "tests/middlewareTypes.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; package subpath `zustand/middleware/immer`; package subpath `zustand/vanilla`",
+     "test_symbols": 27
+    },
+    {
+     "test": "tests/persistPromiseLike.test.ts",
+     "reach": "package subpath `zustand/middleware`; package subpath `zustand/vanilla`",
+     "test_symbols": 4
+    },
+    {
+     "test": "tests/types.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`",
+     "test_symbols": 8
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 0,
+    "sure_or_possible_4": [],
+    "named_sure_or_possible_4": 0,
+    "sure_or_possible_8": [],
+    "named_sure_or_possible_8": 0
+   },
+   "simulated_file_as_test": {
+    "sure": [],
+    "sure_or_possible": [],
+    "named_sure": 0,
+    "named_sure_or_possible": 0,
+    "ancestors_sure": 1,
+    "ancestors_all": 1
+   },
+   "symbol": "src::middleware::persist::hydrate",
+   "file": "src/middleware/persist.ts",
+   "truth": 6,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/devtools.test.tsx",
+     "reach": "package subpath `zustand/middleware`; package subpath `zustand/vanilla`",
+     "test_symbols": 31
+    },
+    {
+     "test": "tests/middlewareTypes.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; package subpath `zustand/middleware/immer`; package subpath `zustand/vanilla`",
+     "test_symbols": 27
+    },
+    {
+     "test": "tests/persistAsync.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; package subpath `zustand/vanilla`; helper `tests/test-utils`",
+     "test_symbols": 26
+    },
+    {
+     "test": "tests/persistPromiseLike.test.ts",
+     "reach": "package subpath `zustand/middleware`; package subpath `zustand/vanilla`",
+     "test_symbols": 4
+    },
+    {
+     "test": "tests/persistSync.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; helper `tests/test-utils`",
+     "test_symbols": 8
+    },
+    {
+     "test": "tests/types.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`",
+     "test_symbols": 8
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 0,
+    "sure_or_possible_4": [],
+    "named_sure_or_possible_4": 0,
+    "sure_or_possible_8": [],
+    "named_sure_or_possible_8": 0
+   },
+   "simulated_file_as_test": {
+    "sure": [],
+    "sure_or_possible": [],
+    "named_sure": 1,
+    "named_sure_or_possible": 1,
+    "ancestors_sure": 1,
+    "ancestors_all": 1
+   },
+   "symbol": "src::middleware::persist::parse",
+   "file": "src/middleware/persist.ts",
+   "truth": 3,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/persistAsync.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; package subpath `zustand/vanilla`; helper `tests/test-utils`",
+     "test_symbols": 26
+    },
+    {
+     "test": "tests/persistPromiseLike.test.ts",
+     "reach": "package subpath `zustand/middleware`; package subpath `zustand/vanilla`",
+     "test_symbols": 4
+    },
+    {
+     "test": "tests/persistSync.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; helper `tests/test-utils`",
+     "test_symbols": 8
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 0,
+    "sure_or_possible_4": [],
+    "named_sure_or_possible_4": 0,
+    "sure_or_possible_8": [],
+    "named_sure_or_possible_8": 0
+   },
+   "simulated_file_as_test": {
+    "sure": [],
+    "sure_or_possible": [],
+    "named_sure": 0,
+    "named_sure_or_possible": 0,
+    "ancestors_sure": 1,
+    "ancestors_all": 1
+   },
+   "symbol": "src::middleware::persist::persistImpl",
+   "file": "src/middleware/persist.ts",
+   "truth": 6,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/devtools.test.tsx",
+     "reach": "package subpath `zustand/middleware`; package subpath `zustand/vanilla`",
+     "test_symbols": 31
+    },
+    {
+     "test": "tests/middlewareTypes.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; package subpath `zustand/middleware/immer`; package subpath `zustand/vanilla`",
+     "test_symbols": 27
+    },
+    {
+     "test": "tests/persistAsync.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; package subpath `zustand/vanilla`; helper `tests/test-utils`",
+     "test_symbols": 26
+    },
+    {
+     "test": "tests/persistPromiseLike.test.ts",
+     "reach": "package subpath `zustand/middleware`; package subpath `zustand/vanilla`",
+     "test_symbols": 4
+    },
+    {
+     "test": "tests/persistSync.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; helper `tests/test-utils`",
+     "test_symbols": 8
+    },
+    {
+     "test": "tests/types.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`",
+     "test_symbols": 8
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 0,
+    "sure_or_possible_4": [],
+    "named_sure_or_possible_4": 0,
+    "sure_or_possible_8": [],
+    "named_sure_or_possible_8": 0
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/persistPromiseLike.test.ts"
+    ],
+    "sure_or_possible": [
+     "tests/persistPromiseLike.test.ts"
+    ],
+    "named_sure": 1,
+    "named_sure_or_possible": 1,
+    "ancestors_sure": 3,
+    "ancestors_all": 3
+   },
+   "symbol": "src::middleware::persist::toThenable",
+   "file": "src/middleware/persist.ts",
+   "truth": 6,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/devtools.test.tsx",
+     "reach": "package subpath `zustand/middleware`; package subpath `zustand/vanilla`",
+     "test_symbols": 31
+    },
+    {
+     "test": "tests/middlewareTypes.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; package subpath `zustand/middleware/immer`; package subpath `zustand/vanilla`",
+     "test_symbols": 27
+    },
+    {
+     "test": "tests/persistAsync.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; package subpath `zustand/vanilla`; helper `tests/test-utils`",
+     "test_symbols": 26
+    },
+    {
+     "test": "tests/persistPromiseLike.test.ts",
+     "reach": "package subpath `zustand/middleware`; package subpath `zustand/vanilla`",
+     "test_symbols": 4
+    },
+    {
+     "test": "tests/persistSync.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; helper `tests/test-utils`",
+     "test_symbols": 8
+    },
+    {
+     "test": "tests/types.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`",
+     "test_symbols": 8
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [],
+    "named_sure_4": 0,
+    "sure_8": [],
+    "named_sure_8": 0,
+    "sure_or_possible_4": [],
+    "named_sure_or_possible_4": 0,
+    "sure_or_possible_8": [],
+    "named_sure_or_possible_8": 0
+   },
+   "simulated_file_as_test": {
+    "sure": [],
+    "sure_or_possible": [],
+    "named_sure": 0,
+    "named_sure_or_possible": 0,
+    "ancestors_sure": 1,
+    "ancestors_all": 1
+   },
+   "symbol": "src::middleware::redux::reduxImpl",
+   "file": "src/middleware/redux.ts",
+   "truth": 2,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/devtools.test.tsx",
+     "reach": "package subpath `zustand/middleware`; package subpath `zustand/vanilla`",
+     "test_symbols": 31
+    },
+    {
+     "test": "tests/middlewareTypes.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; package subpath `zustand/middleware/immer`; package subpath `zustand/vanilla`",
+     "test_symbols": 27
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/basic.test.tsx",
+     "tests/immer.test.tsx",
+     "tests/middlewareTypes.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/persistSync.test.tsx",
+     "tests/shallow.test.tsx",
+     "tests/ssr.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/types.test.tsx"
+    ],
+    "named_sure_4": 9,
+    "sure_8": [
+     "tests/basic.test.tsx",
+     "tests/immer.test.tsx",
+     "tests/middlewareTypes.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/persistSync.test.tsx",
+     "tests/shallow.test.tsx",
+     "tests/ssr.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/types.test.tsx"
+    ],
+    "named_sure_8": 9,
+    "sure_or_possible_4": [
+     "tests/basic.test.tsx",
+     "tests/immer.test.tsx",
+     "tests/middlewareTypes.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/persistSync.test.tsx",
+     "tests/shallow.test.tsx",
+     "tests/ssr.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/types.test.tsx"
+    ],
+    "named_sure_or_possible_4": 9,
+    "sure_or_possible_8": [
+     "tests/basic.test.tsx",
+     "tests/immer.test.tsx",
+     "tests/middlewareTypes.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/persistSync.test.tsx",
+     "tests/shallow.test.tsx",
+     "tests/ssr.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/types.test.tsx"
+    ],
+    "named_sure_or_possible_8": 9
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/basic.test.tsx",
+     "tests/immer.test.tsx",
+     "tests/middlewareTypes.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/persistSync.test.tsx",
+     "tests/shallow.test.tsx",
+     "tests/ssr.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/types.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/basic.test.tsx",
+     "tests/immer.test.tsx",
+     "tests/middlewareTypes.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/persistSync.test.tsx",
+     "tests/shallow.test.tsx",
+     "tests/ssr.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/types.test.tsx"
+    ],
+    "named_sure": 9,
+    "named_sure_or_possible": 9,
+    "ancestors_sure": 2,
+    "ancestors_all": 2
+   },
+   "symbol": "src::react::createImpl",
+   "file": "src/react.ts",
+   "truth": 9,
+   "named_files": 2,
+   "hit": 2,
+   "named": [
+    "tests/persistAsync.test.tsx",
+    "tests/persistSync.test.tsx"
+   ],
+   "named_how": [
+    "2 hops"
+   ],
+   "missed": [
+    {
+     "test": "tests/basic.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/traditional`",
+     "test_symbols": 37
+    },
+    {
+     "test": "tests/immer.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware/immer`; package subpath `zustand/vanilla`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/middlewareTypes.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; package subpath `zustand/middleware/immer`; package subpath `zustand/vanilla`",
+     "test_symbols": 27
+    },
+    {
+     "test": "tests/shallow.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/shallow`; package subpath `zustand/traditional`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/ssr.test.tsx",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/subscribe.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/types.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`",
+     "test_symbols": 8
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/shallow.test.tsx"
+    ],
+    "named_sure_4": 2,
+    "sure_8": [
+     "tests/shallow.test.tsx"
+    ],
+    "named_sure_8": 2,
+    "sure_or_possible_4": [
+     "tests/shallow.test.tsx"
+    ],
+    "named_sure_or_possible_4": 2,
+    "sure_or_possible_8": [
+     "tests/shallow.test.tsx"
+    ],
+    "named_sure_or_possible_8": 2
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/shallow.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/shallow.test.tsx"
+    ],
+    "named_sure": 2,
+    "named_sure_or_possible": 2,
+    "ancestors_sure": 1,
+    "ancestors_all": 1
+   },
+   "symbol": "src::react::shallow::useShallow",
+   "file": "src/react/shallow.ts",
+   "truth": 1,
+   "named_files": 2,
+   "hit": 1,
+   "named": [
+    "tests/shallow.test.tsx",
+    "tests/vanilla/shallow.test.tsx"
+   ],
+   "named_how": [
+    "direct",
+    "direct, named after it",
+    "its test file"
+   ],
+   "missed": []
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/basic.test.tsx",
+     "tests/shallow.test.tsx"
+    ],
+    "named_sure_4": 2,
+    "sure_8": [
+     "tests/basic.test.tsx",
+     "tests/shallow.test.tsx"
+    ],
+    "named_sure_8": 2,
+    "sure_or_possible_4": [
+     "tests/basic.test.tsx",
+     "tests/shallow.test.tsx"
+    ],
+    "named_sure_or_possible_4": 2,
+    "sure_or_possible_8": [
+     "tests/basic.test.tsx",
+     "tests/shallow.test.tsx"
+    ],
+    "named_sure_or_possible_8": 2
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/basic.test.tsx",
+     "tests/shallow.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/basic.test.tsx",
+     "tests/shallow.test.tsx"
+    ],
+    "named_sure": 2,
+    "named_sure_or_possible": 2,
+    "ancestors_sure": 2,
+    "ancestors_all": 2
+   },
+   "symbol": "src::traditional::createWithEqualityFnImpl",
+   "file": "src/traditional.ts",
+   "truth": 2,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/basic.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/traditional`",
+     "test_symbols": 37
+    },
+    {
+     "test": "tests/shallow.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/shallow`; package subpath `zustand/traditional`",
+     "test_symbols": 5
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/basic.test.tsx",
+     "tests/devtools.test.tsx",
+     "tests/immer.test.tsx",
+     "tests/middlewareTypes.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/persistPromiseLike.test.ts",
+     "tests/persistSync.test.tsx",
+     "tests/shallow.test.tsx",
+     "tests/ssr.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/types.test.tsx",
+     "tests/vanilla/basic.test.ts",
+     "tests/vanilla/subscribe.test.tsx"
+    ],
+    "named_sure_4": 13,
+    "sure_8": [
+     "tests/basic.test.tsx",
+     "tests/devtools.test.tsx",
+     "tests/immer.test.tsx",
+     "tests/middlewareTypes.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/persistPromiseLike.test.ts",
+     "tests/persistSync.test.tsx",
+     "tests/shallow.test.tsx",
+     "tests/ssr.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/types.test.tsx",
+     "tests/vanilla/basic.test.ts",
+     "tests/vanilla/subscribe.test.tsx"
+    ],
+    "named_sure_8": 13,
+    "sure_or_possible_4": [
+     "tests/basic.test.tsx",
+     "tests/devtools.test.tsx",
+     "tests/immer.test.tsx",
+     "tests/middlewareTypes.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/persistPromiseLike.test.ts",
+     "tests/persistSync.test.tsx",
+     "tests/shallow.test.tsx",
+     "tests/ssr.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/types.test.tsx",
+     "tests/vanilla/basic.test.ts",
+     "tests/vanilla/subscribe.test.tsx"
+    ],
+    "named_sure_or_possible_4": 13,
+    "sure_or_possible_8": [
+     "tests/basic.test.tsx",
+     "tests/devtools.test.tsx",
+     "tests/immer.test.tsx",
+     "tests/middlewareTypes.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/persistPromiseLike.test.ts",
+     "tests/persistSync.test.tsx",
+     "tests/shallow.test.tsx",
+     "tests/ssr.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/types.test.tsx",
+     "tests/vanilla/basic.test.ts",
+     "tests/vanilla/subscribe.test.tsx"
+    ],
+    "named_sure_or_possible_8": 13
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/basic.test.tsx",
+     "tests/devtools.test.tsx",
+     "tests/immer.test.tsx",
+     "tests/middlewareTypes.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/persistPromiseLike.test.ts",
+     "tests/persistSync.test.tsx",
+     "tests/shallow.test.tsx",
+     "tests/ssr.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/types.test.tsx",
+     "tests/vanilla/basic.test.ts",
+     "tests/vanilla/subscribe.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/basic.test.tsx",
+     "tests/devtools.test.tsx",
+     "tests/immer.test.tsx",
+     "tests/middlewareTypes.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/persistPromiseLike.test.ts",
+     "tests/persistSync.test.tsx",
+     "tests/shallow.test.tsx",
+     "tests/ssr.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/types.test.tsx",
+     "tests/vanilla/basic.test.ts",
+     "tests/vanilla/subscribe.test.tsx"
+    ],
+    "named_sure": 13,
+    "named_sure_or_possible": 13,
+    "ancestors_sure": 6,
+    "ancestors_all": 6
+   },
+   "symbol": "src::vanilla::createStoreImpl",
+   "file": "src/vanilla.ts",
+   "truth": 13,
+   "named_files": 4,
+   "hit": 4,
+   "named": [
+    "tests/persistPromiseLike.test.ts",
+    "tests/devtools.test.tsx",
+    "tests/persistAsync.test.tsx",
+    "tests/persistSync.test.tsx"
+   ],
+   "named_how": [
+    "2 hops",
+    "4 hops"
+   ],
+   "missed": [
+    {
+     "test": "tests/basic.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/traditional`",
+     "test_symbols": 37
+    },
+    {
+     "test": "tests/immer.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware/immer`; package subpath `zustand/vanilla`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/middlewareTypes.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; package subpath `zustand/middleware/immer`; package subpath `zustand/vanilla`",
+     "test_symbols": 27
+    },
+    {
+     "test": "tests/shallow.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/shallow`; package subpath `zustand/traditional`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/ssr.test.tsx",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/subscribe.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/types.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`",
+     "test_symbols": 8
+    },
+    {
+     "test": "tests/vanilla/basic.test.ts",
+     "reach": "package subpath `zustand/vanilla`",
+     "test_symbols": 1
+    },
+    {
+     "test": "tests/vanilla/subscribe.test.tsx",
+     "reach": "package subpath `zustand/middleware`; package subpath `zustand/vanilla`",
+     "test_symbols": 1
+    }
+   ]
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/shallow.test.tsx",
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure_4": 2,
+    "sure_8": [
+     "tests/shallow.test.tsx",
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure_8": 2,
+    "sure_or_possible_4": [
+     "tests/shallow.test.tsx",
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure_or_possible_4": 2,
+    "sure_or_possible_8": [
+     "tests/shallow.test.tsx",
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure_or_possible_8": 2
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/shallow.test.tsx",
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/shallow.test.tsx",
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure": 2,
+    "named_sure_or_possible": 2,
+    "ancestors_sure": 3,
+    "ancestors_all": 3
+   },
+   "symbol": "src::vanilla::shallow::compareEntries",
+   "file": "src/vanilla/shallow.ts",
+   "truth": 2,
+   "named_files": 2,
+   "hit": 2,
+   "named": [
+    "tests/shallow.test.tsx",
+    "tests/vanilla/shallow.test.tsx"
+   ],
+   "named_how": [
+    "3 hops, its test file",
+    "its test file"
+   ],
+   "missed": []
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure_4": 2,
+    "sure_8": [
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure_8": 2,
+    "sure_or_possible_4": [
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure_or_possible_4": 2,
+    "sure_or_possible_8": [
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure_or_possible_8": 2
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure": 2,
+    "named_sure_or_possible": 2,
+    "ancestors_sure": 3,
+    "ancestors_all": 3
+   },
+   "symbol": "src::vanilla::shallow::compareIterables",
+   "file": "src/vanilla/shallow.ts",
+   "truth": 1,
+   "named_files": 2,
+   "hit": 1,
+   "named": [
+    "tests/shallow.test.tsx",
+    "tests/vanilla/shallow.test.tsx"
+   ],
+   "named_how": [
+    "3 hops, its test file",
+    "its test file"
+   ],
+   "missed": []
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/shallow.test.tsx",
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure_4": 2,
+    "sure_8": [
+     "tests/shallow.test.tsx",
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure_8": 2,
+    "sure_or_possible_4": [
+     "tests/shallow.test.tsx",
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure_or_possible_4": 2,
+    "sure_or_possible_8": [
+     "tests/shallow.test.tsx",
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure_or_possible_8": 2
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/shallow.test.tsx",
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/shallow.test.tsx",
+     "tests/vanilla/shallow.test.tsx"
+    ],
+    "named_sure": 2,
+    "named_sure_or_possible": 2,
+    "ancestors_sure": 2,
+    "ancestors_all": 2
+   },
+   "symbol": "src::vanilla::shallow::shallow",
+   "file": "src/vanilla/shallow.ts",
+   "truth": 2,
+   "named_files": 2,
+   "hit": 2,
+   "named": [
+    "tests/shallow.test.tsx",
+    "tests/vanilla/shallow.test.tsx"
+   ],
+   "named_how": [
+    "2 hops, named after it, its test file",
+    "its test file"
+   ],
+   "missed": []
+  },
+  {
+   "graph_with_test_modules": {
+    "sure_4": [
+     "tests/basic.test.tsx",
+     "tests/vanilla/subscribe.test.tsx"
+    ],
+    "named_sure_4": 2,
+    "sure_8": [
+     "tests/basic.test.tsx",
+     "tests/vanilla/subscribe.test.tsx"
+    ],
+    "named_sure_8": 2,
+    "sure_or_possible_4": [
+     "tests/basic.test.tsx",
+     "tests/vanilla/subscribe.test.tsx"
+    ],
+    "named_sure_or_possible_4": 2,
+    "sure_or_possible_8": [
+     "tests/basic.test.tsx",
+     "tests/vanilla/subscribe.test.tsx"
+    ],
+    "named_sure_or_possible_8": 2
+   },
+   "simulated_file_as_test": {
+    "sure": [
+     "tests/basic.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/vanilla/basic.test.ts",
+     "tests/vanilla/subscribe.test.tsx"
+    ],
+    "sure_or_possible": [
+     "tests/basic.test.tsx",
+     "tests/persistAsync.test.tsx",
+     "tests/subscribe.test.tsx",
+     "tests/vanilla/basic.test.ts",
+     "tests/vanilla/subscribe.test.tsx"
+    ],
+    "named_sure": 6,
+    "named_sure_or_possible": 6,
+    "ancestors_sure": 1,
+    "ancestors_all": 1
+   },
+   "symbol": "src::vanilla::subscribe",
+   "file": "src/vanilla.ts",
+   "truth": 7,
+   "named_files": 0,
+   "hit": 0,
+   "named": [],
+   "named_how": [],
+   "missed": [
+    {
+     "test": "tests/basic.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/traditional`",
+     "test_symbols": 37
+    },
+    {
+     "test": "tests/persistAsync.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`; package subpath `zustand/vanilla`; helper `tests/test-utils`",
+     "test_symbols": 26
+    },
+    {
+     "test": "tests/shallow.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/shallow`; package subpath `zustand/traditional`",
+     "test_symbols": 5
+    },
+    {
+     "test": "tests/ssr.test.tsx",
+     "reach": "package name (vitest alias) → index re-export",
+     "test_symbols": 2
+    },
+    {
+     "test": "tests/subscribe.test.tsx",
+     "reach": "package name (vitest alias) → index re-export; package subpath `zustand/middleware`",
+     "test_symbols": 0
+    },
+    {
+     "test": "tests/vanilla/basic.test.ts",
+     "reach": "package subpath `zustand/vanilla`",
+     "test_symbols": 1
+    },
+    {
+     "test": "tests/vanilla/subscribe.test.tsx",
+     "reach": "package subpath `zustand/middleware`; package subpath `zustand/vanilla`",
+     "test_symbols": 1
+    }
+   ]
+  }
+ ]
+}
