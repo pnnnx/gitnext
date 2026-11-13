@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+- **`gitnext learn-tests` for Java** (Maven; JUnit 5, and JUnit 4 under surefire 3.6 and newer): one test run with
+  the JaCoCo agent, its data taken around every test, so `tests-for`, `look`, `check` and `why` name the tests
+  that really run a method — 99% and 94% of the failing ones on JSON-java and jsoup (the call graph: 71% and
+  29%); the run took 19 s and 69 s. What a class's static blocks run is booked to every test that touches the
+  class. Nothing is written into the project and nothing is downloaded: when JaCoCo is not in the local Maven
+  repository the message is the command that gets it. Gradle and TestNG are not learned yet.
+- **`why <test>` and `check <test>` end with what to do**: the function to change, by name and place, and the
+  call that replaces it, then the check to run — small models read the failure and stopped there.
+- **A quarter less time per command on a very large repository** (Kubernetes, 5.6M lines: seven commands took
+  22.4 s, now 16.9 s): the graph is read on two threads and is not taken apart when the command ends.
+
 ## 0.3.1 — 2026-11-13
 
 - **`gitnext look` takes a place in a file**, written the way tracebacks, test runners and models write it:

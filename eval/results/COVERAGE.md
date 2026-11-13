@@ -14,10 +14,11 @@ that the answer is right.
 | `rename` | the project still compiles and its tests pass | 91% ±3 (338) |
 | `tests-for` (and the tests part of `look`, `check`) | failing tests found; at least one of the first 10 fails | 49% ±6; 79% ±6 (167). TypeScript: 19% |
 | `learn-tests` (Python, Go, Rust) | the same with the learned map (`learn_tests.py`, `learn_tests_go.py`, `learn_tests_rust.py`) | 100% of the failing tests in all three (the graph: 19% on click, Go 78%, Rust 59%) |
+| `learn-tests` (Java) | the map `gitnext learn-tests` writes against the tests that fail when a method raises (34 and 33 methods) | json-java 99%, jsoup 94% of the failing tests (the graph: 71% and 29%) |
 | `why`, `check <test>` | place of the function at fault for a seeded bug (`why_rank.py`, `why-rank.md`) | with the learned map the culprit is first in 81% of 57 seeded bugs (Python 90%, Go 82%, Rust 70%); from the call graph alone in 18% |
 | the tools as a small model uses them | `agent.py`, Qwen 3.5 4B: find / callers / rename / fix | see the agent runs in `HISTORY.md` |
 
-## 2. Unit tests (`cargo test --workspace`, 139 tests)
+## 2. Unit tests (`cargo test --workspace`, 145 tests)
 
 | function | tests |
 |---|---|
@@ -29,6 +30,7 @@ that the answer is right.
 | `why` | `why.rs` (11) |
 | `tests-for`, the learned map | `tests_for.rs`, `testmap.rs` (8) |
 | `learn-tests`: Go, Rust | unit tests of the parsers of coverage output, and one end-to-end test each (skipped without `go` / `llvm-tools`) |
+| `learn-tests`: Java | unit tests of the copy of the pom, the agent's filter, the jars it needs (4), what is said without a JVM, and one end-to-end test on Maven (`learn_java.rs`, skipped without `GITNEXT_TEST_MVN=1`) |
 | `check`, `context`, `locate`, `outline` | 3, 4, 2, 1 |
 | `look` (a place in a file), `edit`, `dead` | `look.rs` (3), `edit.rs` (3), `dead.rs` (1) |
 | semantic diff (`diff`, `since`, `changelog`), `libs`, `setup`, MCP server, TUI | 4, 3, 3, 2, 3 |

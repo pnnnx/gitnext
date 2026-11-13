@@ -12,6 +12,7 @@ use anyhow::{bail, Result};
 use gitnext_index::{Graph, TestMap};
 
 mod go;
+mod java;
 mod js;
 mod python;
 mod rust;
@@ -40,6 +41,7 @@ type Learner = fn(&Path, &Graph) -> Result<Run>;
 const LANGUAGES: &[(&str, &[&str], Learner)] = &[
     ("Python", &[".py"], python::run), ("Go", &[".go"], go::run), ("Rust", &[".rs"], rust::run),
     ("JavaScript/TypeScript", &[".ts", ".tsx", ".mts", ".js", ".jsx", ".mjs", ".cjs"], js::run),
+    ("Java", &[".java"], java::run),
 ];
 
 pub struct Learned {
