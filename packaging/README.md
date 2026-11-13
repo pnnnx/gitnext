@@ -19,9 +19,9 @@ For each release (after the release workflow has finished and the assets are up)
 
 ```sh
 cd ~/Developer/gitnext
-sh packaging/homebrew/update.sh v0.3.0 > ~/Developer/homebrew-tap/Formula/gitnext.rb
+sh packaging/homebrew/update.sh v0.3.1 > ~/Developer/homebrew-tap/Formula/gitnext.rb
 cd ~/Developer/homebrew-tap
-git add Formula/gitnext.rb && git commit -m "gitnext 0.3.0" && git push
+git add Formula/gitnext.rb && git commit -m "gitnext 0.3.1" && git push
 brew install pnnnx/tap/gitnext && gitnext --version     # check
 ```
 
@@ -38,7 +38,7 @@ For each release:
 
 ```sh
 cd ~/Developer/gitnext/packaging/npm
-npm version 0.3.0 --no-git-tag-version   # must match the release tag (v0.3.0)
+npm version 0.3.0 --no-git-tag-version   # must match the release tag (v0.3.1)
 npm login                                  # once
 npm publish
 npx -y gitnext --version                   # check

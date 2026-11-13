@@ -202,15 +202,9 @@ pub fn read(g: &Graph, root: &Path, ids: &[usize]) -> String {
         let lines = cache.entry(r.file.as_str()).or_insert_with(|| {
             std::fs::read_to_string(root.join(&r.file)).map(|t| t.lines().map(str::to_string).collect()).unwrap_or_default()
         });
-        let (mut a, b) = (r.sym.start_line as usize, (r.sym.end_line as usize).min(lines.len()));
-        // pull in doc comments / attributes / decorators directly above
-        while a > 1 {
-            let prev = lines[a - 2].trim_start();
-            let is_doc = prev.starts_with("///") || prev.starts_with("//!") || prev.starts_with("#[") || prev.starts_with('@')
-                || prev.starts_with("/**") || prev.starts_with("* ") || prev == "*" || prev.starts_with("*/")
-                || (prev.starts_with("//") && !lines[a - 2].trim().is_empty());
-            if is_doc { a -= 1 } else { break }
-        }
+        let b = (r.sym.end_line as usize).min(lines.len());
+        // pull in doc comments / attributes / decorators directly above — the lines an edit of the symbol takes with it
+        let a = if r.sym.start_line as usize <= lines.len() { crate::edit::doc_start(lines, r.sym.start_line as usize) } else { r.sym.start_line as usize };
         if a == 0 || b < a {
             continue;
         }
@@ -273,6 +267,10 @@ pub fn show(g: &Graph, i: usize, o: Opts) -> String {
         if !c.resolved.is_empty() {
             let v: Vec<String> = c.resolved.iter().map(|(x, _)| g.short_name(*x).to_string()).collect();
             parts.push(format!("calls ({}): {}", v.len(), v.join(", ")));
+        }
+        if !c.maybe.is_empty() {
+            let v: Vec<String> = c.maybe.iter().map(|(x, _)| g.short_name(*x).to_string()).collect();
+            parts.push(format!("maybe calls ({}): {}", v.len(), v.join(", ")));
         }
         if !c.ambiguous.is_empty() {
             let v: Vec<String> = c.ambiguous.iter().map(|(n, v)| format!("{n}?{}", v.len())).collect();
@@ -354,6 +352,9 @@ pub fn callees(g: &Graph, i: usize, o: Opts) -> String {
     let mut s = format!("calls from {}:\n", g.syms[i].sym.qualified);
     for (x, line) in &c.resolved {
         let _ = writeln!(s, "{}  L{line} → {}", g.short_name(*x), loc(g, *x));
+    }
+    for (x, line) in &c.maybe {
+        let _ = writeln!(s, "{}  L{line} → {} (maybe: by name, on an object of unknown type)", g.short_name(*x), loc(g, *x));
     }
     for (name, cands) in &c.ambiguous {
         let v: Vec<&str> = cands.iter().take(6).map(|&x| g.short_name(x)).collect();

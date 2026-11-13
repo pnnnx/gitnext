@@ -1,5 +1,44 @@
 # Changelog
 
+## 0.3.1 — 2026-11-13
+
+- **`gitnext look` takes a place in a file**, written the way tracebacks, test runners and models write it:
+  `src/eval.rs:62` (the function around the line), `tests/test_x.py:120-160` (those lines),
+  `src/eval.rs::matches_greater`, `tests/test_x.py::TestA::test_b[case]`, `eval.rs matches_greater`.
+  Words of which only some are names list those names instead of "nothing found". In a trial with
+  Qwen 3.5 4B and 27B, 37 of 89 `look` calls were written one of these ways and found nothing; all are answered now.
+- **`gitnext rename --text` reaches the documentation** (`.md`, `.rst`, `.txt`, `.adoc`): the old name written as
+  code there (`name()`, `` `name` ``, `Type.name`, or a name that cannot be a word) is renamed with the rest.
+- `look` also takes a list of places (`a.go:497-506, a_test.go:123-128`) and a Go subtest (`TestX/case`); the MCP
+  `check` tool says first that a failing test is what it is for.
+- eval: the agent runs repeated on three models, 216 tasks each way (`eval/results/HISTORY.md`): +9 points of solved
+  tasks with the five tools, a third of the steps; the earlier 24-task comparison did not repeat.
+- **`gitnext dead` names only what nothing refers to.** It knew calls only: a function used as a value, a class
+  used as a type, a base or a metaclass, an imported name, a Go `init` were "likely dead" — 160 of 225 on ten
+  projects, and deleting them broke the build of six. Now the name must be written nowhere outside the symbol.
+- **`gitnext edit replace`** keeps every line where it was when the code comes back as it was read (a line indented
+  less than the first, tabs under spaces); **`edit delete`** and `read` take the whole doc comment (a Javadoc
+  whose lines do not start with `*` was cut in half, and the delete refused).
+- **`callees`** lists a method called on an object of unknown type as "maybe", as `callers` does; `look` counts
+  such calls instead of naming them.
+- **`gitnext learn-tests` for JavaScript and TypeScript** (vitest with v8 coverage, every test file alone):
+  `tests-for`, `look` and `check` name the test files that really run the code — 100% of the failing ones on yaml
+  and zustand (the call graph: 16% and 68%), for 2.6–6.6 ordinary test runs. Says which package to install when
+  `@vitest/coverage-v8` is missing; jest is not supported yet.
+- eval: a coverage map for Java measured as a prototype (`eval/learn_tests_java.py`, JaCoCo with a dump per test
+  in one Maven run): 94% and 99% of the failing tests on jsoup and json-java (the call graph: 29% and 71%) for
+  2.1–3.5 ordinary test runs. Not in `learn-tests` yet.
+- **Rust: functions declared inside a macro call are symbols** (`quickcheck! { fn prop(..) -> bool { .. } }`,
+  `proptest!`, a local `macro_rules!` that writes `#[test]`). In indexmap 43 of 192 tests were outside the graph and
+  the coverage map, now 4; `why` put the function at fault first in 14 of 20 seeded Rust bugs, now in 16–18, and
+  no longer answers with an empty list (4 of 10 on indexmap).
+- `dead` again: a name built next to reflection (`getattr(self, "_process_" + kind)`) is used; a Rust function run
+  by an attribute (`#[bench]`, `#[no_mangle]`, …) is not dead; `protected` is API. On the ten projects what it
+  calls likely dead went 225 → 64 → 1, and that one deletes cleanly.
+- `eval/consistency.py`: do the commands agree with each other and with the source (`eval/results/consistency.md`).
+- eval: a tool call cut by the token limit (a long `replace`) is asked for again instead of ending the run.
+- Release: the Intel Mac binary is built again (its runner was retired); `CITATION.cff`.
+
 ## 0.3.0 — 2026-11-12
 
 Measured on ten open-source projects in five languages; the numbers and how they are obtained are in

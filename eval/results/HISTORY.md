@@ -35,6 +35,76 @@ What the conversations showed, and what was changed after each run:
   the model called `check <test>` and the map was there, the culprit was first 5 times of 5 and 3 were solved; in
   the other two it did not see the wrong line — hence the changed lines in the answer of `why`.
 
+### A trial on a rented GPU: the same `fix` tasks with a 27B model
+
+The harness on Kaggle (two T4 cards, llama.cpp with CUDA, the settings of the Mac runs), gitnext 0.3.0, the `fix`
+tasks of click and semver with the coverage map, three bugs per project. One run, 6 tasks per cell — the counts of
+solved tasks are too few to compare; the steps and tokens differ in every single task.
+
+| model | mode | solved | median steps | tokens sent, all 6 | seconds, all 6 |
+|---|---|---:|---:|---:|---:|
+| Qwen 3.5 27B | plain | 5 of 6 | 16 | 498 k | 1184 |
+| | gitnext | 6 of 6 | 5 | 58 k | 378 |
+| | lite | 6 of 6 | 7 | 105 k | 676 |
+| Qwen 3.5 4B | gitnext | 2 of 6 | 16 | 499 k | 385 |
+| | lite | 2 of 6 | 17 | 332 k | 322 |
+
+- The 27B model with gitnext does the same thing every time: `check <test>`, one edit, `check`, done — 4 or 5 steps.
+- The 4B model: 37 of its and the 27B model's 89 `look` calls named a place the way a traceback does
+  (`src/eval.rs:62`, `tests/test_options.py:460-500`, `eval.rs::matches_greater`) and got "nothing found"; with the
+  five tools of `lite` there is no other way to read lines, and three of its four lost `lite` runs ended at the step
+  limit on such calls. `look` takes these now. In the three lost `gitnext` runs out of four the model named the bug
+  and stopped without an edit. One run ended on a `replace` cut by the token limit — the harness asks again now.
+
+### The full run on a rented GPU: three models, 216 tasks each way
+
+Kaggle, two T4 cards, llama.cpp with CUDA, the settings of the Mac runs; gitnext 0.3.0 plus the `look` change above.
+Qwen 3.5 4B, 9B and 27B (Q4_K_M); six projects (click, sqlparse, semver, indexmap, cobra, chi); find, who calls, fix,
+rename; three sets of tasks per project (seeds 11, 12, 13) — 72 tasks, the same for every model and mode, 648 runs.
+Every row: `eval/results/agent-kaggle-20261113.json`; the tables below: `python3 eval/agent_stats.py` on it.
+
+Solved, of 72 (median steps · tokens sent per task · seconds per task):
+
+| model | plain | gitnext (11 tools) | lite (5 tools) |
+|---|---|---|---|
+| Qwen 3.5 4B | 46 (10 · 54.7 k · 37 s) | 47 (5 · 44.7 k · 30 s) | 52 (3 · 41.1 k · 28 s) |
+| Qwen 3.5 9B | 44 (9 · 53.9 k · 51 s) | 50 (5 · 38.0 k · 44 s) | 51 (4 · 36.6 k · 50 s) |
+| Qwen 3.5 27B | 54 (10 · 49.6 k · 123 s) | 59 (4 · 18.8 k · 55 s) | 60 (3 · 20.9 k · 65 s) |
+| all three, of 216 | 144 | 156 | 163 |
+
+By kind, of 18 (plain → gitnext → lite):
+
+| model | find | who calls | fix | rename |
+|---|---|---|---|---|
+| 4B | 17 → 18 → 18 | 12 → 15 → 16 | 3 → 2 → 6 | 14 → 12 → 12 |
+| 9B | 18 → 18 → 18 | 10 → 14 → 15 | 4 → 5 → 6 | 12 → 13 → 12 |
+| 27B | 18 → 18 → 18 | 15 → 14 → 16 | 7 → 14 → 14 | 14 → 13 → 12 |
+
+What is and is not shown (the same task in two modes is a pair; sign test on the pairs that differ; the interval is a
+bootstrap over the 72 tasks):
+- **One model, all kinds: inside the noise.** Plain → lite: 4B +12 −6 (p = 0.24), 9B +10 −3 (p = 0.09), 27B +10 −4
+  (p = 0.18). Plain → gitnext: +7 −6, +10 −4, +8 −3.
+- **Three models together:** plain → lite 144 → 163 of 216, +32 −13, +8.8 points, 95% interval +0.9 to +16.7.
+  Plain → gitnext 144 → 156, +25 −13, +5.6 points, interval −1.4 to +13.0.
+- **Fixing a bug with the 27B model:** 7 → 14 of 18 in both gitnext modes, +7 −0 (p = 0.016). `check <test>` was its
+  first call in all 36 runs. The small models fix 2–6 of 18 whatever the tools.
+- **Steps:** a median of 9–10 plain, 4–5 with gitnext, 3–4 with the five tools — in every model.
+- **The earlier Mac result did not repeat.** Runs 1–3 above gave the 4B model 3–4 of 24 plain and 11–15 with gitnext
+  on click and semver. Here, on the same two projects, plain is 19 of 24 and gitnext 18. Since run 3 the harness
+  itself changed (the guard's hints act in every mode: 29 of 72 plain runs got one) and llama.cpp is another build;
+  which of the two moved the plain numbers was not measured. The numbers of runs 1–3 should not be quoted any more.
+
+What the conversations showed:
+- With eleven tools the small models do not start a fix from `check <test>`: the 9B model never in 18 tasks, the 4B
+  in 5 (they call `look`). With five tools: 16 of 18 each. The tool description now starts with the failing test.
+- `rename` with the tool lost to a rename by hand on the judge (old name nowhere outside `*.md`): the same five tasks
+  in every model. Two are a name in the `.rst` documentation (sqlparse) — `rename --text` covers documentation now;
+  the others are names that are also common words (`Name`, `remaining`) or a standard-library function (`FileServer`),
+  where the judge's `git grep` finds other things.
+- `look` after the change, the 553 calls of the lite fix runs: 18 named something that is not there (a path outside
+  the repo, a shell command, a library function), 5 a name that is not in the file given, 62 repeated an earlier call.
+- Rust `why` with the map after macros became symbols: the function at fault first in 17 of 20 (it was 14).
+
 ## Run 8 · in TypeScript the test is the file; coverage maps for Go and Rust
 
 **tests-for, TypeScript.** `it('…', () => …)` is not a named function; its calls are booked to the module of the

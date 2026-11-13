@@ -1,6 +1,7 @@
 //! `look`: one call that answers whatever the agent needs next, decided by the
 //! shape of the target — a file or folder (outline), a symbol (everything about
-//! it at once), an error (where it happened) or words (where they appear).
+//! it at once), a place in a file (`src/eval.rs:62`, `tests/t.py:120-154`,
+//! `src/eval.rs::matches_greater`), an error (where it happened) or words (where they appear).
 //!
 //! Every agent step re-sends the whole system prompt, so one answer that saves a
 //! follow-up call is worth far more than a shorter answer. For a symbol, `look`
@@ -30,13 +31,31 @@ pub fn look(ws: &Workspace, g: &Graph, what: &str, lite: bool) -> String {
             return s;
         }
     }
+    // a shell habit: `tests/test_x.py | grep -A 20 name` — the file is what was asked for
+    let what = match what.split_once(" | ") {
+        Some((a, _)) if file_of(g, a.trim()).is_some() => a.trim(),
+        _ => what,
+    };
+    // several places in one target: `a.go:497-506, a_test.go:123-128`
+    if what.contains(", ") {
+        let parts: Vec<&str> = what.split(", ").map(str::trim).filter(|p| !p.is_empty()).collect();
+        if parts.len() > 1 && parts.len() <= 6 && parts.iter().all(|p| place(ws, g, p, lite).is_some() || file_of(g, p).is_some()) {
+            return parts.iter().map(|p| look(ws, g, p, lite)).collect::<Vec<_>>().join("\n");
+        }
+    }
+    // a place in a file, the way tracebacks, test runners and models write it
+    if let Some(s) = place(ws, g, what, lite) {
+        return s;
+    }
+    // a subtest as Go names it: `TestClientIP/earlier_persists` is in `TestClientIP`
+    if let Some((test, _)) = what.split_once('/') {
+        if !test.contains(['.', ' ']) && file_of(g, what).is_none() && g.find(test).iter().any(|&i| g.syms[i].sym.test) {
+            return look(ws, g, test, lite);
+        }
+    }
     // a file or folder (exact, or a unique file name like `utils.py`)
     let p = what.trim_start_matches("./").trim_end_matches('/');
-    let file = g.files.iter().find(|f| f.path == p).map(|f| f.path.clone()).or_else(|| {
-        let v: Vec<&str> = g.files.iter().filter(|f| f.path.ends_with(&format!("/{p}"))).map(|f| f.path.as_str()).collect();
-        (v.len() == 1).then(|| v[0].to_string())
-    });
-    if let Some(f) = file {
+    if let Some(f) = file_of(g, what) {
         if g.files.iter().any(|x| x.path == f && x.parsed) {
             let mut s = render::outline(g, root, &f, Opts { tests: true, ..opts });
             s.push_str("next: look at several names from this list in one call\n");
@@ -71,21 +90,129 @@ pub fn look(ws: &Workspace, g: &Graph, what: &str, lite: bool) -> String {
         }
     }
     if !ids.is_empty() {
-        let first = g.syms[ids[0]].sym.qualified.clone();
-        if ids.iter().all(|&i| g.syms[i].sym.qualified == first) {
-            return symbol(ws, g, &ids, lite);
-        }
-        let mut s = format!("{} things are called `{name}` — look at one by its full name (or several at once):\n", ids.len());
-        for &i in ids.iter().take(12) {
-            let r = &g.syms[i];
-            // a name that would only bring this list back is pinned by its line: `main@78`
-            let short = g.short_name(i);
-            let label = if g.find(short).iter().all(|&x| g.syms[x].sym.qualified == r.sym.qualified) && short != name { short.to_string() } else { format!("{}@{}", r.sym.name, r.sym.start_line) };
-            let _ = writeln!(s, "  {label} ({}) {}:{}", r.sym.kind.as_str(), r.file, r.sym.start_line);
-        }
-        return s;
+        return one_or_choice(ws, g, name, &ids, lite);
     }
     words_hits(g, root, what)
+}
+
+/// The symbol, or — when the ids are different things with one name — the list to pick from.
+fn one_or_choice(ws: &Workspace, g: &Graph, name: &str, ids: &[usize], lite: bool) -> String {
+    let first = &g.syms[ids[0]].sym.qualified;
+    if ids.iter().all(|&i| &g.syms[i].sym.qualified == first) {
+        return symbol(ws, g, ids, lite);
+    }
+    let mut s = format!("{} things are called `{name}` — look at one by its full name (or several at once):\n", ids.len());
+    for &i in ids.iter().take(12) {
+        let r = &g.syms[i];
+        // a name that would only bring this list back is pinned by its line: `main@78`
+        let short = g.short_name(i);
+        let label = if g.find(short).iter().all(|&x| g.syms[x].sym.qualified == r.sym.qualified) && short != name { short.to_string() } else { format!("{}@{}", r.sym.name, r.sym.start_line) };
+        let _ = writeln!(s, "  {label} ({}) {}:{}", r.sym.kind.as_str(), r.file, r.sym.start_line);
+    }
+    s
+}
+
+/// The repo file `p` names: its path, or a file name / path tail that only one file has (`utils.py`).
+fn file_of(g: &Graph, p: &str) -> Option<String> {
+    let p = p.trim_start_matches("./").trim_end_matches('/');
+    if p.is_empty() {
+        return None;
+    }
+    g.files.iter().find(|f| f.path == p).map(|f| f.path.clone()).or_else(|| {
+        let v: Vec<&str> = g.files.iter().filter(|f| f.path.ends_with(&format!("/{p}"))).map(|f| f.path.as_str()).collect();
+        (v.len() == 1).then(|| v[0].to_string())
+    })
+}
+
+/// Lines of a file the way they get written: `62`, `L62`, `120-154`, `L120-L154`.
+fn line_range(s: &str) -> Option<(usize, usize)> {
+    let num = |x: &str| x.trim().trim_start_matches(['L', 'l']).parse::<usize>().ok().filter(|&n| n > 0);
+    match s.split_once('-') {
+        Some((a, b)) => Some((num(a)?, num(b)?)).filter(|(a, b)| a <= b),
+        None => num(s).map(|n| (n, n)),
+    }
+}
+
+/// Most lines one answer shows; a longer range says how to ask for the rest.
+const RANGE_LINES: usize = 200;
+
+/// A place in a file: `src/eval.rs:62` (the function around the line), `tests/t.py:120-154`
+/// (those lines), `src/eval.rs::matches_greater`, `tests/t.py::TestA::test_b[case]`,
+/// `eval.rs matches_greater`, `pad src/display.rs`. None: `what` is not written that way.
+fn place(ws: &Workspace, g: &Graph, what: &str, lite: bool) -> Option<String> {
+    let words: Vec<&str> = what.split_whitespace().collect();
+    // written as a path (`eval.rs`, `src/eval`): a bare word is a name, even if a file is called that
+    let path = |p: &str| if p.contains(['.', '/']) { file_of(g, p) } else { None };
+    let (file, rest) = match words.as_slice() {
+        [one] => {
+            let (a, b) = one.split_once(':')?;
+            (path(a)?, b.trim_start_matches(':'))
+        }
+        [a, b] => match (path(a), path(b)) {
+            (Some(f), None) => (f, *b),
+            (None, Some(f)) => (f, *a),
+            _ => return None,
+        },
+        _ => return None,
+    };
+    let rest = rest.trim_end_matches("()").trim_end_matches(':');
+    if rest.is_empty() {
+        return None;
+    }
+    let inside = |a: usize, b: usize| -> Vec<usize> {
+        (0..g.syms.len())
+            .filter(|&i| {
+                let s = &g.syms[i].sym;
+                g.syms[i].file == file && (s.kind.is_callable() || s.kind.is_type()) && s.start_line as usize <= b && s.end_line as usize >= a
+            })
+            .collect()
+    };
+    if let Some((a, b)) = line_range(rest) {
+        // one line: the function it is in, with everything `look` says about a function
+        if a == b {
+            if let Some(i) = inside(a, a).into_iter().min_by_key(|&i| g.syms[i].sym.end_line - g.syms[i].sym.start_line) {
+                return Some(symbol(ws, g, &[i], lite));
+            }
+        }
+        let text = std::fs::read_to_string(ws.root.join(&file)).ok()?;
+        let lines: Vec<&str> = text.lines().collect();
+        // one line outside any function: the lines around it
+        let (a, b) = if a == b { (a.saturating_sub(10).max(1), a + 20) } else { (a, b) };
+        if a > lines.len() {
+            return Some(format!("{file} has {} lines\n", lines.len()));
+        }
+        let end = b.min(lines.len()).min(a + RANGE_LINES - 1);
+        let fence = gitnext_parse::lang_for(std::path::Path::new(&file)).map(|l| l.fence()).unwrap_or("");
+        let mut s = format!("{file}:{a}-{end} (of {} lines)\n```{fence}\n", lines.len());
+        for l in &lines[a - 1..end] {
+            let _ = writeln!(s, "{l}");
+        }
+        s.push_str("```\n");
+        if end < b.min(lines.len()) {
+            let _ = writeln!(s, "… cut at {RANGE_LINES} lines: ask for {file}:{}-{} for the rest", end + 1, b.min(lines.len()));
+        }
+        let mut owners = inside(a, end);
+        owners.sort_by_key(|&i| g.syms[i].sym.start_line);
+        if !owners.is_empty() {
+            let list: Vec<String> = owners.iter().take(8).map(|&i| format!("{} ({}-{})", g.short_name(i), g.syms[i].sym.start_line, g.syms[i].sym.end_line)).collect();
+            let _ = writeln!(s, "these lines are in: {}{}", list.join(", "), if owners.len() > 8 { " …" } else { "" });
+            let _ = writeln!(s, "{}", if lite { "to change one: replace(symbol=<its name>, code=<whole new definition>)" } else { "next: look at one by name for its callers and tests" });
+        }
+        return Some(s);
+    }
+    // a name in that file; a test id keeps its class and loses its case: `TestA::test_b[case]`
+    let name = rest.split('[').next().unwrap_or(rest).replace('.', "::");
+    let last = name.rsplit("::").next().unwrap_or(&name);
+    let here = |v: Vec<usize>| -> Vec<usize> { v.into_iter().filter(|&i| g.syms[i].file == file).collect() };
+    let mut ids = here(g.find(&name));
+    if ids.is_empty() {
+        ids = here(g.named(last));
+    }
+    if ids.is_empty() {
+        let outline = render::outline(g, &ws.root, &file, Opts { tests: true, ..Opts::default() });
+        return Some(format!("no `{rest}` in {file} — what is there:\n{outline}"));
+    }
+    Some(one_or_choice(ws, g, last, &ids, lite))
 }
 
 /// Several targets in one call: each answered as by [`look`], separated.
@@ -136,7 +263,10 @@ fn symbol(ws: &Workspace, g: &Graph, ids: &[usize], lite: bool) -> String {
         let c = g.callees(ids[0]);
         if !c.resolved.is_empty() {
             let list: Vec<String> = c.resolved.iter().take(12).map(|(t, _)| g.short_name(*t).to_string()).collect();
-            let _ = writeln!(s, "calls: {}{}", list.join(", "), if c.resolved.len() > 12 { format!(" +{}", c.resolved.len() - 12) } else { String::new() });
+            let more = if c.resolved.len() > 12 { format!(" +{}", c.resolved.len() - 12) } else { String::new() };
+            // guesses (a method called on an object of unknown type) are counted, not named — as in "called by"
+            let maybe = if c.maybe.is_empty() || lite { String::new() } else { format!(" · maybe {} more via calls on objects of unknown type", c.maybe.len()) };
+            let _ = writeln!(s, "calls: {}{more}{maybe}", list.join(", "));
         }
         if let Some(l) = crate::libs::describe(root, g, ids[0]) {
             let _ = writeln!(s, "libraries: {l}");
@@ -238,7 +368,24 @@ fn words_hits(g: &Graph, root: &std::path::Path, what: &str) -> String {
         s.push('\n');
     }
     if s.is_empty() {
-        s = format!("nothing found for `{what}`. Try a file name, a function name or other words; look . shows the whole project\n");
+        // several words and no line has them all: the ones that are names are still an answer
+        let mut seen = std::collections::HashSet::new();
+        let names: Vec<usize> = what
+            .split(|c: char| c.is_whitespace() || c == ',')
+            .filter(|w| w.len() > 2)
+            .flat_map(|w| g.find(w).into_iter().take(2))
+            .filter(|&i| (g.syms[i].sym.kind.is_callable() || g.syms[i].sym.kind.is_type()) && seen.insert(i))
+            .take(10)
+            .collect();
+        if what.split_whitespace().count() > 1 && !names.is_empty() {
+            s.push_str("nothing has all these words; the ones that are names — look at one:\n");
+            for i in names {
+                let r = &g.syms[i];
+                let _ = writeln!(s, "  {} ({}) {}:{}", g.short_name(i), r.sym.kind.as_str(), r.file, r.sym.start_line);
+            }
+            return s;
+        }
+        s = format!("nothing found for `{what}`. Try a function name, a file name, lines of a file (`src/app.py:120-160`) or other words; look . shows the whole project\n");
     }
     s
 }

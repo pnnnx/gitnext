@@ -1,0 +1,655 @@
+{
+ "repo": "zustand",
+ "lang": "typescript",
+ "commit": "9fed2eb2f3af",
+ "seed": 7,
+ "gitnext_commit": "eeae698",
+ "functions": [
+  {
+   "group": "pick",
+   "symbol": "src::middleware::persist::createJSONStorage",
+   "file": "src/middleware/persist.ts",
+   "from_map": true,
+   "named_graph": 3,
+   "named_map": 6,
+   "truth": 6,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.5,
+     "precision": 1.0,
+     "predicted": 3,
+     "top_hits": 3,
+     "top_n": 3,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::devtools::setStateFromDevtools",
+   "file": "src/middleware/devtools.ts",
+   "from_map": true,
+   "named_graph": 1,
+   "named_map": 1,
+   "truth": 1,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::persist::persistImpl",
+   "file": "src/middleware/persist.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 6,
+   "truth": 6,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::persist::parse",
+   "file": "src/middleware/persist.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 5,
+   "truth": 3,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 0.6,
+     "predicted": 5,
+     "top_hits": 3,
+     "top_n": 5,
+     "top_precision": 0.6,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::devtools::maskToRegex",
+   "file": "src/middleware/devtools.ts",
+   "from_map": true,
+   "named_graph": 1,
+   "named_map": 1,
+   "truth": 1,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::vanilla::subscribe",
+   "file": "src/vanilla.ts",
+   "from_map": true,
+   "named_graph": 3,
+   "named_map": 7,
+   "truth": 7,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.42857142857142855,
+     "precision": 1.0,
+     "predicted": 3,
+     "top_hits": 3,
+     "top_n": 3,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 7,
+     "top_hits": 7,
+     "top_n": 7,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::vanilla::shallow::shallow",
+   "file": "src/vanilla/shallow.ts",
+   "from_map": true,
+   "named_graph": 2,
+   "named_map": 2,
+   "truth": 2,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::react::shallow::useShallow",
+   "file": "src/react/shallow.ts",
+   "from_map": true,
+   "named_graph": 2,
+   "named_map": 1,
+   "truth": 1,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::devtools::parseDropdownArgs",
+   "file": "src/middleware/devtools.ts",
+   "from_map": true,
+   "named_graph": 1,
+   "named_map": 1,
+   "truth": 1,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::react::createImpl",
+   "file": "src/react.ts",
+   "from_map": true,
+   "named_graph": 9,
+   "named_map": 9,
+   "truth": 9,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 9,
+     "top_hits": 9,
+     "top_n": 9,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 9,
+     "top_hits": 9,
+     "top_n": 9,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::vanilla::createStoreImpl",
+   "file": "src/vanilla.ts",
+   "from_map": true,
+   "named_graph": 13,
+   "named_map": 13,
+   "truth": 13,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 13,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 13,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::devtools::getTrackedConnectionState",
+   "file": "src/middleware/devtools.ts",
+   "from_map": true,
+   "named_graph": 1,
+   "named_map": 1,
+   "truth": 1,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::vanilla::shallow::compareIterables",
+   "file": "src/vanilla/shallow.ts",
+   "from_map": true,
+   "named_graph": 2,
+   "named_map": 2,
+   "truth": 1,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::traditional::createWithEqualityFnImpl",
+   "file": "src/traditional.ts",
+   "from_map": true,
+   "named_graph": 2,
+   "named_map": 2,
+   "truth": 2,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::devtools::getParamNames",
+   "file": "src/middleware/devtools.ts",
+   "from_map": true,
+   "named_graph": 1,
+   "named_map": 1,
+   "truth": 1,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::persist::toSyncThenable",
+   "file": "src/middleware/persist.ts",
+   "from_map": false,
+   "named_graph": 0,
+   "named_map": 0,
+   "skipped": "mutant does not compile"
+  },
+  {
+   "group": "random",
+   "symbol": "src::vanilla::shallow::hasIterableEntries",
+   "file": "src/vanilla/shallow.ts",
+   "from_map": true,
+   "named_graph": 2,
+   "named_map": 2,
+   "skipped": "mutant does not compile"
+  },
+  {
+   "group": "random",
+   "symbol": "src::vanilla::shallow::compareEntries",
+   "file": "src/vanilla/shallow.ts",
+   "from_map": true,
+   "named_graph": 2,
+   "named_map": 2,
+   "truth": 2,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::redux::reduxImpl",
+   "file": "src/middleware/redux.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 3,
+   "truth": 2,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 0.6666666666666666,
+     "predicted": 3,
+     "top_hits": 2,
+     "top_n": 3,
+     "top_precision": 0.6666666666666666,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::persist::toThenable",
+   "file": "src/middleware/persist.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 6,
+   "truth": 6,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::middleware::persist::hydrate",
+   "file": "src/middleware/persist.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 6,
+   "truth": 6,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  }
+ ],
+ "summary": {
+  "pick": {
+   "graph": {
+    "recall": 0.5,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "map": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "functions": 1,
+   "from_map": 1
+  },
+  "random": {
+   "graph": {
+    "recall": 0.69,
+    "precision": 0.667,
+    "top_precision": 0.667,
+    "caught": 0.722
+   },
+   "map": {
+    "recall": 1.0,
+    "precision": 0.931,
+    "top_precision": 0.931,
+    "caught": 1.0
+   },
+   "functions": 18,
+   "from_map": 18
+  },
+  "all": {
+   "graph": {
+    "recall": 0.68,
+    "precision": 0.684,
+    "top_precision": 0.684,
+    "caught": 0.737
+   },
+   "map": {
+    "recall": 1.0,
+    "precision": 0.935,
+    "top_precision": 0.935,
+    "caught": 1.0
+   },
+   "functions": 19,
+   "from_map": 19
+  }
+ },
+ "cost": {
+  "plain_s": 8.5,
+  "learn_cold_s": 22.4,
+  "learn_output": "learned which tests run which functions: 48 functions, 14 tests, 164 pairs (22s: npx vitest run <file> --coverage.enabled --coverage.provider=v8 --coverage.reporter=json --coverage.include=examples/**/*.{ts,tsx,mts,cts,js,jsx,mjs,cjs},rollup.config.mjs,src/**/*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}, each test file alone (14 files, vitest 5.1.0))\n38 functions were run by no test — for those `tests-for` still uses the call graph\n`tests-for`, `look` and `check` now use the map; run `gitnext learn-tests` again after larger changes",
+  "learn_warm_s": 22.3,
+  "learn_x_plain": 2.6,
+  "map_sqlite_bytes": 32768
+ }
+}

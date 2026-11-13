@@ -1,0 +1,1045 @@
+{
+ "repo": "yaml",
+ "lang": "typescript",
+ "commit": "528ef30d6ded",
+ "seed": 7,
+ "gitnext_commit": "eeae698",
+ "functions": [
+  {
+   "group": "pick",
+   "symbol": "src::compose::compose_collection::composeCollection",
+   "file": "src/compose/compose-collection.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 17,
+   "truth": 17,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 17,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::compose_doc::composeDoc",
+   "file": "src/compose/compose-doc.ts",
+   "from_map": true,
+   "named_graph": 13,
+   "named_map": 18,
+   "truth": 18,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.6111111111111112,
+     "precision": 0.8461538461538461,
+     "predicted": 13,
+     "top_hits": 9,
+     "top_n": 10,
+     "top_precision": 0.9,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 18,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::compose_scalar::composeScalar",
+   "file": "src/compose/compose-scalar.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 18,
+   "truth": 18,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 18,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::composer::Composer::compose",
+   "file": "src/compose/composer.ts",
+   "from_map": true,
+   "named_graph": 14,
+   "named_map": 17,
+   "truth": 17,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.7058823529411765,
+     "precision": 0.8571428571428571,
+     "predicted": 14,
+     "top_hits": 9,
+     "top_n": 10,
+     "top_precision": 0.9,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 17,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::resolve_block_seq::resolveBlockSeq",
+   "file": "src/compose/resolve-block-seq.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 13,
+   "truth": 13,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 13,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::resolve_end::resolveEnd",
+   "file": "src/compose/resolve-end.ts",
+   "from_map": true,
+   "named_graph": 13,
+   "named_map": 19,
+   "truth": 19,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.5789473684210527,
+     "precision": 0.8461538461538461,
+     "predicted": 13,
+     "top_hits": 9,
+     "top_n": 10,
+     "top_precision": 0.9,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 19,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::resolve_flow_scalar::resolveFlowScalar",
+   "file": "src/compose/resolve-flow-scalar.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 19,
+   "skipped": "mutant does not compile"
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::util_contains_newline::containsNewline",
+   "file": "src/compose/util-contains-newline.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 17,
+   "truth": 17,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 17,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::compose::util_flow_indent_check::flowIndentCheck",
+   "file": "src/compose/util-flow-indent-check.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 1,
+   "truth": 1,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::doc::Document::Document::setSchema",
+   "file": "src/doc/Document.ts",
+   "from_map": true,
+   "named_graph": 1,
+   "named_map": 20,
+   "truth": 20,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.05,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::doc::NodeCreator::NodeCreator::setAnchors",
+   "file": "src/doc/NodeCreator.ts",
+   "from_map": true,
+   "named_graph": 7,
+   "named_map": 20,
+   "truth": 20,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.35,
+     "precision": 1.0,
+     "predicted": 7,
+     "top_hits": 7,
+     "top_n": 7,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::doc::directives::Directives::atDocument",
+   "file": "src/doc/directives.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 18,
+   "truth": 18,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 18,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::nodes::YAMLMap::YAMLMap::#stringifyFlowMap",
+   "file": "src/nodes/YAMLMap.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 8,
+   "truth": 8,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 8,
+     "top_hits": 8,
+     "top_n": 8,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::nodes::YAMLSeq::YAMLSeq::#stringifyBlockSeq",
+   "file": "src/nodes/YAMLSeq.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 12,
+   "truth": 12,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 12,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::nodes::YAMLSet::YAMLSet::#stringifyBlockSet",
+   "file": "src/nodes/YAMLSet.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 2,
+   "truth": 2,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::nodes::YAMLSet::YAMLSet::#stringifyFlowSet",
+   "file": "src/nodes/YAMLSet.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 1,
+   "truth": 1,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::nodes::toJS::ToJSContext::resolveAlias",
+   "file": "src/nodes/toJS.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 6,
+   "truth": 6,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::nodes::toJS::ToJSContext::setAnchor",
+   "file": "src/nodes/toJS.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 6,
+   "truth": 6,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::parse::cst::tokenType",
+   "file": "src/parse/cst.ts",
+   "from_map": true,
+   "named_graph": 14,
+   "named_map": 19,
+   "truth": 19,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.631578947368421,
+     "precision": 0.8571428571428571,
+     "predicted": 14,
+     "top_hits": 9,
+     "top_n": 10,
+     "top_precision": 0.9,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 19,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::parse::lexer::Lexer::flow",
+   "file": "src/parse/lexer.ts",
+   "from_map": true,
+   "named_graph": 16,
+   "named_map": 15,
+   "truth": 15,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.6,
+     "precision": 0.5625,
+     "predicted": 16,
+     "top_hits": 6,
+     "top_n": 10,
+     "top_precision": 0.6,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 15,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::public_api::parseAllDocuments",
+   "file": "src/public-api.ts",
+   "from_map": true,
+   "named_graph": 2,
+   "named_map": 4,
+   "truth": 4,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.25,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "pick",
+   "symbol": "src::schema::yaml_1_1::pairs::resolvePairs",
+   "file": "src/schema/yaml-1.1/pairs.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 4,
+   "truth": 4,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 4,
+     "top_hits": 4,
+     "top_n": 4,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::nodes::YAMLSeq::YAMLSeq::toJS",
+   "file": "src/nodes/YAMLSeq.ts",
+   "from_map": true,
+   "named_graph": 2,
+   "named_map": 8,
+   "truth": 8,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.125,
+     "precision": 0.5,
+     "predicted": 2,
+     "top_hits": 1,
+     "top_n": 2,
+     "top_precision": 0.5,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 8,
+     "top_hits": 8,
+     "top_n": 8,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::nodes::Alias::Alias::toJS",
+   "file": "src/nodes/Alias.ts",
+   "from_map": true,
+   "named_graph": 2,
+   "named_map": 6,
+   "truth": 6,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.3333333333333333,
+     "precision": 1.0,
+     "predicted": 2,
+     "top_hits": 2,
+     "top_n": 2,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 6,
+     "top_hits": 6,
+     "top_n": 6,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::doc::anchors::anchorIsValid",
+   "file": "src/doc/anchors.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 8,
+   "truth": 8,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 8,
+     "top_hits": 8,
+     "top_n": 8,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::schema::core::float::couldBeFloat",
+   "file": "src/schema/core/float.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 18,
+   "truth": 18,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 18,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::schema::yaml_1_1::pairs::createPairs",
+   "file": "src/schema/yaml-1.1/pairs.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 3,
+   "truth": 3,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 3,
+     "top_hits": 3,
+     "top_n": 3,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::doc::Document::Document::set",
+   "file": "src/doc/Document.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 5,
+   "truth": 5,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 5,
+     "top_hits": 5,
+     "top_n": 5,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::nodes::util_clone_map_or_set::cloneMapOrSet",
+   "file": "src/nodes/util-clone-map-or-set.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 1,
+   "truth": 1,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 0,
+     "top_hits": 0,
+     "top_n": 0,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::parse::lexer::Lexer::indicators",
+   "file": "src/parse/lexer.ts",
+   "from_map": true,
+   "named_graph": 5,
+   "named_map": 20,
+   "truth": 20,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.2,
+     "precision": 0.8,
+     "predicted": 5,
+     "top_hits": 4,
+     "top_n": 5,
+     "top_precision": 0.8,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::stringify::stringify::getResolvedOptions",
+   "file": "src/stringify/stringify.ts",
+   "from_map": true,
+   "named_graph": 1,
+   "named_map": 17,
+   "truth": 17,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "predicted": 1,
+     "top_hits": 0,
+     "top_n": 1,
+     "top_precision": 0.0,
+     "caught": 0.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 17,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::stringify::stringifyNumber::stringifyNumber",
+   "file": "src/stringify/stringifyNumber.ts",
+   "from_map": true,
+   "named_graph": 1,
+   "named_map": 11,
+   "truth": 11,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.09090909090909091,
+     "precision": 1.0,
+     "predicted": 1,
+     "top_hits": 1,
+     "top_n": 1,
+     "top_precision": 1.0,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 11,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  },
+  {
+   "group": "random",
+   "symbol": "src::parse::cst_scalar::createScalarToken",
+   "file": "src/parse/cst-scalar.ts",
+   "from_map": true,
+   "named_graph": 0,
+   "named_map": 1,
+   "skipped": "mutant does not compile"
+  },
+  {
+   "group": "random",
+   "symbol": "src::parse::lexer::lex",
+   "file": "src/parse/lexer.ts",
+   "from_map": true,
+   "named_graph": 17,
+   "named_map": 20,
+   "truth": 20,
+   "missed_by_map": [],
+   "score": {
+    "graph": {
+     "recall": 0.75,
+     "precision": 0.8823529411764706,
+     "predicted": 17,
+     "top_hits": 9,
+     "top_n": 10,
+     "top_precision": 0.9,
+     "caught": 1.0
+    },
+    "map": {
+     "recall": 1.0,
+     "precision": 1.0,
+     "predicted": 20,
+     "top_hits": 10,
+     "top_n": 10,
+     "top_precision": 1.0,
+     "caught": 1.0
+    }
+   }
+  }
+ ],
+ "summary": {
+  "pick": {
+   "graph": {
+    "recall": 0.18,
+    "precision": 0.308,
+    "top_precision": 0.319,
+    "caught": 0.381
+   },
+   "map": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "functions": 21,
+   "from_map": 21
+  },
+  "random": {
+   "graph": {
+    "recall": 0.136,
+    "precision": 0.38,
+    "top_precision": 0.382,
+    "caught": 0.455
+   },
+   "map": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "functions": 11,
+   "from_map": 11
+  },
+  "all": {
+   "graph": {
+    "recall": 0.165,
+    "precision": 0.333,
+    "top_precision": 0.341,
+    "caught": 0.406
+   },
+   "map": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "top_precision": 1.0,
+    "caught": 1.0
+   },
+   "functions": 32,
+   "from_map": 32
+  }
+ },
+ "cost": {
+  "plain_s": 5.7,
+  "learn_cold_s": 37.3,
+  "learn_output": "learned which tests run which functions: 285 functions, 22 tests, 2942 pairs (37s: npx vitest run <file> --coverage.enabled --coverage.provider=v8 --coverage.reporter=json --coverage.include=src/**/*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}, each test file alone (24 files, vitest 4.1.11))\n54 functions were run by no test — for those `tests-for` still uses the call graph\nnote: JS/TS: 2 test files wrote no coverage report and are not in the map: tests/json-test-suite.ts (ENOENT: no such file or directory, scandir '/home/claude/gitnext/eval/.work/yaml/tests/json-test-suite/test_parsing'), tests/yaml-test-suite.ts (ENOENT: no such file or directory, scandir '/home/claude/gitnext/eval/.work/yaml/tests/yaml-test-suite/src')\nnote: the test run itself reported failures; the map holds what ran\n`tests-for`, `look` and `check` now use the map; run `gitnext learn-tests` again after larger changes",
+  "learn_warm_s": 37.8,
+  "learn_x_plain": 6.6,
+  "map_sqlite_bytes": 225280
+ }
+}

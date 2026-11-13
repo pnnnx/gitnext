@@ -78,6 +78,7 @@ pub fn instructions_lite() -> String {
      Use `mcp__gitnext__look` before reading files. It takes one string `what`:\n\
      - a file or folder → its functions and classes with line numbers: {\"what\": \"utils.py\"}\n\
      - a function or class → its code: {\"what\": \"parse_date\"} or {\"what\": \"Task.reopen\"}\n\
+     - lines of a file: {\"what\": \"utils.py:120-160\"}\n\
      - an error or traceback → the code where it happened\n\
      - words → where they appear: {\"what\": \"retry delay\"}\n\
      To change one function: `mcp__gitnext__replace` {\"symbol\": \"parse_date\", \"code\": \"<the whole new function>\"}.\n\

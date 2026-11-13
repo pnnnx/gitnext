@@ -54,6 +54,7 @@ import random
 import re
 import subprocess
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -86,12 +87,12 @@ GITNEXT_TOOLS = [
     tool("look", "gitnext: everything about a function, class, file or error in one call — its code, who calls it, what it calls, the tests that reach it and how to run them. Use this first.", {"what": S}, ["what"]),
     tool("rename", "gitnext: rename a function/class everywhere (definition, calls, imports, tests, comments).", {"old": S, "new": S}, ["old", "new"]),
     tool("replace_symbol", "gitnext: replace the whole code of one function/class by name, without reading the file.", {"symbol": S, "code": S}, ["symbol", "code"]),
-    tool("check", "gitnext: run the tests. No arguments: after a change — builds the project, runs the tests of what you changed, answers with a verdict. "
-                  "With `test`: why that test fails — the failure in a few lines and the code to fix, the most likely culprit first.", {"test": S}, []),
+    tool("check", "gitnext: a test fails — call this first with test = its name: it runs the test and shows the failure in a few lines and the code to fix, "
+                  "the most likely culprit first. After a change: call it with no arguments — builds the project, runs the tests of what you changed, answers with a verdict.", {"test": S}, []),
 ]
 # mode `lite`: these and nothing else — what gitnext's lite MCP profile gives a small model (plus `finish`)
 LITE_TOOLS = [
-    tool("look", "Look at code. what = a function or class name (shows its code, who calls it, its tests), a file or folder (lists what is in it), an error message, or words to find.", {"what": S}, ["what"]),
+    tool("look", "Look at code. what = a function or class name (shows its code, who calls it, its tests), a file or folder (lists what is in it), lines of a file (`src/app.py:120-160`), an error message, or words to find.", {"what": S}, ["what"]),
     tool("replace", "Replace one whole function or class with new code. No need to read the file first.", {"symbol": S, "code": S}, ["symbol", "code"]),
     tool("add_after", "Add new code (a new function) right after an existing function or class.", {"symbol": S, "code": S}, ["symbol", "code"]),
     tool("rename", "Rename a function or class everywhere: definition, calls, imports, tests.", {"old": S, "new": S}, ["old", "new"]),
@@ -334,7 +335,15 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
             used["timeout"] = True
             break
         compress(msgs, CTX_CHARS)
-        r = chat(host, msgs, tools, 1024)
+        try:
+            r = chat(host, msgs, tools, 1024)
+        except urllib.error.HTTPError as e:
+            # llama.cpp answers 500 when the model's tool call is not whole JSON: a long `replace` cut
+            # by the token limit. The same step again with room to finish it; any other error is an error
+            if e.code != 500 or "tool call" not in e.read().decode(errors="replace"):
+                raise
+            used["cut_calls"] = used.get("cut_calls", 0) + 1
+            r = chat(host, msgs, tools, 4096)
         u = r.get("usage", {})
         used["tokens_in"] += u.get("prompt_tokens", 0)
         used["tokens_out"] += u.get("completion_tokens", 0)

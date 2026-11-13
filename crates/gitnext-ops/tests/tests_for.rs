@@ -189,3 +189,37 @@ fn a_typescript_test_file_is_a_test() {
     assert!(locate::tests_for(&g, g.find("unused")[0], 4).is_empty());
     let _ = std::fs::remove_dir_all(&dir);
 }
+
+/// A learned map of a JavaScript / TypeScript project names test files (their module): `tests-for`
+/// takes them from the map, also a file the call graph does not link to the function.
+#[test]
+fn a_learned_typescript_test_file_comes_from_the_map() {
+    let dir = project(
+        "learned-ts",
+        &[
+            ("src/price.ts", "export function totalPrice(items: number[]): number {\n  return items.reduce((a, b) => a + b, 0)\n}\n\nconst table = { total: totalPrice }\n\nexport function byName(name: 'total', items: number[]): number {\n  return table[name](items)\n}\n"),
+            ("tests/cart.ts", "import { expect, it } from 'vitest'\nimport { totalPrice } from '../src/price'\n\nit('adds up', () => {\n  expect(totalPrice([1, 2])).toBe(3)\n})\n"),
+            ("tests/by-name.test.ts", "import { expect, it } from 'vitest'\nimport { byName } from '../src/price'\n\nit('looks up', () => {\n  expect(byName('total', [1])).toBe(1)\n})\n"),
+        ],
+    );
+    let mut idx = Index::open(&dir).unwrap();
+    idx.refresh().unwrap();
+    let g = idx.graph().unwrap();
+    let target = g.find("totalPrice")[0];
+    let (t, source) = locate::tests_for_at(&g, &dir, target, 4);
+    assert_eq!(source, locate::Source::Graph);
+    assert_eq!(t.iter().map(|x| g.syms[x.symbol].file.as_str()).collect::<Vec<_>>(), ["tests/cart.ts"]);
+    // the map books both files to it by the name of their module symbol
+    let module = |file: &str| g.syms.iter().find(|s| s.file == file && s.sym.test).map(|s| s.sym.name.clone()).unwrap();
+    let hash = g.syms[target].sym.body_hash.clone();
+    let rows: Vec<_> = ["tests/cart.ts", "tests/by-name.test.ts"].iter().map(|f| (g.unique_name(target), hash.clone(), f.to_string(), module(f))).collect();
+    gitnext_ops::gitnext_index::TestMap::write(&dir, "vitest-v8", &rows).unwrap();
+    let (t, source) = locate::tests_for_at(&g, &dir, target, 4);
+    assert_eq!(source, locate::Source::Learned { stale: false });
+    let mut files: Vec<&str> = t.iter().map(|x| g.syms[x.symbol].file.as_str()).collect();
+    files.sort();
+    assert_eq!(files, ["tests/by-name.test.ts", "tests/cart.ts"]);
+    let text = locate::render_tests_for(&g, &dir, target, 4, false);
+    assert!(text.starts_with("tests that ran totalPrice (2)") && text.contains("tests/by-name.test.ts tests/cart.ts"), "{text}");
+    let _ = std::fs::remove_dir_all(&dir);
+}

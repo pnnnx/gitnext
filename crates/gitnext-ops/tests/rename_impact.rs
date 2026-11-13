@@ -111,3 +111,30 @@ fn rename_text_leaves_other_symbols_in_code_alone() {
     assert!(text.contains("# show() is ours") && text.contains("def show(x)") && text.contains("return show(1), 'show'"), "{text}");
     std::fs::remove_dir_all(&dir).ok();
 }
+
+#[test]
+fn rename_text_reaches_the_documentation() {
+    let dir = project(
+        "rename-docs",
+        &[
+            ("app/__init__.py", ""),
+            ("app/lexer.py", "def default_initialization():\n    return 1\n\n\ndef close():\n    return default_initialization()\n"),
+            ("docs/extending.rst", "Call ``default_initialization()`` first.\nThen close the file; `close()` does it.\n"),
+            ("README.md", "Use `Lexer.default_initialization` to start. Keep it close at hand.\n"),
+        ],
+    );
+    let g = graph(&dir);
+    let mut r = edit::rename(&dir, &g, g.find("default_initialization")[0], "default_init", false).unwrap();
+    assert!(r.leftover.iter().any(|l| l.starts_with("docs/extending.rst:1:")) && r.leftover.iter().any(|l| l.starts_with("README.md:1:")), "{:?}", r.leftover);
+    edit::rename_leftover_text(&dir, &mut r).unwrap();
+    assert_eq!(std::fs::read_to_string(dir.join("docs/extending.rst")).unwrap(), "Call ``default_init()`` first.\nThen close the file; `close()` does it.\n");
+    assert_eq!(std::fs::read_to_string(dir.join("README.md")).unwrap(), "Use `Lexer.default_init` to start. Keep it close at hand.\n");
+    // a name that is also a word: in the documentation only where it is written as code
+    let g = graph(&dir);
+    let mut r = edit::rename(&dir, &g, g.find("close")[0], "shut", false).unwrap();
+    assert_eq!(r.leftover.iter().filter(|l| l.starts_with("docs/") || l.starts_with("README")).count(), 1, "{:?}", r.leftover);
+    edit::rename_leftover_text(&dir, &mut r).unwrap();
+    assert_eq!(std::fs::read_to_string(dir.join("docs/extending.rst")).unwrap(), "Call ``default_init()`` first.\nThen close the file; `shut()` does it.\n");
+    assert_eq!(std::fs::read_to_string(dir.join("README.md")).unwrap(), "Use `Lexer.default_init` to start. Keep it close at hand.\n");
+    std::fs::remove_dir_all(&dir).ok();
+}

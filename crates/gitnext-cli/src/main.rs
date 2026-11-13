@@ -779,6 +779,7 @@ fn callees_json(g: &Graph, i: usize) -> serde_json::Value {
     let c = g.callees(i);
     serde_json::json!({
         "resolved": c.resolved.into_iter().map(|(x, l)| (g.syms[x].sym.qualified.clone(), l)).collect::<Vec<_>>(),
+        "maybe": c.maybe.into_iter().map(|(x, l)| (g.syms[x].sym.qualified.clone(), l)).collect::<Vec<_>>(),
         "ambiguous": c.ambiguous.into_iter().map(|(n, v)| (n, v.into_iter().map(|x| g.syms[x].sym.qualified.clone()).collect::<Vec<_>>())).collect::<Vec<_>>(),
         "external": c.external,
     })

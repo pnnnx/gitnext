@@ -8,6 +8,7 @@
 <p align="center">
   <a href="https://github.com/pnnnx/gitnext/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/pnnnx/gitnext/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <a href="https://zenodo.org/badge/latestdoi/1453025544"><img alt="DOI" src="https://zenodo.org/badge/1453025544.svg"></a>
   <img alt="Rust" src="https://img.shields.io/badge/written%20in-Rust-orange.svg">
 </p>
 
@@ -24,15 +25,15 @@ The repository stays plain git — GitHub, CI and your other tools keep working.
 
 Everything here is measured on other people's code — ten open-source projects in five languages — and judged by their own compilers and test suites. How each number is obtained and how much of it is noise: [eval/results/HISTORY.md](eval/results/HISTORY.md).
 
-### A small local model solves more
+### Agents get there in a third of the steps
 
-<p align="center"><img src="docs/images/agent.svg" width="900" alt="Tasks solved by a 4B local model: with plain tools 4 of 24, with gitnext tools 17 of 24"></p>
+<p align="center"><img src="docs/images/agent.svg" width="900" alt="Tasks solved by three local models: 144 of 216 with plain tools, 163 of 216 with the five gitnext tools"></p>
 
-The same 4B model, the same tasks, the same judge. With plain tools it guesses file paths and answers from memory; with gitnext one call gives it the code, the callers and the tests. For small models there is a short list of five tools (`gitnext mcp --profile lite`): in a separate run of 18 tasks the model solved 17 with the five and 14 with eleven, and spent 15% fewer tokens.
+Three local models (Qwen 3.5 4B, 9B and 27B), the same 72 tasks each way — find a function, list its callers, rename it, fix a seeded bug — on six projects in Python, Rust and Go, judged by the projects' own compilers and tests. With the five gitnext tools (`gitnext mcp --profile lite`) they solve 163 of 216 tasks against 144 with plain read / grep / edit / run (+9 points; the 95% interval is +1 to +17), in a median of 3–4 steps instead of 9–10, and the 27B model sends 2.4 times fewer tokens. The clear gain is a bug fixed by the larger model: 14 of 18 against 7, never the other way round. For one model alone the difference in solved tasks is inside the noise, and an earlier 24-task run that showed 4 against 15 for the 4B model did not repeat: with today's harness the plain model solves 19 of those 24.
 
 ### A failing test leads to the function at fault
 
-<p align="center"><img src="docs/images/why.svg" width="900" alt="Share of seeded bugs where gitnext why names the function at fault first: 18% from the call graph, 81% with the learned coverage map"></p>
+<p align="center"><img src="docs/images/why.svg" width="900" alt="Share of seeded bugs where gitnext why names the function at fault first: 18% from the call graph, 86% with the learned coverage map"></p>
 
 `gitnext why <test>` runs the test and answers in a dozen lines: the failure itself, the code the test ran with the most likely culprit first, and the lines that changed since the tests last passed. `gitnext learn-tests` is one test run with coverage (Python, Go, Rust); a long build or test log goes through `gitnext digest` (a vitest run with 35 failures: 843 lines → 12).
 
@@ -44,7 +45,7 @@ The same 4B model, the same tasks, the same judge. With plain tools it guesses f
 | who calls a function — correct | 98% | — | 100% | 100% | 100% | **99%** ±1 |
 | rename — the project still builds and its tests pass | 93% | 90% | 85% | 96% | 87% | **91%** ±3 |
 | tests for a function — one of the first 10 named does fail | 84% | 81% | 41% | 95% | 73% | **79%** ±6 |
-| … with a learned coverage map — failing tests found | 100% | 100% | — | — | 100% | |
+| … with a learned coverage map — failing tests found | 100% | 100% | 100% | — | 100% | |
 
 232 functions for callers, 338 renames, 167 functions for tests; ± is the 90% interval, a difference inside it is noise. Python has no compiler to say who calls what, so callers are not scored there. `python3 eval/run.py` repeats the run; the full table is [eval/results/latest.md](eval/results/latest.md).
 
@@ -56,11 +57,11 @@ Most of an agent session is the system prompt re-sent on every step, so the win 
 
 ### What is checked, and what is not good yet
 
-- 115 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
-- TypeScript: `tests-for` finds 19% of the failing test files (it was 3%); the coverage map exists for Python, Go and Rust only.
+- 139 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
+- Java has no coverage map in the product yet (a prototype with JaCoCo finds 94–99% of the failing tests); for JS / TS it needs vitest.
 - A rename breaks the build or the tests in 9% of cases — mostly dynamic access and names shared by unrelated types.
-- A 4B model rarely fixes a seeded bug yet: 3 of 12 on click.
-- Rust tests written inside a macro are not seen (22% of the tests of indexmap).
+- Small models rarely fix a seeded bug: 6 of 18 at best for the 4B and the 9B model. With the full tool list they do not start from `check <test>` (the 9B model never did in 18 tasks) — give them the short list.
+- A rename done with the tool passed the judge no more often than one done by hand (12–13 of 18 against 14): names that are also common words, and mentions in documentation — the latter are renamed now.
 
 ## Install
 
@@ -90,7 +91,7 @@ gitnext             # open the TUI
 | edit one function without reading the file | `gitnext edit replace <Sym> -f new.py` / `replace_symbol` |
 | rename everywhere (imports, tests, `__all__`, `mod.func`) | `gitnext rename <old> <new>` / `rename_symbol` |
 | what breaks, which tests to run | `gitnext impact <Sym>` · `gitnext tests-for <Sym>` (the 10 most likely to fail + one command for the rest) |
-| which tests really run a function | `gitnext learn-tests` — the tests run once with coverage (Python: pytest-cov; Go; Rust: `llvm-tools-preview`); `tests-for`, `look`, `check` and `why` then use the real list |
+| which tests really run a function | `gitnext learn-tests` — the tests run once with coverage (Python: pytest-cov; Go; Rust: `llvm-tools-preview`; JS / TS: vitest with `@vitest/coverage-v8`); `tests-for`, `look`, `check` and `why` then use the real list |
 | did my change break anything | `gitnext check` — builds and runs the tests of what changed, prints a verdict (`gitnext rename A B --check` does it right after the rename) |
 | a test fails — why | `gitnext why <test>` / `check` with `test` — runs it: the failure in a few lines, the code the test ran with the most likely culprit first, the lines changed since the tests passed |
 | a long build or test log | `cargo test 2>&1 \| gitnext digest` — what failed, where, the message (a vitest run with 35 failures: 843 lines → 12) |

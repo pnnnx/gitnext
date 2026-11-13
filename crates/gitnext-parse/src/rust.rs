@@ -1,7 +1,7 @@
 //! Rust extractor: walks the tree-sitter CST and emits symbols and edges.
 
 use crate::{name_pos, CrateHint, first_sentence, hash_hex, Edge, EdgeKind, FileAnalysis, Kind, Param, Symbol};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::{Component, Path};
 use tree_sitter::{Node, Parser};
 
@@ -17,7 +17,14 @@ pub fn analyze(rel: &Path, src: &str, krate: Option<&CrateHint>) -> anyhow::Resu
         None => module_path(rel),
     };
 
-    let mut ex = Extractor { src: src.as_bytes(), out: FileAnalysis::default(), vars: HashMap::new(), fields: field_types(root, src.as_bytes()), owner_ty: None };
+    let mut ex = Extractor {
+        src: src.as_bytes(),
+        out: FileAnalysis::default(),
+        vars: HashMap::new(),
+        fields: field_types(root, src.as_bytes()),
+        owner_ty: None,
+        test_macros: test_macros(root, src.as_bytes()),
+    };
     ex.out.module_doc = inner_doc(root, ex.src);
 
     // File-level module symbol: anchor for `use` edges and the file's purpose.
@@ -115,6 +122,8 @@ struct Extractor<'a> {
     fields: HashMap<String, HashMap<String, Option<String>>>,
     /// name of the type whose `impl` the current function is in (`Self` in field lookups)
     owner_ty: Option<String>,
+    /// `macro_rules!` of this file whose rules expand to `#[test]` functions (indexmap's `quickcheck_limit!`)
+    test_macros: HashSet<String>,
 }
 
 impl<'a> Extractor<'a> {
@@ -143,6 +152,13 @@ impl<'a> Extractor<'a> {
             "const_item" => self.simple(n, ctx, Kind::Const),
             "static_item" => self.simple(n, ctx, Kind::Static),
             "macro_definition" => self.simple(n, ctx, Kind::Macro),
+            "macro_invocation" => self.macro_items(n, ctx),
+            // `foo!(…);`
+            "expression_statement" => {
+                if let Some(m) = n.named_child(0).filter(|m| m.kind() == "macro_invocation") {
+                    self.macro_items(m, ctx);
+                }
+            }
             "extern_crate_declaration" => {
                 if let Some(name) = n.child_by_field_name("name") {
                     let to = self.text(name).to_string();
@@ -360,6 +376,65 @@ impl<'a> Extractor<'a> {
         self.out.symbols.push(sym);
         let inner = Ctx { module, owner: None, trait_impl: None, in_trait: false, in_test };
         self.container(body, &inner);
+    }
+
+    /// Functions declared in the body of a macro called where items go (`quickcheck! { fn prop(..) -> bool { .. } }`,
+    /// `proptest! { #[test] fn t(..) { .. } }`): the body, a token tree to the parser, is parsed again as code —
+    /// the same source, only the bytes between the brackets — so lines, columns and calls are those of a real function.
+    /// They are tests in a test file, under `#[test]`, or when the macro is a test macro: `quickcheck*`, `proptest*`,
+    /// or a `macro_rules!` of this file that expands to `#[test]`.
+    fn macro_items(&mut self, n: Node, ctx: &Ctx) {
+        let mut cur = n.walk();
+        let Some(tt) = n.named_children(&mut cur).filter(|t| t.kind() == "token_tree").last() else { return };
+        if tt.end_byte() < tt.start_byte() + 2 {
+            return;
+        }
+        let name = n.child_by_field_name("macro").map(|m| self.text(m)).unwrap_or("");
+        let name = name.rsplit("::").next().unwrap_or(name);
+        let test = name.starts_with("quickcheck") || name.starts_with("proptest") || self.test_macros.contains(name);
+        let (s, e) = (tt.start_position(), tt.end_position());
+        let inner = tree_sitter::Range {
+            start_byte: tt.start_byte() + 1,
+            end_byte: tt.end_byte() - 1,
+            start_point: tree_sitter::Point { row: s.row, column: s.column + 1 },
+            end_point: tree_sitter::Point { row: e.row, column: e.column.saturating_sub(1) },
+        };
+        let mut parser = Parser::new();
+        if parser.set_language(&tree_sitter_rust::LANGUAGE.into()).is_err() || parser.set_included_ranges(&[inner]).is_err() {
+            return;
+        }
+        let Some(tree) = parser.parse(self.src, None) else { return };
+        let inner_ctx = Ctx {
+            module: ctx.module.clone(),
+            owner: ctx.owner.clone(),
+            trait_impl: ctx.trait_impl.clone(),
+            in_trait: ctx.in_trait,
+            in_test: ctx.in_test || test,
+        };
+        self.macro_functions(tree.root_node(), &inner_ctx, test);
+    }
+
+    /// The `fn` items at the top of a re-parsed macro body; a stretch that is not Rust (`x in 0..10`) is an `ERROR`
+    /// node the functions may sit in. A test such a macro writes takes no arguments — those of the declaration are
+    /// the property's (`fn prop(xs: Vec<u8>)` inside `#[test] fn name()`) — so a test keeps them in its signature only.
+    fn macro_functions(&mut self, n: Node, ctx: &Ctx, test_macro: bool) {
+        let mut cur = n.walk();
+        let children: Vec<Node> = n.named_children(&mut cur).collect();
+        for c in children {
+            match c.kind() {
+                "function_item" => {
+                    let before = self.out.symbols.len();
+                    self.function(c, ctx);
+                    if test_macro || has_test_attr(c, self.src) {
+                        if let Some(s) = self.out.symbols.get_mut(before) {
+                            s.params.clear();
+                        }
+                    }
+                }
+                "ERROR" => self.macro_functions(c, ctx, test_macro),
+                _ => {}
+            }
+        }
     }
 
     fn simple(&mut self, n: Node, ctx: &Ctx, kind: Kind) {
@@ -792,6 +867,26 @@ fn has_test_attr(n: Node, src: &[u8]) -> bool {
     false
 }
 
+/// Names of the `macro_rules!` in a file whose rules write `#[test]`: what they are called with are tests.
+fn test_macros(root: Node, src: &[u8]) -> HashSet<String> {
+    let mut out = HashSet::new();
+    let mut stack = vec![root];
+    while let Some(n) = stack.pop() {
+        if n.kind() == "macro_definition" {
+            if let Some(name) = n.child_by_field_name("name") {
+                let body = n.utf8_text(src).unwrap_or("");
+                if body.contains("#[test]") {
+                    out.insert(name.utf8_text(src).unwrap_or("").to_string());
+                }
+            }
+            continue;
+        }
+        let mut cur = n.walk();
+        stack.extend(n.named_children(&mut cur).filter(|c| !matches!(c.kind(), "function_item" | "token_tree")));
+    }
+    out
+}
+
 fn visibility(n: Node, src: &[u8]) -> Option<String> {
     let mut cur = n.walk();
     let v = n
@@ -942,6 +1037,50 @@ fn helper(x: u32) -> Option<Token> { None }
         let flag = |n: &str| a.symbols.iter().find(|s| s.name == n).unwrap().test;
         assert!(!flag("real"));
         assert!(flag("tests") && flag("t") && flag("top"));
+    }
+
+    #[test]
+    fn functions_in_macro_bodies() {
+        let src = r#"macro_rules! check {
+    { $(fn $f:ident($($a:ident : $t:ty),*) -> $r:ty { $($c:tt)* })* } => { $( #[test] fn $f() {} )* };
+}
+fn helper(x: u32) -> u32 { x }
+check! {
+    fn doubles(x: u32) -> bool {
+        let v = Vec::new();
+        helper(x) == x && v.is_empty()
+    }
+}
+quickcheck::quickcheck! {
+    fn qc(x: u8) -> bool { helper(x as u32) > 0 }
+}
+proptest! {
+    #[test]
+    fn pt(x in 0..10u32) { helper(x); }
+}
+thread_local! { static DEPTH: u32 = 0; }
+make_fns!(fn generated() -> u32 { helper(1) });
+impl Thing {
+    getters! { fn width(&self) -> u32 { self.w } }
+}
+fn outer() { inner! { fn hidden() {} } }
+"#;
+        let a = analyze(Path::new("src/lib.rs"), src, None).unwrap();
+        let sym = |n: &str| a.symbols.iter().find(|s| s.name == n).unwrap_or_else(|| panic!("{n}: {:?}", a.symbols.iter().map(|s| &s.name).collect::<Vec<_>>()));
+        let d = sym("doubles");
+        assert_eq!((d.start_line, d.end_line, d.test), (6, 9, true), "a local macro that writes #[test]");
+        assert_eq!(d.signature, "fn doubles(x: u32) -> bool");
+        assert!(sym("qc").test, "quickcheck!");
+        assert!(sym("pt").test, "#[test] inside proptest!");
+        assert!(!sym("generated").test, "not a test macro");
+        assert!(d.params.is_empty() && sym("qc").params.is_empty(), "the test the macro writes takes no arguments");
+        assert_eq!(sym("width").params.len(), 1, "not a test: the arguments stay");
+        assert_eq!(sym("width").qualified, "crate::Thing::width");
+        assert!(!a.symbols.iter().any(|s| s.name == "hidden"), "macros inside functions are not items");
+        let calls = |from: &str, to: &str| a.edges.iter().any(|e| e.from.ends_with(from) && e.to == to && e.kind == EdgeKind::Calls);
+        assert!(calls("::doubles", "helper") && calls("::qc", "helper") && calls("::pt", "helper") && calls("::generated", "helper"));
+        let at = a.edges.iter().find(|e| e.from.ends_with("::doubles") && e.to == "helper").unwrap();
+        assert_eq!((at.line, at.col), (8, 8));
     }
 
     #[test]

@@ -309,7 +309,8 @@ pub fn tests_for_at(g: &Graph, root: &Path, i: usize, depth: usize) -> (Vec<Test
     let mirror = mirror_test_files(&r.file);
     let mut by_place: std::collections::HashMap<(&str, &str), usize> = std::collections::HashMap::new();
     for (k, s) in g.syms.iter().enumerate() {
-        if s.sym.test && s.sym.kind.is_callable() {
+        // a JS/TS test file is one test: the map names it by its module, as `tests_for` does
+        if s.sym.test && is_test_unit(s) {
             by_place.entry((s.file.as_str(), s.sym.name.as_str())).or_insert(k);
         }
     }
