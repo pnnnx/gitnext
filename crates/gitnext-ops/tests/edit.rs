@@ -88,3 +88,52 @@ fn a_comment_that_ends_a_line_of_code_is_not_a_doc() {
     assert!(render::read(&g, &dir, &[i]).starts_with("src/Range.java:26-28 "), "{}", render::read(&g, &dir, &[i]));
     let _ = std::fs::remove_dir_all(&dir);
 }
+
+/// `replace` given a line of the code where the name belongs: the edit that was meant is made.
+#[test]
+fn a_line_of_the_code_given_as_the_name() {
+    use gitnext_ops::edit::{is_code, replace_text};
+    const EVAL: &str = "pub fn matches(a: u32, b: u32) -> bool {\n    if a == b {\n        return true;\n    }\n    a > b\n}\n\npub fn other(a: u32, b: u32) -> bool {\n    let same = a == b;\n    same || a > b\n}\n";
+    let dir = std::env::temp_dir().join(format!("gitnext-edit-text-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(dir.join("src")).unwrap();
+    std::fs::write(dir.join("Cargo.toml"), "[package]\nname = \"demo\"\nversion = \"0.1.0\"\nedition = \"2021\"\n").unwrap();
+    std::fs::write(dir.join("src/lib.rs"), EVAL).unwrap();
+    let graph = || {
+        let mut idx = Index::open(&dir).unwrap();
+        idx.refresh().unwrap();
+        idx.graph().unwrap()
+    };
+    let read = || std::fs::read_to_string(dir.join("src/lib.rs")).unwrap();
+    assert!(is_code("if a == b {") && is_code("fn matches(a: u32, b: u32)") && !is_code("eval::matches") && !is_code("Version::fmt@33"));
+    // one line for another: the text is replaced where it stands, at its indent
+    let r = replace_text(&dir, &graph(), "if a == b {", "if a != b {", false).unwrap();
+    assert_eq!((r.file.as_str(), r.lines), ("src/lib.rs", (2, 2)));
+    assert_eq!(read(), EVAL.replace("if a == b {", "if a != b {"));
+    // inside a line
+    replace_text(&dir, &graph(), "same || a > b", "same || a < b", false).unwrap();
+    assert!(read().contains("    same || a < b\n"), "{}", read());
+    std::fs::write(dir.join("src/lib.rs"), EVAL).unwrap();
+    // the first line of a function as the name, the whole function as the code: the function is replaced
+    let whole = "pub fn matches(a: u32, b: u32) -> bool {\n    a >= b\n}\n";
+    replace_text(&dir, &graph(), "pub fn matches(a: u32, b: u32) -> bool {", whole, false).unwrap();
+    assert_eq!(read(), EVAL.replace("pub fn matches(a: u32, b: u32) -> bool {\n    if a == b {\n        return true;\n    }\n    a > b\n}\n", whole));
+    std::fs::write(dir.join("src/lib.rs"), EVAL).unwrap();
+    // a line inside the function as the name, the whole function as the code: the same
+    replace_text(&dir, &graph(), "return true;", whole, false).unwrap();
+    assert!(read().starts_with(whole) && read().contains("pub fn other"), "{}", read());
+    std::fs::write(dir.join("src/lib.rs"), EVAL).unwrap();
+    // in two places: both are named, nothing is written
+    let e = replace_text(&dir, &graph(), "a == b", "a != b", false).unwrap_err().to_string();
+    assert!(e.starts_with("`a == b` is in 2 places: src/lib.rs:2 (in matches@1), src/lib.rs:9 (in other@8); name the function to change"), "{e}");
+    // a whole function for a line of another function is not put there
+    let e = replace_text(&dir, &graph(), "let same = a == b;", whole, false).unwrap_err().to_string();
+    assert!(e.starts_with("the code is a whole function or class, but `let same = a == b;` stands in another one (in other@8)"), "{e}");
+    let e = replace_text(&dir, &graph(), "if a <= b {", "if a < b {", false).unwrap_err().to_string();
+    assert!(e.starts_with("`if a <= b {` is not the name of a function or class, and no line of the code has this text"), "{e}");
+    assert_eq!(read(), EVAL);
+    // what would not parse is refused as with a symbol
+    let e = replace_text(&dir, &graph(), "if a == b {", "if a == b {{{", false).unwrap_err().to_string();
+    assert!(e.contains("would not parse"), "{e}");
+    let _ = std::fs::remove_dir_all(&dir);
+}

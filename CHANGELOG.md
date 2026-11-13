@@ -10,6 +10,11 @@
   repository the message is the command that gets it. Gradle and TestNG are not learned yet.
 - **`why <test>` and `check <test>` end with what to do**: the function to change, by name and place, and the
   call that replaces it, then the check to run — small models read the failure and stopped there.
+- **`edit replace` (MCP: `replace`, `replace_symbol`) given a line of the code where the name belongs makes the
+  edit that was meant.** A small model used to text edits writes `replace("if a == b {", "if a != b {")` or gives
+  the first line of the function as its name; in the agent runs every such call was refused ("symbol not found").
+  Now text that stands in one place is replaced there; when the code is a whole function, the function around
+  that place is replaced; text in several places is answered with the places and the functions they are in.
 - **A quarter less time per command on a very large repository** (Kubernetes, 5.6M lines: seven commands took
   22.4 s, now 16.9 s): the graph is read on two threads and is not taken apart when the command ends.
 

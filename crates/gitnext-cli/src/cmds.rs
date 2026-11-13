@@ -55,8 +55,12 @@ pub fn edit(ws: &Workspace, op: EditOp, json: bool) -> Result<()> {
         EditOp::InsertAfter { symbol, file, force } => (symbol, EditKind::InsertAfter, code_from(file)?, force),
         EditOp::Delete { symbol, force } => (symbol, EditKind::Delete, String::new(), force),
     };
-    let i = one(&g, &sym)?;
-    let r = edit::edit_symbol(&ws.root, &g, i, kind, &code, force)?;
+    let r = match one(&g, &sym) {
+        Ok(i) => edit::edit_symbol(&ws.root, &g, i, kind, &code, force)?,
+        // a line of the code where the name belongs: the edit that was meant
+        Err(_) if kind == EditKind::Replace && edit::is_code(&sym) => edit::replace_text(&ws.root, &g, &sym, &code, force)?,
+        Err(e) => return Err(e),
+    };
     if json {
         println!("{}", serde_json::to_string(&r)?);
     } else {

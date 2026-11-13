@@ -57,7 +57,7 @@ Most of an agent session is the system prompt re-sent on every step, so the win 
 
 ### What is checked, and what is not good yet
 
-- 145 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
+- 146 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
 - The coverage map for Java needs Maven and tests that run on the JUnit Platform (JUnit 5, or JUnit 4 under surefire 3.6 and newer); Gradle is not learned. For JS / TS it needs vitest.
 - A rename breaks the build or the tests in 9% of cases — mostly dynamic access and names shared by unrelated types.
 - Small models rarely fix a seeded bug: 6 of 18 at best for the 4B and the 9B model. With the full tool list they do not start from `check <test>` (the 9B model never did in 18 tasks) — give them the short list.

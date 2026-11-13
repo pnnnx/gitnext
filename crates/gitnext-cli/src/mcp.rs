@@ -256,14 +256,19 @@ impl Server {
                 gitnext_ops::render_diff(&gitnext_ops::semantic_diff(repo, mode).map_err(|e| e.to_string())?, a.get("full").and_then(Value::as_bool).unwrap_or(false))
             }
             "replace_symbol" | "insert_after" | "delete_symbol" => {
-                let i = find_one(g, s_arg(a, "symbol").ok_or("missing `symbol`")?)?;
+                let q = s_arg(a, "symbol").ok_or("missing `symbol`")?;
                 let code = s_arg(a, "code").unwrap_or("");
                 let kind = match name {
                     "replace_symbol" => EditKind::Replace,
                     "insert_after" => EditKind::InsertAfter,
                     _ => EditKind::Delete,
                 };
-                let r = edit::edit_symbol(&root, g, i, kind, code, false).map_err(|e| format!("{e:#}"))?;
+                let r = match find_one(g, q) {
+                    Ok(i) => edit::edit_symbol(&root, g, i, kind, code, false),
+                    Err(_) if kind == EditKind::Replace && edit::is_code(q) => edit::replace_text(&root, g, q, code, false),
+                    Err(e) => return Err(e),
+                }
+                .map_err(|e| format!("{e:#}"))?;
                 edit::render_edit(&r)
             }
             "annotate" => {
@@ -341,9 +346,14 @@ impl Server {
             "replace" | "add_after" => {
                 let q = any_str(a, &["symbol", "name", "function"]).ok_or("give `symbol`")?;
                 let code = a.get("code").and_then(Value::as_str).unwrap_or("");
-                let i = find_one(&self.graph, q)?;
                 let kind = if name == "replace" { EditKind::Replace } else { EditKind::InsertAfter };
-                let r = edit::edit_symbol(&root, &self.graph, i, kind, code, false).map_err(|e| format!("{e:#}"))?;
+                let r = match find_one(&self.graph, q) {
+                    Ok(i) => edit::edit_symbol(&root, &self.graph, i, kind, code, false),
+                    // a line of the code where the name belongs: the edit that was meant
+                    Err(_) if kind == EditKind::Replace && edit::is_code(q) => edit::replace_text(&root, &self.graph, q, code, false),
+                    Err(e) => return Err(e),
+                }
+                .map_err(|e| format!("{e:#}"))?;
                 edit::render_edit(&r)
             }
             "overview" => gitnext_ops::insight::overview(self.ws.repo.as_ref(), g, &root),
