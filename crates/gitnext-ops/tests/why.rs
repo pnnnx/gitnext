@@ -74,7 +74,16 @@ fn the_function_named_like_the_test_comes_first_with_its_code() {
     assert!(text.contains("tests/test_req.rs:5: assert!(matches(req, *v), \"did not match {v}\");"), "{text}");
     assert!(text.contains(" 1. matches_greater  src/eval.rs:9") && text.contains("    v < req\n"), "{text}");
     assert!(!text.contains("req == v") && !text.contains("test result:"), "{text}");
-    assert!(text.len() < 900, "{}", text.len());
+    assert!(text.len() < 1000, "{}", text.len());
+    // the last line is the next step, with the function to change by name
+    assert!(
+        text.ends_with("next: fix `matches_greater` (src/eval.rs:9) — the code, not the test. Replace the whole function with a corrected one: `gitnext edit replace matches_greater`; then `gitnext check`.\n"),
+        "{text}"
+    );
+    // an agent is told the same in the words of its own tools
+    let tools = why::Next { replace: "replace(symbol=\"{}\", code=<the whole corrected function>)", check: "check() with no arguments" };
+    let text = why::render_for(&g, &dir, &w, &tools);
+    assert!(text.ends_with("corrected one: replace(symbol=\"matches_greater\", code=<the whole corrected function>); then check() with no arguments.\n"), "{text}");
 }
 
 #[test]

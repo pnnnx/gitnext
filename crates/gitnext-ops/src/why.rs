@@ -313,7 +313,20 @@ pub fn json(g: &Graph, w: &Why) -> serde_json::Value {
     })
 }
 
+/// How the answer words its last line, the next step: with the commands of the CLI, or with the
+/// tools an agent has. `replace` has `{}` where the name of the function goes.
+pub struct Next<'a> {
+    pub replace: &'a str,
+    pub check: &'a str,
+}
+
+pub const CLI: Next<'static> = Next { replace: "`gitnext edit replace {}`", check: "`gitnext check`" };
+
 pub fn render(g: &Graph, root: &Path, w: &Why) -> String {
+    render_for(g, root, w, &CLI)
+}
+
+pub fn render_for(g: &Graph, root: &Path, w: &Why, next: &Next) -> String {
     let names: Vec<&str> = w.tests.iter().map(|&t| g.syms[t].sym.name.as_str()).collect();
     let mut s = String::new();
     if w.steps.is_empty() {
@@ -406,6 +419,16 @@ pub fn render(g: &Graph, root: &Path, w: &Why) -> String {
         }
         let _ = writeln!(s, "```");
     }
-    let _ = writeln!(s, "next: fix the code, not the test (`gitnext edit replace <function>`), then `gitnext check`");
+    // the next step, spelled out: a small model that reads "the bug is in X" answers "the bug is in X" and stops
+    let first = &g.syms[w.suspects[0].symbol];
+    let name = g.short_name(w.suspects[0].symbol);
+    let _ = writeln!(
+        s,
+        "next: fix `{name}` ({}:{}) — the code, not the test. Replace the whole function with a corrected one: {}; then {}.",
+        first.file,
+        first.sym.start_line,
+        next.replace.replace("{}", name),
+        next.check
+    );
     s
 }

@@ -303,7 +303,11 @@ impl Server {
                     let near: Vec<&str> = gitnext_ops::why::similar_tests(g, name).into_iter().map(|i| g.syms[i].sym.name.as_str()).collect();
                     return Err(format!("no test named `{name}`{}", if near.is_empty() { String::new() } else { format!("; close: {}", near.join(", ")) }));
                 }
-                gitnext_ops::why::render(g, &root, &gitnext_ops::why::why(&root, g, &ids, std::time::Duration::from_secs(600)))
+                let next = gitnext_ops::why::Next {
+                    replace: if self.profile == Profile::Lite { "replace(symbol=\"{}\", code=<the whole corrected function>)" } else { "replace_symbol(symbol=\"{}\", code=<the whole corrected function>)" },
+                    check: "check() with no arguments",
+                };
+                gitnext_ops::why::render_for(g, &root, &gitnext_ops::why::why(&root, g, &ids, std::time::Duration::from_secs(600)), &next)
             }
             "tests_for" => {
                 let d = a.get("depth").and_then(Value::as_u64).unwrap_or(4) as usize;

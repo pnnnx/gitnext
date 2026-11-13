@@ -187,7 +187,16 @@ def call_tool(name: str, a: dict, root: Path, lang: str, short: bool = False) ->
             return ev.gx(["rename", a["old"], a["new"], "--text"], root)[1][:MAX_OUT]
         if name == "check":
             test = (a.get("test") or "").strip()
-            return ev.gx(["check", test] if test else ["check"], root, timeout=900)[1][-MAX_OUT if not test else None:][:MAX_OUT]
+            if not test:
+                return ev.gx(["check"], root, timeout=900)[1][-MAX_OUT:]
+            # why the test fails. Its last line is the next step: worded with this agent's tools, and kept when the answer is cut
+            out = ev.gx(["check", test], root, timeout=900)[1].rstrip()
+            out = re.sub(r"`gitnext edit replace ([^`]+)`", lambda m: f'{"replace" if short else "replace_symbol"}(symbol="{m.group(1)}", code=<the whole corrected function>)', out)
+            out = out.replace("`gitnext check`", "check with no arguments")
+            last = out.splitlines()[-1] if out else ""
+            if len(out) > MAX_OUT and last.startswith("next:"):
+                out = out[:MAX_OUT - len(last) - 3] + "\n…\n" + last
+            return out[:MAX_OUT]
         if name in ("replace_symbol", "replace", "add_after"):
             kind = "insert-after" if name == "add_after" else "replace"
             p = subprocess.run([ev.GITNEXT, "edit", kind, a["symbol"]], input=a["code"], cwd=root, capture_output=True, text=True)
