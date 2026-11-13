@@ -269,13 +269,15 @@ pub fn dead(g: &Graph, root: &Path) -> Dead {
     // (`-> _SourceVarsDict`), a base or metaclass, an import, a callback (`map(helper)`): if the name
     // is written anywhere outside the symbol itself, something refers to it.
     let named = named_elsewhere(g, root, &candidates);
+    let run_by_attribute = entry_attribute(g, root, &candidates);
     for i in candidates {
-        if named.contains(&i) {
+        if named.contains(&i) || run_by_attribute.contains(&i) {
             continue;
         }
         let (r, s) = (&g.syms[i], &g.syms[i].sym);
         let line = format!("{} {}  {}:{}", s.kind.as_str(), g.short_name(i), r.file, s.start_line);
-        if s.is_public() && !s.name.starts_with('_') {
+        // `protected`: there for subclasses, outside the repo too — API, not dead
+        if (s.is_public() || is_protected(s)) && !s.name.starts_with('_') {
             public_unused.push(line);
         } else {
             likely.push(line);
@@ -285,7 +287,8 @@ pub fn dead(g: &Graph, root: &Path) -> Dead {
 }
 
 /// Of `candidates`, the symbols whose name is written in the code outside their own lines
-/// (comment lines aside). One pass over the files.
+/// (comment lines aside), or is built from a piece written next to reflection
+/// (`getattr(self, f"_process_{kind}")`: every `_process_*` is reached). One pass over the files.
 fn named_elsewhere(g: &Graph, root: &Path, candidates: &[usize]) -> HashSet<usize> {
     let mut by_name: HashMap<&str, Vec<usize>> = HashMap::new();
     for &i in candidates {
@@ -295,8 +298,11 @@ fn named_elsewhere(g: &Graph, root: &Path, candidates: &[usize]) -> HashSet<usiz
     if by_name.is_empty() {
         return named;
     }
+    let mut pieces: HashSet<NamePiece> = HashSet::new();
     for f in g.files.iter().filter(|f| f.parsed && f.lines < 50_000) {
         let Ok(text) = std::fs::read_to_string(root.join(&f.path)) else { continue };
+        let mut found: Vec<(u32, NamePiece)> = Vec::new();
+        let mut reflection: Vec<u32> = Vec::new();
         for (n, line) in text.lines().enumerate() {
             let t = line.trim_start();
             if t.starts_with('#') || t.starts_with("//") || t.starts_with('*') || t.starts_with("/*") {
@@ -312,9 +318,149 @@ fn named_elsewhere(g: &Graph, root: &Path, candidates: &[usize]) -> HashSet<usiz
                     }
                 }
             }
+            if REFLECTION.iter().any(|m| line.contains(m)) {
+                reflection.push(ln);
+            }
+            for (piece, indexed) in name_pieces(line) {
+                if indexed {
+                    reflection.push(ln); // `obj["on" + kind]`, `` obj[`on${kind}`] ``
+                }
+                found.push((ln, piece));
+            }
+        }
+        // a piece counts only near reflection: `'Token' + …` in a `__repr__` builds no name
+        for (ln, piece) in found {
+            if reflection.iter().any(|&r| r.abs_diff(ln) <= 3) {
+                pieces.insert(piece);
+            }
+        }
+    }
+    if !pieces.is_empty() {
+        for &i in candidates {
+            let name = g.syms[i].sym.name.to_lowercase();
+            if pieces.iter().any(|p| match p {
+                NamePiece::Prefix(x) => name.len() > x.len() && name.starts_with(x.as_str()),
+                NamePiece::Suffix(x) => name.len() > x.len() && name.ends_with(x.as_str()),
+            }) {
+                named.insert(i);
+            }
         }
     }
     named
+}
+
+/// Calls that reach a member by a name held in a string.
+const REFLECTION: &[&str] = &[
+    "getattr(", "hasattr(", "globals()", "locals()", "vars(", "__dict__", "methodcaller(", // Python
+    "getMethod(", "getDeclaredMethod(", "getField(", "getDeclaredField(", "forName(",      // Java
+    "MethodByName(", "FieldByName(",                                                      // Go
+];
+
+/// The start or the end of a name glued together at run time, lowercased (sqlparse lowercases it).
+#[derive(Debug, PartialEq, Eq, Hash)]
+enum NamePiece {
+    Prefix(String),
+    Suffix(String),
+}
+
+/// String pieces of `line` that are glued to something else into a name: `"_process_" + x`,
+/// `f'_process_{x}'`, `'_process_%s' % x`, `'_process_{}'.format(x)`, `` `on${x}` ``, `x + "_handler"`,
+/// `f'{x}_handler'`. Only identifier characters, at least 3 letters or digits (`f"_{name}"` would make
+/// every `_x` alive). The flag: the string stands right after `[` (`obj["on" + x]`), itself a lookup by name.
+fn name_pieces(line: &str) -> Vec<(NamePiece, bool)> {
+    fn piece(s: &str) -> Option<String> {
+        (s.chars().all(|c| c.is_alphanumeric() || c == '_') && s.chars().filter(|c| c.is_alphanumeric()).count() >= 3)
+            .then(|| s.to_lowercase())
+    }
+    let b: Vec<char> = line.chars().collect();
+    let mut out = Vec::new();
+    let mut i = 0;
+    while i < b.len() {
+        let q = b[i];
+        if !matches!(q, '"' | '\'' | '`') {
+            i += 1;
+            continue;
+        }
+        // f'…' / F'…' / rf'…': an interpolating string
+        let fstr = q == '`' || (i > 0 && matches!(b[i - 1], 'f' | 'F') && (i < 2 || !b[i - 2].is_alphanumeric() || matches!(b[i - 2], 'r' | 'R')));
+        let mut j = i + 1;
+        while j < b.len() && b[j] != q {
+            j += if b[j] == '\\' { 2 } else { 1 };
+        }
+        if j >= b.len() {
+            break;
+        }
+        let body: String = b[i + 1..j].iter().collect();
+        let before = b[..i - usize::from(fstr && q != '`')].iter().rev().find(|c| !c.is_whitespace()).copied();
+        let after = b[j + 1..].iter().find(|c| !c.is_whitespace()).copied();
+        let indexed = before == Some('[');
+        let open = if q == '`' { "${" } else { "{" };
+        if fstr && body.contains(open) {
+            let head = &body[..body.find(open).unwrap()];
+            if let Some(p) = piece(head) {
+                out.push((NamePiece::Prefix(p), indexed));
+            }
+            if let Some(k) = body.rfind('}') {
+                if let Some(p) = piece(&body[k + 1..]) {
+                    out.push((NamePiece::Suffix(p), indexed));
+                }
+            }
+        } else if let Some(head) = body.strip_suffix("%s").or_else(|| body.strip_suffix("{}")) {
+            if let Some(p) = piece(head) {
+                out.push((NamePiece::Prefix(p), indexed));
+            }
+        } else if let Some(p) = piece(&body) {
+            if after == Some('+') {
+                out.push((NamePiece::Prefix(p), indexed));
+            } else if before == Some('+') {
+                out.push((NamePiece::Suffix(p), indexed));
+            }
+        }
+        i = j + 1;
+    }
+    out
+}
+
+/// Rust functions a harness or the linker runs by an attribute: `#[bench]`, `#[no_mangle]`,
+/// `#[export_name = ..]`, `#[proc_macro..]`, `#[tokio::main]`. Read from the lines above the item.
+fn entry_attribute(g: &Graph, root: &Path, candidates: &[usize]) -> HashSet<usize> {
+    let mut by_file: BTreeMap<&str, Vec<usize>> = BTreeMap::new();
+    for &i in candidates {
+        let r = &g.syms[i];
+        if r.file.ends_with(".rs") && r.sym.kind.is_callable() {
+            by_file.entry(r.file.as_str()).or_default().push(i);
+        }
+    }
+    let mut out = HashSet::new();
+    for (file, ids) in by_file {
+        let Ok(text) = std::fs::read_to_string(root.join(file)) else { continue };
+        let lines: Vec<&str> = text.lines().collect();
+        for i in ids {
+            let start = g.syms[i].sym.start_line as usize; // 1-based: lines[start - 1] is the item
+            let mut k = start.saturating_sub(1);
+            // the item's own first line too: an attribute may share it (`#[bench] fn f(..)`)
+            let mut attrs = lines.get(k).map(|l| l.trim_start().to_string()).filter(|l| l.starts_with("#[")).unwrap_or_default();
+            while k > 0 {
+                k -= 1;
+                let t = lines[k].trim_start();
+                if t.starts_with("#[") || t.starts_with("//") {
+                    attrs.push_str(t);
+                } else {
+                    break;
+                }
+            }
+            if ["#[bench]", "no_mangle", "export_name", "#[proc_macro", "::main]", "::main("].iter().any(|a| attrs.contains(a)) {
+                out.insert(i);
+            }
+        }
+    }
+    out
+}
+
+/// `protected` in Java / C++ / TypeScript: written before the name in the signature.
+fn is_protected(s: &gitnext_parse::Symbol) -> bool {
+    s.visibility.as_deref() == Some("protected")
+        || s.signature.find(s.name.as_str()).is_some_and(|k| s.signature[..k].split_whitespace().any(|w| w == "protected"))
 }
 
 pub fn render_dead(d: &Dead) -> String {

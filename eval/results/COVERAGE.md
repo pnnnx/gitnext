@@ -45,15 +45,42 @@ No compiler is asked here; what can be checked without one is, on the 10 project
 | `search` | a symbol is found by its own name | 296, all found |
 | `edit replace`, `edit delete` | a symbol replaced with its own code leaves the file as it was; a delete removes the symbol with its doc comment and nothing else | 200 edits, all right (before: 11 wrong in the two Java projects — a body line indented less than the first, tabs under spaces, a Javadoc without `*`) |
 | `hierarchy` | the bases in a class's own signature (Python, Java, TypeScript) are in `extends` / `implements`, and the class is among their subtypes | 195 bases, both ways, all there |
-| `dead` | the name is written nowhere else in the code; with everything it calls likely dead deleted, the project compiles and no test starts failing (Python, Go, Rust, TypeScript) | see below |
+| `dead` | the name is written nowhere else in the code, nor built next to reflection; with everything it calls likely dead deleted, the project compiles and no test starts failing (all five languages; Rust with every feature and every target) | see below |
 
 `dead` before this check named 225 symbols "likely dead" on the 10 projects; 160 of them were named elsewhere in
 the code — used as a value, a type, a base, an import, a callback, or a Go `init` — and deleting them broke the
-build of at least 6 of the 8 projects where that is tried. Now the name must be written nowhere outside the symbol
-itself: 64 are left. indexmap 57 — deleted, it compiles and its tests pass (not tried with every feature and the
-benches built). sqlparse 5 — deleted, eight tests fail: the methods are reached by names built at run time
-(`getattr(self, "_process_" + …)`). The two Java projects, one each — not tried (the delete run would need Maven
-twice per project). The `public but unused` list is not checked.
+build of at least 6 of the 8 projects where that is tried. Then the name had to be written nowhere outside the
+symbol itself: 64 were left, and deleting them still broke two projects:
+
+- sqlparse 5 — 16 tests fail: the methods are reached by names built at run time
+  (`getattr(self, f'_process_{type(tlist).__name__}'.lower())`). Now a piece of a name — a string of at least
+  3 letters glued into a name (`"_visit_" + x`, `f"_process_{x}"`, `"_handle_%s" % x`, `x + "_handler"`,
+  `` obj[`on${x}`] ``) within 3 lines of reflection (`getattr`, `globals()`, `getMethod`, `MethodByName`, …) —
+  keeps every symbol whose name starts (or ends) with it alive. On the 10 projects it keeps these 5 and nothing else.
+- indexmap 57 — all of them `#[bench]` functions; with every feature and every target built (nightly: the benches use
+  `#![feature(test)]`), deleting them gives 17 compile errors. Before, the benches were not built, so it looked fine.
+  Functions run by an attribute — `#[bench]`, `#[no_mangle]`, `#[export_name]`, `#[proc_macro…]`, `#[…::main]` —
+  are not dead now.
+- json-java 1 — `protected`: there for subclasses, outside the repo too. It is in `public but unused` now.
+
+What deleting everything left in "likely dead" does (`eval/consistency.py`, Java with Maven before and after,
+Rust with `--all-features --all-targets`):
+
+| project | likely dead: before → now | deleted, new compile errors / new failing tests |
+|---|---:|---|
+| cobra, chi, click, zustand, yaml, semver | 0 → 0 | nothing to delete |
+| sqlparse | 5 → 0 | before: 0 / 16 |
+| indexmap | 57 → 0 | before: 17 / 0 (nightly, every feature and target) |
+| json-java | 1 → 0 | before: 0 / 0 (moved to public but unused) |
+| jsoup | 1 → 1 | 0 / 0 (`HtmlTreeBuilder.getBaseUri`, package-private, really unused) |
+
+`public but unused`: 51 → 52 (the `protected` method above; the list is otherwise as it was). Without
+the "named elsewhere" check it would be 265 on the 10 projects; 213 of them are named elsewhere, 52 are left
+(cobra 23, indexmap 12, chi 6, click 3, sqlparse 2, yaml 2, jsoup 2, json-java 1, semver 1, zustand 0).
+Of 37 read by hand (up to 10 a project, seed 5): 29 are API, 4 are reached another way (an `io` method the
+standard library calls, a `sort.Interface` method, a no_std crate that only has to compile), 4 are dead code
+(an unused function in chi's `_examples`, sqlparse's `Having`, yaml's `primitiveKey` that the package does not
+export, jsoup's `internal` `StringUtil.startsWithNewline`). So the list is mostly API, as its name says.
 
 ## 4. Answers on every project, correctness not checked (`eval/smoke.py`, `smoke.md`)
 

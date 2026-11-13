@@ -259,8 +259,23 @@ def check_dead(root: Path, repo: dict, syms: list[dict], run: bool) -> dict:
         if hits:
             res["named_elsewhere"].append(f"{kind} {name} {file}:{line} — named at {', '.join(hits[:3])}{' …' if len(hits) > 3 else ''}")
     L = ev.LANG.get(repo["lang"])
-    if not run or not L or not ent["likely"] or repo["lang"] not in ("python", "go", "rust", "typescript"):
+    res["verdict"] = f"{len(ent['likely'])} named likely dead"
+    if not ent["likely"]:
+        res["verdict"] += ": nothing to delete"
         return res
+    if not run or not L:
+        res["verdict"] += ": deleting not tried" + ("" if run else " (--no-dead-run)")
+        return res
+    L = dict(L)
+    if repo["lang"] == "rust":
+        # every feature and every target: code behind a feature, examples, benches and tests all build.
+        # Benches with `#![feature(test)]` build on nightly only: where stable fails before anything is deleted, nightly
+        tc = ""
+        build = "cargo {}test --all-features --all-targets --no-run --no-fail-fast --message-format human 2>&1"
+        if ev.sh(build.format(""), root, timeout=1800)[0] and "nightly" in ev.sh("rustup toolchain list", root)[1]:
+            tc = "+nightly "
+        L["compile"], L["tests"] = build.format(tc), f"cargo {tc}test --all-features --no-fail-fast 2>&1"
+        res["toolchain"] = tc.strip("+ ") or "stable"
     compiled = lambda: set(map(str, L["errors"](ev.sh(L["compile"], root, timeout=1800)[1], root))) if L.get("compile") and L.get("errors") else set()  # noqa: E731
     before_c = compiled()
     before_t = set(L["failed"](ev.sh(L["tests"], root, timeout=1800)[1], root))
@@ -274,6 +289,9 @@ def check_dead(root: Path, repo: dict, syms: list[dict], run: bool) -> dict:
     # pytest: a test module that no longer imports is an ERROR line without a test name
     after_t |= {f"{m} (does not import)" for m in re.findall(r"^ERROR (\S+\.py)(?: - .*)?$", out, re.M)}
     res["broke"] = {"compile_errors": sorted(after_c - before_c)[:8], "tests": sorted(after_t - before_t)[:8], "tests_ran": bool(L["ran"](out, root))}
+    new_c, new_t = len(after_c - before_c), len(after_t - before_t)
+    res["verdict"] += (f", {res['deleted']} deleted: {new_c} new compile errors, {new_t} new failing tests"
+                       + ("" if res["broke"]["tests_ran"] else " (the tests did not run)") + (f" ({res['toolchain']})" if "toolchain" in res else ""))
     ev.restore(root)
     ev.gx(["index"], root)
     return res

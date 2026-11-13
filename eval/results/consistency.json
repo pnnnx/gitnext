@@ -37,7 +37,8 @@
    "public_unused": 23,
    "named_elsewhere": [],
    "deleted": 0,
-   "broke": null
+   "broke": null,
+   "verdict": "0 named likely dead: nothing to delete"
   },
   "seconds": 7
  },
@@ -79,9 +80,10 @@
    "public_unused": 6,
    "named_elsewhere": [],
    "deleted": 0,
-   "broke": null
+   "broke": null,
+   "verdict": "0 named likely dead: nothing to delete"
   },
-  "seconds": 5
+  "seconds": 6
  },
  "click": {
   "symmetry": {
@@ -121,9 +123,10 @@
    "public_unused": 3,
    "named_elsewhere": [],
    "deleted": 0,
-   "broke": null
+   "broke": null,
+   "verdict": "0 named likely dead: nothing to delete"
   },
-  "seconds": 13
+  "seconds": 14
  },
  "sqlparse": {
   "symmetry": {
@@ -159,26 +162,14 @@
    "missing_subtype": []
   },
   "dead": {
-   "likely": 5,
+   "likely": 0,
    "public_unused": 2,
    "named_elsewhere": [],
-   "deleted": 5,
-   "broke": {
-    "compile_errors": [],
-    "tests": [
-     "test_duplicate_linebreaks",
-     "test_except_formatting",
-     "test_format_invalid_where_clause",
-     "test_having_produces_newline",
-     "test_identifier_list",
-     "test_identifier_list_comment_first",
-     "test_identifier_list_with_wrap_after",
-     "test_issue315_utf8_by_default"
-    ],
-    "tests_ran": true
-   }
+   "deleted": 0,
+   "broke": null,
+   "verdict": "0 named likely dead: nothing to delete"
   },
-  "seconds": 9
+  "seconds": 6
  },
  "zustand": {
   "symmetry": {
@@ -218,9 +209,10 @@
    "public_unused": 0,
    "named_elsewhere": [],
    "deleted": 0,
-   "broke": null
+   "broke": null,
+   "verdict": "0 named likely dead: nothing to delete"
   },
-  "seconds": 5
+  "seconds": 6
  },
  "yaml": {
   "symmetry": {
@@ -260,9 +252,10 @@
    "public_unused": 2,
    "named_elsewhere": [],
    "deleted": 0,
-   "broke": null
+   "broke": null,
+   "verdict": "0 named likely dead: nothing to delete"
   },
-  "seconds": 9
+  "seconds": 11
  },
  "jsoup": {
   "symmetry": {
@@ -301,10 +294,15 @@
    "likely": 1,
    "public_unused": 2,
    "named_elsewhere": [],
-   "deleted": 0,
-   "broke": null
+   "deleted": 1,
+   "broke": {
+    "compile_errors": [],
+    "tests": [],
+    "tests_ran": true
+   },
+   "verdict": "1 named likely dead, 1 deleted: 0 new compile errors, 0 new failing tests"
   },
-  "seconds": 244
+  "seconds": 392
  },
  "json-java": {
   "symmetry": {
@@ -340,13 +338,14 @@
    "missing_subtype": []
   },
   "dead": {
-   "likely": 1,
-   "public_unused": 0,
+   "likely": 0,
+   "public_unused": 1,
    "named_elsewhere": [],
    "deleted": 0,
-   "broke": null
+   "broke": null,
+   "verdict": "0 named likely dead: nothing to delete"
   },
-  "seconds": 18
+  "seconds": 21
  },
  "semver": {
   "symmetry": {
@@ -386,9 +385,10 @@
    "public_unused": 1,
    "named_elsewhere": [],
    "deleted": 0,
-   "broke": null
+   "broke": null,
+   "verdict": "0 named likely dead: nothing to delete"
   },
-  "seconds": 3
+  "seconds": 4
  },
  "indexmap": {
   "symmetry": {
@@ -424,16 +424,13 @@
    "missing_subtype": []
   },
   "dead": {
-   "likely": 57,
+   "likely": 0,
    "public_unused": 12,
    "named_elsewhere": [],
-   "deleted": 57,
-   "broke": {
-    "compile_errors": [],
-    "tests": [],
-    "tests_ran": true
-   }
+   "deleted": 0,
+   "broke": null,
+   "verdict": "0 named likely dead: nothing to delete"
   },
-  "seconds": 14
+  "seconds": 9
  }
 }
