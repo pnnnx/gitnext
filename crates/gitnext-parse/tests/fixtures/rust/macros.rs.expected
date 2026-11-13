@@ -1,0 +1,84 @@
+module doc: Functions declared inside macro calls: property tests and generated items.
+symbols:
+L1-81 module crate::rust::macros [pub]
+    sig: mod crate::rust::macros
+    doc: Functions declared inside macro calls: property tests and generated items.
+L6-8 struct crate::rust::macros::Counter [pub]
+    sig: pub struct Counter
+    parent: crate::rust::macros
+    in: words: HashMap<String, usize>
+    doc: Counts words.
+L11-13 method crate::rust::macros::Counter::new [pub]
+    sig: pub fn new() -> Self
+    parent: crate::rust::macros::Counter
+    out: Self
+L15-17 method crate::rust::macros::Counter::add [pub]
+    sig: pub fn add(&mut self, w: &str)
+    parent: crate::rust::macros::Counter
+    in: self: &mut self, w: &str
+L19-21 method crate::rust::macros::Counter::get [pub]
+    sig: pub fn get(&self, w: &str) -> usize
+    parent: crate::rust::macros::Counter
+    in: self: &self, w: &str
+    out: usize
+L25-25 method crate::rust::macros::Counter::distinct [pub]
+    sig: pub fn distinct(&self) -> usize
+    parent: crate::rust::macros::Counter
+    in: self: &self
+    out: usize
+    doc: How many different words.
+L29-31 function crate::rust::macros::normalize
+    sig: fn normalize(w: &str) -> String
+    parent: crate::rust::macros
+    in: w: &str
+    out: String
+L34-38 macro crate::rust::macros::props
+    sig: macro_rules! props
+    parent: crate::rust::macros
+L42-46 function crate::rust::macros::add_then_get (test)
+    sig: fn add_then_get(w: String) -> bool
+    parent: crate::rust::macros
+    out: bool
+    doc: Adding a word makes it count once.
+L48-50 function crate::rust::macros::normalize_is_idempotent (test)
+    sig: fn normalize_is_idempotent(w: String) -> bool
+    parent: crate::rust::macros
+    out: bool
+L54-60 function crate::rust::macros::distinct_never_exceeds_adds (test)
+    sig: fn distinct_never_exceeds_adds(ws: Vec<String>) -> bool
+    parent: crate::rust::macros
+    out: bool
+L67-69 function crate::rust::macros::get_of_unknown_is_zero (test)
+    sig: fn get_of_unknown_is_zero(w in "[a-z]{1,8}")
+    parent: crate::rust::macros
+L76-76 function crate::rust::macros::generated_helper
+    sig: fn generated_helper() -> String
+    parent: crate::rust::macros
+    out: String
+L78-80 function crate::rust::macros::not_items
+    sig: fn not_items()
+    parent: crate::rust::macros
+edges:
+  L3 imports crate::rust::macros -> std::collections::HashMap
+  L12 calls crate::rust::macros::Counter::new -> HashMap::new
+  L12 uses crate::rust::macros::Counter::new -> Counter
+  L16 calls crate::rust::macros::Counter::add -> .entry
+  L16 calls crate::rust::macros::Counter::add -> .or_default
+  L16 calls crate::rust::macros::Counter::add -> .to_string
+  L20 calls crate::rust::macros::Counter::get -> .copied
+  L20 calls crate::rust::macros::Counter::get -> .get
+  L20 calls crate::rust::macros::Counter::get -> .unwrap_or
+  L25 calls crate::rust::macros::Counter::distinct -> .len
+  L30 calls crate::rust::macros::normalize -> .to_lowercase
+  L43 calls crate::rust::macros::add_then_get -> Counter::new
+  L44 calls crate::rust::macros::add_then_get -> Counter::add
+  L45 calls crate::rust::macros::add_then_get -> Counter::get
+  L49 calls crate::rust::macros::normalize_is_idempotent -> normalize
+  L55 calls crate::rust::macros::distinct_never_exceeds_adds -> Counter::new
+  L57 calls crate::rust::macros::distinct_never_exceeds_adds -> Counter::add
+  L59 calls crate::rust::macros::distinct_never_exceeds_adds -> .len
+  L59 calls crate::rust::macros::distinct_never_exceeds_adds -> Counter::distinct
+  L68 calls crate::rust::macros::get_of_unknown_is_zero -> .get
+  L68 calls crate::rust::macros::get_of_unknown_is_zero -> Counter::new
+  L76 calls crate::rust::macros::generated_helper -> normalize
+  L79 calls crate::rust::macros::not_items -> hidden
