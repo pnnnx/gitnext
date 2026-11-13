@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.1 — 2026-11-13
 
 - **`gitnext look` takes a place in a file**, written the way tracebacks, test runners and models write it:
   `src/eval.rs:62` (the function around the line), `tests/test_x.py:120-160` (those lines),

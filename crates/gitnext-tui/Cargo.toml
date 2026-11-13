@@ -6,9 +6,9 @@ license.workspace = true
 
 [dependencies]
 anyhow = "1.0.104"
-gitnext-core = { version = "0.3.0", path = "../gitnext-core" }
-gitnext-index = { version = "0.3.0", path = "../gitnext-index" }
-gitnext-ops = { version = "0.3.0", path = "../gitnext-ops" }
-gitnext-parse = { version = "0.3.0", path = "../gitnext-parse" }
+gitnext-core = { version = "0.3.1", path = "../gitnext-core" }
+gitnext-index = { version = "0.3.1", path = "../gitnext-index" }
+gitnext-ops = { version = "0.3.1", path = "../gitnext-ops" }
+gitnext-parse = { version = "0.3.1", path = "../gitnext-parse" }
 ratatui = "0.30.2"
 unicode-width = "0.2.3"
