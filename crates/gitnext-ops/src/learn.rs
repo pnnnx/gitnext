@@ -33,9 +33,10 @@ pub(crate) struct Run {
     pub notes: Vec<String>,
 }
 
-/// The language is in the repository when a file ends so; its tests are run by the function.
+/// The language is in the repository when a file ends with one of its suffixes; its tests are
+/// run once by the function.
 type Learner = fn(&Path, &Graph) -> Result<Run>;
-const LANGUAGES: &[(&str, &str, Learner)] = &[("Python", ".py", python::run), ("Go", ".go", go::run), ("Rust", ".rs", rust::run)];
+const LANGUAGES: &[(&str, &[&str], Learner)] = &[("Python", &[".py"], python::run), ("Go", &[".go"], go::run), ("Rust", &[".rs"], rust::run)];
 
 pub struct Learned {
     pub command: String,
@@ -84,7 +85,7 @@ pub(crate) fn owners_at(g: &Graph, header: bool) -> HashMap<&str, Vec<Option<usi
 }
 
 pub fn learn(root: &Path, g: &Graph) -> Result<Learned> {
-    let here: Vec<&(&str, &str, Learner)> = LANGUAGES.iter().filter(|(_, ext, _)| g.files.iter().any(|f| f.path.ends_with(ext))).collect();
+    let here: Vec<&(&str, &[&str], Learner)> = LANGUAGES.iter().filter(|(_, exts, _)| g.files.iter().any(|f| exts.iter().any(|e| f.path.ends_with(e)))).collect();
     if here.is_empty() {
         bail!("learn-tests has no way to run the tests of this repository with coverage (it knows: {})", LANGUAGES.iter().map(|l| l.0).collect::<Vec<_>>().join(", "));
     }
