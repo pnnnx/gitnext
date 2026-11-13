@@ -12,6 +12,7 @@ use anyhow::{bail, Result};
 use gitnext_index::{Graph, TestMap};
 
 mod go;
+mod js;
 mod python;
 mod rust;
 
@@ -36,7 +37,10 @@ pub(crate) struct Run {
 /// The language is in the repository when a file ends with one of its suffixes; its tests are
 /// run once by the function.
 type Learner = fn(&Path, &Graph) -> Result<Run>;
-const LANGUAGES: &[(&str, &[&str], Learner)] = &[("Python", &[".py"], python::run), ("Go", &[".go"], go::run), ("Rust", &[".rs"], rust::run)];
+const LANGUAGES: &[(&str, &[&str], Learner)] = &[
+    ("Python", &[".py"], python::run), ("Go", &[".go"], go::run), ("Rust", &[".rs"], rust::run),
+    ("JavaScript/TypeScript", &[".ts", ".tsx", ".mts", ".js", ".jsx", ".mjs", ".cjs"], js::run),
+];
 
 pub struct Learned {
     pub command: String,
