@@ -434,9 +434,15 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
 
 # ---------------------------------------------------------------- tasks
 
+OWN_FILES = {"go": ".go", "rust": ".rs", "python": ".py", "java": ".java", "typescript": (".ts", ".tsx", ".mts")}
+
+
 def make_tasks(repo: dict, root: Path, kinds: list[str], seed: int) -> list[dict]:
     syms = ev.symbols(root)
-    sample = ev.pick(syms, root, 6, seed)
+    # a project in several languages (a Go server with a TypeScript UI): the judge is the compiler of one of
+    # them, so the tasks are about that language's code
+    own = [s for s in syms if s["file"].endswith(OWN_FILES.get(repo["lang"], ""))]
+    sample = ev.pick(own, root, 6, seed)
     rng = random.Random(seed)
     tasks = []
     if "find" in kinds and sample:
