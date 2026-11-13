@@ -7,22 +7,29 @@ holds its line (from `run.body_start` to the end): the line of a declaration run
 counting it would book every function of every imported module to the test.
 `tests-for` is scored by file as in `run.check_tests`. The driver is `learn_tests_go.measure`, with the test name
 being the test file.
+`--product` measures the product instead: `gitnext learn-tests` writes the map, and `tests-for` is scored before
+it (the call graph) and after it (the map), on the same functions (`--pick-from`, `--n2`, `--seed`). Results go to
+`eval/results/learn-tests-<repo>.product.{md,json}`; the prototype's files stay as they are.
 `--causes` writes, for every function whose failing test files `tests-for` misses, how each missed file reaches the
 code (package name through the vitest alias, `index.ts` re-export, a relative import of `src/`, a helper), whether
 gitnext sees test symbols in it, and what `tests-for` named instead.
 
     GITNEXT=$PWD/target/release/gitnext python3 eval/learn_tests_js.py [--repos zustand,yaml] [--n2 12] [--seed 7] \\
-        [--pick-from <truth.json of an earlier run>] [--causes]
+        [--pick-from <truth.json of an earlier run>] [--causes | --product]
 """
 from __future__ import annotations
 
+import argparse
 import json
+import random
 import re
+import statistics
 import sys
 import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+import learn_tests as lt  # noqa: E402  metrics of the Python prototype
 import learn_tests_go as lg  # noqa: E402  the shared driver of 005
 import run  # noqa: E402  the eval: same checkout, ground truth and cache
 
@@ -294,9 +301,149 @@ def render_causes(res: dict) -> str:
     return "\n".join(L) + "\n"
 
 
+# ---------------------------------------------------------------- the product: gitnext learn-tests
+
+def timed_learn(root: Path) -> tuple[float, str]:
+    t = time.time()
+    _, out = run.gx(["learn-tests"], root, timeout=3600)
+    return round(time.time() - t, 1), out.strip()
+
+
+def product(repo: dict, a) -> dict:
+    """`tests-for` by file before and after `gitnext learn-tests`, on the functions `lg.measure` would pick."""
+    key = f"{repo['name']}@{repo['commit'][:12]}"
+    prefix = f"{key}:{TS.get('tests_key', 'tests')}:"
+    root = run.prepare(repo)
+    run.gx(["init"], root, timeout=1800)
+    (root / ".gitnext" / "tests.db").unlink(missing_ok=True)
+    syms = run.symbols(root)
+    by_q = {s["qualified"]: s for s in lg.fn_syms(syms)}
+    cost: dict = {}
+    plain = []
+    for _ in range(a.repeat):
+        t = time.time()
+        run.sh(TS["tests"], root, timeout=3600)
+        plain.append(time.time() - t)
+    cost["plain_s"] = round(statistics.median(plain), 1)
+    # the product installs nothing: what it says when the coverage package is missing, then the prototype's install
+    if not (root / "node_modules" / "@vitest" / "coverage-v8").is_dir():
+        cost["message_without_coverage"] = run.gx(["learn-tests"], root)[1].strip()
+        version = json.loads((root / "node_modules" / "vitest" / "package.json").read_text())["version"]
+        t = time.time()
+        code, out = run.sh(f"npm i --no-save --no-audit --no-fund --loglevel=error --legacy-peer-deps @vitest/coverage-v8@{version}",
+                           root, timeout=900)
+        cost["install_s"] = round(time.time() - t, 1)
+        if code:
+            raise RuntimeError(f"npm i @vitest/coverage-v8@{version}: {out[-400:]}")
+
+    # the same sample as lg.measure: the eval's functions, then random ones of the library
+    if not run.CACHE:
+        run._load_cache()
+    known = json.loads(Path(a.pick_from).read_text()) if a.pick_from else run.CACHE
+    cached = [q[len(prefix):] for q in known if q.startswith(prefix)]
+    pick = [by_q[q] for q in sorted(cached) if q in by_q]
+    cands = [s for s in lg.fn_syms(syms) if not s.get("test") and js_library(s["file"]) and s["qualified"] not in set(cached)
+             and (b := run.body_start(root, s, repo["lang"])) and s["end_line"] - b + 1 >= 3]
+    random.Random(a.seed).shuffle(cands)
+    groups = (("pick", pick), ("random", cands[:a.n2]))
+    base = set(run.cached(f"{key}:baseline", lambda: run.baseline_tests(root, TS)).get("failed", []))
+
+    graph = {s["qualified"]: tests_for_files(root, s["qualified"])[0] for _, ss in groups for s in ss}
+    cost["learn_cold_s"], cost["learn_output"] = timed_learn(root)
+    cost["learn_warm_s"], _ = timed_learn(root)
+    cost["learn_x_plain"] = round(cost["learn_warm_s"] / cost["plain_s"], 1) if cost["plain_s"] else None
+    db = root / ".gitnext" / "tests.db"
+    cost["map_sqlite_bytes"] = db.stat().st_size if db.exists() else 0
+    mapped, from_map = {}, set()
+    for _, ss in groups:
+        for s in ss:
+            q = s["qualified"]
+            mapped[q] = tests_for_files(root, q)[0]
+            if run.gx(["tests-for", q], root)[1].startswith("tests that ran"):
+                from_map.add(q)
+
+    rows = []
+    for group, ss in groups:
+        for s in ss:
+            q = s["qualified"]
+            print(f"  {repo['name']} {group} {q}", flush=True)
+            tr = run.cached(f"{prefix}{q}", lambda: run.failing_tests(root, repo, s, base),
+                            keep=lambda v: v.get("skipped") != "the test suite did not run")
+            r = {"group": group, "symbol": q, "file": s["file"], "from_map": q in from_map,
+                 "named_graph": len(graph[q]), "named_map": len(mapped[q])}
+            if "skipped" in tr or not tr.get("failed"):
+                r["skipped"] = tr.get("skipped") or "no test fails when it throws"
+                rows.append(r)
+                continue
+            truth = set(tr["failed"])
+            r.update(truth=len(truth), missed_by_map=sorted(truth - set(mapped[q]))[:10],
+                     score={"graph": lt.score(graph[q], truth), "map": lt.score(mapped[q], truth)})
+            rows.append(r)
+    summary = {}
+    for g in ("pick", "random", "all"):
+        rs = [r for r in rows if r.get("score") and (g == "all" or r["group"] == g)]
+        summary[g] = {src: {m: lt.mean([r["score"][src][m] for r in rs]) for m in ("recall", "precision", "top_precision", "caught")}
+                      for src in ("graph", "map")}
+        summary[g]["functions"] = len(rs)
+        summary[g]["from_map"] = sum(1 for r in rs if r["from_map"])
+    return {"repo": repo["name"], "lang": repo["lang"], "commit": repo["commit"][:12], "seed": a.seed,
+            "gitnext_commit": run.sh("git rev-parse --short HEAD", run.HERE)[1].strip(),
+            "functions": rows, "summary": summary, "cost": cost}
+
+
+def render_product(res: dict) -> str:
+    pct = lt.pct
+    L = [f"# gitnext learn-tests на {res['repo']}: `tests-for` до карты (граф) и после (карта)",
+         f"{res['repo']} {res['commit']}, gitnext {res['gitnext_commit']}, seed {res['seed']}. Истина — eval "
+         "(файлы тестов, падающие при throw в начале функции). pick — функции с ответом в кэше eval, random — случайные.",
+         "Ответ — `tests-for <функция> --all` по файлам; «из карты» — сколько функций `tests-for` ответил по карте.", "",
+         "| выборка | функций | из карты | источник | полнота | точность | из 10 падают | поймано |",
+         "|---|---:|---:|---|---:|---:|---:|---:|"]
+    for g, gname in (("pick", "pick (кэш eval)"), ("random", "случайные"), ("all", "все")):
+        s = res["summary"][g]
+        for src, sname in (("graph", "граф"), ("map", "карта")):
+            m = s[src]
+            L.append(f"| {gname} | {s['functions']} | {s['from_map']} | {sname} | {pct(m['recall'])} | {pct(m['precision'])} | "
+                     f"{pct(m['top_precision'])} | {pct(m['caught'])} |")
+    L += ["", "## По функциям", "", "| выборка | функция | падают | граф: полн / из 10 | карта: полн / точн / из 10 | мимо карты |",
+          "|---|---|---:|---|---|---|"]
+    for r in res["functions"]:
+        if "score" not in r:
+            L.append(f"| {r['group']} | `{r['symbol']}` | 0 | {r['skipped']} | названо {r['named_map']} | |")
+            continue
+        g, c = r["score"]["graph"], r["score"]["map"]
+        L.append(f"| {r['group']} | `{r['symbol']}` | {r['truth']} | {pct(g['recall'])} / {pct(g['top_precision'])} | "
+                 f"{pct(c['recall'])} / {pct(c['precision'])} / {pct(c['top_precision'])} | {', '.join(r['missed_by_map'][:4])} |")
+    L += ["", "## Цена", ""]
+    for k, v in res["cost"].items():
+        L += [f"- `{k}`:", "", "```", str(v), "```"] if "\n" in str(v) else [f"- `{k}`: {v}"]
+    return "\n".join(L) + "\n"
+
+
+def main_product() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--product", action="store_true")
+    ap.add_argument("--repos", default="zustand,yaml")
+    ap.add_argument("--n2", type=int, default=12)
+    ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--repeat", type=int, default=3)
+    ap.add_argument("--pick-from")
+    a = ap.parse_args()
+    repos = {r["name"]: r for r in json.loads((run.HERE / "repos.json").read_text())}
+    for name in a.repos.split(","):
+        res = product(repos[name], a)
+        out = run.HERE / "results" / f"learn-tests-{name}.product"
+        Path(f"{out}.json").write_text(json.dumps(res, ensure_ascii=False, indent=1))
+        md = render_product(res)
+        Path(f"{out}.md").write_text(md)
+        print("\n" + md, flush=True)
+
+
 def main() -> None:
+    if "--product" in sys.argv:
+        main_product()
+        return
     if "--causes" in sys.argv:
-        import argparse
         ap = argparse.ArgumentParser()
         ap.add_argument("--repos", default="zustand,yaml")
         ap.add_argument("--pick-from")
