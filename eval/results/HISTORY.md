@@ -105,6 +105,49 @@ What the conversations showed:
   the repo, a shell command, a library function), 5 a name that is not in the file given, 62 repeated an earlier call.
 - Rust `why` with the map after macros became symbols: the function at fault first in 17 of 20 (it was 14).
 
+### The same 648 conversations, call by call (`eval/agent_traces.py`)
+
+Calls per run (mean) and what they are:
+
+| task | mode | solved | calls | what the calls are | calls that bring nothing |
+|---|---|---|---|---|---|
+| find | plain | 53 / 54 | 2.9 | search 1.7, read 0.3 | 0.6 (a search with no match) |
+| find | five tools | 54 / 54 | 2.1 | look 1.0 | 0 |
+| callers | plain | 37 / 54 | 8.0 | read 4.0, search 3.0 | 2.7 (2.0 are a file read again) |
+| callers | five tools | 47 / 54 | 3.6 | look 2.8 | 0.4 |
+| fix | plain | 14 / 54 | 20.3 | read 7.4, search 6.3, run 5.3, edit 1.0 | 5.8 (3.9 are a file read again) |
+| fix | five tools | 26 / 54 | 16.3 | look 10.2, check 3.4, edit 2.2 | 4.2 (3.0 are the same call again) |
+| rename | plain | 40 / 54 | 15.2 | edit 5.1, read 3.8, search 3.1, run 2.4 | 3.2 |
+| rename | five tools | 36 / 54 | 6.5 | look 2.6, check 1.6, edit 1.2 | 1.0 |
+
+- **Where plain tools spend their calls.** A quarter to a third of them bring nothing new (4B 30%, 9B 24%, 27B 25%):
+  a file read again, a `grep` with no match (170 of 908), an edit refused because the old text stands in several
+  places (53 of 383). With the five tools it is 16–23%, and of another kind: the same call repeated.
+- **A fix is lost before the first edit.** With plain tools 31 of 54 fix runs change any code at all, and the first
+  change comes at call 12–17 of 25; 29 of the 40 failed runs end out of steps. The 27B model with gitnext changes
+  code in 35 of 36 runs, at call 3. The small models do not get there with any tools (4B: 10 of 18 plain, 10 of 18
+  with five tools).
+- **With eleven tools, gitnext's are often not called at all:** 4B in 21 of 72 runs, 27B in 23 (nearly all are
+  `find`, where one `grep` is enough), 9B in 2.
+- **Lost against plain tools on the same task: 13 of 216 in each gitnext mode; won: 25 and 32.** Of the 13 lost
+  with five tools: 5 are the sqlparse rename the judge fails for a name left in `.rst` (above); 3 are runs where the
+  model gave no answer at all (9 such runs in the whole set: 2 plain, 2 gitnext, 5 five tools — counted as
+  failures); 2 are a rename in cobra, below; 2 are callers of `contains`, a name several things have; 1 is a fix the
+  4B model lost in refused `replace` calls.
+- **`check` blames the change for a test that fails without it.** cobra's `TestFailGenFishCompletionFile` fails on
+  the test machine whatever the code (it expects a permission error, and the run is root). After a correct rename
+  `check` reported it as "tests FAILED"; the 27B model renamed the function back, the 4B model started rewriting
+  the test. cobra renames: plain 6 of 9, eleven tools 5, five tools 3. `check` does not know which tests failed
+  before the change — a known gap now.
+- **`replace` is called like a text edit.** Of 129 `replace` / `add_after` calls with five tools, 66 made an edit;
+  21 gave a line of code as the name of the symbol (`replace("if a == b {", "if a != b {")`), 16 a name that is
+  not there, 18 repeated a refused call. All of the first kind are the 4B model. `replace` now makes that edit.
+- **The harness is not the same in every mode.** The guard (hints after repeated or idle steps) acts in all three.
+  The gate acts in the gitnext modes only: an answer given before any tool call is sent back, and with five tools
+  the harness also asks once for the change when no file was changed and reruns `check` after one. With five tools
+  it fired on every `find` and `callers` run (one more step, the answer repeated) and stands behind at most 4 of
+  the 163 solved tasks (3 renames through the `check` it reran, 1 fix after "no file was changed").
+
 ## Run 8 · in TypeScript the test is the file; coverage maps for Go and Rust
 
 **tests-for, TypeScript.** `it('…', () => …)` is not a named function; its calls are booked to the module of the
@@ -415,6 +458,8 @@ The tables below are the earlier runs, measured the old way.
 
 ## Known gaps
 
+- `check` does not know which tests failed before the change: a test that fails on its own is reported as a failure
+  of the change (cobra's permission test under root made two models undo or abandon a correct rename).
 - "Reaches" is a superset of "fails when it breaks": in cobra most tests reach a function through `Execute`, and the
   call graph cannot tell which of them take that branch — the top 10 hold 30% failing tests where the best order of the
   same list would hold 78%. Coverage from one real test run (`learn-tests`) is the way to close this.
