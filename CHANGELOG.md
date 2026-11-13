@@ -19,6 +19,9 @@
   `tests-for`, `look` and `check` name the test files that really run the code — 100% of the failing ones on yaml
   and zustand (the call graph: 16% and 68%), for 2.6–6.6 ordinary test runs. Says which package to install when
   `@vitest/coverage-v8` is missing; jest is not supported yet.
+- eval: a coverage map for Java measured as a prototype (`eval/learn_tests_java.py`, JaCoCo with a dump per test
+  in one Maven run): 94% and 99% of the failing tests on jsoup and json-java (the call graph: 29% and 71%) for
+  2.1–3.5 ordinary test runs. Not in `learn-tests` yet.
 - **Rust: functions declared inside a macro call are symbols** (`quickcheck! { fn prop(..) -> bool { .. } }`,
   `proptest!`, a local `macro_rules!` that writes `#[test]`). In indexmap 43 of 192 tests were outside the graph and
   the coverage map, now 4; `why` put the function at fault first in 14 of 20 seeded Rust bugs, now in 16–18, and
