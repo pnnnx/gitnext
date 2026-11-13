@@ -7,6 +7,12 @@
   `src/eval.rs::matches_greater`, `tests/test_x.py::TestA::test_b[case]`, `eval.rs matches_greater`.
   Words of which only some are names list those names instead of "nothing found". In a trial with
   Qwen 3.5 4B and 27B, 37 of 89 `look` calls were written one of these ways and found nothing; all are answered now.
+- **`gitnext rename --text` reaches the documentation** (`.md`, `.rst`, `.txt`, `.adoc`): the old name written as
+  code there (`name()`, `` `name` ``, `Type.name`, or a name that cannot be a word) is renamed with the rest.
+- `look` also takes a list of places (`a.go:497-506, a_test.go:123-128`) and a Go subtest (`TestX/case`); the MCP
+  `check` tool says first that a failing test is what it is for.
+- eval: the agent runs repeated on three models, 216 tasks each way (`eval/results/HISTORY.md`): +9 points of solved
+  tasks with the five tools, a third of the steps; the earlier 24-task comparison did not repeat.
 - **`gitnext dead` names only what nothing refers to.** It knew calls only: a function used as a value, a class
   used as a type, a base or a metaclass, an imported name, a Go `init` were "likely dead" — 160 of 225 on ten
   projects, and deleting them broke the build of six. Now the name must be written nowhere outside the symbol.
