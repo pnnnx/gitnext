@@ -36,9 +36,22 @@ pub fn look(ws: &Workspace, g: &Graph, what: &str, lite: bool) -> String {
         Some((a, _)) if file_of(g, a.trim()).is_some() => a.trim(),
         _ => what,
     };
+    // several places in one target: `a.go:497-506, a_test.go:123-128`
+    if what.contains(", ") {
+        let parts: Vec<&str> = what.split(", ").map(str::trim).filter(|p| !p.is_empty()).collect();
+        if parts.len() > 1 && parts.len() <= 6 && parts.iter().all(|p| place(ws, g, p, lite).is_some() || file_of(g, p).is_some()) {
+            return parts.iter().map(|p| look(ws, g, p, lite)).collect::<Vec<_>>().join("\n");
+        }
+    }
     // a place in a file, the way tracebacks, test runners and models write it
     if let Some(s) = place(ws, g, what, lite) {
         return s;
+    }
+    // a subtest as Go names it: `TestClientIP/earlier_persists` is in `TestClientIP`
+    if let Some((test, _)) = what.split_once('/') {
+        if !test.contains(['.', ' ']) && file_of(g, what).is_none() && g.find(test).iter().any(|&i| g.syms[i].sym.test) {
+            return look(ws, g, test, lite);
+        }
     }
     // a file or folder (exact, or a unique file name like `utils.py`)
     let p = what.trim_start_matches("./").trim_end_matches('/');

@@ -55,6 +55,10 @@ fn a_name_in_a_file_is_found_however_it_is_written() {
     // a file followed by a shell pipe is the file
     let piped = look(&ws, &g, "src/display.rs | grep -n pad", false);
     assert_eq!(piped, look(&ws, &g, "src/display.rs", false));
+    // several places at once, and a Go-style subtest
+    let two = look(&ws, &g, "src/eval.rs:5-7, src/display.rs:1-3", false);
+    assert!(two.contains("src/eval.rs:5-7 (of 12 lines)") && two.contains("src/display.rs:1-3 (of 7 lines)"), "{two}");
+    assert_eq!(look(&ws, &g, "test_greater_than/case_one", false), look(&ws, &g, "test_greater_than", false));
     // names with `::` that are not files are names as before
     let q = look(&ws, &g, "eval::matches_greater", false);
     assert_eq!(q, by_name);

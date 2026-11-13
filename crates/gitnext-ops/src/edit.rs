@@ -257,6 +257,11 @@ pub fn rename_leftover_text(root: &Path, r: &mut RenameReport) -> Result<()> {
     Ok(())
 }
 
+/// Prose about the code: a rename looks for the old name there too.
+fn is_doc(path: &str) -> bool {
+    matches!(path.rsplit('.').next().unwrap_or(""), "md" | "mdx" | "rst" | "txt" | "adoc")
+}
+
 fn is_ident(c: u8) -> bool {
     c.is_ascii_alphanumeric() || c == b'_'
 }
@@ -411,6 +416,22 @@ pub fn rename(root: &Path, g: &Graph, i: usize, new_name: &str, dry_run: bool) -
                 } else if !twins.iter().any(|&t| g.syms[t].file == f.path && l >= g.syms[t].sym.start_line as usize && l <= g.syms[t].sym.start_line as usize + 1) {
                     report.leftover.push(format!("{}:{l}: {}", f.path, text.trim().chars().take(100).collect::<String>()));
                 }
+            }
+        }
+    }
+    // documentation the index lists but does not parse (.md, .rst, .txt, .adoc): the name there is text.
+    // Only where it is written as code — `name()`, `` `name` ``, `Type.name` — or cannot be an English word.
+    let distinctive = old.contains('_') || old.chars().skip(1).any(|c| c.is_uppercase() || c.is_ascii_digit());
+    for f in g.files.iter().filter(|f| !f.parsed && is_doc(&f.path)) {
+        for (n, text) in lines_of(&f.path).iter().enumerate() {
+            let b = text.as_bytes();
+            let code_shaped = |c: usize| {
+                distinctive
+                    || matches!(b.get(c + old.len()), Some(b'(' | b'`'))
+                    || (c > 0 && matches!(b[c - 1], b'`' | b'.' | b':' | b'#'))
+            };
+            if word_hits(text, &old).into_iter().any(code_shaped) {
+                report.leftover.push(format!("{}:{}: {}", f.path, n + 1, text.trim().chars().take(100).collect::<String>()));
             }
         }
     }

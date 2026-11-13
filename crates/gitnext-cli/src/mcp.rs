@@ -104,7 +104,7 @@ fn tools() -> Value {
              json!({ "items": { "type": "array", "items": { "type": "object", "properties": { "symbol": { "type": "string" }, "summary": { "type": "string" } }, "required": ["symbol", "summary"] } } }), &["items"]),
         tool("locate", "Paste a compiler error, panic, test failure or traceback: returns the repo symbols at those file:line locations (innermost function/method) and the code of the top one.",
              json!({ "text": { "type": "string" } }), &["text"]),
-        tool("check", "After a change: builds the project and runs the tests of what changed, answers with a verdict (ok / what failed, where, the message). With `test`: the same as `why`.",
+        tool("check", "A test fails: call this first with test = its name — the same as `why`. After a change: call it with no arguments — builds the project and runs the tests of what changed, answers with a verdict (ok / what failed, where, the message).",
              json!({ "test": { "type": "string", "description": "a failing test to explain instead of checking the change" } }), &[]),
         tool("why", "A test fails: runs it and returns the failure in a few lines (what, where, the message) and the code the test reaches, most likely culprit first, with the code of the top ones. Use this first when told that a test fails.",
              json!({ "test": { "type": "string", "description": "test name; `greater_than` finds `test_greater_than`" } }), &["test"]),

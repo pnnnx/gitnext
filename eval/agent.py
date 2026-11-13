@@ -87,8 +87,8 @@ GITNEXT_TOOLS = [
     tool("look", "gitnext: everything about a function, class, file or error in one call — its code, who calls it, what it calls, the tests that reach it and how to run them. Use this first.", {"what": S}, ["what"]),
     tool("rename", "gitnext: rename a function/class everywhere (definition, calls, imports, tests, comments).", {"old": S, "new": S}, ["old", "new"]),
     tool("replace_symbol", "gitnext: replace the whole code of one function/class by name, without reading the file.", {"symbol": S, "code": S}, ["symbol", "code"]),
-    tool("check", "gitnext: run the tests. No arguments: after a change — builds the project, runs the tests of what you changed, answers with a verdict. "
-                  "With `test`: why that test fails — the failure in a few lines and the code to fix, the most likely culprit first.", {"test": S}, []),
+    tool("check", "gitnext: a test fails — call this first with test = its name: it runs the test and shows the failure in a few lines and the code to fix, "
+                  "the most likely culprit first. After a change: call it with no arguments — builds the project, runs the tests of what you changed, answers with a verdict.", {"test": S}, []),
 ]
 # mode `lite`: these and nothing else — what gitnext's lite MCP profile gives a small model (plus `finish`)
 LITE_TOOLS = [
