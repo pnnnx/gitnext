@@ -17,7 +17,7 @@ that the answer is right.
 | `why`, `check <test>` | place of the function at fault for a seeded bug (`why_rank.py`, `why-rank.md`) | with the learned map the culprit is first in 81% of 57 seeded bugs (Python 90%, Go 82%, Rust 70%); from the call graph alone in 18% |
 | the tools as a small model uses them | `agent.py`, Qwen 3.5 4B: find / callers / rename / fix | see the agent runs in `HISTORY.md` |
 
-## 2. Unit tests (`cargo test --workspace`, 122 tests)
+## 2. Unit tests (`cargo test --workspace`, 127 tests)
 
 | function | tests |
 |---|---|

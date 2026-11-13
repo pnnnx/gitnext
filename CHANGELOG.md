@@ -15,6 +15,13 @@
   whose lines do not start with `*` was cut in half, and the delete refused).
 - **`callees`** lists a method called on an object of unknown type as "maybe", as `callers` does; `look` counts
   such calls instead of naming them.
+- **Rust: functions declared inside a macro call are symbols** (`quickcheck! { fn prop(..) -> bool { .. } }`,
+  `proptest!`, a local `macro_rules!` that writes `#[test]`). In indexmap 43 of 192 tests were outside the graph and
+  the coverage map, now 4; `why` put the function at fault first in 14 of 20 seeded Rust bugs, now in 16–18, and
+  no longer answers with an empty list (4 of 10 on indexmap).
+- `dead` again: a name built next to reflection (`getattr(self, "_process_" + kind)`) is used; a Rust function run
+  by an attribute (`#[bench]`, `#[no_mangle]`, …) is not dead; `protected` is API. On the ten projects what it
+  calls likely dead went 225 → 64 → 1, and that one deletes cleanly.
 - `eval/consistency.py`: do the commands agree with each other and with the source (`eval/results/consistency.md`).
 - eval: a tool call cut by the token limit (a long `replace`) is asked for again instead of ending the run.
 - Release: the Intel Mac binary is built again (its runner was retired); `CITATION.cff`.
