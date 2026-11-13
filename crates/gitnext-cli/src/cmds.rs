@@ -49,7 +49,7 @@ fn code_from(file: Option<PathBuf>) -> Result<String> {
 }
 
 pub fn edit(ws: &Workspace, op: EditOp, json: bool) -> Result<()> {
-    let g = ws.graph()?;
+    let g = ws.graph_once()?;
     let (sym, kind, code, force) = match op {
         EditOp::Replace { symbol, file, force } => (symbol, EditKind::Replace, code_from(file)?, force),
         EditOp::InsertAfter { symbol, file, force } => (symbol, EditKind::InsertAfter, code_from(file)?, force),
@@ -249,7 +249,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
     };
     match m {
         More::Explain { path, provider, limit, dry_run } => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let scope = crate::norm_path(&ws, path.as_deref().unwrap_or(""));
             let p = match provider.as_deref() {
                 Some(x) => Some(explain::Provider::parse(x).ok_or_else(|| anyhow::anyhow!("unknown provider `{x}`"))?),
@@ -272,7 +272,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             }
         }
         More::Annotate { target, summary } => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let text = summary.join(" ");
             if text.trim().is_empty() {
                 bail!("give the summary text");
@@ -286,7 +286,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             println!("✓ noted");
         }
         More::Locate { text, no_code } => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let t = if text.is_empty() {
                 let mut s = String::new();
                 std::io::stdin().read_to_string(&mut s)?;
@@ -297,11 +297,11 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             out.text(&gitnext_ops::locate::render_locate(&g, &ws.root, &t, !no_code));
         }
         More::LearnTests => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             out.text(&gitnext_ops::learn::render(&gitnext_ops::learn::learn(&ws.root, &g)?));
         }
         More::Why { names, timeout } => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             if names.is_empty() {
                 bail!("which test? `gitnext why <test name>`");
             }
@@ -335,7 +335,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             out.text(&gitnext_ops::digest::render(&gitnext_ops::digest::digest(&t), max));
         }
         More::Check { timeout, .. } => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let c = gitnext_ops::check::check(&ws.root, &g, std::time::Duration::from_secs(timeout));
             out.text(&gitnext_ops::check::render(&g, &c));
             if !c.ok() {
@@ -343,13 +343,13 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             }
         }
         More::TestsFor { symbol, depth, all } => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             for i in lookup(&g, &symbol)? {
                 out.text(&gitnext_ops::locate::render_tests_for(&g, &ws.root, i, depth, all));
             }
         }
         More::Lsp { lang, limit, all } => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let fams = match lang.as_deref() {
                 Some(l) => vec![gitnext_ops::lsp::Family::parse(l).ok_or_else(|| anyhow::anyhow!("unknown language `{l}`"))?],
                 None => gitnext_ops::lsp::families_in(&g),
@@ -367,7 +367,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             }
         }
         More::History { symbol, limit } => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let i = one(&g, &symbol)?;
             let ev = gitnext_ops::history::history(ws.repo()?, &g, i, limit)?;
             if out.json {
@@ -376,7 +376,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             out.text(&gitnext_ops::history::render_history(&g, i, &ev));
         }
         More::Changelog { range } => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let c = gitnext_ops::history::changelog(ws.repo()?, &g, &range)?;
             if out.json {
                 return out.json(&c);
@@ -384,7 +384,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             out.text(&gitnext_ops::history::render_changelog(&c));
         }
         More::Overview => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             out.text(&insight::overview(ws.repo.as_ref(), &g, &ws.root));
         }
         More::Activity { limit } => {
@@ -395,7 +395,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             out.text(&insight::render_activity(&a));
         }
         More::Hotspots { top } => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let h = insight::hotspots(ws.repo.as_ref(), &g, 500, top)?;
             if out.json {
                 return out.json(&h);
@@ -403,7 +403,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             out.text(&insight::render_hotspots(&h));
         }
         More::Dead => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let d = insight::dead(&g, &ws.root);
             if out.json {
                 return out.json(&d);
@@ -411,7 +411,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             out.text(&insight::render_dead(&d));
         }
         More::Cycles => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let c = insight::cycles(&g);
             if out.json {
                 return out.json(&c);
@@ -419,7 +419,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             out.text(&insight::render_cycles(&g, &c));
         }
         More::Entrypoints => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let e = insight::entrypoints(&g, &ws.root);
             if out.json {
                 return out.json(&e);
@@ -434,7 +434,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             out.text(&gitnext_ops::journal::render(&j, sessions));
         }
         More::Bench { symbols, dirs } => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let b = gitnext_ops::bench::run(&ws.root, &g, symbols, dirs);
             if out.json {
                 return out.json(&b);
@@ -457,12 +457,12 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             list.sort();
             list.dedup();
             if !ws.root.join(gitnext_ops::gitnext_index::GITNEXT_DIR).is_dir() {
-                let g = ws.graph()?;
+                let g = ws.graph_once()?;
                 ws.write_map(&g)?;
             }
             let r = ag::setup(&ws.root, &ag::SetupOpts { agents: list, hooks, command: "gitnext".into(), tools })?;
             // settings may change what AGENTS.md looks like
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             ws.write_map(&g)?;
             if out.json {
                 return out.json(&r);
@@ -498,7 +498,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
                 return out.json(&b);
             }
             let now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs() as i64).unwrap_or(0);
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             for b in b {
                 let pl = gitnext_ops::changes::plural;
                 let rel = match (b.ahead, b.behind) {
@@ -542,7 +542,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             println!("{}", cv.draft);
         }
         More::Look { targets } => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             out.text(&gitnext_ops::look::look_many(&ws, &g, &targets, false));
         }
         More::Doctor => {
@@ -556,11 +556,11 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
             }
         }
         More::Libs => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             out.text(&gitnext_ops::libs::render_libraries(&ws.root, &g, 40));
         }
         More::Brief => {
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             out.text(&gitnext_ops::agents::brief(&ws, &g));
         }
         More::Hook { event } => {
@@ -581,7 +581,7 @@ pub fn more(cwd: &Path, m: More, out: &Out) -> Result<()> {
                     let cwd = v["cwd"].as_str().map(PathBuf::from).unwrap_or_else(|| ws.root.clone());
                     let ws = Workspace::open(&cwd)?;
                     if ws.root.join(gitnext_ops::gitnext_index::GITNEXT_DIR).is_dir() {
-                        let g = ws.graph()?;
+                        let g = ws.graph_once()?;
                         print!("{}", gitnext_ops::agents::brief(&ws, &g));
                     }
                 }
