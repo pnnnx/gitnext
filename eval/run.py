@@ -1099,6 +1099,8 @@ def main() -> None:
                     "eval/results) instead of drawing them again: the sample asks gitnext, so a change of the graph\n"
                     "would move it. Then --compare pairs every function. Same --seeds as that run")
     ap.add_argument("--repos", default="", help="comma-separated names (default: all)")
+    ap.add_argument("--repos-file", default="repos.json", help="the list of projects, a file in eval/ (default: repos.json; "
+                    "repos-heldout.json: projects that took no part in tuning the tool)")
     ap.add_argument("--n", type=int, default=20, help="functions sampled per repo and seed")
     ap.add_argument("--mutants", type=int, default=8, help="of those, how many get the test-suite check (one that cannot be\n"
                     "measured is replaced by the next of the sample; at most twice as many are tried)")
@@ -1124,7 +1126,7 @@ def main() -> None:
         SAMPLE_FROM = {r["repo"]: r for r in _load_run(args.sample_from) if "error" not in r}
     seeds = [args.seed] if args.seed is not None else [int(x) for x in args.seeds.split(",") if x.strip()]
     cfg = f"n{args.n}-m{args.mutants}-seeds{','.join(map(str, seeds))}"  # a baseline belongs to one sample
-    repos = json.loads((HERE / "repos.json").read_text())
+    repos = json.loads((HERE / args.repos_file).read_text())
     if args.repos:
         want = set(args.repos.split(","))
         repos = [r for r in repos if r["name"] in want]

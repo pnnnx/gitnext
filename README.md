@@ -49,6 +49,12 @@ Three local models (Qwen 3.5 4B, 9B and 27B), the same 72 tasks each way — fin
 
 232 functions for callers, 338 renames, 167 functions for tests; ± is the 90% interval, a difference inside it is noise. Python has no compiler to say who calls what, so callers are not scored there. `python3 eval/run.py` repeats the run; the full table is [eval/results/latest.md](eval/results/latest.md).
 
+What these numbers are not:
+
+- **The tool was tuned on these ten projects.** On fourteen projects it had never seen, measured once ([heldout.md](eval/results/heldout.md)): callers found 99%, correct 96%; rename 77%; and where a function is picked whether or not gitnext knows a caller of it, 87% of the callers are found (99% here).
+- **A plain search for the name finds every caller too** — with one wrong answer in ten instead of one in a hundred. For methods whose name several types share, the search is wrong two times in three, gitnext finds 83% of the callers (73% on the unseen projects), and a language server (gopls, rust-analyzer, tsserver) 97–99% ([latest.lsp.md](eval/results/latest.lsp.md)).
+- **Ten tests picked at random catch a broken function in 61% of cases**, so 79% is 18 points above chance; with a learned coverage map the failing tests are named outright.
+
 ### Fewer steps, less to read
 
 <p align="center"><img src="docs/images/savings.svg" width="900" alt="Bytes of code an agent read for six tasks: 49 KB without gitnext, 29 KB recounted, 22 KB with gitnext look"></p>

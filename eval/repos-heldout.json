@@ -1,0 +1,100 @@
+[
+ {
+  "name": "pflag",
+  "lang": "go",
+  "url": "https://github.com/spf13/pflag",
+  "commit": "046b0d889369e6f70ae31483dffad578ffb10e2e",
+  "setup": "go mod download"
+ },
+ {
+  "name": "mux",
+  "lang": "go",
+  "url": "https://github.com/gorilla/mux",
+  "commit": "db9d1d0073d27a0a2d9a8c1bc52aa0af4374d265",
+  "setup": "go mod download"
+ },
+ {
+  "name": "itsdangerous",
+  "lang": "python",
+  "url": "https://github.com/pallets/itsdangerous",
+  "commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+  "setup": "PY=$(command -v python3.13 || command -v python3.12 || command -v python3.11 || command -v python3.10 || echo python3) && rm -rf .venv && $PY -m venv .venv && .venv/bin/python -m pip -q install --upgrade pip && .venv/bin/pip -q install -e . pytest freezegun"
+ },
+ {
+  "name": "more-itertools",
+  "lang": "python",
+  "url": "https://github.com/more-itertools/more-itertools",
+  "commit": "ceafee8ce96f4bc1eb74c528bc247c91d648a0bb",
+  "setup": "PY=$(command -v python3.13 || command -v python3.12 || command -v python3.11 || command -v python3.10 || echo python3) && rm -rf .venv && $PY -m venv .venv && .venv/bin/python -m pip -q install --upgrade pip && .venv/bin/pip -q install -e . pytest"
+ },
+ {
+  "name": "byteorder",
+  "lang": "rust",
+  "url": "https://github.com/BurntSushi/byteorder",
+  "commit": "5a82625fae462e8ba64cec8146b24a372b4d75c6",
+  "setup": "cargo fetch -q"
+ },
+ {
+  "name": "either",
+  "lang": "rust",
+  "url": "https://github.com/rayon-rs/either",
+  "commit": "1e4326df5972eb4a0ced66cb3b67fa0c5aca8493",
+  "setup": "cargo fetch -q"
+ },
+ {
+  "name": "strsim",
+  "lang": "rust",
+  "url": "https://github.com/rapidfuzz/strsim-rs",
+  "commit": "dacc84c0dc61eff0ee0ff66962bcf2e17018ad26",
+  "setup": "cargo fetch -q"
+ },
+ {
+  "name": "ufo",
+  "lang": "typescript",
+  "url": "https://github.com/unjs/ufo",
+  "commit": "f06c800d0c59f2a4a1b9ba65eb6cb61a84419be6",
+  "setup": "npm install --ignore-scripts --no-audit --no-fund --loglevel=error --legacy-peer-deps"
+ },
+ {
+  "name": "pathe",
+  "lang": "typescript",
+  "url": "https://github.com/unjs/pathe",
+  "commit": "bc7477a01f0bd60ada017add8142c9f9d69ccdc5",
+  "setup": "npm install --ignore-scripts --no-audit --no-fund --loglevel=error --legacy-peer-deps"
+ },
+ {
+  "name": "urfave-cli",
+  "lang": "go",
+  "url": "https://github.com/urfave/cli",
+  "commit": "d5c06cb04479eeacbbb9378ea26261b6be516320",
+  "setup": "go mod download"
+ },
+ {
+  "name": "logrus",
+  "lang": "go",
+  "url": "https://github.com/sirupsen/logrus",
+  "commit": "6ef0748d1177dadaeee9aa79ffef604570f487d7",
+  "setup": "go mod download"
+ },
+ {
+  "name": "marshmallow",
+  "lang": "python",
+  "url": "https://github.com/marshmallow-code/marshmallow",
+  "commit": "777ff66039fd939fc509226a33586bc3209df301",
+  "setup": "PY=$(command -v python3.13 || command -v python3.12 || command -v python3.11 || command -v python3.10 || echo python3) && rm -rf .venv && $PY -m venv .venv && .venv/bin/python -m pip -q install --upgrade pip && .venv/bin/pip -q install -e . pytest simplejson"
+ },
+ {
+  "name": "boltons",
+  "lang": "python",
+  "url": "https://github.com/mahmoud/boltons",
+  "commit": "d31d821d56c8f7756af9c30a864077f2e5855321",
+  "setup": "PY=$(command -v python3.13 || command -v python3.12 || command -v python3.11 || command -v python3.10 || echo python3) && rm -rf .venv && $PY -m venv .venv && .venv/bin/python -m pip -q install --upgrade pip && .venv/bin/pip -q install -e . pytest"
+ },
+ {
+  "name": "itertools",
+  "lang": "rust",
+  "url": "https://github.com/rust-itertools/itertools",
+  "commit": "8b4c6cb2732a08b3dcac681ca249ae413b998c83",
+  "setup": "cargo fetch -q"
+ }
+]

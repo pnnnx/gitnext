@@ -5,6 +5,61 @@ Runs 1–5: five repos (one per language), one sample (seed 7, 8 functions, 4 mu
 From run 6 on: ten repos, 20 functions and 8 mutants per repo, three seeds, and a threshold next to every number.
 Since the run after run 4, a rename only counts as ok if the project's tests still pass too.
 
+## Run 9 · baselines and projects held out from tuning
+
+A review of the write-up asked three things the earlier runs did not answer: what a plain search for the name gives on
+the same functions, what a language server gives, and what the numbers are on projects the tool was not tuned on.
+Nothing in the tool was changed in this run or because of it.
+
+**Baselines on the functions of run 8** (`eval/baselines.py`, `eval/lsp_baseline.py`; tables: `latest.baselines.md`,
+`latest.lsp.md`). Recall / precision, %:
+
+| callers | functions | search for the name | gitnext | language servers |
+|---|---|---|---|---|
+| names that occur once | 232 | 100 / 89 ±3 | 100 / 99 ±1 | — |
+| … of them Go, Rust, TypeScript | 147 | 100 / 92 ±3 | 100 / 99 ±1 | 100 / 100 |
+| methods that share a name | 108 | 100 / 32 ±4 | 83 ±6 / 99 ±1 | — |
+| … of them Go, Rust, TypeScript | 52 | 100 / 27 ±5 | 75 ±9 / 100 | 97 ±3 / 99 ±1 |
+
+- The truth for callers is a list of places where the name stands, so the search cannot miss one; what it shows is
+  how much the graph removes: one wrong answer in ten becomes one in a hundred, and for shared names two in three
+  become one in a hundred — at the price of one true caller in six.
+- gopls, rust-analyzer (all features) and tsserver lose almost nothing on either side. rust-analyzer needs 10–25 s
+  before its first answer; gopls answers in 0.7 s per function.
+- **Tests: ten at random catch a broken function in 61% ±5 of cases** — a function that fails on entry breaks 24% of
+  its project's tests on average. gitnext's 79% is 18 points above that, and in TypeScript below it (41% against
+  90%). The search for the name in test bodies: caught 47%, recall 12%, precision 43%. gitnext: recall 49%,
+  precision 50% against a base rate of 24%.
+- **Intervals with the project as the unit** (`eval/cluster_boot.py`): the same for callers; for tests twice as wide
+  (recall 49% ±14, caught 79% ±10).
+
+**Fourteen projects held out from tuning, measured once** (`repos-heldout.json`, `heldout.md`): pflag, mux,
+urfave/cli, logrus (Go); itsdangerous, more-itertools, marshmallow, boltons (Python); byteorder, either, strsim,
+itertools (Rust); ufo, pathe (TypeScript). No Java: commons-cli takes two minutes per build, javapoet does not build
+with JDK 26.
+
+| | run 8, ten projects | held out, fourteen |
+|---|---|---|
+| callers: recall | 100% ±1 (232) | 99% ±1 (124) |
+| callers: precision | 99% ±1 | 96% ±3 |
+| callers, picked blind: recall | 99% ±1 (163) | 87% ±6 (103) |
+| shared names: recall | 83% ±6 (108) | 73% ±7 (108) |
+| shared names: precision | 100% ±2 | 99% ±2 |
+| rename ok | 91% ±3 (338) | 77% ±5 (226) |
+| tests: recall | 49% ±6 (167) | 72% ±6 (135) |
+| tests: precision | 50% ±6 | 64% ±6 |
+| tests: caught by the top 10 | 79% ±6 | 93% ±4 |
+
+- **Rename loses 14 points**: that is what the fixes of run 7 had bought on the sample they were found on. The
+  failures here: boltons (15, its tests), itertools (10), pathe (9, its tests import the renamed name), marshmallow (8).
+- **Blind recall loses 12 points**: callers the graph does not see at all — a function passed as a value
+  (urfave/cli's `Action: LintActionFunc`), a getter read as a property (ufo's `$URL.href`), a trait method called
+  through a type parameter (byteorder's `T::from_slice_i64`).
+- The baselines keep their order: the search 100 / 84 for unique names and 100 / 51 for shared ones, the language
+  servers 100 / 100 and 99 / 99, ten tests at random 52%.
+- Over projects the intervals are ±9 for rename and ±17 for shared-name recall (six projects).
+- A full disk stopped the first attempt of four projects; their cached truth was thrown away and they were run again.
+
 ## The agent runs · a 4B local model with and without gitnext
 
 `eval/agent.py` (`sh eval/run_agent_mac.sh`): Qwen 3.5 4B on llama.cpp, the projects click (Python) and semver (Rust).
