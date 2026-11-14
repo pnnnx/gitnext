@@ -29,7 +29,8 @@ and checked by the project itself:
   find      "where is X defined"           → the answer names the right file
   callers   "who calls X"                  → recall against the compiler's list
   fix       a seeded bug makes tests fail  → the test suite passes again
-  rename    "rename X to Y everywhere"     → it compiles and no old name is left
+  rename    "rename X to Y everywhere"     → it compiles, the old definition is gone and the new one is there
+                                             (Python, with no compiler: the old name is left nowhere)
 
     python3 eval/agent.py --host http://127.0.0.1:8080 --repos click,cobra \\
         --tasks find,callers,fix,rename --modes base,gitnext,lite --repeat 3
@@ -542,7 +543,17 @@ def check(task: dict, repo: dict, root: Path, res: dict) -> bool:
         left = ev.sh(f"git grep -nw {task['old']} -- . ':!*.md' | head -3", root)[1].strip()
         code, out = ev.sh(L["compile"], root, timeout=1200)
         res["left"] = left[:200]
-        return code == 0 and not left and bool(ev.sh(f"git grep -nw {task['new']} | head -1", root)[1].strip())
+        if repo["lang"] == "python":
+            # no compiler: a use left behind shows only as the word, so the word must be gone
+            return code == 0 and not left and bool(ev.sh(f"git grep -nw {task['new']} | head -1", root)[1].strip())
+        # With a compiler a use of a name that is not defined any more does not build: it is enough that the old
+        # definition is gone and the new one stands in its place. The word itself may stay — it is other things
+        # too (`os.Rename`, a struct field of the same name): on a large project 3 of 12 tasks could not pass.
+        ev.gx(["index"], root)
+        defined = {x["qualified"] for x in ev.symbols(root)}
+        new = task["target"][: len(task["target"]) - len(task["old"])] + task["new"]
+        res["old_defined"] = task["target"] in defined
+        return code == 0 and not res["old_defined"] and new in defined
     if task["kind"] == "fix":
         code, _ = ev.sh(L["compile"], root, timeout=1200)
         if code and repo["lang"] != "python":

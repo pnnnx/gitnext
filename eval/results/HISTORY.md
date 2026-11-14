@@ -176,6 +176,8 @@ needs the test suite, which does not fit the time). 12 task sets, each task once
 - **Three of the twelve renames cannot pass in any mode:** the judge's `git grep -w` finds another thing of the same
   name (`os.Rename`, a struct field `IsolationDisabled`, a field `DroppedTargets`). Without them rename is 11 / 16 /
   15 of 18.
+  From the next run on the judge of a compiled language asks for what the compiler can tell: the project builds,
+  the old definition is gone and the new one is there (Python keeps the word rule: it has no compiler).
 - **The gate did not make the difference:** with five tools it fired on every `find` and `callers` run (the answer
   repeated) and on no rename; the eleven-tool mode has no such gate and solves 61.
 - Limits: one project in one language, each task once, no bug fixes, two models of one family.
