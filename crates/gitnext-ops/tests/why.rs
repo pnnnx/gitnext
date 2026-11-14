@@ -24,7 +24,7 @@ fn graph(dir: &Path) -> Graph {
 }
 
 fn failed(g: &Graph, dir: &Path, output: &str) -> Step {
-    Step { what: "tests", command: "the test command".into(), ok: false, timed_out: false, seconds: 0.2, output: output.into(), digest: digest::digest(output), frames: locate::frames(g, dir, output) }
+    Step { what: "tests", command: "the test command".into(), ok: false, timed_out: false, seconds: 0.2, output: output.into(), before: None, digest: digest::digest(output), frames: locate::frames(g, dir, output) }
 }
 
 const EVAL: &str = "pub fn matches(req: u32, v: u32) -> bool {\n    matches_exact(req, v) || matches_greater(req, v)\n}\n\nfn matches_exact(req: u32, v: u32) -> bool {\n    req == v\n}\n\nfn matches_greater(req: u32, v: u32) -> bool {\n    v < req\n}\n\npub fn unrelated() -> u32 {\n    7\n}\n";
@@ -121,7 +121,7 @@ fn a_passing_test_needs_no_explanation() {
     let dir = rust_project("pass");
     let g = graph(&dir);
     let test = why::find_tests(&g, "test_exact");
-    let ok = Step { what: "tests", command: "cargo test".into(), ok: true, timed_out: false, seconds: 0.1, output: String::new(), digest: Default::default(), frames: vec![] };
+    let ok = Step { what: "tests", command: "cargo test".into(), ok: true, timed_out: false, seconds: 0.1, output: String::new(), before: None, digest: Default::default(), frames: vec![] };
     let w = why::explain(&dir, &g, &test, vec![ok]);
     assert!(!w.failed() && w.suspects.is_empty());
     assert!(why::render(&g, &dir, &w).starts_with("why: test_exact — passes"));

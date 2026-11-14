@@ -8,6 +8,12 @@
   29%); the run took 19 s and 69 s. What a class's static blocks run is booked to every test that touches the
   class. Nothing is written into the project and nothing is downloaded: when JaCoCo is not in the local Maven
   repository the message is the command that gets it. Gradle and TestNG are not learned yet.
+- **`gitnext check` tells a test the change broke from a test that fails anyway.** The tests that failed are run
+  once more on the code as the last commit has it (the changed files are put back for that run, then the changes
+  return), and the answer is remembered for the commit. A test that fails both ways is named as not caused by the
+  change, and when nothing else fails the verdict is ok; a test that passes without the change is said to. In the
+  agent runs a test that cannot pass on the test machine made two models undo or abandon a correct rename.
+  `GITNEXT_CHECK_BEFORE=0` switches it off; changes left by a killed check come back at the next one.
 - **`why <test>` and `check <test>` end with what to do**: the function to change, by name and place, and the
   call that replaces it, then the check to run — small models read the failure and stopped there.
 - **`edit replace` (MCP: `replace`, `replace_symbol`) given a line of the code where the name belongs makes the

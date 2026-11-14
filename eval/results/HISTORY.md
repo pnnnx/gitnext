@@ -137,8 +137,8 @@ Calls per run (mean) and what they are:
 - **`check` blames the change for a test that fails without it.** cobra's `TestFailGenFishCompletionFile` fails on
   the test machine whatever the code (it expects a permission error, and the run is root). After a correct rename
   `check` reported it as "tests FAILED"; the 27B model renamed the function back, the 4B model started rewriting
-  the test. cobra renames: plain 6 of 9, eleven tools 5, five tools 3. `check` does not know which tests failed
-  before the change — a known gap now.
+  the test. cobra renames: plain 6 of 9, eleven tools 5, five tools 3. `check` now runs the failed tests on the
+  last commit too and says which of them fail without the change (the same rename: `tests AS BEFORE`, verdict ok).
 - **`replace` is called like a text edit.** Of 129 `replace` / `add_after` calls with five tools, 66 made an edit;
   21 gave a line of code as the name of the symbol (`replace("if a == b {", "if a != b {")`), 16 a name that is
   not there, 18 repeated a refused call. All of the first kind are the 4B model. `replace` now makes that edit.
@@ -458,8 +458,6 @@ The tables below are the earlier runs, measured the old way.
 
 ## Known gaps
 
-- `check` does not know which tests failed before the change: a test that fails on its own is reported as a failure
-  of the change (cobra's permission test under root made two models undo or abandon a correct rename).
 - "Reaches" is a superset of "fails when it breaks": in cobra most tests reach a function through `Execute`, and the
   call graph cannot tell which of them take that branch — the top 10 hold 30% failing tests where the best order of the
   same list would hold 78%. Coverage from one real test run (`learn-tests`) is the way to close this.
