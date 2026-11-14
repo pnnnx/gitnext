@@ -83,6 +83,22 @@ servers themselves 99%. Go 70% → 93%, Rust 84% → 90% (18 methods, inside the
 Time of one `callers` query once the index is built: 20–50 ms on eight of the ten projects, 0.16 s on json-java and
 1.5 s on jsoup — the two Java ones; the graph is slow to resolve there, to be looked at.
 
+### The language server's own rename on the same functions (Go, `eval/lsp_rename.py`)
+
+`gopls rename` at the name in the definition, then the same check as for the tool: the project builds and the tests
+that passed before still pass.
+
+| | renames | gopls | gitnext | both | only gopls | only gitnext | neither |
+|---|---|---|---|---|---|---|---|
+| main sample: cobra, chi | 81 | 96% ±4 | 93% ±4 | 73 | 5 | 2 | 1 |
+| held out: pflag, mux, urfave/cli, logrus | 41 | 88% ±9 | 78% ±10 | 28 | 8 | 4 | 1 |
+
+The server's rename does not reach 100% under this check either. What it leaves: a method name inside a text
+template (`{{.UseLine}}`, `{{.FullName}}`, `{{.VisibleFlags}}`) or a string, an example function named after the
+method (`ExampleCommand_Walk_visibleTree`, which then does not compile), and a rename it refuses because the type
+would stop satisfying an interface (`flagCompError.Error`). gitnext, which replaces the name in text too, passes
+6 renames that gopls does not and fails 13 that gopls passes.
+
 ## The agent runs · a 4B local model with and without gitnext
 
 `eval/agent.py` (`sh eval/run_agent_mac.sh`): Qwen 3.5 4B on llama.cpp, the projects click (Python) and semver (Rust).

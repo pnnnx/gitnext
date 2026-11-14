@@ -1,0 +1,330 @@
+[
+ {
+  "repo": "pflag",
+  "symbol": "main::FlagSet::Output",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "pflag",
+  "symbol": "main::NewFlagSet",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "pflag",
+  "symbol": "main::FlagSet::FlagUsagesWrapped",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "pflag",
+  "symbol": "main::FlagSet::GetNormalizeFunc",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "pflag",
+  "symbol": "main::FlagSet::FlagUsages",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "pflag",
+  "symbol": "main::FlagSet::AddGoFlag",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "pflag",
+  "symbol": "main::PFlagFromGoFlag",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "pflag",
+  "symbol": "main::FlagSet::VarPF",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "pflag",
+  "symbol": "main::FlagSet::AddFlag",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "pflag",
+  "symbol": "main::UnquoteUsage",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "pflag",
+  "symbol": "main::ParseIPv4Mask",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "mux",
+  "symbol": "main::Router::NewRoute",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "mux",
+  "symbol": "main::Route::Handler",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "mux",
+  "symbol": "main::Route::GetMethods",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "mux",
+  "symbol": "main::Route::HandlerFunc",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "mux",
+  "symbol": "main::Route::GetHandlerWithMiddlewares",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::ValueSourceChain::LookupWithSource",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::Command::VisibleFlagCategories",
+  "server_ok": false,
+  "server_stage": "tests",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::Command::VisibleFlags",
+  "server_ok": false,
+  "server_stage": "tests",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::Exit",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::ShowVersion",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::ValueSourceChain::EnvKeys",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::Command::Walk",
+  "server_ok": false,
+  "server_stage": "build",
+  "server_detail": "# github.com/urfave/cli/v3_test\n# [github.com/urfave/cli/v3_test]\n./examples_test.go:445:1: ExampleCommand_Walk_visibleTree refers to unknown field or method: Command.Walk\nFAIL\tgithub.com/urfave/cli/v3 [build failed]\n?   \tgithub.com/urfave/cli/v3/examples/example-cli\t[no test files]\n?   \tgithub.com/",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::Command::Path",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::File",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::Command::FullName",
+  "server_ok": false,
+  "server_stage": "tests",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::Command::Bool",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::EnvVar",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::Command::LocalFlagNames",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::Command::VisiblePersistentFlags",
+  "server_ok": false,
+  "server_stage": "tests",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::HandleExitCoder",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::EnvVars",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::DefaultCompleteWithFlags",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::Command::Lineage",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "urfave-cli",
+  "symbol": "main::Command::Root",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "logrus",
+  "symbol": "main::Logger::LogFn",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "logrus",
+  "symbol": "main::mutexWrap::Lock",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "logrus",
+  "symbol": "main::mutexWrap::Unlock",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "logrus",
+  "symbol": "main::Entry::Bytes",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "logrus",
+  "symbol": "main::mutexWrap::Disable",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "logrus",
+  "symbol": "main::NewEntry",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ }
+]

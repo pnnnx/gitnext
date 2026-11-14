@@ -1,0 +1,650 @@
+[
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::NamePadding",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::CheckErr",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::CommandPathPadding",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::GenPowerShellCompletionWithDesc",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::Print",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::OutOrStderr",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::PrintErrf",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::MinimumNArgs",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::Flags",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::LocalFlags",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::Println",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::Execute",
+  "server_ok": false,
+  "server_stage": "tests",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::CalledAs",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::HasAvailableInheritedFlags",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::Parent",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::CompError",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::CompErrorln",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::LocalNonPersistentFlags",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::ParseFlags",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::InitDefaultCompletionCmd",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::ValidateFlagGroups",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::PrintErrln",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::Help",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::HasParent",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::InitDefaultVersionFlag",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::Commands",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::HelpFunc",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "doc::GenMarkdownCustom",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::GenBashCompletionV2",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::InheritedFlags",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::Root",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "doc::GenMarkdownTreeCustom",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::FlagErrorFunc",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::SetGlobalNormalizationFunc",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::UseLine",
+  "server_ok": false,
+  "server_stage": "tests",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::GenZshCompletion",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::flagCompError::Error",
+  "server_ok": false,
+  "server_stage": "rename",
+  "server_detail": "gopls: cobra/completions.go:52:25: renaming this method \"Error\" to \"ErrorGnx\"\n\twould make *github.com/spf13/cobra.flagCompError no longer assignable to interface error\n\t(rename error.Error if you intend to change both types)\n",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::HasPersistentFlags",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::PrintErr",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "cobra",
+  "symbol": "doc::GenYamlCustom",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::HasSubCommands",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::Traverse",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::SuggestionsFor",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::Usage",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::ValidateArgs",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "cobra",
+  "symbol": "main::Command::HasFlags",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::GetLogEntry",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "_examples::fileserver::FileServer",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::Chain",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::NewCompressor",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::Walk",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::RouteContext",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::RequestLogger",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::NewMux",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "_examples::rest::NewArticleListResponse",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::GetClientIPAddr",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::Middlewares::HandlerFunc",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::NewRouteContext",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::NewPattern",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::Throttle",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::Timeout",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::Context::RoutePattern",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::Mux::NotFoundHandler",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::endpoints::Value",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::node::InsertRoute",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::node::FindRoute",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::URLParamFromCtx",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::GetReqID",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::NewWrapResponseWriter",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::compressResponseWriter::Close",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": false
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::NewRouter",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::Compressor::SetEncoder",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "_examples::rest::ErrRender",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "_examples::rest::NewUserPayloadResponse",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::Mux::MethodNotAllowedHandler",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::PrintPrettyStack",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "_examples::rest::ErrInvalidRequest",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::HeaderRoute::IsMatch",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "main::RegisterMethod",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::ThrottleWithOpts",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ },
+ {
+  "repo": "chi",
+  "symbol": "middleware::WithLogEntry",
+  "server_ok": true,
+  "server_stage": "",
+  "server_detail": "",
+  "gitnext_ok": true
+ }
+]
