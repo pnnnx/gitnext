@@ -306,6 +306,37 @@ needs the test suite, which does not fit the time). 12 task sets, each task once
   repeated) and on no rename; the eleven-tool mode has no such gate and solves 61.
 - Limits: one project in one language, each task once, no bug fixes, two models of one family.
 
+### Three changes made after reading the conversations, measured on new tasks (two models, 12 task sets)
+
+After the 648 conversations were read call by call, three things were changed in the tool: `why` and `check` end
+with the next line to act on, `replace` takes a line of code given in place of a name, and `check` reruns a failed
+test on the code as it was before the change and says so when it failed there too. The comparison: the 0.3.1 release
+("old") against the same release with these changes ("new"), five tools, Qwen 3.5 4B and 9B (Q4_K_M, one T4 each),
+six projects, bug fixing and renaming, 12 task sets drawn with a new seed — 144 tasks per model, each solved with
+both builds. A rename is judged by the new check (the build passes, the old definition is gone, the new one is
+there). `results/agent-kaggle-ab-20261115.json`; 6.9 hours.
+
+| solved | old | new | gained / lost | difference | 95% interval | p |
+|---|---|---|---|---|---|---|
+| 4B, of 144 | 88 | 99 | +18 −7 | +7.6 | +1.4 … +14.6 | 0.043 (sign) |
+| 9B, of 144 | 113 | 121 | +9 −1 | +5.6 | +1.4 … +9.7 | 0.021 (sign) |
+| both, of 288 | 201 | 220 | +27 −8 | +6.6 | +2.4 … +10.8 | 0.005 (permutation by task) |
+| bug fixing, both, of 144 | 72 | 85 | +21 −8 | +9.0 | +1.4 … +17.4 | 0.046 |
+| renaming, both, of 144 | 129 | 135 | +6 −0 | +4.2 | +1.4 … +7.6 | 0.032 |
+
+- **The 4B model stops wandering.** Median steps 14 → 5, median input tokens 51.9k → 8.2k, median time 51 s → 18 s;
+  for 9B 5 → 4 steps and 9.2k → 6.1k tokens. The harness had to send a failed check back to the model in 17 old
+  runs and in 3 new ones.
+- **Renames pass in 90–94% of runs under the new check** (65 and 64 of 72 old, 68 and 67 new) — against 12 of 18
+  under the old one, which also wanted the old word gone from the whole project.
+- **The bug-fix tasks of cobra cannot pass on this machine, in either build: 0 of 48.** The judge wanted no failing
+  test at all, and cobra has one that fails when the suite runs as root, before any change. The same holds for the
+  27 cobra bug-fix runs of the three-model experiment above (0 in every mode). The judge now leaves out the tests
+  that failed before the bug was seeded (`eval/agent.py`); the numbers above are as they were measured.
+- Ten pairs had a run that ended with a server error (HTTP 500) and counts as unsolved; without them 199 → 218 of
+  278, p = 0.002.
+
+
 ## Run 8 · in TypeScript the test is the file; coverage maps for Go and Rust
 
 **tests-for, TypeScript.** `it('…', () => …)` is not a named function; its calls are booked to the module of the

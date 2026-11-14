@@ -524,7 +524,7 @@ def seed_bug(repo: dict, root: Path, syms: list[dict], rng: random.Random) -> di
                         patch = ev.sh("git diff", root)[1]
                         ev.restore(root)
                         name = sorted(failed)[0]
-                        return {"kind": "fix", "target": s["qualified"], "patch": patch, "prompt": f"The test `{name}` fails. Find the bug in the code and fix it (do not change the tests).", "failing": sorted(failed)[:10]}
+                        return {"kind": "fix", "target": s["qualified"], "patch": patch, "prompt": f"The test `{name}` fails. Find the bug in the code and fix it (do not change the tests).", "failing": sorted(failed)[:10], "before": sorted(before)}
                     ev.restore(root)
                     break
     return None
@@ -559,7 +559,8 @@ def check(task: dict, repo: dict, root: Path, res: dict) -> bool:
         if code and repo["lang"] != "python":
             return False
         _, tout = ev.sh(L["tests"], root, timeout=1800)
-        return not L["failed"](tout, root)
+        # a test that failed before the bug was seeded is not the model's to fix (cobra has one when run as root)
+        return not (set(L["failed"](tout, root)) - set(task.get("before", [])))
     return False
 
 
