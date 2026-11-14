@@ -75,6 +75,14 @@ run 8:
 Nothing got worse; callers of unique names, blind recall and rename did not move. This closes most of the distance
 to the language servers themselves (97%), for projects where one is installed.
 
+The same on the eight held-out Go and Rust projects (`heldout-lsp-refined.compare.md`; 4 to 185 seconds a project,
+itertools the longest): shared names recall 72.7% → 92.7% ±4 on 108 methods (+19.9; +14.8 … +25.0), the language
+servers themselves 99%. Go 70% → 93%, Rust 84% → 90% (18 methods, inside the noise). Blind recall (85%) and rename
+(82%) did not move: a function passed as a value is not an ambiguous call.
+
+Time of one `callers` query once the index is built: 20–50 ms on eight of the ten projects, 0.16 s on json-java and
+1.5 s on jsoup — the two Java ones; the graph is slow to resolve there, to be looked at.
+
 ## The agent runs · a 4B local model with and without gitnext
 
 `eval/agent.py` (`sh eval/run_agent_mac.sh`): Qwen 3.5 4B on llama.cpp, the projects click (Python) and semver (Rust).
