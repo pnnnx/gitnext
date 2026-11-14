@@ -83,6 +83,34 @@ servers themselves 99%. Go 70% → 93%, Rust 84% → 90% (18 methods, inside the
 Time of one `callers` query once the index is built: 20–50 ms on eight of the ten projects, 0.16 s on json-java and
 1.5 s on jsoup — the two Java ones; the graph is slow to resolve there, to be looked at.
 
+### A second tool on the same functions: Codebase-Memory (`eval/codebase_memory.py`)
+
+Codebase-Memory 0.12.1 (github.com/DeusData/codebase-memory-mcp), a Tree-sitter graph for agents, asked who calls
+each sampled function: the `CALLS` edges into the function's node, read with its own `query_graph`; each caller it
+names is put onto the function that stands at that place. The truth is the run's, the compiler's uses.
+
+| callers, recall / precision | functions | Codebase-Memory | gitnext |
+|---|---|---|---|
+| main, names that occur once | 232 | 85% ±4 / 96% ±2 | 100% / 99% ±1 |
+| main, whether or not gitnext sees a caller | 163 | 85% ±5 / 98% ±1 | 99% ±1 / 100% |
+| main, methods that share a name | 108 | 58% ±8 / 85% ±5 | 83% ±5 / 99% ±1 |
+| held out, names that occur once | 124 | 71% ±6 / 85% ±5 | 99% ±1 / 95% ±3 |
+| held out, whether or not gitnext sees a caller | 103 | 60% ±8 / 83% ±6 | 87% ±6 / 94% ±4 |
+| held out, methods that share a name | 108 | 10% ±5 / 72% ±16 | 73% ±7 / 99% ±2 |
+
+By language on the main sample (names that occur once): Go 97% recall, Java 100%, TypeScript 97%, Rust 15%.
+Two causes, both looked at by hand:
+
+- **Go: a function and a method of the same name are one node.** In pflag the call `f.FlagUsages()` inside
+  `FlagSet.PrintDefaults` is given to the function `PrintDefaults`; the method has no node. Hence 7% recall on
+  the 90 held-out Go methods that share a name.
+- **Rust: a call made inside a method belongs to the file.** In indexmap the caller of `sort_unstable_keys` is the
+  node `set.rs`, not `IndexSet::sort_unstable_keys`; no calling function is named for 31 of the 32 sampled functions.
+
+The functions are drawn from gitnext's own list of symbols, which favours gitnext: this shows that the method
+tells two tools apart and names the cause, it does not rank them.
+
+
 ### The language server's own rename on the same functions (Go, `eval/lsp_rename.py`)
 
 `gopls rename` at the name in the definition, then the same check as for the tool: the project builds and the tests

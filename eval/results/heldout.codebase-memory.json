@@ -1,0 +1,3302 @@
+{
+ "callers": [
+  {
+   "symbol": "main::FlagSet::Output",
+   "lang": "go",
+   "other_recall": 0.375,
+   "other_precision": 0.875,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::NewFlagSet",
+   "lang": "go",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": 0.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::FlagUsagesWrapped",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::GetNormalizeFunc",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::FlagUsages",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::AddGoFlag",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::PFlagFromGoFlag",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::VarPF",
+   "lang": "go",
+   "other_recall": 0.2,
+   "other_precision": 0.25,
+   "recall": 0.8,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::AddFlag",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::UnquoteUsage",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::ParseIPv4Mask",
+   "lang": "go",
+   "other_recall": 0.5,
+   "other_precision": 0.5,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::Router::NewRoute",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::Handler",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::GetMethods",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::HandlerFunc",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 0.3333333333333333,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::GetHandlerWithMiddlewares",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "either::Either::as_pin_mut",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "either"
+  },
+  {
+   "symbol": "either::Either::is_left",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "either"
+  },
+  {
+   "symbol": "strsim::jaro",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::damerau_levenshtein",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::sorensen_dice",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::levenshtein",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::osa_distance",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::generic_jaro_winkler",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::normalized_damerau_levenshtein",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::normalized_levenshtein",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::hamming",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::generic_hamming",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::generic_levenshtein",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::generic_jaro",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::jaro_winkler",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "src::encoding::encodeHost",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::query::stringifyQuery",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::parse::parsePath",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::isNonEmptyURL",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::query::encodeQueryItem",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::withProtocol",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::encode",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::encodeHash",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::decodeQueryKey",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::parse::parseURL",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::withLeadingSlash",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::query::parseQuery",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::isEmptyURL",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::hasLeadingSlash",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::punycode::toASCII",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::withoutTrailingSlash",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::withTrailingSlash",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::parse::parseHost",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::decodePath",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::joinURL",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::decode",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::decodeQueryValue",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::encodePath",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::hasTrailingSlash",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::encodeQueryKey",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::withoutLeadingSlash",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::parse::parseAuth",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::parse::stringifyParsedURL",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::normalizeAliases",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::normalize",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::isAbsolute",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::join",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::normalizeString",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::extname",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_internal::normalizeWindowsPath",
+   "lang": "typescript",
+   "other_recall": 0.2222222222222222,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_glob::matchGlob",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::basename",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::resolve",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::dirname",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "main::ValueSourceChain::LookupWithSource",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::VisibleFlags",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 0.25,
+   "recall": 1.0,
+   "precision": 0.25,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Exit",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 0.6666666666666666,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::ShowVersion",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::ValueSourceChain::EnvKeys",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::Walk",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::Path",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::File",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::FullName",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 0.2,
+   "recall": 1.0,
+   "precision": 0.16666666666666666,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::Bool",
+   "lang": "go",
+   "other_recall": 0.75,
+   "other_precision": 1.0,
+   "recall": 0.75,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::EnvVar",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::LocalFlagNames",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::VisiblePersistentFlags",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 0.6666666666666666,
+   "recall": 1.0,
+   "precision": 0.6666666666666666,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::HandleExitCoder",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::EnvVars",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::DefaultCompleteWithFlags",
+   "lang": "go",
+   "other_recall": 0.5,
+   "other_precision": 1.0,
+   "recall": 0.5,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::Lineage",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::Root",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Logger::LogFn",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::mutexWrap::Lock",
+   "lang": "go",
+   "other_recall": 0.45454545454545453,
+   "other_precision": 0.45454545454545453,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::mutexWrap::Unlock",
+   "lang": "go",
+   "other_recall": 0.45454545454545453,
+   "other_precision": 0.45454545454545453,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Entry::Bytes",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 0.6666666666666666,
+   "recall": 1.0,
+   "precision": 0.5,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::mutexWrap::Disable",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::NewEntry",
+   "lang": "go",
+   "other_recall": 0.5,
+   "other_precision": 0.5,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "itertools::either_or_both::EitherOrBoth::or_default",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 0.3333333333333333,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::either_or_both::EitherOrBoth::both",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::adaptors::checked_binomial",
+   "lang": "rust",
+   "other_recall": 0.75,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::either_or_both::EitherOrBoth::map_any",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::lazy_buffer::LazyBuffer::get_at",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::strip_prefix_by",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::collect_vec",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::grouping_map::GroupingMap::fold_with",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::chunk_by",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 0.5,
+   "recall": 1.0,
+   "precision": 0.5,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::extrema_set::max_set_impl",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::next_tuple",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::adaptors::PutBack::with_value",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::position_max",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::extrema_set::min_set_impl",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::either_or_both::EitherOrBoth::right_or_insert_with",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::position_min",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::position_minmax",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::next_array::ArrayBuilder::take",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 0.16666666666666666,
+   "recall": 1.0,
+   "precision": 0.03125,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::grouping_map::GroupingMap::max_by",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 0.5,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::groupbylazy::new_chunks",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::k_smallest::key_to_cmp",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::size_hint::mul_scalar",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::next_array::ArrayBuilder::push",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 0.25,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::partition_map",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::heap::heapify",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::lazy_buffer::LazyBuffer::get_next",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::size_hint::add_scalar",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::all_unique_with_hasher",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::either_or_both::EitherOrBoth::as_ref",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::grouping_map::GroupingMap::aggregate",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::either_or_both::EitherOrBoth::insert_right",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::k_smallest_by",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::k_largest_relaxed_by",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::minmax::minmax_impl",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::heap::sift_down",
+   "lang": "rust",
+   "other_recall": 0.6666666666666666,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::combinations::Combinations::reset",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::k_smallest::k_smallest_general",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::grouping_map::new_map_for_grouping",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::either_or_both::EitherOrBoth::left_or_insert_with",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  }
+ ],
+ "callers_common": [
+  {
+   "symbol": "main::FlagSet::StringToIntVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::BoolVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::StringArrayVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::IPNetSliceVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::StringSliceVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::Uint16VarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::Lookup",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.9,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::Float32VarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::StringToInt64VarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::Uint64VarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::Uint32VarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::DurationSliceVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::Float64SliceVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::Parse",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": 0.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::BoolP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.5,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::IntVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::IPNetVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::IPVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::BytesBase64VarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::StringToStringVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::Int64VarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::DurationVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::Int16VarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::StringVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::UintSliceVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::TimeVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.6666666666666666,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::Int8VarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::VarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.5,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::Float32SliceVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::TimeP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.3333333333333333,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::BoolSliceVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::UintVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::IPSliceVarP",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::PrintDefaults",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.5,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::Route::Path",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::Schemes",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::Host",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::Headers",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::BuildVarsFunc",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::Queries",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::PathPrefix",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::Name",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::MatcherFunc",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::Methods",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "byteorder::io::ReadBytesExt::read_f64_into",
+   "lang": "rust",
+   "other_recall": 0.3333333333333333,
+   "other_precision": 1.0,
+   "recall": 0.3333333333333333,
+   "precision": 1.0,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::read_f32_into",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::read_int",
+   "lang": "rust",
+   "other_recall": 0.3333333333333333,
+   "other_precision": 1.0,
+   "recall": 0.6666666666666666,
+   "precision": 1.0,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::write_int",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 0.6666666666666666,
+   "precision": 1.0,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::read_f64_into",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "main::commandCategory::Name",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::HasName",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::extFlag::IsBoolFlag",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::MapBase::Value",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::FlagBase::PreParse",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Entry::Logln",
+   "lang": "go",
+   "other_recall": 0.8571428571428571,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Entry::WriterLevel",
+   "lang": "go",
+   "other_recall": 0.5,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Panicln",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Infoln",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Errorln",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Entry::WithError",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Entry::Errorf",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 0.3333333333333333,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Entry::String",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 0.16666666666666666,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Info",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::FatalFn",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Entry::Panicf",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Logf",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::WithField",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Println",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::WithContext",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Debugf",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::PrintFn",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Entry::Debug",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Error",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Entry::Warnln",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Fatalf",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::DebugFn",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Warnf",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.5,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Printf",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::IsLevelEnabled",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::WithFields",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Trace",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Traceln",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::SetOutput",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::GetLevel",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Entry::Printf",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::WriterLevel",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Panic",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Infof",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Warnln",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.5,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Entry::Info",
+   "lang": "go",
+   "other_recall": 0.5,
+   "other_precision": 0.5,
+   "recall": 0.5,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::PanicFn",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Logger::Fatal",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Level::String",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.5,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "hooks::slog::SlogLevel::Level",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 0.5,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Entry::WithFields",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "itertools::Itertools::next_array",
+   "lang": "rust",
+   "other_recall": 0.5,
+   "other_precision": 1.0,
+   "recall": 0.5,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::adaptors::PutBack::put_back",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::sorted",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::minmax_by",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::peek_nth::PeekNth::peek_nth",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::intersperse",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::intersperse_with",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::multipeek_impl::MultiPeek::peek",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::sorted_unstable",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::peek_nth::PeekNth::peek",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::grouping_map::GroupingMap::minmax_by",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::put_back_n_impl::PutBackN::put_back",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::grouping_map::GroupingMap::reduce",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  }
+ ],
+ "callers_blind": [
+  {
+   "symbol": "main::FlagSet::Output",
+   "lang": "go",
+   "other_recall": 0.375,
+   "other_precision": 0.875,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::NewFlagSet",
+   "lang": "go",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": 0.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::FlagUsagesWrapped",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::GetNormalizeFunc",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::AddFlag",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::UnquoteUsage",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::PFlagFromGoFlag",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::AddGoFlag",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::FlagSet::VarPF",
+   "lang": "go",
+   "other_recall": 0.2,
+   "other_precision": 0.25,
+   "recall": 0.8,
+   "precision": 1.0,
+   "repo": "pflag"
+  },
+  {
+   "symbol": "main::Router::NewRoute",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::GetMethods",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "main::Route::GetHandlerWithMiddlewares",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "mux"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::from_slice_i64",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::write_i32_into",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::write_i128_into",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::from_slice_i32",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::write_f64_into",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::from_slice_i16",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::write_i64_into",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::from_slice_i128",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::write_i16_into",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "byteorder::ByteOrder::write_f32_into",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "byteorder"
+  },
+  {
+   "symbol": "either::Either::as_pin_mut",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "either"
+  },
+  {
+   "symbol": "either::Either::right",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "either"
+  },
+  {
+   "symbol": "strsim::jaro",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::damerau_levenshtein",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::sorensen_dice",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::levenshtein",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::osa_distance",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::generic_jaro_winkler",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::normalized_damerau_levenshtein",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::normalized_levenshtein",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::hamming",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::generic_hamming",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::generic_levenshtein",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::generic_jaro",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "strsim::jaro_winkler",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "strsim"
+  },
+  {
+   "symbol": "src::encoding::encodeHost",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::query::stringifyQuery",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::parse::parsePath",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::url::$URL::href",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::isNonEmptyURL",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::query::encodeQueryItem",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::withProtocol",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::encode",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::encodeHash",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::decodeQueryKey",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::parse::parseURL",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::withLeadingSlash",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::decode",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::withoutTrailingSlash",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::decodeQueryValue",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::encodePath",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::query::parseQuery",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::encoding::decodePath",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::withTrailingSlash",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::url::$URL::encodedAuth",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::hasTrailingSlash",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::url::$URL::isAbsolute",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::url::$URL::search",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::joinURL",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::parse::parseHost",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::withoutLeadingSlash",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "ufo"
+  },
+  {
+   "symbol": "src::utils::normalizeAliases",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::normalize",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::isAbsolute",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::join",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::normalizeString",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::extname",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_internal::normalizeWindowsPath",
+   "lang": "typescript",
+   "other_recall": 0.2222222222222222,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_glob::matchGlob",
+   "lang": "typescript",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::basename",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::resolve",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "src::_path::dirname",
+   "lang": "typescript",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "pathe"
+  },
+  {
+   "symbol": "main::ValueSourceChain::LookupWithSource",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::DefaultShowCommandHelp",
+   "lang": "go",
+   "other_recall": null,
+   "other_precision": 1.0,
+   "recall": null,
+   "precision": null,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::VisibleFlags",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 0.25,
+   "recall": 1.0,
+   "precision": 0.25,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Exit",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 0.6666666666666666,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::DefaultPrintVersion",
+   "lang": "go",
+   "other_recall": null,
+   "other_precision": 1.0,
+   "recall": null,
+   "precision": null,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "scripts::LintActionFunc",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "scripts::SetMkdocsRemoteActionFunc",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::DefaultCompleteWithFlags",
+   "lang": "go",
+   "other_recall": 0.5,
+   "other_precision": 1.0,
+   "recall": 0.5,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::DefaultShowRootCommandHelp",
+   "lang": "go",
+   "other_recall": null,
+   "other_precision": 1.0,
+   "recall": null,
+   "precision": null,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::Walk",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::Lineage",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "scripts::V3Diff",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Command::FullName",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 0.2,
+   "recall": 1.0,
+   "precision": 0.16666666666666666,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::EnvVars",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::ShowRootCommandHelpAndExit",
+   "lang": "go",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "scripts::EnsureGoimportsActionFunc",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::NewSliceBase",
+   "lang": "go",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::ValueSourceChain::EnvKeys",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "urfave-cli"
+  },
+  {
+   "symbol": "main::Logger::LogFn",
+   "lang": "go",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::mutexWrap::Lock",
+   "lang": "go",
+   "other_recall": 0.45454545454545453,
+   "other_precision": 0.45454545454545453,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::mutexWrap::Unlock",
+   "lang": "go",
+   "other_recall": 0.45454545454545453,
+   "other_precision": 0.45454545454545453,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::Entry::Bytes",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 0.6666666666666666,
+   "recall": 1.0,
+   "precision": 0.5,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::mutexWrap::Disable",
+   "lang": "go",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "main::NewEntry",
+   "lang": "go",
+   "other_recall": 0.5,
+   "other_precision": 0.5,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "logrus"
+  },
+  {
+   "symbol": "itertools::either_or_both::EitherOrBoth::or_default",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 0.3333333333333333,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::either_or_both::EitherOrBoth::both",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::adaptors::checked_binomial",
+   "lang": "rust",
+   "other_recall": 0.75,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::either_or_both::EitherOrBoth::map_any",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::lazy_buffer::LazyBuffer::get_at",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::strip_prefix_by",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::collect_vec",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::grouping_map::GroupingMap::fold_with",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::chunk_by",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 0.5,
+   "recall": 1.0,
+   "precision": 0.5,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::repeatn::repeat_n",
+   "lang": "rust",
+   "other_recall": null,
+   "other_precision": null,
+   "recall": null,
+   "precision": null,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::next_array::ArrayBuilder::take",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 0.16666666666666666,
+   "recall": 1.0,
+   "precision": 0.03125,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::grouping_map::GroupingMap::max_by",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 0.5,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::groupbylazy::new_chunks",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::k_smallest::key_to_cmp",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::size_hint::mul_scalar",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::next_array::ArrayBuilder::push",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 0.25,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::extrema_set::min_set_impl",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::partition_map",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::heap::heapify",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::grouping_map::GroupingMap::aggregate",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::either_or_both::EitherOrBoth::insert_right",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::either_or_both::EitherOrBoth::right_or_insert_with",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::k_smallest_by",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::either_or_both::EitherOrBoth::as_ref",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": 0.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::tuple_impl::TupleCollect::buffer_len",
+   "lang": "rust",
+   "other_recall": 0.0,
+   "other_precision": null,
+   "recall": 0.0,
+   "precision": null,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::Itertools::k_largest_relaxed_by",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  },
+  {
+   "symbol": "itertools::minmax::minmax_impl",
+   "lang": "rust",
+   "other_recall": 1.0,
+   "other_precision": 1.0,
+   "recall": 1.0,
+   "precision": 1.0,
+   "repo": "itertools"
+  }
+ ]
+}
