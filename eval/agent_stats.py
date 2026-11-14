@@ -3,12 +3,16 @@
 the same task in two modes as a pair (sign test, bootstrap over tasks).
 
     python3 eval/agent_stats.py eval/results/agent-kaggle-20261113.json
+    python3 eval/agent_stats.py eval/results/agent-kaggle-big-20261114.json
 
 The file is a list of the rows `eval/agent.py` writes, each with `model` and `set` (the task set, 0-based) added.
 """
 import json, sys, statistics, collections, random, math
 rows = json.load(open(sys.argv[1]))
-MODELS = ["qwen3.5-4b", "qwen3.5-9b", "qwen3.5-27b"]; MODES = ["base", "gitnext", "lite"]; TASKS = ["find", "callers", "fix", "rename"]
+# the models, kinds of task and projects are the ones the file has; models by size
+MODELS = sorted({r["model"] for r in rows}, key=lambda m: (float("".join(c for c in m.rsplit("-", 1)[-1] if c.isdigit() or c == ".") or 0), m))
+MODES = ["base", "gitnext", "lite"]; TASKS = [t for t in ["find", "callers", "fix", "rename"] if any(r["task"] == t for r in rows)]
+REPOS = sorted({r["repo"] for r in rows})
 by = collections.defaultdict(list)
 for r in rows:
     by[(r["model"], r["task"], r["mode"])].append(r); by[(r["model"], "all", r["mode"])].append(r)
@@ -37,12 +41,12 @@ def paired(m, a, b, task=None):
     solved = [k for k in ks if A[k]["passed"] and B[k]["passed"] and A[k].get("tokens_in") and B[k].get("tokens_in")]
     r2 = statistics.median(A[k]["tokens_in"] / B[k]["tokens_in"] for k in solved) if solved else 0
     return len(ks), win, lose, min(1.0, p), sum(d) / len(d), bs[100], bs[3899], ratio, r2, len(solved)
-print("\npaired, the same 72 tasks: n, +wins, -losses, sign-test p, diff [95% CI], median token ratio (all), (both solved, n)")
+print("\npaired, the same tasks: n, +wins, -losses, sign-test p, diff [95% CI], median token ratio (all), (both solved, n)")
 for m in MODELS:
     for a, b in (("base", "gitnext"), ("base", "lite"), ("gitnext", "lite")):
         n, w, l, p, d, lo, hi, ra, r2, ns = paired(m, a, b)
         print(f"  {m:12} {a:>7} -> {b:7} n={n} +{w} -{l} p={p:.4f} diff {d*100:+.0f} pp [{lo*100:+.0f}, {hi*100:+.0f}]  tokens x{ra:.1f} (both solved x{r2:.1f}, n={ns})")
-print("\nby repo, solved of 12 per mode:")
+print("\nby repo, solved per mode:")
 for m in MODELS:
-    print(" ", m, " ".join(f"{repo}:" + "/".join(str(sum(bool(r['passed']) for r in rows if r['model'] == m and r['repo'] == repo and r['mode'] == md)) for md in MODES) for repo in ["click", "sqlparse", "semver", "indexmap", "cobra", "chi"]))
+    print(" ", m, " ".join(f"{repo}:" + "/".join(str(sum(bool(r['passed']) for r in rows if r['model'] == m and r['repo'] == repo and r['mode'] == md)) for md in MODES) for repo in REPOS))
 print("\nguard stops:", {m: collections.Counter((r["mode"], (r.get("guard") or {}).get("stopped")) for r in rows if r["model"] == m and (r.get("guard") or {}).get("stopped")) for m in MODELS})

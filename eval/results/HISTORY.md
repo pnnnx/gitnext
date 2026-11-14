@@ -148,6 +148,38 @@ Calls per run (mean) and what they are:
   it fired on every `find` and `callers` run (one more step, the answer repeated) and stands behind at most 4 of
   the 163 solved tasks (3 renames through the `check` it reran, 1 fix after "no file was changed").
 
+### A large project: Prometheus, 406 thousand lines of Go (two models, 12 task sets)
+
+Prometheus at `f4838fa` (766 Go files, 406,642 lines; indexed in 7 s; the first build takes 8.7 minutes), the gitnext
+0.3.1 release binary, the 4B and 27B models, the harness of the full run. Tasks: find, callers, rename (a seeded bug
+needs the test suite, which does not fit the time). 12 task sets, each task once: 36 tasks per model in every mode,
+216 runs. Rows: `agent-kaggle-big-20261114.json`; tables: `eval/agent_stats.py`, `eval/agent_traces.py`.
+
+| solved | plain | eleven tools | five tools |
+|---|---|---|---|
+| 4B, of 36 | 23 | 29 | 30 |
+| 27B, of 36 | 26 | 32 | 32 |
+| both, of 72 | 49 | 61 | 62 |
+| find, of 24 | 24 | 24 | 24 |
+| callers, of 24 | 14 | 21 | 23 |
+| rename, of 24 | 11 | 16 | 15 |
+| median steps | 8 | 4 | 3 |
+| tokens sent per task | 47.4k | 22.1k | 15.6k |
+
+- **Plain → five tools: +14 −1 (p = 0.001), +18.1 points, 95% interval +6.9 to +30.6** (bootstrap over the 36 tasks).
+  Plain → eleven tools: +14 −2 (p = 0.004), +16.7 points, +5.6 to +27.8. Each model alone, five tools: 4B +8 −1
+  (p = 0.04), 27B +6 −0 (p = 0.03). On the six small projects the same comparison gave +8.8 points.
+- **Callers is where a large project hurts plain tools:** 8.0 file reads per run, 5.3 of them of a file already
+  read; 4 of the 10 failed runs end out of steps, 6 with a wrong list. With five tools: 3.5 `look` calls, 23 of 24.
+- **The 27B model sends five times fewer tokens** (53.2k → 10.5k per task) and 8% of its calls bring nothing,
+  against 36% with plain tools.
+- **Three of the twelve renames cannot pass in any mode:** the judge's `git grep -w` finds another thing of the same
+  name (`os.Rename`, a struct field `IsolationDisabled`, a field `DroppedTargets`). Without them rename is 11 / 16 /
+  15 of 18.
+- **The gate did not make the difference:** with five tools it fired on every `find` and `callers` run (the answer
+  repeated) and on no rename; the eleven-tool mode has no such gate and solves 61.
+- Limits: one project in one language, each task once, no bug fixes, two models of one family.
+
 ## Run 8 · in TypeScript the test is the file; coverage maps for Go and Rust
 
 **tests-for, TypeScript.** `it('…', () => …)` is not a named function; its calls are booked to the module of the
