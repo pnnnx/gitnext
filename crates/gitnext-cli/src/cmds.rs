@@ -97,9 +97,10 @@ pub enum More {
         #[arg(long)]
         no_code: bool,
     },
-    /// Resolve ambiguous calls precisely with language servers (rust-analyzer, pyright, clangd); cached
+    /// Resolve ambiguous calls precisely with the language servers installed here (gopls, rust-analyzer, pyright,
+    /// typescript-language-server, clangd, jdtls); the answers are kept in the index
     Lsp {
-        /// rust | python | c (default: every language in the repo)
+        /// go | rust | python | ts | c | java (default: every language in the repo)
         #[arg(long)]
         lang: Option<String>,
         #[arg(short = 'n', long, default_value_t = 3000)]

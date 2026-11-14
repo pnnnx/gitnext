@@ -60,6 +60,21 @@ with JDK 26.
 - Over projects the intervals are ±9 for rename and ±17 for shared-name recall (six projects).
 - A full disk stopped the first attempt of four projects; their cached truth was thrown away and they were run again.
 
+**`gitnext lsp` on the same functions** (`lsp-refined.compare.md`). The command, which the tool has had for a while,
+asks a language server where each ambiguous call goes and keeps the answers in the index. Run once in cobra, chi
+(gopls) and semver, indexmap (rust-analyzer) — 3 to 57 seconds per project — and the eval repeated on the functions of
+run 8:
+
+| | functions | graph alone | after `gitnext lsp` | difference, 90% interval |
+|---|---|---|---|---|
+| shared names: recall | 42 | 78.0% | 96.4% | +18.5 (+9.5 … +27.4) |
+| shared names: precision | 34 | 99.4% | 100.0% | +0.6 (0 … +1.8) |
+| tests: recall | 59 | 69.4% | 77.9% | +8.5 (+3.4 … +13.9) |
+| tests: caught by the top 10 | 59 | 79.7% | 86.4% | +6.8 (+1.7 … +11.9) |
+
+Nothing got worse; callers of unique names, blind recall and rename did not move. This closes most of the distance
+to the language servers themselves (97%), for projects where one is installed.
+
 ## The agent runs · a 4B local model with and without gitnext
 
 `eval/agent.py` (`sh eval/run_agent_mac.sh`): Qwen 3.5 4B on llama.cpp, the projects click (Python) and semver (Rust).
