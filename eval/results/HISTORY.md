@@ -225,6 +225,8 @@ Calls per run (mean) and what they are:
   the harness also asks once for the change when no file was changed and reruns `check` after one. With five tools
   it fired on every `find` and `callers` run (one more step, the answer repeated) and stands behind at most 4 of
   the 163 solved tasks (3 renames through the `check` it reran, 1 fix after "no file was changed").
+  With those four counted as unsolved: 159 against 144, +32 −17 (sign test p = 0.044), +6.9 points, 95% interval
+  −1.9 to +15.3 — it includes zero. Plain tools solved all four of these tasks as well.
 
 ### A large project: Prometheus, 406 thousand lines of Go (two models, 12 task sets)
 
