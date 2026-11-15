@@ -29,7 +29,7 @@ Everything here is measured on other people's code — ten open-source projects 
 
 <p align="center"><img src="docs/images/agent.svg" width="900" alt="Tasks solved by three local models: 144 of 216 with plain tools, 163 of 216 with the five gitnext tools"></p>
 
-Three local models (Qwen 3.5 4B, 9B and 27B), the same 72 tasks each way — find a function, list its callers, rename it, fix a seeded bug — on six projects in Python, Rust and Go, judged by the projects' own compilers and tests. With the five gitnext tools (`gitnext mcp --profile lite`) they solve 163 of 216 tasks against 144 with plain read / grep / edit / run (+9 points; the 95% interval is +1 to +17), in a median of 3–4 steps instead of 9–10, and the 27B model sends 2.4 times fewer tokens. The clear gain is a bug fixed by the larger model: 14 of 18 against 7, never the other way round. For one model alone the difference in solved tasks is inside the noise, and an earlier 24-task run that showed 4 against 15 for the 4B model did not repeat: with today's harness the plain model solves 19 of those 24.
+Three local models (Qwen 3.5 4B, 9B and 27B), the same 72 tasks each way — find a function, list its callers, rename it, fix a seeded bug — on six projects in Python, Rust and Go, judged by the projects' own compilers and tests. With the five gitnext tools (`gitnext mcp --profile lite`) they solve 163 of 216 tasks against 144 with plain read / grep / edit / run (+9 points; the 95% interval is +1 to +17), in a median of 3–4 steps instead of 9–10, and the 27B model sends 2.4 times fewer tokens. The clear gain is a bug fixed by the larger model: 14 of 18 against 7, never the other way round. For one model alone the difference in solved tasks is inside the noise, and an earlier 24-task run that showed 4 against 15 for the 4B model did not repeat: with today's harness the plain model solves 19 of those 24. On a large project (Prometheus, 406 thousand lines of Go; the 4B and 27B models, 36 tasks each way, no bug fixes) the gain is larger: 62 of 72 tasks against 49 (+18 points, the 95% interval is +7 to +31), for a third of the tokens.
 
 ### A failing test leads to the function at fault
 
@@ -49,6 +49,12 @@ Three local models (Qwen 3.5 4B, 9B and 27B), the same 72 tasks each way — fin
 
 232 functions for callers, 338 renames, 167 functions for tests; ± is the 90% interval, a difference inside it is noise. Python has no compiler to say who calls what, so callers are not scored there. `python3 eval/run.py` repeats the run; the full table is [eval/results/latest.md](eval/results/latest.md).
 
+What these numbers are not:
+
+- **The tool was tuned on these ten projects.** On fourteen projects it had never seen, measured once ([heldout.md](eval/results/heldout.md)): callers found 99%, correct 96%; rename 77%; and where a function is picked whether or not gitnext knows a caller of it, 87% of the callers are found (99% here).
+- **A plain search for the name finds every caller too** — with one wrong answer in ten instead of one in a hundred. For methods whose name several types share, the search is wrong two times in three, gitnext finds 83% of the callers (73% on the unseen projects), and a language server (gopls, rust-analyzer, tsserver) 97–99% ([latest.lsp.md](eval/results/latest.lsp.md)). Where a language server is installed, `gitnext lsp` asks it once about the ambiguous calls and keeps the answers: on the Go and Rust projects that takes gitnext from 78% to 96%, and from 73% to 93% on the unseen ones ([lsp-refined.compare.md](eval/results/lsp-refined.compare.md)).
+- **Ten tests picked at random catch a broken function in 61% of cases**, so 79% is 18 points above chance; with a learned coverage map the failing tests are named outright.
+
 ### Fewer steps, less to read
 
 <p align="center"><img src="docs/images/savings.svg" width="900" alt="Bytes of code an agent read for six tasks: 49 KB without gitnext, 29 KB recounted, 22 KB with gitnext look"></p>
@@ -57,8 +63,8 @@ Most of an agent session is the system prompt re-sent on every step, so the win 
 
 ### What is checked, and what is not good yet
 
-- 139 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
-- Java has no coverage map in the product yet (a prototype with JaCoCo finds 94–99% of the failing tests); for JS / TS it needs vitest.
+- 149 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
+- The coverage map for Java needs Maven and tests that run on the JUnit Platform (JUnit 5, or JUnit 4 under surefire 3.6 and newer); Gradle is not learned. For JS / TS it needs vitest.
 - A rename breaks the build or the tests in 9% of cases — mostly dynamic access and names shared by unrelated types.
 - Small models rarely fix a seeded bug: 6 of 18 at best for the 4B and the 9B model. With the full tool list they do not start from `check <test>` (the 9B model never did in 18 tasks) — give them the short list.
 - A rename done with the tool passed the judge no more often than one done by hand (12–13 of 18 against 14): names that are also common words, and mentions in documentation — the latter are renamed now.
@@ -91,8 +97,8 @@ gitnext             # open the TUI
 | edit one function without reading the file | `gitnext edit replace <Sym> -f new.py` / `replace_symbol` |
 | rename everywhere (imports, tests, `__all__`, `mod.func`) | `gitnext rename <old> <new>` / `rename_symbol` |
 | what breaks, which tests to run | `gitnext impact <Sym>` · `gitnext tests-for <Sym>` (the 10 most likely to fail + one command for the rest) |
-| which tests really run a function | `gitnext learn-tests` — the tests run once with coverage (Python: pytest-cov; Go; Rust: `llvm-tools-preview`; JS / TS: vitest with `@vitest/coverage-v8`); `tests-for`, `look`, `check` and `why` then use the real list |
-| did my change break anything | `gitnext check` — builds and runs the tests of what changed, prints a verdict (`gitnext rename A B --check` does it right after the rename) |
+| which tests really run a function | `gitnext learn-tests` — the tests run once with coverage (Python: pytest-cov; Go; Rust: `llvm-tools-preview`; JS / TS: vitest with `@vitest/coverage-v8`; Java: Maven with the JaCoCo agent); `tests-for`, `look`, `check` and `why` then use the real list |
+| did my change break anything | `gitnext check` — builds and runs the tests of what changed, prints a verdict; a test that fails without the change too is named as not caused by it (`gitnext rename A B --check` does it right after the rename) |
 | a test fails — why | `gitnext why <test>` / `check` with `test` — runs it: the failure in a few lines, the code the test ran with the most likely culprit first, the lines changed since the tests passed |
 | a long build or test log | `cargo test 2>&1 \| gitnext digest` — what failed, where, the message (a vitest run with 35 failures: 843 lines → 12) |
 | error or traceback → code | `gitnext locate` (stdin) / `locate` |

@@ -5,6 +5,128 @@ Runs 1–5: five repos (one per language), one sample (seed 7, 8 functions, 4 mu
 From run 6 on: ten repos, 20 functions and 8 mutants per repo, three seeds, and a threshold next to every number.
 Since the run after run 4, a rename only counts as ok if the project's tests still pass too.
 
+## Run 9 · baselines and projects held out from tuning
+
+A review of the write-up asked three things the earlier runs did not answer: what a plain search for the name gives on
+the same functions, what a language server gives, and what the numbers are on projects the tool was not tuned on.
+Nothing in the tool was changed in this run or because of it.
+
+**Baselines on the functions of run 8** (`eval/baselines.py`, `eval/lsp_baseline.py`; tables: `latest.baselines.md`,
+`latest.lsp.md`). Recall / precision, %:
+
+| callers | functions | search for the name | gitnext | language servers |
+|---|---|---|---|---|
+| names that occur once | 232 | 100 / 89 ±3 | 100 / 99 ±1 | — |
+| … of them Go, Rust, TypeScript | 147 | 100 / 92 ±3 | 100 / 99 ±1 | 100 / 100 |
+| methods that share a name | 108 | 100 / 32 ±4 | 83 ±6 / 99 ±1 | — |
+| … of them Go, Rust, TypeScript | 52 | 100 / 27 ±5 | 75 ±9 / 100 | 97 ±3 / 99 ±1 |
+
+- The truth for callers is a list of places where the name stands, so the search cannot miss one; what it shows is
+  how much the graph removes: one wrong answer in ten becomes one in a hundred, and for shared names two in three
+  become one in a hundred — at the price of one true caller in six.
+- gopls, rust-analyzer (all features) and tsserver lose almost nothing on either side. rust-analyzer needs 10–25 s
+  before its first answer; gopls answers in 0.7 s per function.
+- **Tests: ten at random catch a broken function in 61% ±5 of cases** — a function that fails on entry breaks 24% of
+  its project's tests on average. gitnext's 79% is 18 points above that, and in TypeScript below it (41% against
+  90%). The search for the name in test bodies: caught 47%, recall 12%, precision 43%. gitnext: recall 49%,
+  precision 50% against a base rate of 24%.
+- **Intervals with the project as the unit** (`eval/cluster_boot.py`): the same for callers; for tests twice as wide
+  (recall 49% ±14, caught 79% ±10).
+
+**Fourteen projects held out from tuning, measured once** (`repos-heldout.json`, `heldout.md`): pflag, mux,
+urfave/cli, logrus (Go); itsdangerous, more-itertools, marshmallow, boltons (Python); byteorder, either, strsim,
+itertools (Rust); ufo, pathe (TypeScript). No Java: commons-cli takes two minutes per build, javapoet does not build
+with JDK 26.
+
+| | run 8, ten projects | held out, fourteen |
+|---|---|---|
+| callers: recall | 100% ±1 (232) | 99% ±1 (124) |
+| callers: precision | 99% ±1 | 96% ±3 |
+| callers, picked blind: recall | 99% ±1 (163) | 87% ±6 (103) |
+| shared names: recall | 83% ±6 (108) | 73% ±7 (108) |
+| shared names: precision | 100% ±2 | 99% ±2 |
+| rename ok | 91% ±3 (338) | 77% ±5 (226) |
+| tests: recall | 49% ±6 (167) | 72% ±6 (135) |
+| tests: precision | 50% ±6 | 64% ±6 |
+| tests: caught by the top 10 | 79% ±6 | 93% ±4 |
+
+- **Rename loses 14 points**: that is what the fixes of run 7 had bought on the sample they were found on. The
+  failures here: boltons (15, its tests), itertools (10), pathe (9, its tests import the renamed name), marshmallow (8).
+- **Blind recall loses 12 points**: callers the graph does not see at all — a function passed as a value
+  (urfave/cli's `Action: LintActionFunc`), a getter read as a property (ufo's `$URL.href`), a trait method called
+  through a type parameter (byteorder's `T::from_slice_i64`).
+- The baselines keep their order: the search 100 / 84 for unique names and 100 / 51 for shared ones, the language
+  servers 100 / 100 and 99 / 99, ten tests at random 52%.
+- Over projects the intervals are ±9 for rename and ±17 for shared-name recall (six projects).
+- A full disk stopped the first attempt of four projects; their cached truth was thrown away and they were run again.
+
+**`gitnext lsp` on the same functions** (`lsp-refined.compare.md`). The command, which the tool has had for a while,
+asks a language server where each ambiguous call goes and keeps the answers in the index. Run once in cobra, chi
+(gopls) and semver, indexmap (rust-analyzer) — 3 to 57 seconds per project — and the eval repeated on the functions of
+run 8:
+
+| | functions | graph alone | after `gitnext lsp` | difference, 90% interval |
+|---|---|---|---|---|
+| shared names: recall | 42 | 78.0% | 96.4% | +18.5 (+9.5 … +27.4) |
+| shared names: precision | 34 | 99.4% | 100.0% | +0.6 (0 … +1.8) |
+| tests: recall | 59 | 69.4% | 77.9% | +8.5 (+3.4 … +13.9) |
+| tests: caught by the top 10 | 59 | 79.7% | 86.4% | +6.8 (+1.7 … +11.9) |
+
+Nothing got worse; callers of unique names, blind recall and rename did not move. This closes most of the distance
+to the language servers themselves (97%), for projects where one is installed.
+
+The same on the eight held-out Go and Rust projects (`heldout-lsp-refined.compare.md`; 4 to 185 seconds a project,
+itertools the longest): shared names recall 72.7% → 92.7% ±4 on 108 methods (+19.9; +14.8 … +25.0), the language
+servers themselves 99%. Go 70% → 93%, Rust 84% → 90% (18 methods, inside the noise). Blind recall (85%) and rename
+(82%) did not move: a function passed as a value is not an ambiguous call.
+
+Time of one `callers` query once the index is built: 20–50 ms on eight of the ten projects, 0.16 s on json-java and
+1.5 s on jsoup — the two Java ones; the graph is slow to resolve there, to be looked at.
+
+### A second tool on the same functions: Codebase-Memory (`eval/codebase_memory.py`)
+
+Codebase-Memory 0.12.1 (github.com/DeusData/codebase-memory-mcp), a Tree-sitter graph for agents, asked who calls
+each sampled function: the `CALLS` edges into the function's node, read with its own `query_graph`; each caller it
+names is put onto the function that stands at that place. The truth is the run's, the compiler's uses.
+
+| callers, recall / precision | functions | Codebase-Memory | gitnext |
+|---|---|---|---|
+| main, names that occur once | 232 | 85% ±4 / 96% ±2 | 100% / 99% ±1 |
+| main, whether or not gitnext sees a caller | 163 | 85% ±5 / 98% ±1 | 99% ±1 / 100% |
+| main, methods that share a name | 108 | 58% ±8 / 85% ±5 | 83% ±5 / 99% ±1 |
+| held out, names that occur once | 124 | 71% ±6 / 85% ±5 | 99% ±1 / 95% ±3 |
+| held out, whether or not gitnext sees a caller | 103 | 60% ±8 / 83% ±6 | 87% ±6 / 94% ±4 |
+| held out, methods that share a name | 108 | 10% ±5 / 72% ±16 | 73% ±7 / 99% ±2 |
+
+By language on the main sample (names that occur once): Go 97% recall, Java 100%, TypeScript 97%, Rust 15%.
+Two causes, both looked at by hand:
+
+- **Go: a function and a method of the same name are one node.** In pflag the call `f.FlagUsages()` inside
+  `FlagSet.PrintDefaults` is given to the function `PrintDefaults`; the method has no node. Hence 7% recall on
+  the 90 held-out Go methods that share a name.
+- **Rust: a call made inside a method belongs to the file.** In indexmap the caller of `sort_unstable_keys` is the
+  node `set.rs`, not `IndexSet::sort_unstable_keys`; no calling function is named for 31 of the 32 sampled functions.
+
+The functions are drawn from gitnext's own list of symbols, which favours gitnext: this shows that the method
+tells two tools apart and names the cause, it does not rank them.
+
+
+### The language server's own rename on the same functions (Go, `eval/lsp_rename.py`)
+
+`gopls rename` at the name in the definition, then the same check as for the tool: the project builds and the tests
+that passed before still pass.
+
+| | renames | gopls | gitnext | both | only gopls | only gitnext | neither |
+|---|---|---|---|---|---|---|---|
+| main sample: cobra, chi | 81 | 96% ±4 | 93% ±4 | 73 | 5 | 2 | 1 |
+| held out: pflag, mux, urfave/cli, logrus | 41 | 88% ±9 | 78% ±10 | 28 | 8 | 4 | 1 |
+
+The server's rename does not reach 100% under this check either. What it leaves: a method name inside a text
+template (`{{.UseLine}}`, `{{.FullName}}`, `{{.VisibleFlags}}`) or a string, an example function named after the
+method (`ExampleCommand_Walk_visibleTree`, which then does not compile), and a rename it refuses because the type
+would stop satisfying an interface (`flagCompError.Error`). gitnext, which replaces the name in text too, passes
+6 renames that gopls does not and fails 13 that gopls passes.
+
 ## The agent runs · a 4B local model with and without gitnext
 
 `eval/agent.py` (`sh eval/run_agent_mac.sh`): Qwen 3.5 4B on llama.cpp, the projects click (Python) and semver (Rust).
@@ -104,6 +226,116 @@ What the conversations showed:
 - `look` after the change, the 553 calls of the lite fix runs: 18 named something that is not there (a path outside
   the repo, a shell command, a library function), 5 a name that is not in the file given, 62 repeated an earlier call.
 - Rust `why` with the map after macros became symbols: the function at fault first in 17 of 20 (it was 14).
+
+### The same 648 conversations, call by call (`eval/agent_traces.py`)
+
+Calls per run (mean) and what they are:
+
+| task | mode | solved | calls | what the calls are | calls that bring nothing |
+|---|---|---|---|---|---|
+| find | plain | 53 / 54 | 2.9 | search 1.7, read 0.3 | 0.6 (a search with no match) |
+| find | five tools | 54 / 54 | 2.1 | look 1.0 | 0 |
+| callers | plain | 37 / 54 | 8.0 | read 4.0, search 3.0 | 2.7 (2.0 are a file read again) |
+| callers | five tools | 47 / 54 | 3.6 | look 2.8 | 0.4 |
+| fix | plain | 14 / 54 | 20.3 | read 7.4, search 6.3, run 5.3, edit 1.0 | 5.8 (3.9 are a file read again) |
+| fix | five tools | 26 / 54 | 16.3 | look 10.2, check 3.4, edit 2.2 | 4.2 (3.0 are the same call again) |
+| rename | plain | 40 / 54 | 15.2 | edit 5.1, read 3.8, search 3.1, run 2.4 | 3.2 |
+| rename | five tools | 36 / 54 | 6.5 | look 2.6, check 1.6, edit 1.2 | 1.0 |
+
+- **Where plain tools spend their calls.** A quarter to a third of them bring nothing new (4B 30%, 9B 24%, 27B 25%):
+  a file read again, a `grep` with no match (170 of 908), an edit refused because the old text stands in several
+  places (53 of 383). With the five tools it is 16–23%, and of another kind: the same call repeated.
+- **A fix is lost before the first edit.** With plain tools 31 of 54 fix runs change any code at all, and the first
+  change comes at call 12–17 of 25; 29 of the 40 failed runs end out of steps. The 27B model with gitnext changes
+  code in 35 of 36 runs, at call 3. The small models do not get there with any tools (4B: 10 of 18 plain, 10 of 18
+  with five tools).
+- **With eleven tools, gitnext's are often not called at all:** 4B in 21 of 72 runs, 27B in 23 (nearly all are
+  `find`, where one `grep` is enough), 9B in 2.
+- **Lost against plain tools on the same task: 13 of 216 in each gitnext mode; won: 25 and 32.** Of the 13 lost
+  with five tools: 5 are the sqlparse rename the judge fails for a name left in `.rst` (above); 3 are runs where the
+  model gave no answer at all (9 such runs in the whole set: 2 plain, 2 gitnext, 5 five tools — counted as
+  failures); 2 are a rename in cobra, below; 2 are callers of `contains`, a name several things have; 1 is a fix the
+  4B model lost in refused `replace` calls.
+- **`check` blames the change for a test that fails without it.** cobra's `TestFailGenFishCompletionFile` fails on
+  the test machine whatever the code (it expects a permission error, and the run is root). After a correct rename
+  `check` reported it as "tests FAILED"; the 27B model renamed the function back, the 4B model started rewriting
+  the test. cobra renames: plain 6 of 9, eleven tools 5, five tools 3. `check` now runs the failed tests on the
+  last commit too and says which of them fail without the change (the same rename: `tests AS BEFORE`, verdict ok).
+- **`replace` is called like a text edit.** Of 129 `replace` / `add_after` calls with five tools, 66 made an edit;
+  21 gave a line of code as the name of the symbol (`replace("if a == b {", "if a != b {")`), 16 a name that is
+  not there, 18 repeated a refused call. All of the first kind are the 4B model. `replace` now makes that edit.
+- **The harness is not the same in every mode.** The guard (hints after repeated or idle steps) acts in all three.
+  The gate acts in the gitnext modes only: an answer given before any tool call is sent back, and with five tools
+  the harness also asks once for the change when no file was changed and reruns `check` after one. With five tools
+  it fired on every `find` and `callers` run (one more step, the answer repeated) and stands behind at most 4 of
+  the 163 solved tasks (3 renames through the `check` it reran, 1 fix after "no file was changed").
+  With those four counted as unsolved: 159 against 144, +32 −17 (sign test p = 0.044), +6.9 points, 95% interval
+  −1.9 to +15.3 — it includes zero. Plain tools solved all four of these tasks as well.
+
+### A large project: Prometheus, 406 thousand lines of Go (two models, 12 task sets)
+
+Prometheus at `f4838fa` (766 Go files, 406,642 lines; indexed in 7 s; the first build takes 8.7 minutes), the gitnext
+0.3.1 release binary, the 4B and 27B models, the harness of the full run. Tasks: find, callers, rename (a seeded bug
+needs the test suite, which does not fit the time). 12 task sets, each task once: 36 tasks per model in every mode,
+216 runs. Rows: `agent-kaggle-big-20261114.json`; tables: `eval/agent_stats.py`, `eval/agent_traces.py`.
+
+| solved | plain | eleven tools | five tools |
+|---|---|---|---|
+| 4B, of 36 | 23 | 29 | 30 |
+| 27B, of 36 | 26 | 32 | 32 |
+| both, of 72 | 49 | 61 | 62 |
+| find, of 24 | 24 | 24 | 24 |
+| callers, of 24 | 14 | 21 | 23 |
+| rename, of 24 | 11 | 16 | 15 |
+| median steps | 8 | 4 | 3 |
+| tokens sent per task | 47.4k | 22.1k | 15.6k |
+
+- **Plain → five tools: +14 −1 (p = 0.001), +18.1 points, 95% interval +6.9 to +30.6** (bootstrap over the 36 tasks).
+  Plain → eleven tools: +14 −2 (p = 0.004), +16.7 points, +5.6 to +27.8. Each model alone, five tools: 4B +8 −1
+  (p = 0.04), 27B +6 −0 (p = 0.03). On the six small projects the same comparison gave +8.8 points.
+- **Callers is where a large project hurts plain tools:** 8.0 file reads per run, 5.3 of them of a file already
+  read; 4 of the 10 failed runs end out of steps, 6 with a wrong list. With five tools: 3.5 `look` calls, 23 of 24.
+- **The 27B model sends five times fewer tokens** (53.2k → 10.5k per task) and 8% of its calls bring nothing,
+  against 36% with plain tools.
+- **Three of the twelve renames cannot pass in any mode:** the judge's `git grep -w` finds another thing of the same
+  name (`os.Rename`, a struct field `IsolationDisabled`, a field `DroppedTargets`). Without them rename is 11 / 16 /
+  15 of 18.
+  From the next run on the judge of a compiled language asks for what the compiler can tell: the project builds,
+  the old definition is gone and the new one is there (Python keeps the word rule: it has no compiler).
+- **The gate did not make the difference:** with five tools it fired on every `find` and `callers` run (the answer
+  repeated) and on no rename; the eleven-tool mode has no such gate and solves 61.
+- Limits: one project in one language, each task once, no bug fixes, two models of one family.
+
+### Three changes made after reading the conversations, measured on new tasks (two models, 12 task sets)
+
+After the 648 conversations were read call by call, three things were changed in the tool: `why` and `check` end
+with the next line to act on, `replace` takes a line of code given in place of a name, and `check` reruns a failed
+test on the code as it was before the change and says so when it failed there too. The comparison: the 0.3.1 release
+("old") against the same release with these changes ("new"), five tools, Qwen 3.5 4B and 9B (Q4_K_M, one T4 each),
+six projects, bug fixing and renaming, 12 task sets drawn with a new seed — 144 tasks per model, each solved with
+both builds. A rename is judged by the new check (the build passes, the old definition is gone, the new one is
+there). `results/agent-kaggle-ab-20261115.json`; 6.9 hours.
+
+| solved | old | new | gained / lost | difference | 95% interval | p |
+|---|---|---|---|---|---|---|
+| 4B, of 144 | 88 | 99 | +18 −7 | +7.6 | +1.4 … +14.6 | 0.043 (sign) |
+| 9B, of 144 | 113 | 121 | +9 −1 | +5.6 | +1.4 … +9.7 | 0.021 (sign) |
+| both, of 288 | 201 | 220 | +27 −8 | +6.6 | +2.4 … +10.8 | 0.005 (permutation by task) |
+| bug fixing, both, of 144 | 72 | 85 | +21 −8 | +9.0 | +1.4 … +17.4 | 0.046 |
+| renaming, both, of 144 | 129 | 135 | +6 −0 | +4.2 | +1.4 … +7.6 | 0.032 |
+
+- **The 4B model stops wandering.** Median steps 14 → 5, median input tokens 51.9k → 8.2k, median time 51 s → 18 s;
+  for 9B 5 → 4 steps and 9.2k → 6.1k tokens. The harness had to send a failed check back to the model in 17 old
+  runs and in 3 new ones.
+- **Renames pass in 90–94% of runs under the new check** (65 and 64 of 72 old, 68 and 67 new) — against 12 of 18
+  under the old one, which also wanted the old word gone from the whole project.
+- **The bug-fix tasks of cobra cannot pass on this machine, in either build: 0 of 48.** The judge wanted no failing
+  test at all, and cobra has one that fails when the suite runs as root, before any change. The same holds for the
+  27 cobra bug-fix runs of the three-model experiment above (0 in every mode). The judge now leaves out the tests
+  that failed before the bug was seeded (`eval/agent.py`); the numbers above are as they were measured.
+- Ten pairs had a run that ended with a server error (HTTP 500) and counts as unsolved; without them 199 → 218 of
+  278, p = 0.002.
+
 
 ## Run 8 · in TypeScript the test is the file; coverage maps for Go and Rust
 

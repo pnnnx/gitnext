@@ -371,7 +371,7 @@ fn run() -> Result<()> {
         }
         Cmd::Map { dir, print } => {
             let ws = Workspace::open(&cwd)?;
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             if print || dir.is_some() {
                 let d = norm_path(&ws, dir.as_deref().unwrap_or(""));
                 let d = render::dir_for(&g, &d);
@@ -403,7 +403,7 @@ fn run() -> Result<()> {
         }
         Cmd::Outline { path, all } => {
             let ws = Workspace::open(&cwd)?;
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let p = norm_path(&ws, path.as_deref().unwrap_or(""));
             let mut o = out.opts;
             o.all = all;
@@ -411,7 +411,7 @@ fn run() -> Result<()> {
         }
         Cmd::Read { symbols } => {
             let ws = Workspace::open(&cwd)?;
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let mut ids = Vec::new();
             for q in &symbols {
                 ids.extend(lookup_same(&g, q)?);
@@ -426,7 +426,7 @@ fn run() -> Result<()> {
         }
         Cmd::Show { symbol } => {
             let ws = Workspace::open(&cwd)?;
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let ids = lookup(&g, &symbol)?;
             if out.json {
                 let v: Vec<_> = ids.iter().map(|&i| show_json(&g, i)).collect();
@@ -441,7 +441,7 @@ fn run() -> Result<()> {
         }
         Cmd::Search { query, limit, text } => {
             let ws = Workspace::open(&cwd)?;
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let q = query.join(" ");
             if text {
                 let hits = gitnext_ops::look::text_hits(&g, &ws.root, &q, limit);
@@ -459,7 +459,7 @@ fn run() -> Result<()> {
         }
         Cmd::Symbols { path, kind, public } => {
             let ws = Workspace::open(&cwd)?;
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let p = norm_path(&ws, path.as_deref().unwrap_or(""));
             let kind = match kind.as_deref() {
                 Some(k) => Some(Kind::parse(k).ok_or_else(|| anyhow::anyhow!("unknown kind `{k}`"))?),
@@ -477,7 +477,7 @@ fn run() -> Result<()> {
         }
         Cmd::Callers { symbols } => {
             let ws = Workspace::open(&cwd)?;
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             // several names in one run: the graph is loaded once (it is the slow part on a big repo)
             let mut ids = Vec::new();
             for symbol in &symbols {
@@ -503,7 +503,7 @@ fn run() -> Result<()> {
         }
         Cmd::Callees { symbol } => {
             let ws = Workspace::open(&cwd)?;
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let ids = lookup(&g, &symbol)?;
             if out.json {
                 let v: Vec<_> = ids.iter().map(|&i| callees_json(&g, i)).collect();
@@ -515,7 +515,7 @@ fn run() -> Result<()> {
         }
         Cmd::Impact { symbol, depth } => {
             let ws = Workspace::open(&cwd)?;
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let ids = lookup(&g, &symbol)?;
             if out.json {
                 let v: Vec<_> = ids.iter().map(|&i| serde_json::json!({ "symbol": g.sym_ref(i), "impact": g.impact(i, depth) })).collect();
@@ -527,7 +527,7 @@ fn run() -> Result<()> {
         }
         Cmd::Hierarchy { symbol } => {
             let ws = Workspace::open(&cwd)?;
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let ids: Vec<usize> = lookup(&g, &symbol)?.into_iter().filter(|&i| g.syms[i].sym.kind.is_type()).collect();
             if ids.is_empty() {
                 bail!("`{symbol}` is not a type, class or trait");
@@ -542,7 +542,7 @@ fn run() -> Result<()> {
         }
         Cmd::Deps { dir } => {
             let ws = Workspace::open(&cwd)?;
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let d = render::dir_for(&g, &norm_path(&ws, dir.as_deref().unwrap_or("")));
             if out.json {
                 return out.json(&g.dir_deps(&d));
@@ -551,7 +551,7 @@ fn run() -> Result<()> {
         }
         Cmd::Context { query, tokens } => {
             let ws = Workspace::open(&cwd)?;
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let mut q = query.join(" ");
             if q.trim().is_empty() {
                 use std::io::{IsTerminal as _, Read as _};
@@ -585,7 +585,7 @@ fn run() -> Result<()> {
         }
         Cmd::Rename { symbol, new_name, dry_run, text, check } => {
             let ws = Workspace::open(&cwd)?;
-            let g = ws.graph()?;
+            let g = ws.graph_once()?;
             let i = one(&g, &symbol)?;
             let _op = gitnext_ops::oplog::Group::start(&ws.root, "rename", &format!("{} → {new_name}", g.syms[i].sym.qualified));
             let mut r = gitnext_ops::edit::rename(&ws.root, &g, i, &new_name, dry_run)?;
@@ -597,7 +597,7 @@ fn run() -> Result<()> {
             }
             out.text(&gitnext_ops::edit::render_rename(&r));
             if check && !dry_run {
-                let g = ws.graph()?; // the files changed: index them again
+                let g = ws.graph_once()?; // the files changed: index them again
                 let c = gitnext_ops::check::check(&ws.root, &g, std::time::Duration::from_secs(600));
                 out.text(&gitnext_ops::check::render(&g, &c));
                 if !c.ok() {

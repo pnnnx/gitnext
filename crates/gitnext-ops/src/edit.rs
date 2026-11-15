@@ -161,6 +161,83 @@ pub fn edit_symbol(root: &Path, g: &Graph, i: usize, kind: EditKind, code: &str,
     Ok(EditResult { file: r.file.clone(), lines: new_range, changes })
 }
 
+/// `replace` was given a piece of the code where the name of a symbol belongs: models used to
+/// text edits write the line they want changed (`if a == b {`) or the first line of the function
+/// (`def f(x):`). In the agent runs 37 of 129 `replace` calls were this, and all were refused.
+pub fn is_code(q: &str) -> bool {
+    let q = q.trim();
+    q.contains(char::is_whitespace) || q.contains(['(', '='])
+}
+
+/// The first line of `code` declares something (a function, a class): the code is a whole symbol.
+fn declares(code: &str) -> Option<&str> {
+    const WORDS: [&str; 16] = ["def ", "async ", "fn ", "pub ", "func ", "class ", "function ", "public ", "private ", "protected ", "static ", "impl ", "struct ", "export ", "@", "#["];
+    let first = code.lines().map(str::trim).find(|l| !l.is_empty() && !l.starts_with("//") && !l.starts_with("#[") && !l.starts_with('@') && !l.starts_with("/*") && !l.starts_with('*'));
+    first.filter(|l| WORDS.iter().any(|w| l.starts_with(w)))
+}
+
+fn has_word(line: &str, word: &str) -> bool {
+    let is_word = |c: char| c.is_alphanumeric() || c == '_';
+    line.match_indices(word).any(|(i, _)| !line[..i].chars().next_back().is_some_and(is_word) && !line[i + word.len()..].chars().next().is_some_and(is_word))
+}
+
+/// The edit meant by `replace` with text of the code as the name (`is_code`). The text must stand
+/// in one place. When `code` is a whole function or class, the symbol around that place is
+/// replaced, as if it had been named; otherwise the text itself is replaced with `code`.
+pub fn replace_text(root: &Path, g: &Graph, old: &str, code: &str, force: bool) -> Result<EditResult> {
+    const HOW: &str = "replace takes the name of a function or class and its whole new code";
+    let old = old.trim();
+    let short: String = old.lines().next().unwrap_or("").chars().take(60).collect();
+    if old.is_empty() || code.trim().is_empty() {
+        bail!("{HOW}");
+    }
+    // every place the text stands in: (file, byte offset, line)
+    let mut places: Vec<(&str, usize, usize)> = Vec::new();
+    let mut texts: BTreeMap<&str, String> = BTreeMap::new();
+    for f in &g.files {
+        let Ok(text) = std::fs::read_to_string(root.join(&f.path)) else { continue };
+        for (at, _) in text.match_indices(old) {
+            places.push((f.path.as_str(), at, text[..at].matches('\n').count() + 1));
+        }
+        if places.last().is_some_and(|p| p.0 == f.path) {
+            texts.insert(f.path.as_str(), text);
+        }
+    }
+    // the innermost symbol around a line
+    let around = |file: &str, line: usize| {
+        let inside = g.syms.iter().enumerate().filter(|(_, s)| s.file == file && s.sym.start_line as usize <= line && line <= s.sym.end_line as usize && s.sym.kind != gitnext_parse::Kind::Module);
+        inside.min_by_key(|(_, s)| s.sym.end_line - s.sym.start_line).map(|(i, _)| i)
+    };
+    let name_at = |file: &str, line: usize| around(file, line).map(|i| format!(" (in {}@{})", g.short_name(i), g.syms[i].sym.start_line)).unwrap_or_default();
+    if places.is_empty() {
+        bail!("`{short}` is not the name of a function or class, and no line of the code has this text; {HOW}");
+    }
+    if let Some(first) = declares(code) {
+        // a whole symbol: the one the text stands in, when the code declares that name
+        let mut named: Vec<usize> = places.iter().filter_map(|(f, _, l)| around(f, *l)).filter(|i| has_word(first, &g.syms[*i].sym.name)).collect();
+        named.dedup();
+        return match named[..] {
+            [i] => edit_symbol(root, g, i, EditKind::Replace, code, force),
+            [] => bail!("the code is a whole function or class, but `{short}` stands in another one{}; {HOW}", name_at(places[0].0, places[0].2)),
+            _ => bail!("`{short}` is in {} symbols: {}; name one — {HOW}", named.len(), named.iter().take(6).map(|i| format!("{}@{}", g.short_name(*i), g.syms[*i].sym.start_line)).collect::<Vec<_>>().join(", ")),
+        };
+    }
+    if places.len() > 1 {
+        let list: Vec<String> = places.iter().take(6).map(|(f, _, l)| format!("{f}:{l}{}", name_at(f, *l))).collect();
+        bail!("`{short}` is in {} places: {}; name the function to change — {HOW}", places.len(), list.join(", "));
+    }
+    let (file, at, line) = places[0];
+    let old_text = &texts[file];
+    let line_start = old_text[..at].rfind('\n').map_or(0, |i| i + 1);
+    let indent = &old_text[line_start..at];
+    // from the start of its line the new text takes the line's indent; inside a line it goes in as it is
+    let (from, new) = if indent.trim().is_empty() { (line_start, reindent(code, indent).join("\n")) } else { (at, code.trim().to_string()) };
+    let new_text = format!("{}{new}{}", &old_text[..from], &old_text[at + old.len()..]);
+    let changes = write_checked(root, file, old_text, &new_text, force)?;
+    crate::oplog::record(root, "replace", &format!("{file}:{line}"), &[(file.to_string(), old_text.clone(), new_text)]);
+    Ok(EditResult { file: file.to_string(), lines: (line, line + new.lines().count().max(1) - 1), changes })
+}
+
 #[derive(Debug, Serialize, Default)]
 pub struct RenameReport {
     pub old: String,

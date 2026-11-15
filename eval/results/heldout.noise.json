@@ -1,0 +1,813 @@
+{
+ "config": "n20-m8-seeds7,8,9",
+ "seconds": 6759,
+ "truth": {
+  "cached": 209,
+  "asked": 845
+ },
+ "scopes": {
+  "all": {
+   "callers_recall": {
+    "mean": 0.992,
+    "functions": 124,
+    "boot_lo": 0.984,
+    "boot_hi": 0.998,
+    "boot_half": 0.007,
+    "seeds": [
+     0.99,
+     0.99,
+     0.99
+    ],
+    "seed_sd": 0.0,
+    "threshold": 0.01
+   },
+   "callers_precision": {
+    "mean": 0.959,
+    "functions": 124,
+    "boot_lo": 0.933,
+    "boot_hi": 0.981,
+    "boot_half": 0.024,
+    "seeds": [
+     0.962,
+     0.958,
+     0.967
+    ],
+    "seed_sd": 0.005,
+    "threshold": 0.03
+   },
+   "blind_recall": {
+    "mean": 0.867,
+    "functions": 103,
+    "boot_lo": 0.809,
+    "boot_hi": 0.92,
+    "boot_half": 0.056,
+    "seeds": [
+     0.909,
+     0.877,
+     0.8
+    ],
+    "seed_sd": 0.056,
+    "threshold": 0.06
+   },
+   "common_recall": {
+    "mean": 0.727,
+    "functions": 108,
+    "boot_lo": 0.662,
+    "boot_hi": 0.793,
+    "boot_half": 0.066,
+    "seeds": [
+     0.747,
+     0.779,
+     0.808
+    ],
+    "seed_sd": 0.031,
+    "threshold": 0.07
+   },
+   "common_recall_with_maybe": {
+    "mean": 0.936,
+    "functions": 108,
+    "boot_lo": 0.903,
+    "boot_hi": 0.964,
+    "boot_half": 0.03,
+    "seeds": [
+     0.94,
+     0.937,
+     0.927
+    ],
+    "seed_sd": 0.007,
+    "threshold": 0.04
+   },
+   "common_precision": {
+    "mean": 0.988,
+    "functions": 86,
+    "boot_lo": 0.965,
+    "boot_hi": 1.0,
+    "boot_half": 0.017,
+    "seeds": [
+     0.978,
+     0.98,
+     1.0
+    ],
+    "seed_sd": 0.012,
+    "threshold": 0.02
+   },
+   "rename_ok": {
+    "mean": 0.774,
+    "functions": 226,
+    "boot_lo": 0.73,
+    "boot_hi": 0.819,
+    "boot_half": 0.044,
+    "seeds": [
+     0.783,
+     0.777,
+     0.79
+    ],
+    "seed_sd": 0.006,
+    "threshold": 0.05
+   },
+   "tests_recall": {
+    "mean": 0.717,
+    "functions": 135,
+    "boot_lo": 0.663,
+    "boot_hi": 0.767,
+    "boot_half": 0.052,
+    "seeds": [
+     0.664,
+     0.705,
+     0.694
+    ],
+    "seed_sd": 0.021,
+    "threshold": 0.06
+   },
+   "tests_precision": {
+    "mean": 0.638,
+    "functions": 135,
+    "boot_lo": 0.58,
+    "boot_hi": 0.691,
+    "boot_half": 0.055,
+    "seeds": [
+     0.649,
+     0.653,
+     0.673
+    ],
+    "seed_sd": 0.013,
+    "threshold": 0.06
+   },
+   "tests_top10_precision": {
+    "mean": 0.671,
+    "functions": 135,
+    "boot_lo": 0.615,
+    "boot_hi": 0.723,
+    "boot_half": 0.054,
+    "seeds": [
+     0.69,
+     0.681,
+     0.706
+    ],
+    "seed_sd": 0.012,
+    "threshold": 0.06
+   },
+   "tests_top10_best": {
+    "mean": 0.714,
+    "functions": 135,
+    "boot_lo": 0.661,
+    "boot_hi": 0.766,
+    "boot_half": 0.052,
+    "seeds": [
+     0.73,
+     0.732,
+     0.752
+    ],
+    "seed_sd": 0.012,
+    "threshold": 0.06
+   },
+   "tests_caught": {
+    "mean": 0.926,
+    "functions": 135,
+    "boot_lo": 0.889,
+    "boot_hi": 0.963,
+    "boot_half": 0.037,
+    "seeds": [
+     0.925,
+     0.925,
+     0.95
+    ],
+    "seed_sd": 0.014,
+    "threshold": 0.04
+   },
+   "look_vs_file": {
+    "mean": 0.182,
+    "functions": 226,
+    "boot_lo": 0.154,
+    "boot_hi": 0.215,
+    "boot_half": 0.03,
+    "seeds": [
+     0.183,
+     0.205,
+     0.196
+    ],
+    "seed_sd": 0.011,
+    "threshold": 0.04
+   }
+  },
+  "go": {
+   "callers_recall": {
+    "mean": 0.976,
+    "functions": 39,
+    "boot_lo": 0.95,
+    "boot_hi": 0.995,
+    "boot_half": 0.022,
+    "seeds": [
+     0.976,
+     0.976,
+     0.976
+    ],
+    "seed_sd": 0.0,
+    "threshold": 0.03
+   },
+   "callers_precision": {
+    "mean": 0.938,
+    "functions": 39,
+    "boot_lo": 0.882,
+    "boot_hi": 0.983,
+    "boot_half": 0.05,
+    "seeds": [
+     0.938,
+     0.938,
+     0.938
+    ],
+    "seed_sd": 0.0,
+    "threshold": 0.06
+   },
+   "blind_recall": {
+    "mean": 0.843,
+    "functions": 30,
+    "boot_lo": 0.737,
+    "boot_hi": 0.943,
+    "boot_half": 0.103,
+    "seeds": [
+     1.0,
+     0.816,
+     0.779
+    ],
+    "seed_sd": 0.118,
+    "threshold": 0.11
+   },
+   "common_recall": {
+    "mean": 0.704,
+    "functions": 90,
+    "boot_lo": 0.628,
+    "boot_hi": 0.772,
+    "boot_half": 0.072,
+    "seeds": [
+     0.736,
+     0.743,
+     0.789
+    ],
+    "seed_sd": 0.029,
+    "threshold": 0.08
+   },
+   "common_recall_with_maybe": {
+    "mean": 0.943,
+    "functions": 90,
+    "boot_lo": 0.909,
+    "boot_hi": 0.974,
+    "boot_half": 0.032,
+    "seeds": [
+     0.964,
+     0.945,
+     0.944
+    ],
+    "seed_sd": 0.011,
+    "threshold": 0.04
+   },
+   "common_precision": {
+    "mean": 0.986,
+    "functions": 69,
+    "boot_lo": 0.957,
+    "boot_hi": 1.0,
+    "boot_half": 0.022,
+    "seeds": [
+     0.971,
+     0.973,
+     1.0
+    ],
+    "seed_sd": 0.016,
+    "threshold": 0.03
+   },
+   "rename_ok": {
+    "mean": 0.78,
+    "functions": 41,
+    "boot_lo": 0.659,
+    "boot_hi": 0.878,
+    "boot_half": 0.11,
+    "seeds": [
+     0.78,
+     0.78,
+     0.78
+    ],
+    "seed_sd": 0.0,
+    "threshold": 0.11
+   },
+   "tests_recall": {
+    "mean": 0.621,
+    "functions": 29,
+    "boot_lo": 0.502,
+    "boot_hi": 0.74,
+    "boot_half": 0.119,
+    "seeds": [
+     0.649,
+     0.65,
+     0.715
+    ],
+    "seed_sd": 0.038,
+    "threshold": 0.12
+   },
+   "tests_precision": {
+    "mean": 0.592,
+    "functions": 29,
+    "boot_lo": 0.477,
+    "boot_hi": 0.708,
+    "boot_half": 0.116,
+    "seeds": [
+     0.62,
+     0.614,
+     0.628
+    ],
+    "seed_sd": 0.007,
+    "threshold": 0.12
+   },
+   "tests_top10_precision": {
+    "mean": 0.654,
+    "functions": 29,
+    "boot_lo": 0.539,
+    "boot_hi": 0.766,
+    "boot_half": 0.114,
+    "seeds": [
+     0.655,
+     0.658,
+     0.684
+    ],
+    "seed_sd": 0.016,
+    "threshold": 0.12
+   },
+   "tests_top10_best": {
+    "mean": 0.716,
+    "functions": 29,
+    "boot_lo": 0.606,
+    "boot_hi": 0.824,
+    "boot_half": 0.109,
+    "seeds": [
+     0.726,
+     0.717,
+     0.755
+    ],
+    "seed_sd": 0.02,
+    "threshold": 0.11
+   },
+   "tests_caught": {
+    "mean": 1.0,
+    "functions": 29,
+    "boot_lo": 1.0,
+    "boot_hi": 1.0,
+    "boot_half": 0.0,
+    "seeds": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "seed_sd": 0.0,
+    "threshold": 0.04
+   },
+   "look_vs_file": {
+    "mean": 0.118,
+    "functions": 41,
+    "boot_lo": 0.088,
+    "boot_hi": 0.156,
+    "boot_half": 0.034,
+    "seeds": [
+     0.118,
+     0.118,
+     0.118
+    ],
+    "seed_sd": 0.0,
+    "threshold": 0.04
+   }
+  },
+  "python": {
+   "callers_recall": null,
+   "callers_precision": null,
+   "blind_recall": null,
+   "common_recall": null,
+   "common_recall_with_maybe": null,
+   "common_precision": null,
+   "rename_ok": {
+    "mean": 0.726,
+    "functions": 84,
+    "boot_lo": 0.643,
+    "boot_hi": 0.798,
+    "boot_half": 0.077,
+    "seeds": [
+     0.8,
+     0.76,
+     0.78
+    ],
+    "seed_sd": 0.02,
+    "threshold": 0.08
+   },
+   "tests_recall": {
+    "mean": 0.702,
+    "functions": 44,
+    "boot_lo": 0.597,
+    "boot_hi": 0.796,
+    "boot_half": 0.099,
+    "seeds": [
+     0.476,
+     0.547,
+     0.534
+    ],
+    "seed_sd": 0.038,
+    "threshold": 0.1
+   },
+   "tests_precision": {
+    "mean": 0.445,
+    "functions": 44,
+    "boot_lo": 0.355,
+    "boot_hi": 0.532,
+    "boot_half": 0.089,
+    "seeds": [
+     0.425,
+     0.458,
+     0.496
+    ],
+    "seed_sd": 0.036,
+    "threshold": 0.09
+   },
+   "tests_top10_precision": {
+    "mean": 0.467,
+    "functions": 44,
+    "boot_lo": 0.383,
+    "boot_hi": 0.548,
+    "boot_half": 0.083,
+    "seeds": [
+     0.459,
+     0.475,
+     0.506
+    ],
+    "seed_sd": 0.024,
+    "threshold": 0.09
+   },
+   "tests_top10_best": {
+    "mean": 0.544,
+    "functions": 44,
+    "boot_lo": 0.451,
+    "boot_hi": 0.633,
+    "boot_half": 0.091,
+    "seeds": [
+     0.521,
+     0.575,
+     0.573
+    ],
+    "seed_sd": 0.03,
+    "threshold": 0.1
+   },
+   "tests_caught": {
+    "mean": 0.886,
+    "functions": 44,
+    "boot_lo": 0.795,
+    "boot_hi": 0.955,
+    "boot_half": 0.08,
+    "seeds": [
+     0.833,
+     0.833,
+     0.875
+    ],
+    "seed_sd": 0.024,
+    "threshold": 0.08
+   },
+   "look_vs_file": {
+    "mean": 0.203,
+    "functions": 84,
+    "boot_lo": 0.159,
+    "boot_hi": 0.251,
+    "boot_half": 0.046,
+    "seeds": [
+     0.24,
+     0.264,
+     0.26
+    ],
+    "seed_sd": 0.013,
+    "threshold": 0.05
+   }
+  },
+  "rust": {
+   "callers_recall": {
+    "mean": 1.0,
+    "functions": 46,
+    "boot_lo": 1.0,
+    "boot_hi": 1.0,
+    "boot_half": 0.0,
+    "seeds": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "seed_sd": 0.0,
+    "threshold": 0.03
+   },
+   "callers_precision": {
+    "mean": 0.943,
+    "functions": 46,
+    "boot_lo": 0.895,
+    "boot_hi": 0.989,
+    "boot_half": 0.047,
+    "seeds": [
+     0.951,
+     0.933,
+     0.972
+    ],
+    "seed_sd": 0.02,
+    "threshold": 0.05
+   },
+   "blind_recall": {
+    "mean": 0.861,
+    "functions": 36,
+    "boot_lo": 0.75,
+    "boot_hi": 0.944,
+    "boot_half": 0.097,
+    "seeds": [
+     0.789,
+     0.789,
+     0.737
+    ],
+    "seed_sd": 0.03,
+    "threshold": 0.1
+   },
+   "common_recall": {
+    "mean": 0.843,
+    "functions": 18,
+    "boot_lo": 0.722,
+    "boot_hi": 0.944,
+    "boot_half": 0.111,
+    "seeds": [
+     0.782,
+     0.91,
+     0.869
+    ],
+    "seed_sd": 0.065,
+    "threshold": 0.12
+   },
+   "common_recall_with_maybe": {
+    "mean": 0.898,
+    "functions": 18,
+    "boot_lo": 0.815,
+    "boot_hi": 0.972,
+    "boot_half": 0.079,
+    "seeds": [
+     0.859,
+     0.91,
+     0.869
+    ],
+    "seed_sd": 0.027,
+    "threshold": 0.08
+   },
+   "common_precision": {
+    "mean": 1.0,
+    "functions": 17,
+    "boot_lo": 1.0,
+    "boot_hi": 1.0,
+    "boot_half": 0.0,
+    "seeds": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "seed_sd": 0.0,
+    "threshold": 0.06
+   },
+   "rename_ok": {
+    "mean": 0.839,
+    "functions": 62,
+    "boot_lo": 0.758,
+    "boot_hi": 0.919,
+    "boot_half": 0.081,
+    "seeds": [
+     0.829,
+     0.857,
+     0.886
+    ],
+    "seed_sd": 0.029,
+    "threshold": 0.09
+   },
+   "tests_recall": {
+    "mean": 0.735,
+    "functions": 34,
+    "boot_lo": 0.625,
+    "boot_hi": 0.837,
+    "boot_half": 0.106,
+    "seeds": [
+     0.823,
+     0.857,
+     0.757
+    ],
+    "seed_sd": 0.051,
+    "threshold": 0.11
+   },
+   "tests_precision": {
+    "mean": 0.684,
+    "functions": 34,
+    "boot_lo": 0.572,
+    "boot_hi": 0.792,
+    "boot_half": 0.11,
+    "seeds": [
+     0.718,
+     0.703,
+     0.722
+    ],
+    "seed_sd": 0.01,
+    "threshold": 0.12
+   },
+   "tests_top10_precision": {
+    "mean": 0.732,
+    "functions": 34,
+    "boot_lo": 0.62,
+    "boot_hi": 0.838,
+    "boot_half": 0.109,
+    "seeds": [
+     0.819,
+     0.755,
+     0.785
+    ],
+    "seed_sd": 0.032,
+    "threshold": 0.11
+   },
+   "tests_top10_best": {
+    "mean": 0.753,
+    "functions": 34,
+    "boot_lo": 0.642,
+    "boot_hi": 0.857,
+    "boot_half": 0.107,
+    "seeds": [
+     0.819,
+     0.774,
+     0.81
+    ],
+    "seed_sd": 0.024,
+    "threshold": 0.11
+   },
+   "tests_caught": {
+    "mean": 0.853,
+    "functions": 34,
+    "boot_lo": 0.765,
+    "boot_hi": 0.941,
+    "boot_half": 0.088,
+    "seeds": [
+     0.875,
+     0.875,
+     0.938
+    ],
+    "seed_sd": 0.036,
+    "threshold": 0.09
+   },
+   "look_vs_file": {
+    "mean": 0.159,
+    "functions": 62,
+    "boot_lo": 0.108,
+    "boot_hi": 0.216,
+    "boot_half": 0.054,
+    "seeds": [
+     0.108,
+     0.167,
+     0.161
+    ],
+    "seed_sd": 0.032,
+    "threshold": 0.06
+   }
+  },
+  "typescript": {
+   "callers_recall": {
+    "mean": 1.0,
+    "functions": 39,
+    "boot_lo": 1.0,
+    "boot_hi": 1.0,
+    "boot_half": 0.0,
+    "seeds": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "seed_sd": 0.0,
+    "threshold": 0.03
+   },
+   "callers_precision": {
+    "mean": 1.0,
+    "functions": 39,
+    "boot_lo": 1.0,
+    "boot_hi": 1.0,
+    "boot_half": 0.0,
+    "seeds": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "seed_sd": 0.0,
+    "threshold": 0.03
+   },
+   "blind_recall": {
+    "mean": 0.892,
+    "functions": 37,
+    "boot_lo": 0.811,
+    "boot_hi": 0.973,
+    "boot_half": 0.081,
+    "seeds": [
+     0.957,
+     1.0,
+     0.87
+    ],
+    "seed_sd": 0.066,
+    "threshold": 0.09
+   },
+   "common_recall": null,
+   "common_recall_with_maybe": null,
+   "common_precision": null,
+   "rename_ok": {
+    "mean": 0.769,
+    "functions": 39,
+    "boot_lo": 0.667,
+    "boot_hi": 0.872,
+    "boot_half": 0.103,
+    "seeds": [
+     0.71,
+     0.71,
+     0.71
+    ],
+    "seed_sd": 0.0,
+    "threshold": 0.11
+   },
+   "tests_recall": {
+    "mean": 0.82,
+    "functions": 28,
+    "boot_lo": 0.756,
+    "boot_hi": 0.879,
+    "boot_half": 0.062,
+    "seeds": [
+     0.807,
+     0.872,
+     0.839
+    ],
+    "seed_sd": 0.033,
+    "threshold": 0.07
+   },
+   "tests_precision": {
+    "mean": 0.933,
+    "functions": 28,
+    "boot_lo": 0.884,
+    "boot_hi": 0.975,
+    "boot_half": 0.046,
+    "seeds": [
+     0.958,
+     0.952,
+     0.958
+    ],
+    "seed_sd": 0.004,
+    "threshold": 0.05
+   },
+   "tests_top10_precision": {
+    "mean": 0.933,
+    "functions": 28,
+    "boot_lo": 0.884,
+    "boot_hi": 0.975,
+    "boot_half": 0.046,
+    "seeds": [
+     0.958,
+     0.952,
+     0.958
+    ],
+    "seed_sd": 0.004,
+    "threshold": 0.05
+   },
+   "tests_top10_best": {
+    "mean": 0.933,
+    "functions": 28,
+    "boot_lo": 0.884,
+    "boot_hi": 0.975,
+    "boot_half": 0.046,
+    "seeds": [
+     0.958,
+     0.952,
+     0.958
+    ],
+    "seed_sd": 0.004,
+    "threshold": 0.05
+   },
+   "tests_caught": {
+    "mean": 1.0,
+    "functions": 28,
+    "boot_lo": 1.0,
+    "boot_hi": 1.0,
+    "boot_half": 0.0,
+    "seeds": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "seed_sd": 0.0,
+    "threshold": 0.04
+   },
+   "look_vs_file": {
+    "mean": 0.241,
+    "functions": 39,
+    "boot_lo": 0.156,
+    "boot_hi": 0.351,
+    "boot_half": 0.098,
+    "seeds": [
+     0.261,
+     0.268,
+     0.235
+    ],
+    "seed_sd": 0.017,
+    "threshold": 0.1
+   }
+  }
+ }
+}

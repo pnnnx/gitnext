@@ -29,7 +29,8 @@ and checked by the project itself:
   find      "where is X defined"           → the answer names the right file
   callers   "who calls X"                  → recall against the compiler's list
   fix       a seeded bug makes tests fail  → the test suite passes again
-  rename    "rename X to Y everywhere"     → it compiles and no old name is left
+  rename    "rename X to Y everywhere"     → it compiles, the old definition is gone and the new one is there
+                                             (Python, with no compiler: the old name is left nowhere)
 
     python3 eval/agent.py --host http://127.0.0.1:8080 --repos click,cobra \\
         --tasks find,callers,fix,rename --modes base,gitnext,lite --repeat 3
@@ -187,7 +188,16 @@ def call_tool(name: str, a: dict, root: Path, lang: str, short: bool = False) ->
             return ev.gx(["rename", a["old"], a["new"], "--text"], root)[1][:MAX_OUT]
         if name == "check":
             test = (a.get("test") or "").strip()
-            return ev.gx(["check", test] if test else ["check"], root, timeout=900)[1][-MAX_OUT if not test else None:][:MAX_OUT]
+            if not test:
+                return ev.gx(["check"], root, timeout=900)[1][-MAX_OUT:]
+            # why the test fails. Its last line is the next step: worded with this agent's tools, and kept when the answer is cut
+            out = ev.gx(["check", test], root, timeout=900)[1].rstrip()
+            out = re.sub(r"`gitnext edit replace ([^`]+)`", lambda m: f'{"replace" if short else "replace_symbol"}(symbol="{m.group(1)}", code=<the whole corrected function>)', out)
+            out = out.replace("`gitnext check`", "check with no arguments")
+            last = out.splitlines()[-1] if out else ""
+            if len(out) > MAX_OUT and last.startswith("next:"):
+                out = out[:MAX_OUT - len(last) - 3] + "\n…\n" + last
+            return out[:MAX_OUT]
         if name in ("replace_symbol", "replace", "add_after"):
             kind = "insert-after" if name == "add_after" else "replace"
             p = subprocess.run([ev.GITNEXT, "edit", kind, a["symbol"]], input=a["code"], cwd=root, capture_output=True, text=True)
@@ -434,9 +444,15 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
 
 # ---------------------------------------------------------------- tasks
 
+OWN_FILES = {"go": ".go", "rust": ".rs", "python": ".py", "java": ".java", "typescript": (".ts", ".tsx", ".mts")}
+
+
 def make_tasks(repo: dict, root: Path, kinds: list[str], seed: int) -> list[dict]:
     syms = ev.symbols(root)
-    sample = ev.pick(syms, root, 6, seed)
+    # a project in several languages (a Go server with a TypeScript UI): the judge is the compiler of one of
+    # them, so the tasks are about that language's code
+    own = [s for s in syms if s["file"].endswith(OWN_FILES.get(repo["lang"], ""))]
+    sample = ev.pick(own, root, 6, seed)
     rng = random.Random(seed)
     tasks = []
     if "find" in kinds and sample:
@@ -508,7 +524,7 @@ def seed_bug(repo: dict, root: Path, syms: list[dict], rng: random.Random) -> di
                         patch = ev.sh("git diff", root)[1]
                         ev.restore(root)
                         name = sorted(failed)[0]
-                        return {"kind": "fix", "target": s["qualified"], "patch": patch, "prompt": f"The test `{name}` fails. Find the bug in the code and fix it (do not change the tests).", "failing": sorted(failed)[:10]}
+                        return {"kind": "fix", "target": s["qualified"], "patch": patch, "prompt": f"The test `{name}` fails. Find the bug in the code and fix it (do not change the tests).", "failing": sorted(failed)[:10], "before": sorted(before)}
                     ev.restore(root)
                     break
     return None
@@ -527,13 +543,24 @@ def check(task: dict, repo: dict, root: Path, res: dict) -> bool:
         left = ev.sh(f"git grep -nw {task['old']} -- . ':!*.md' | head -3", root)[1].strip()
         code, out = ev.sh(L["compile"], root, timeout=1200)
         res["left"] = left[:200]
-        return code == 0 and not left and bool(ev.sh(f"git grep -nw {task['new']} | head -1", root)[1].strip())
+        if repo["lang"] == "python":
+            # no compiler: a use left behind shows only as the word, so the word must be gone
+            return code == 0 and not left and bool(ev.sh(f"git grep -nw {task['new']} | head -1", root)[1].strip())
+        # With a compiler a use of a name that is not defined any more does not build: it is enough that the old
+        # definition is gone and the new one stands in its place. The word itself may stay — it is other things
+        # too (`os.Rename`, a struct field of the same name): on a large project 3 of 12 tasks could not pass.
+        ev.gx(["index"], root)
+        defined = {x["qualified"] for x in ev.symbols(root)}
+        new = task["target"][: len(task["target"]) - len(task["old"])] + task["new"]
+        res["old_defined"] = task["target"] in defined
+        return code == 0 and not res["old_defined"] and new in defined
     if task["kind"] == "fix":
         code, _ = ev.sh(L["compile"], root, timeout=1200)
         if code and repo["lang"] != "python":
             return False
         _, tout = ev.sh(L["tests"], root, timeout=1800)
-        return not L["failed"](tout, root)
+        # a test that failed before the bug was seeded is not the model's to fix (cobra has one when run as root)
+        return not (set(L["failed"](tout, root)) - set(task.get("before", [])))
     return False
 
 

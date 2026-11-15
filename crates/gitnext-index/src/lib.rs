@@ -337,11 +337,11 @@ impl Index {
              FROM symbols ORDER BY file, start_line",
         )?;
         let rows = st.query_map([], |r| {
-            let params_json: String = r.get(9)?;
+            let params_json = r.get_ref(9)?.as_str()?;
             Ok(SymbolRow {
                 file: r.get(0)?,
                 sym: Symbol {
-                    kind: Kind::parse(&r.get::<_, String>(1)?).unwrap_or(Kind::Function),
+                    kind: Kind::parse(r.get_ref(1)?.as_str()?).unwrap_or(Kind::Function),
                     name: r.get(2)?,
                     qualified: r.get(3)?,
                     parent: r.get(4)?,
@@ -349,7 +349,7 @@ impl Index {
                     start_line: r.get(6)?,
                     end_line: r.get(7)?,
                     signature: r.get(8)?,
-                    params: serde_json::from_str::<Vec<Param>>(&params_json).unwrap_or_default(),
+                    params: if params_json == "[]" { Vec::new() } else { serde_json::from_str::<Vec<Param>>(params_json).unwrap_or_default() },
                     returns: r.get(10)?,
                     doc: r.get(11)?,
                     summary: r.get(12)?,
@@ -365,20 +365,7 @@ impl Index {
     }
 
     pub fn edges(&self) -> Result<Vec<(String, Edge)>> {
-        let mut st = self.conn.prepare("SELECT file, src, dst, kind, line, col FROM edges")?;
-        let rows = st.query_map([], |r| {
-            Ok((
-                r.get::<_, String>(0)?,
-                Edge {
-                    from: r.get(1)?,
-                    to: r.get(2)?,
-                    kind: EdgeKind::parse(&r.get::<_, String>(3)?).unwrap_or(EdgeKind::Uses),
-                    line: r.get(4)?,
-                    col: r.get(5)?,
-                },
-            ))
-        })?;
-        Ok(rows.collect::<rusqlite::Result<_>>()?)
+        read_edges(&self.conn)
     }
 
     /// Cache language-server answers: call site → definition (`""` target = outside the repo).
@@ -409,11 +396,38 @@ impl Index {
 
     /// Load the whole index into memory for cross-reference queries.
     pub fn graph(&self) -> Result<Graph> {
-        let mut g = Graph::new(self.files()?, self.symbols()?, self.edges()?);
+        let files = self.files()?;
+        // the two big tables on two threads: a second read-only connection reads the edges
+        let db = self.root.join(GITNEXT_DIR).join("index.db");
+        let (syms, edges) = std::thread::scope(|sc| {
+            let h = sc.spawn(move || Connection::open_with_flags(&db, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY).map_err(anyhow::Error::from).and_then(|c| read_edges(&c)));
+            let syms = self.symbols();
+            // a locked or missing file: read them on this connection as before
+            let edges = h.join().ok().and_then(|r| r.ok()).map(Ok).unwrap_or_else(|| self.edges());
+            (syms, edges)
+        });
+        let mut g = Graph::new(files, syms?, edges?);
         g.apply_notes(&notes::load(&self.root));
         g.links = self.links()?.into_iter().collect();
         Ok(g)
     }
+}
+
+fn read_edges(conn: &Connection) -> Result<Vec<(String, Edge)>> {
+    let mut st = conn.prepare("SELECT file, src, dst, kind, line, col FROM edges")?;
+    let rows = st.query_map([], |r| {
+        Ok((
+            r.get::<_, String>(0)?,
+            Edge {
+                from: r.get(1)?,
+                to: r.get(2)?,
+                kind: EdgeKind::parse(r.get_ref(3)?.as_str()?).unwrap_or(EdgeKind::Uses),
+                line: r.get(4)?,
+                col: r.get(5)?,
+            },
+        ))
+    })?;
+    Ok(rows.collect::<rusqlite::Result<_>>()?)
 }
 
 fn insert_analysis(tx: &rusqlite::Transaction, path: &str, a: &FileAnalysis) -> Result<()> {

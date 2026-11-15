@@ -67,6 +67,12 @@ impl Workspace {
         idx.graph()
     }
 
+    /// The graph for a process that answers once and exits. It is never dropped: freeing a large
+    /// graph string by string (a quarter of a million symbols in Kubernetes) only delays the exit.
+    pub fn graph_once(&self) -> Result<std::mem::ManuallyDrop<Graph>> {
+        self.graph().map(std::mem::ManuallyDrop::new)
+    }
+
     pub fn write_map(&self, g: &Graph) -> Result<MapOutput> {
         gitnext_docs::write_map(&self.root, g)
     }

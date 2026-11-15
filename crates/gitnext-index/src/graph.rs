@@ -154,17 +154,18 @@ impl Graph {
         }
         let mut visible: HashMap<String, HashSet<String>> = HashMap::new();
         for (_, e) in &edges {
-            let from_root = e.from.split("::").next().unwrap_or("").to_string();
-            let targets: Vec<String> = match e.kind {
-                EdgeKind::Imports => flatten_use(&e.to),
-                EdgeKind::Calls | EdgeKind::Uses if e.to.contains("::") => vec![e.to.clone()],
-                _ => continue,
-            };
-            for t in targets {
+            // this loop runs over every edge of the repo: nothing is allocated unless a new pair is found
+            let from_root = e.from.split("::").next().unwrap_or("");
+            let mut see = |t: &str| {
                 let root = t.split("::").next().unwrap_or("");
-                if root != from_root && crate_roots.contains(root) {
-                    visible.entry(from_root.clone()).or_default().insert(root.to_string());
+                if root != from_root && crate_roots.contains(root) && !visible.get(from_root).is_some_and(|v| v.contains(root)) {
+                    visible.entry(from_root.to_string()).or_default().insert(root.to_string());
                 }
+            };
+            match e.kind {
+                EdgeKind::Imports => flatten_use(&e.to).iter().for_each(|t| see(t)),
+                EdgeKind::Calls | EdgeKind::Uses if e.to.contains("::") => see(&e.to),
+                _ => continue,
             }
         }
         // Re-exports (`pub use other_crate as x`) make visibility transitive.
