@@ -20,6 +20,13 @@ Modes (tools the model gets):
            to the model (a small model stops after one step otherwise). Every mode with the
            gitnext tools sends back an answer given before any tool was called
 
+Fix variants — lite, and what the model gets when a test fails (`check <test>`):
+  lite     V1 show: what changed since the tests last passed (`learn-tests`), - as it was, + as it is now
+  prove    V2 prove: each change is undone alone and the failing test run; the one that makes it pass is named
+  try      V3 try: lite + a `try` tool that puts up to three versions of a fix in place and keeps the first that passes
+  combo    V4 all three: V2's proof, the changes tried in gitnext's rank order and shown without V1's view
+           of the same change; no proof → V1's view; `try` with two versions
+
 Every run is watched by a loop guard (eval/guard.py): repeated calls, no progress, the same
 error again and again, see-saw edits, repeated text, step and token budgets. A stopped run
 leaves a hand-off note; with --escalate-host a stronger model gets the task and that note.
@@ -29,6 +36,7 @@ and checked by the project itself:
   find      "where is X defined"           → the answer names the right file
   callers   "who calls X"                  → recall against the compiler's list
   fix       a seeded bug makes tests fail  → the test suite passes again
+  regress   the bug and two meant changes in one commit → the tests pass and the meant changes stay
   rename    "rename X to Y everywhere"     → it compiles, the old definition is gone and the new one is there
                                              (Python, with no compiler: the old name is left nowhere)
 
@@ -53,6 +61,8 @@ import json
 import os
 import random
 import re
+import shlex
+import sqlite3
 import subprocess
 import time
 import urllib.error
@@ -100,6 +110,21 @@ LITE_TOOLS = [
     tool("check", "A test fails: call this first with test = its name — it runs the test and shows the failure and the code to fix. After your change: call it with no arguments — says ok or what failed.", {"test": S}, []),
     tool("finish", "Finish the task with the final answer.", {"answer": S}, ["answer"]),
 ]
+
+
+# mode `try` (fix variant V3): the five tools and `try` — several versions of a fix checked in one call
+TRY_TOOL = tool("try", "Fix a failing test by trying up to three versions at once: each version is put in place and tested (the failing test, then the tests of the changed code); "
+                       "the first that passes is kept, the others are undone. symbol = the function's name, or the wrong line itself; "
+                       "variants = up to three versions of the corrected function (or of the corrected line).",
+                {"symbol": S, "variants": {"type": "array", "items": S}, "test": S}, ["symbol", "variants"])
+# mode `combo` (fix variant V4): V2's proof first, V1's view when there is no proof, V3's `try` with two versions
+COMBO_TRY = tool("try", "Not sure which fix is right? Try up to two versions at once: each is put in place and tested (the failing test, then the tests of the changed code); "
+                         "the first that passes is kept, the other is undone. symbol = the function's name, or the wrong line itself; "
+                         "variants = one or two versions of the corrected function (or of the corrected line).",
+                 {"symbol": S, "variants": {"type": "array", "items": S}, "test": S}, ["symbol", "variants"])
+VARIANT = ""   # the fix variant of the run in progress: "lite" (V1, show), "prove" (V2), "try" (V3), "combo" (V4)
+FAILING = ""   # the test the task names (it is in the prompt)
+PROVE_MAX = 6  # changes undone one at a time by `prove`
 
 
 def digest(out: str) -> str | None:
@@ -194,10 +219,16 @@ def call_tool(name: str, a: dict, root: Path, lang: str, short: bool = False) ->
             out = ev.gx(["check", test], root, timeout=900)[1].rstrip()
             out = re.sub(r"`gitnext edit replace ([^`]+)`", lambda m: f'{"replace" if short else "replace_symbol"}(symbol="{m.group(1)}", code=<the whole corrected function>)', out)
             out = out.replace("`gitnext check`", "check with no arguments")
+            if VARIANT == "prove":
+                out = prove(root, test, out)
+            elif VARIANT == "combo":
+                out = combo(root, test, out)
             last = out.splitlines()[-1] if out else ""
             if len(out) > MAX_OUT and last.startswith("next:"):
                 out = out[:MAX_OUT - len(last) - 3] + "\n…\n" + last
             return out[:MAX_OUT]
+        if name == "try":
+            return try_versions(root, a)[:MAX_OUT]
         if name in ("replace_symbol", "replace", "add_after"):
             kind = "insert-after" if name == "add_after" else "replace"
             p = subprocess.run([ev.GITNEXT, "edit", kind, a["symbol"]], input=a["code"], cwd=root, capture_output=True, text=True)
@@ -205,6 +236,225 @@ def call_tool(name: str, a: dict, root: Path, lang: str, short: bool = False) ->
     except Exception as e:  # the model sees the error and can try again
         return f"error: {e}"
     return f"unknown tool {name}"
+
+
+# ---------------------------------------------------------------- fix variants V2 (prove) and V3 (try)
+
+TEST_PATH = re.compile(r"(^|/)(tests?|testing)/|(^|/)test_[^/]*\.py$|_test\.(py|go)$|(^|/)conftest\.py$")
+
+
+def learned_commit(root: Path) -> str:
+    """The commit `gitnext learn-tests` ran on: the last time the tests were seen passing."""
+    try:
+        with sqlite3.connect(root / ".gitnext" / "tests.db") as c:
+            r = c.execute("SELECT value FROM meta WHERE key = 'commit'").fetchone()
+        return r[0] if r else ""
+    except sqlite3.Error:
+        return ""
+
+
+def changes_since(root: Path, base: str) -> list[dict]:
+    """The hunks of `git diff -U0 base` in the project's own code (not its tests)."""
+    out = ev.sh(f"git diff -U0 --no-color --no-ext-diff {base}", root)[1]
+    hunks, path = [], None
+    for line in out.split("\n"):
+        if line.startswith("+++ "):
+            path = None if line[4:] == "/dev/null" else line[6:]
+        elif line.startswith("@@") and path and not TEST_PATH.search(path):
+            m = re.match(r"@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@", line)
+            hunks.append({"file": path, "new": int(m.group(3)), "count": int(m.group(4) or 1), "minus": [], "plus": []})
+        elif hunks and hunks[-1]["file"] == path and line[:1] in ("+", "-") and not line.startswith(("+++", "---")):
+            hunks[-1]["minus" if line[0] == "-" else "plus"].append(line[1:])
+    return hunks
+
+
+def undo(root: Path, h: dict) -> str:
+    """Put one hunk back as it was; returns the file's text before, to restore it."""
+    f = root / h["file"]
+    text = f.read_text(errors="replace")
+    lines = text.split("\n")
+    at = h["new"] - 1 if h["count"] else h["new"]
+    lines[at:at + h["count"]] = h["minus"]
+    f.write_text("\n".join(lines))
+    return text
+
+
+def passes(root: Path, test: str) -> tuple[bool, str]:
+    """Run one test the way `gitnext why` does: (passes, what it said)."""
+    code, out = ev.gx(["why", test], root, timeout=900)
+    return code == 0 and "no test named" not in out, out
+
+
+def symbol_at(root: Path, file: str, line: int) -> dict | None:
+    inside = [s for s in ev.symbols(root) if s["file"] == file and s["start_line"] <= line <= s["end_line"] and s["kind"] in ("function", "method")]
+    return min(inside, key=lambda s: s["end_line"] - s["start_line"]) if inside else None
+
+
+def prove(root: Path, test: str, out: str) -> str:
+    """V2: undo each change made since the tests last passed, one at a time, and run the failing test.
+    The change whose undoing alone makes it pass is the cause, shown with the one call that undoes it;
+    the others are said to be not the cause."""
+    base = learned_commit(root)
+    if " FAILS" not in out.split("\n", 1)[0]:
+        return out  # gitnext did not run the test (no test of that name): nothing to prove with
+    hunks = changes_since(root, base)[:PROVE_MAX] if base else []
+    if not hunks:
+        return out
+    cause = None
+    for h in hunks:
+        before = undo(root, h)
+        try:
+            ok, _ = passes(root, test)
+        finally:
+            (root / h["file"]).write_text(before)
+        if ok:
+            cause = h
+            break
+    lines = [l for l in out.rstrip().split("\n")]
+    nxt = lines.pop() if lines and lines[-1].startswith("next:") else ""
+    n = len(hunks)
+    if not cause:
+        note = (f"\nproof: {n} change(s) since the tests last passed (commit {base[:8]}); undoing any one of them alone does not make "
+                f"`{test}` pass — the cause is not a single one of them.")
+        return "\n".join(lines) + note + ("\n" + nxt if nxt else "")
+    sym = symbol_at(root, cause["file"], cause["new"])
+    where = f"`{sym['qualified']}` ({cause['file']}:{cause['new']})" if sym else f"{cause['file']}:{cause['new']}"
+    shown = "\n".join([f"    - {l}" for l in cause["minus"]] + [f"    + {l}" for l in cause["plus"]])
+    note = [f"\nproof: gitnext undid each of the {n} change(s) since the tests last passed (commit {base[:8]}), one at a time, and ran `{test}`.",
+            f"Undoing the change in {where} makes the test pass (- as it was, + as it is now):", shown]
+    if n > 1:
+        note.append(f"Undoing any of the other {n - 1} change(s) does not: they are not the cause — keep them.")
+    one = cause["plus"][0].strip() if len(cause["plus"]) == 1 and len(cause["minus"]) == 1 else ""
+    places = [l for l in ev.sh(f"git grep -F -c -e {shlex.quote(one)} -- .", root)[1].strip().split("\n") if l] if one else []
+    unique = len(places) == 1 and places[0].endswith(":1")
+    if unique:
+        note.append(f'next: replace(symbol={json.dumps(cause["plus"][0].strip())}, code={json.dumps(cause["minus"][0].strip())}) — puts the line back as it was, '
+                    "then check with no arguments")
+    elif sym:
+        before = undo(root, cause)
+        fixed = "\n".join((root / cause["file"]).read_text(errors="replace").split("\n")[sym["start_line"] - 1:sym["end_line"] - len(cause["plus"]) + len(cause["minus"])])
+        (root / cause["file"]).write_text(before)
+        note.append(f"The function as it should be:\n```\n{fixed}\n```")
+        note.append(f'next: replace(symbol="{sym["qualified"]}", code=<the function above>), then check with no arguments')
+    elif nxt:
+        note.append(nxt)
+    return "\n".join(lines + note)
+
+
+RANKED = re.compile(r"^\s*\d+\.\s+\S+\s+(\S+):(\d+)\s+\(changed since", re.M)
+
+
+def combo(root: Path, test: str, out: str) -> str:
+    """V4: V2's proof, cheaper and shorter. The changes since the tests last passed are undone in the order
+    gitnext ranks the code the test ran (the changed functions it lists first, then the rest), so the cause
+    is usually the first one tried. With a proof the model gets the failure, the proof and the function as
+    it should be — not also V1's view of the same change. Without one it gets V1's view and `try`."""
+    head = out.split("\n", 1)[0]
+    lines = out.rstrip().split("\n")
+    nxt = lines.pop() if lines and lines[-1].startswith("next:") else ""
+    hint = "If you are not sure which fix is right, call try with two versions of the corrected function."
+    base = learned_commit(root)
+    hunks = changes_since(root, base) if base and " FAILS" in head else []
+    if not hunks:
+        return "\n".join(lines + [hint] + ([nxt] if nxt else []))
+    # the order: functions the test ran, as gitnext ranks them; then the other changes
+    rank = {(f, int(n)): i for i, (f, n) in enumerate(RANKED.findall(out))}
+    def order(h):
+        s = symbol_at(root, h["file"], h["new"])
+        return rank.get((s["file"], s["start_line"]), len(rank)) if s else len(rank)
+    hunks = sorted(hunks, key=order)[:PROVE_MAX]
+    cause, tried = None, 0
+    for h in hunks:
+        tried += 1
+        before = undo(root, h)
+        try:
+            ok, _ = passes(root, test)
+        finally:
+            (root / h["file"]).write_text(before)
+        if ok:
+            cause = h
+            break
+    if not cause:
+        return "\n".join(lines + [f"proof: undoing any one of the {len(hunks)} change(s) since the tests last passed (commit {base[:8]}) alone does not make "
+                                  f"`{test}` pass — the cause is not a single change.", hint] + ([nxt] if nxt else []))
+    # the failure as gitnext shows it, up to its list of the code the test ran
+    failure = out.split("\ncode the test ran", 1)[0].rstrip().split("\n")
+    sym = symbol_at(root, cause["file"], cause["new"])
+    where = f"`{sym['qualified']}` ({cause['file']}:{cause['new']})" if sym else f"{cause['file']}:{cause['new']}"
+    shown = "\n".join([f"    - {l}" for l in cause["minus"]] + [f"    + {l}" for l in cause["plus"]])
+    note = ["", f"proof: gitnext undid the changes made since the tests last passed (commit {base[:8]}) one at a time and ran `{test}`. "
+                f"Undoing the change in {where} makes it pass (- as it was, + as it is now):", shown]
+    others = len(changes_since(root, base)) - 1
+    if others > 0:
+        note.append(f"The other {others} change(s) are meant: keep them.")
+    one = cause["plus"][0].strip() if len(cause["plus"]) == 1 and len(cause["minus"]) == 1 else ""
+    places = [l for l in ev.sh(f"git grep -F -c -e {shlex.quote(one)} -- .", root)[1].strip().split("\n") if l] if one else []
+    if len(places) == 1 and places[0].endswith(":1"):
+        note.append(f'next: replace(symbol={json.dumps(one)}, code={json.dumps(cause["minus"][0].strip())}) — puts the line back as it was, '
+                    "then check with no arguments")
+    elif sym:
+        before = undo(root, cause)
+        fixed = "\n".join((root / cause["file"]).read_text(errors="replace").split("\n")[sym["start_line"] - 1:sym["end_line"] - len(cause["plus"]) + len(cause["minus"])])
+        (root / cause["file"]).write_text(before)
+        note.append(f"The function as it should be:\n```\n{fixed}\n```")
+        note.append(f'next: replace(symbol="{sym["qualified"]}", code=<the function above>), then check with no arguments')
+    elif nxt:
+        note.append(nxt)
+    return "\n".join(failure + note)
+
+
+def snapshot(root: Path) -> dict:
+    names = [n for n in ev.sh("git diff --name-only HEAD", root)[1].split("\n") if n.strip()]
+    return {n: (root / n).read_text(errors="replace") for n in names if (root / n).exists()}
+
+
+def rollback(root: Path, snap: dict) -> None:
+    now = [n for n in ev.sh("git diff --name-only HEAD", root)[1].split("\n") if n.strip()]
+    for n in set(now) | set(snap):
+        if n in snap:
+            (root / n).write_text(snap[n])
+        else:
+            ev.sh(f"git checkout -q HEAD -- {json.dumps(n)}", root)
+
+
+def try_versions(root: Path, a: dict) -> str:
+    """V3: up to three versions of a fix in one call; each is put in place, the failing test is run, then
+    `gitnext check`; the first that passes both stays, the rest are undone."""
+    vs = a.get("variants") or []
+    if isinstance(vs, str):
+        try:
+            vs = json.loads(vs)
+        except ValueError:
+            vs = [vs]
+    vs = [v for v in vs if isinstance(v, str) and v.strip()][:2 if VARIANT == "combo" else 3]
+    sym, test = (a.get("symbol") or "").strip(), (a.get("test") or FAILING).strip()
+    if not sym or not vs:
+        return "try needs symbol (a function's name or the wrong line) and variants (1 to 3 versions of the corrected code)"
+    said = []
+    for i, code in enumerate(vs, 1):
+        snap = snapshot(root)
+        p = subprocess.run([ev.GITNEXT, "edit", "replace", sym], input=code if code.endswith("\n") else code + "\n", cwd=root, capture_output=True, text=True)
+        if p.returncode != 0:
+            said.append(f"version {i}: not put in place — {(p.stdout + p.stderr).strip()[:300]}")
+            rollback(root, snap)
+            continue
+        if snapshot(root) == snap:
+            said.append(f"version {i}: the same as the code already there")
+            continue
+        if test:
+            ok, why = passes(root, test)
+            if not ok:
+                said.append(f"version {i}: `{test}` still fails —\n" + "\n".join(why.strip().split("\n")[:8]))
+                rollback(root, snap)
+                continue
+        verdict = ev.gx(["check"], root, timeout=900)[1]
+        if "verdict: FAILED" in verdict:
+            said.append(f"version {i}: `{test}` passes, but the check fails —\n" + verdict.strip()[-800:])
+            rollback(root, snap)
+            continue
+        said.append(f"version {i}: `{test}` passes and the check is ok. This version is now in the file; the task can be finished.")
+        return "\n".join(said)
+    return "\n".join(said) + "\nNone of the versions passed: the code is as it was before this call."
 
 
 # ---------------------------------------------------------------- model
@@ -259,7 +509,8 @@ CMD_SYSTEM = ("You are a coding agent working in a software project. Answer with
               "cat, grep, sed -i. "
               "When the task is done answer `DONE: <answer>`. Be brief. Do not modify tests unless asked.")
 TOKEN_BUDGET = int(os.environ.get("AGENT_TOKEN_BUDGET", "0"))  # prompt tokens per run, 0 = no limit
-GITNEXT_MODES = ("gitnext", "both", "verify", "lite")  # modes with the gitnext tools
+GITNEXT_MODES = ("gitnext", "both", "verify", "lite", "prove", "try", "combo")  # modes with the gitnext tools
+LITE_MODES = ("lite", "prove", "try", "combo")  # the five tools (`try` and `combo` add `try`)
 LITE_SYSTEM = ("You are a coding agent working in a software project. You have five tools for the code: look (read: a function, a file, an error), "
                "replace and add_after (change code), rename, check (a test fails: call it first with the test's name; after a change: with no arguments). "
                "Use them, be brief, and call finish with the answer when done. Do not modify tests unless asked.")
@@ -319,7 +570,11 @@ def command_of(content: str) -> str | None:
 
 def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: int, deadline: float) -> dict:
     cmd = mode == "cmd"
-    tools = [] if cmd else LITE_TOOLS if mode == "lite" else BASE_TOOLS + (GITNEXT_TOOLS if mode in GITNEXT_MODES else [])
+    global VARIANT, FAILING
+    VARIANT = mode
+    m = re.search(r"The test `([^`]+)` fails", task["prompt"])
+    FAILING = m.group(1) if m else ""
+    tools = [] if cmd else (LITE_TOOLS + [TRY_TOOL] if mode == "try" else LITE_TOOLS + [COMBO_TRY] if mode == "combo" else LITE_TOOLS) if mode in LITE_MODES else BASE_TOOLS + (GITNEXT_TOOLS if mode in GITNEXT_MODES else [])
     prompt = task["prompt"]
     if task.get("handoff"):  # a weaker model gave up on this task: what it tried
         prompt += "\n\nAn earlier attempt was stopped. Its notes:\n" + task["handoff"]
@@ -327,7 +582,14 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
         _, c = ev.gx(["context", task["prompt"]], root)
         if c.strip():
             prompt += "\n\n" + c.strip()
-    msgs = [{"role": "system", "content": CMD_SYSTEM if cmd else LITE_SYSTEM if mode == "lite" else SYSTEM}, {"role": "user", "content": prompt}]
+    system = CMD_SYSTEM if cmd else LITE_SYSTEM if mode in LITE_MODES else SYSTEM
+    if mode == "try":
+        system += (" To fix a failing test you can also call try with up to three versions of the corrected function (or line): "
+                   "each is put in place and tested, the first that passes is kept.")
+    elif mode == "combo":
+        system += (" A test fails: check with its name finds the change that broke it. "
+                   "Not sure which fix is right: try with two versions puts each in place and keeps the first that passes.")
+    msgs = [{"role": "system", "content": system}, {"role": "user", "content": prompt}]
     used = {"tokens_in": 0, "tokens_out": 0, "steps": 0, "tools": {}}
 
     def locate(err: str) -> str:  # where gitnext thinks an error comes from
@@ -337,7 +599,7 @@ def agent(task: dict, mode: str, root: Path, lang: str, host: str, max_steps: in
             return ""
 
     guard = Guard(root, max_steps, TOKEN_BUDGET, locate=locate)
-    gate = Gate(guard, lambda: call_tool("check", {}, root, lang), full=mode in ("verify", "lite")) if mode in GITNEXT_MODES else None
+    gate = Gate(guard, lambda: call_tool("check", {}, root, lang), full=mode in ("verify",) + LITE_MODES) if mode in GITNEXT_MODES else None
     names = tuple(t["function"]["name"] for t in tools) if tools else ()
     answer = ""
     for _ in range(max_steps):
@@ -472,10 +734,14 @@ def make_tasks(repo: dict, root: Path, kinds: list[str], seed: int) -> list[dict
         tasks.append({"kind": "rename", "target": s["qualified"],
                       "prompt": f"Rename the function `{s['name']}` to `{new}` everywhere in the project (definition and every use). The project must still compile.",
                       "old": s["name"], "new": new})
-    if "fix" in kinds:
-        bug = seed_bug(repo, root, syms, rng)
-        if bug:
-            tasks.append(bug)
+    bug = seed_bug(repo, root, syms, rng) if "fix" in kinds or "regress" in kinds else None
+    if bug and "fix" in kinds:
+        tasks.append(bug)
+    if bug and "regress" in kinds:
+        # the same bug, in one commit with changes that are meant (the tests pass with them)
+        reg = with_distractors(repo, root, syms, bug, rng)
+        if reg:
+            tasks.append(reg)
     return tasks
 
 
@@ -530,6 +796,86 @@ def seed_bug(repo: dict, root: Path, syms: list[dict], rng: random.Random) -> di
     return None
 
 
+# a comparison of two plain operands, as a refactor writes it the other way round (`a == b` → `b == a`)
+ATOM = r"(?:[A-Za-z_][\w.]*(?:\([\w.]*\))?|\d+|'[^'\n]*'|\"[^\"\n]*\")"
+SWAP = re.compile(rf"(?P<pre>\b(?:if|elif|while|return|and|or|not|assert)\s+|[(,]\s*|&&\s*|\|\|\s*)(?P<a>{ATOM})\s*(?P<op>==|!=|<=|>=|<|>)\s*(?P<b>{ATOM})"
+                  r"(?P<post>\s*(?:[:){;,]|$|\band\b|\bor\b|&&|\|\|))")
+MIRROR = {"==": "==", "!=": "!=", "<": ">", ">": "<", "<=": ">=", ">=": "<="}
+DISTRACTORS = 2
+
+
+def swap_sites(text: str, lang: str):
+    for m in SWAP.finditer(text):
+        if lang == "rust" and m["op"] not in ("==", "!="):
+            continue  # `<`/`>` there are as often generics
+        if m["a"] == m["b"] or m["a"][0].isdigit() and m["b"][0].isdigit():
+            continue
+        yield m
+
+
+def with_distractors(repo: dict, root: Path, syms: list[dict], bug: dict, rng: random.Random) -> dict | None:
+    """The `regress` task: the seeded bug plus DISTRACTORS changes that are meant (a comparison written the
+    other way round) in other functions the failing test runs, all in one commit. The tests pass with the
+    changes alone and fail with the bug alone the same way. Solved = the tests pass and the meant changes stay."""
+    L = ev.LANG[repo["lang"]]
+    name = bug["prompt"].split("`")[1]
+    subprocess.run(["git", "apply"], input=bug["patch"], text=True, cwd=root)
+    ev.gx(["index"], root)
+    ran = []
+    for t in [name] + [x for x in bug.get("failing", []) if x != name]:
+        # what the failing test runs (a Go `Example…` test is not found by name: another failing one is asked)
+        code, out = ev.gx(["--json", "why", t], root, timeout=900)
+        try:
+            ran = [x["symbol"] for x in json.loads(out).get("suspects", []) if x.get("ran")]
+        except (ValueError, AttributeError):
+            ran = []
+        if ran:
+            break
+    ev.restore(root)
+    ev.gx(["index"], root)
+    by = {s["qualified"]: s for s in syms}
+    funcs = [by[q] for q in ran if q in by and q != bug["target"] and by[q]["kind"] in ("function", "method") and not by[q].get("test")]
+    for attempt in range(3):
+        rng.shuffle(funcs)
+        edits, used_files = [], {}
+        for s in funcs:
+            if len(edits) == DISTRACTORS:
+                break
+            f = root / s["file"]
+            lines = used_files.get(s["file"]) or f.read_text(errors="replace").split("\n")
+            sites = [(ln, m) for ln in range(s["start_line"] - 1, min(s["end_line"], len(lines)))
+                     if not lines[ln].lstrip().startswith(("//", "#", "*", "\"\"\"")) for m in swap_sites(lines[ln], repo["lang"])]
+            if not sites:
+                continue
+            ln, m = rng.choice(sites)
+            old = lines[ln]
+            new = old[:m.start()] + f"{m['pre']}{m['b']} {MIRROR[m['op']]} {m['a']}{m['post']}" + old[m.end():]
+            lines[ln] = new
+            used_files[s["file"]] = lines
+            edits.append({"file": s["file"], "symbol": s["qualified"], "line": ln + 1, "old": old, "new": new})
+        if len(edits) < DISTRACTORS:
+            return None
+        def write():
+            for file, lines in used_files.items():
+                (root / file).write_text("\n".join(lines))
+        # the meant changes alone: the project builds and no test fails that did not fail before
+        write()
+        ccode, _ = ev.sh(L["compile"], root, timeout=900)
+        failed = set(L["failed"](ev.sh(L["tests"], root, timeout=1800)[1], root)) - set(bug["before"]) if (ccode == 0 or repo["lang"] == "python") else {"build"}
+        ok = not failed
+        if ok:
+            subprocess.run(["git", "apply"], input=bug["patch"], text=True, cwd=root)
+            ccode, _ = ev.sh(L["compile"], root, timeout=900)
+            failed = set(L["failed"](ev.sh(L["tests"], root, timeout=1800)[1], root)) - set(bug["before"]) if (ccode == 0 or repo["lang"] == "python") else set()
+            ok = name in failed
+            patch = ev.sh("git diff", root)[1]
+        ev.restore(root)
+        if ok:
+            return {**bug, "kind": "regress", "patch": patch, "distractors": edits,
+                    "prompt": bug["prompt"] + " The last commit also has changes that are meant: keep them, change only what is wrong."}
+    return None
+
+
 def check(task: dict, repo: dict, root: Path, res: dict) -> bool:
     L = ev.LANG[repo["lang"]]
     if task["kind"] == "find":
@@ -554,7 +900,13 @@ def check(task: dict, repo: dict, root: Path, res: dict) -> bool:
         new = task["target"][: len(task["target"]) - len(task["old"])] + task["new"]
         res["old_defined"] = task["target"] in defined
         return code == 0 and not res["old_defined"] and new in defined
-    if task["kind"] == "fix":
+    if task["kind"] == "regress":
+        # the meant changes are still there (a revert of the whole commit makes the tests pass too)
+        kept = [d for d in task["distractors"] if d["new"].strip() in (root / d["file"]).read_text(errors="replace")]
+        res["distractors_kept"] = f"{len(kept)}/{len(task['distractors'])}"
+        if len(kept) < len(task["distractors"]):
+            return False
+    if task["kind"] in ("fix", "regress"):
         code, _ = ev.sh(L["compile"], root, timeout=1200)
         if code and repo["lang"] != "python":
             return False
@@ -631,7 +983,7 @@ def main() -> None:
     for repo in repos:
         root = ev.prepare(repo)
         ev.gx(["init"], root, timeout=1800)
-        if args.learn and "fix" in args.tasks.split(",") and repo["lang"] in ("python", "go", "rust") and any(m in GITNEXT_MODES for m in modes):
+        if args.learn and {"fix", "regress"} & set(args.tasks.split(",")) and repo["lang"] in ("python", "go", "rust") and any(m in GITNEXT_MODES for m in modes):
             # what a project does once while its tests pass: `gitnext why` then knows what each test
             # really runs and which of that code changed since (the bug is put in after this)
             if repo["lang"] == "python":
@@ -650,10 +1002,10 @@ def main() -> None:
             for task in tasks:
                 for mode in modes:
                     clean()
-                    if task["kind"] == "fix":
+                    if task["kind"] in ("fix", "regress"):
                         # the bug is a commit: `git diff` and `gitnext check` must not point at it
                         subprocess.run(["git", "apply"], input=task["patch"], text=True, cwd=root)
-                        ev.sh("git -c user.name=eval -c user.email=eval@example.invalid -c commit.gpgsign=false commit -qam 'seeded bug'", root)
+                        ev.sh("git -c user.name=eval -c user.email=eval@example.invalid -c commit.gpgsign=false commit -qam 'seeded bug'" if task["kind"] == "fix" else "git -c user.name=eval -c user.email=eval@example.invalid -c commit.gpgsign=false commit -qam 'update'", root)
                     ev.gx(["index"], root)
                     t0 = time.time()
                     try:
@@ -667,11 +1019,13 @@ def main() -> None:
                     except Exception as e:
                         res = {"passed": False, "error": str(e)[:300]}
                     res.update({"repo": repo["name"], "task": task["kind"], "target": task.get("target"), "mode": mode, "repeat": rep, "seconds": round(time.time() - t0)})
+                    if task.get("distractors"):
+                        res["distractors"] = [f'{d["file"]}:{d["line"]}' for d in task["distractors"]]
                     with Path(args.out).with_suffix(".trace.jsonl").open("a") as f:
                         f.write(json.dumps({k: res.get(k) for k in ("repo", "task", "target", "mode", "repeat", "passed")} | {"messages": trace_of(res.pop("_msgs", []))}, ensure_ascii=False) + "\n")
                     rows.append(res)
                     print(f"{repo['name']:8} {task['kind']:8} {mode:8} {'✓' if res['passed'] else '✗'} steps {res.get('steps')} tok {res.get('tokens_in')}/{res.get('tokens_out')} {res['seconds']}s tools {res.get('tools')}"
-                          + (f" code-as-text {res['text_code']}" if res.get("text_code") else "") + (f" guard {res['guard']}" if res.get("guard") else "") + (f" gate {res['gate']}" if res.get("gate") else "") + (f" stopped: {res['stopped']}" if res.get("stopped") else "") + (" escalated" if res.get("escalated") else ""), flush=True)
+                          + (f" code-as-text {res['text_code']}" if res.get("text_code") else "") + (f" kept {res['distractors_kept']}" if res.get("distractors_kept") else "") + (f" guard {res['guard']}" if res.get("guard") else "") + (f" gate {res['gate']}" if res.get("gate") else "") + (f" stopped: {res['stopped']}" if res.get("stopped") else "") + (" escalated" if res.get("escalated") else ""), flush=True)
                     Path(args.out).parent.mkdir(exist_ok=True)
                     Path(args.out).write_text(json.dumps(rows, ensure_ascii=False, indent=1))
         clean()
