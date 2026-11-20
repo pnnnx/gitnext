@@ -1,0 +1,157 @@
+[
+ {
+  "tokens_in": 86125,
+  "tokens_out": 856,
+  "steps": 22,
+  "tools": {
+   "check": 3,
+   "look": 17,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `Core::move_index` where it checked `if from == to` instead of `if from != to`. This caused the move operation to be skipped when the indices were different, leading to incorrect map state and failing tests. I corrected the condition to `if from != to`.",
+  "guard": {
+   "repeats": 11,
+   "no_progress": 1,
+   "soft_budget": 1
+  },
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::Core::move_index",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 88
+ },
+ {
+  "tokens_in": 10683,
+  "tokens_out": 382,
+  "steps": 6,
+  "tools": {
+   "check": 2,
+   "look": 2,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `Core::move_index` where the condition `if from == to` was used instead of `if from != to`. This caused the index moving logic (which rotates entries and updates indices) to be skipped when it should have been executed, or vice versa depending on the intended behavior. Changing it to `if from != to` correctly handles the move operation.",
+  "guard": {},
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::Core::move_index",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 44
+ },
+ {
+  "tokens_in": 11304,
+  "tokens_out": 396,
+  "steps": 7,
+  "tools": {
+   "check": 2,
+   "look": 3,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `Core::move_index` where it checked `if from == to` instead of `if from != to`. This caused the index update logic to be skipped when moving an entry to a different position, leading to incorrect internal state. I corrected the condition to `if from != to`.",
+  "guard": {
+   "repeats": 1
+  },
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::Core::move_index",
+  "mode": "combo",
+  "repeat": 0,
+  "seconds": 41
+ },
+ {
+  "tokens_in": 109518,
+  "tokens_out": 994,
+  "steps": 24,
+  "tools": {
+   "check": 3,
+   "look": 19,
+   "replace": 2
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 12,
+   "no_progress": 2,
+   "soft_budget": 1
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `indexed_entry_move_index` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"indexed_entry_move_index\"}\n  step 2: look {\"what\": \"src/inner.rs:649-671\"}\n  step 3: look {\"what\": \"Core::move_index\"}\n  step 4: look {\"what\": \"src/map/entry.rs:260-285\"}\n  step 5: look {\"what\": \"src/inner.rs:649-675\"}\n  step 6: look {\"what\": \"src/inner.rs:649-664\"}\n  step 7: replace {\"code\": \"    pub(super) fn move_index(&mut self, from: usize, to: usize) {\\n        assert_index_lt(from, self.len());\\n        let\n  step 8: check {}\n  step 14: look {\"what\": \"src/map/entry.rs:271-285\"}\n  step 15: look {\"what\": \"src/inner.rs:666-675\"}\n  step 16: look {\"what\": \"src/inner.rs:607-618\"}\n  step 20: look {\"what\": \"src/inner.rs:607-623\"}\nFiles changed so far:\nsrc/inner.rs | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::Core::move_index",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 98,
+  "distractors": [
+   "src/map.rs:167",
+   "src/inner.rs:322"
+  ]
+ },
+ {
+  "tokens_in": 61384,
+  "tokens_out": 625,
+  "steps": 17,
+  "tools": {
+   "check": 3,
+   "look": 13,
+   "replace": 1
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 9,
+   "no_progress": 2
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `indexed_entry_move_index` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"test_indexed_entry_move_index\"}\n  step 2: look {\"what\": \"src/inner.rs:649-670\"}\n  step 3: look {\"what\": \"Core::move_index\"}\n  step 4: replace {\"code\": \"    #[track_caller]\\n    pub(super) fn move_index(&mut self, from: usize, to: usize) {\\n        assert_index_lt(from, self\n  step 5: check {}\n  step 7: look {\"what\": \"IndexedEntry::move_index\"}\n  step 8: look {\"what\": \"src/inner.rs:648-675\"}\n  step 9: look {\"what\": \"src/map/entry.rs:258-273\"}\nFiles changed so far:\nsrc/inner.rs | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::Core::move_index",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 67,
+  "distractors": [
+   "src/map.rs:167",
+   "src/inner.rs:322"
+  ]
+ },
+ {
+  "tokens_in": 69917,
+  "tokens_out": 878,
+  "steps": 20,
+  "tools": {
+   "check": 4,
+   "look": 14,
+   "replace": 2
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 11,
+   "no_progress": 2,
+   "soft_budget": 1
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `indexed_entry_move_index` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"indexed_entry_move_index\"}\n  step 2: look {\"what\": \"src/inner.rs:652\"}\n  step 3: look {\"what\": \"src/inner.rs:648-664\"}\n  step 5: replace {\"code\": \"    #[track_caller]\\n    pub(super) fn move_index(&mut self, from: usize, to: usize) {\\n        assert_index_lt(from, self\n  step 6: check {}\n  step 12: look {\"what\": \"src/inner.rs:640-670\"}\n  step 13: look {\"what\": \"src/inner.rs:666-680\"}\n  step 14: look {\"what\": \"src/inner.rs:629-646\"}\n  step 16: look {\"what\": \"src/inner.rs:648-675\"}\nFiles changed so far:\nsrc/inner.rs | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::Core::move_index",
+  "mode": "combo",
+  "repeat": 0,
+  "seconds": 86,
+  "distractors": [
+   "src/map.rs:167",
+   "src/inner.rs:322"
+  ]
+ }
+]

@@ -1,0 +1,137 @@
+[
+ {
+  "tokens_in": 12098,
+  "tokens_out": 440,
+  "steps": 6,
+  "tools": {
+   "check": 2,
+   "look": 2,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `SpacesAroundOperatorsFilter._process` where `tlist.token_next(tidx, skip_ws=True)` was used instead of `skip_ws=False`. This caused the filter to incorrectly identify if a whitespace token already existed after an operator, leading to missing spaces in some cases. Changing `skip_ws` to `False` ensures that existing whitespace is correctly detected and not duplicated or ignored inappropriately.",
+  "guard": {},
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "fix",
+  "target": "sqlparse::filters::others::SpacesAroundOperatorsFilter::_process",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 77
+ },
+ {
+  "tokens_in": 11312,
+  "tokens_out": 434,
+  "steps": 6,
+  "tools": {
+   "check": 3,
+   "look": 1,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `SpacesAroundOperatorsFilter._process` where `tlist.token_next(tidx, skip_ws=True)` was used instead of `skip_ws=False`. This caused the filter to incorrectly identify if a whitespace token already existed after an operator, leading to missing spaces in some cases. Changing it back to `skip_ws=False` fixes the issue.",
+  "guard": {},
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "fix",
+  "target": "sqlparse::filters::others::SpacesAroundOperatorsFilter::_process",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 84
+ },
+ {
+  "tokens_in": 8961,
+  "tokens_out": 453,
+  "steps": 5,
+  "tools": {
+   "check": 1,
+   "look": 2,
+   "try": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `SpacesAroundOperatorsFilter._process` where `tlist.token_next(tidx, skip_ws=True)` was used instead of `skip_ws=False`. This caused the filter to incorrectly identify whether a whitespace token already existed after an operator, leading to missing spaces in the formatted output. Changing `skip_ws` to `False` ensures that existing whitespace is correctly detected and not duplicated or skipped when determining if a space needs to be inserted.",
+  "guard": {},
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "fix",
+  "target": "sqlparse::filters::others::SpacesAroundOperatorsFilter::_process",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 87
+ },
+ {
+  "tokens_in": 13117,
+  "tokens_out": 450,
+  "steps": 6,
+  "tools": {
+   "check": 2,
+   "look": 2,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `SpacesAroundOperatorsFilter._process` where `tlist.token_next(tidx, skip_ws=True)` was used instead of `skip_ws=False`. This caused the filter to incorrectly identify if a whitespace token already existed after an operator, leading to missing spaces in some cases. Changing `skip_ws` back to `False` ensures that existing whitespace is correctly detected and not skipped when deciding whether to insert a new space.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "regress",
+  "target": "sqlparse::filters::others::SpacesAroundOperatorsFilter::_process",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 86,
+  "distractors": [
+   "sqlparse/filters/aligned_indent.py:99",
+   "sqlparse/engine/statement_splitter.py:113"
+  ]
+ },
+ {
+  "tokens_in": 27348,
+  "tokens_out": 571,
+  "steps": 9,
+  "tools": {
+   "check": 5,
+   "look": 2,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `sqlparse/filters/others.py` within the `SpacesAroundOperatorsFilter._process` method. The call to `tlist.token_next(tidx, skip_ws=True)` was skipping whitespace tokens when checking if a space should be inserted after an operator. This caused it to incorrectly identify that a space was needed even when one already existed (or conversely, fail to detect the immediate next token correctly for spacing purposes). Changing `skip_ws=True` back to `skip_ws=False` ensures that existing w",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "regress",
+  "target": "sqlparse::filters::others::SpacesAroundOperatorsFilter::_process",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 115,
+  "distractors": [
+   "sqlparse/filters/aligned_indent.py:99",
+   "sqlparse/engine/statement_splitter.py:113"
+  ]
+ },
+ {
+  "tokens_in": 10774,
+  "tokens_out": 441,
+  "steps": 5,
+  "tools": {
+   "check": 1,
+   "look": 2,
+   "try": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `SpacesAroundOperatorsFilter._process`, where `tlist.token_next(tidx, skip_ws=True)` was used instead of `skip_ws=False`. This caused the filter to incorrectly identify if a whitespace token already existed after an operator, leading to missing spaces in some cases. Changing `skip_ws` to `False` ensures that existing whitespace is correctly detected and not duplicated or skipped when it should be checked.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "regress",
+  "target": "sqlparse::filters::others::SpacesAroundOperatorsFilter::_process",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 76,
+  "distractors": [
+   "sqlparse/filters/aligned_indent.py:99",
+   "sqlparse/engine/statement_splitter.py:113"
+  ]
+ }
+]

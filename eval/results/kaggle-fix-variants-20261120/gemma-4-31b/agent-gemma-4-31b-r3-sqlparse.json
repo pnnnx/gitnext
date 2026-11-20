@@ -1,0 +1,137 @@
+[
+ {
+  "tokens_in": 16244,
+  "tokens_out": 581,
+  "steps": 7,
+  "tools": {
+   "check": 4,
+   "replace": 1,
+   "look": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `ReindentFilter._process_case` where the condition for inserting a newline before case branches was incorrectly using an `or` instead of an `and`. Specifically, it was `if (not self.compact or end_pos > self.wrap_after):`, which caused newlines to be inserted even when `self.compact` was True. I changed it back to `if (not self.compact and end_pos > self.wrap_after):`, ensuring that in compact mode, newlines are only inserted if the line length exceeds `wrap_after`.",
+  "guard": {},
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "fix",
+  "target": "sqlparse::filters::reindent::ReindentFilter::_process_case",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 93
+ },
+ {
+  "tokens_in": 11518,
+  "tokens_out": 329,
+  "steps": 6,
+  "tools": {
+   "check": 3,
+   "replace": 1,
+   "look": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `sqlparse/filters/reindent.py` within the `ReindentFilter._process_case` method. The condition for inserting a newline before case branches was incorrectly using an `or` instead of an `and` when checking if the formatter should be in compact mode and whether the line length exceeded `wrap_after`.\n\nSpecifically, the code had:\n```python\nif (not self.compact or end_pos > self.wrap_after):\n```\nwhich caused newlines to be inserted even when `self.compact` was True, as long as the line ",
+  "guard": {},
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "fix",
+  "target": "sqlparse::filters::reindent::ReindentFilter::_process_case",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 57
+ },
+ {
+  "tokens_in": 13103,
+  "tokens_out": 585,
+  "steps": 6,
+  "tools": {
+   "check": 3,
+   "replace": 1,
+   "look": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `sqlparse/filters/reindent.py` within the `ReindentFilter._process_case` method. The condition for inserting a newline before case branches was incorrectly using an `or` instead of an `and` when checking if the formatter should be in compact mode and whether the line length exceeded the wrap limit. Specifically, it was `if (not self.compact or end_pos > self.wrap_after):`, which caused newlines to be inserted even when `self.compact` was True. I changed it back to `if (not self.co",
+  "guard": {},
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "fix",
+  "target": "sqlparse::filters::reindent::ReindentFilter::_process_case",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 100
+ },
+ {
+  "tokens_in": 10099,
+  "tokens_out": 552,
+  "steps": 5,
+  "tools": {
+   "check": 3,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `ReindentFilter._process_case` where a logical OR (`or`) was used instead of a logical AND (`and`) when checking if a newline should be inserted for CASE statements in compact mode. Specifically, the condition `if (not self.compact or end_pos > self.wrap_after):` caused newlines to be inserted even when `self.compact` was True, as long as `end_pos > self.wrap_after` was false (or vice versa). Changing it back to `if (not self.compact and end_pos > self.wrap_after):` ensures that i",
+  "guard": {
+   "repeats": 1
+  },
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "regress",
+  "target": "sqlparse::filters::reindent::ReindentFilter::_process_case",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 94,
+  "distractors": [
+   "sqlparse/engine/grouping.py:238",
+   "sqlparse/formatter.py:101"
+  ]
+ },
+ {
+  "tokens_in": 20629,
+  "tokens_out": 628,
+  "steps": 7,
+  "tools": {
+   "check": 4,
+   "replace": 1,
+   "look": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `sqlparse/filters/reindent.py` within the `ReindentFilter._process_case` method. A recent change had incorrectly modified the condition for inserting line breaks in CASE statements when the `compact` option is enabled. Specifically, it used an `or` instead of an `and` operator:\n\n```python\n# Incorrect\nif (not self.compact or end_pos > self.wrap_after):\n\n# Correct\nif (not self.compact and end_pos > self.wrap_after):\n```\n\nThis caused line breaks to be inserted even when `compact=True",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "regress",
+  "target": "sqlparse::filters::reindent::ReindentFilter::_process_case",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 112,
+  "distractors": [
+   "sqlparse/engine/grouping.py:238",
+   "sqlparse/formatter.py:101"
+  ]
+ },
+ {
+  "tokens_in": 5367,
+  "tokens_out": 536,
+  "steps": 3,
+  "tools": {
+   "check": 1,
+   "try": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `ReindentFilter._process_case` where a logical OR (`or`) was used instead of a logical AND (`and`) when checking if a newline should be inserted during compact formatting. Specifically, the condition `if (not self.compact or end_pos > self.wrap_after):` caused newlines to be inserted even when `self.compact` was True, as long as `end_pos > self.wrap_after` was False (which is not what was intended) or vice versa. Changing it back to `if (not self.compact and end_pos > self.wrap_af",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "regress",
+  "target": "sqlparse::filters::reindent::ReindentFilter::_process_case",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 95,
+  "distractors": [
+   "sqlparse/engine/grouping.py:238",
+   "sqlparse/formatter.py:101"
+  ]
+ }
+]

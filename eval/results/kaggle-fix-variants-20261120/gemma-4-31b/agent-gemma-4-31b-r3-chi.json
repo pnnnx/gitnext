@@ -1,0 +1,132 @@
+[
+ {
+  "tokens_in": 4185,
+  "tokens_out": 176,
+  "steps": 4,
+  "tools": {
+   "check": 2,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `URLParamFromCtx` where it checked if `rctx == nil` instead of `rctx != nil` before calling `rctx.URLParam(key)`. I corrected the condition to ensure that the route context is not nil before attempting to retrieve the URL parameter.",
+  "guard": {},
+  "passed": true,
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::URLParamFromCtx",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 67
+ },
+ {
+  "tokens_in": 4509,
+  "tokens_out": 176,
+  "steps": 4,
+  "tools": {
+   "check": 2,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `URLParamFromCtx` in `context.go`, where a condition `rctx == nil` was used instead of `rctx != nil`, causing it to return an empty string when the route context was actually present. I corrected the condition to `rctx != nil`.",
+  "guard": {},
+  "passed": true,
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::URLParamFromCtx",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 84
+ },
+ {
+  "tokens_in": 6489,
+  "tokens_out": 201,
+  "steps": 5,
+  "tools": {
+   "check": 3,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in the `URLParamFromCtx` function in `context.go`, where a conditional check `if rctx := RouteContext(ctx); rctx == nil` was incorrectly returning the parameter only when `rctx` was `nil`. I corrected it to `if rctx := RouteContext(ctx); rctx != nil`.",
+  "guard": {},
+  "passed": true,
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::URLParamFromCtx",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 90
+ },
+ {
+  "tokens_in": 4882,
+  "tokens_out": 189,
+  "steps": 4,
+  "tools": {
+   "check": 2,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `URLParamFromCtx` where a condition check was inverted (`rctx == nil` instead of `rctx != nil`), causing it to return an empty string when a valid `RouteContext` was present. I corrected the condition to ensure that `rctx.URLParam(key)` is called only when `rctx` is not nil.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "chi",
+  "task": "regress",
+  "target": "main::URLParamFromCtx",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 70,
+  "distractors": [
+   "tree.go:843",
+   "tree.go:355"
+  ]
+ },
+ {
+  "tokens_in": 7774,
+  "tokens_out": 230,
+  "steps": 5,
+  "tools": {
+   "check": 2,
+   "look": 1,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `URLParamFromCtx` in `context.go`, where a condition `rctx == nil` was used instead of `rctx != nil`. This caused the function to return an empty string when a valid `RouteContext` was present, and would have panicked if it had entered the block with a `nil` context. I corrected the condition to `rctx != nil`.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "chi",
+  "task": "regress",
+  "target": "main::URLParamFromCtx",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 80,
+  "distractors": [
+   "tree.go:843",
+   "tree.go:355"
+  ]
+ },
+ {
+  "tokens_in": 5594,
+  "tokens_out": 185,
+  "steps": 4,
+  "tools": {
+   "check": 2,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `URLParamFromCtx` where a condition check was inverted (`rctx == nil` instead of `rctx != nil`), causing it to return an empty string when a route context was present and panic (or fail) if it wasn't. I corrected the condition to properly retrieve the URL parameter from the context.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "chi",
+  "task": "regress",
+  "target": "main::URLParamFromCtx",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 79,
+  "distractors": [
+   "tree.go:843",
+   "tree.go:355"
+  ]
+ }
+]

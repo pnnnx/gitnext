@@ -1,0 +1,163 @@
+[
+ {
+  "tokens_in": 112217,
+  "tokens_out": 1496,
+  "steps": 25,
+  "tools": {
+   "check": 4,
+   "look": 18,
+   "replace": 3
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 10,
+   "no_progress": 1,
+   "soft_budget": 1
+  },
+  "stopped": "steps",
+  "handoff": "Task: The test `TestCustomHTTPMethod` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: ran out of steps.\nTried (distinct actions):\n  step 1: check {\"test\": \"TestCustomHTTPMethod\"}\n  step 2: look {\"what\": \"tree.go:70-80\"}\n  step 3: look {\"what\": \"methodMap\"}\n  step 4: look {\"what\": \"tree.go:70-86\"}\n  step 5: look {\"what\": \"TestCustomHTTPMethod\"}\n  step 6: replace {\"code\": \"func RegisterMethod(method string) {\\n\\tif method == \\\"\\\" {\\n\\t\\treturn\\n\\t}\\n\\tmethod = strings.ToUpper(method)\\n\\tif _, \n  step 9: look {\"what\": \"tree.go:42-55\"}\n  step 14: look {\"what\": \"mux.go:127-133\"}\n  step 15: look {\"what\": \"tree.go:42-86\"}\n  step 17: look {\"what\": \"tree.go:1-40\"}\n  step 18: look {\"what\": \"mux.go:350-400\"}\n  step 21: look {\"what\": \"mux.go:382-408\"}\n  step 22: replace {\"code\": \"func (mx *Mux) Find(rctx *Context, method, path string) string {\\n\\tm, ok := methodMap[strings.ToUpper(method)]\\n\\tif !ok \n  step 24: look {\"what\": \"mux.go:130\"}\n  step 25: look {\"what\": \"mux.go:100-120\"}\nFiles changed so far:\nmux.go  | 2 +-\n tree.go | 2 +-\n 2 files changed, 2 insertions(+), 2 deletions(-)\nNo failing command was seen.",
+  "passed": true,
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::RegisterMethod",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 145
+ },
+ {
+  "tokens_in": 97086,
+  "tokens_out": 912,
+  "steps": 25,
+  "tools": {
+   "check": 3,
+   "look": 20,
+   "replace": 2
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 5,
+   "no_progress": 1,
+   "soft_budget": 1
+  },
+  "stopped": "steps",
+  "handoff": "Task: The test `TestCustomHTTPMethod` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: ran out of steps.\nTried (distinct actions):\n  step 7: look {\"what\": \"tree.go:68-86 RegisterMethod\"}\n  step 8: look {\"what\": \"tree.go:1-86\"}\n  step 9: look {\"what\": \"TestCustomHTTPMethod\"}\n  step 10: look {\"what\": \"mux.go:138 MethodFunc\"}\n  step 11: look {\"what\": \"mux.go:137-142 MethodFunc\"}\n  step 12: look {\"what\": \"mux.go:130-142\"}\n  step 13: look {\"what\": \"chi.go:96 Router::MethodFunc\"}\n  step 14: look {\"what\": \"chi.go:80-115 Router::MethodFunc\"}\n  step 15: look {\"what\": \"chi.go:80-115\"}\n  step 16: look {\"what\": \"chi.go:96\"}\n  step 17: look {\"what\": \"chi.go:90-117\"}\n  step 18: look {\"what\": \"chi.go:95-96\"}\n  step 20: look {\"what\": \"chi.go:100-117\"}\n  step 21: look {\"what\": \"chi.go:95-117\"}\n  step 23: look {\"what\": \"tree.go:70-86 RegisterMethod\"}\nFiles changed so far:\ntree.go | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "passed": true,
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::RegisterMethod",
+  "mode": "combo",
+  "repeat": 0,
+  "seconds": 105
+ },
+ {
+  "tokens_in": 21971,
+  "tokens_out": 291,
+  "steps": 12,
+  "tools": {
+   "check": 1,
+   "look": 11
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 8,
+   "no_progress": 2
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `TestCustomHTTPMethod` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"TestCustomHTTPMethod\"}\n  step 2: look {\"what\": \"methodMap\"}\n  step 3: look {\"what\": \"RegisterMethod\"}\n  step 4: look {\"what\": \"tree.go:68-86 RegisterMethod\"}\nNo file was changed.\nNo failing command was seen.",
+  "passed": false,
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::RegisterMethod",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 54
+ },
+ {
+  "tokens_in": 89112,
+  "tokens_out": 911,
+  "steps": 25,
+  "tools": {
+   "check": 4,
+   "look": 19,
+   "replace": 2
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 11,
+   "no_progress": 1,
+   "soft_budget": 1
+  },
+  "stopped": "steps",
+  "handoff": "Task: The test `TestCustomHTTPMethod` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: ran out of steps.\nTried (distinct actions):\n  step 1: check {\"test\": \"TestCustomHTTPMethod\"}\n  step 2: look {\"what\": \"tree.go:70-80\"}\n  step 3: look {\"what\": \"methodMap\"}\n  step 4: look {\"what\": \"RegisterMethod\"}\n  step 5: replace {\"code\": \"// RegisterMethod adds support for custom HTTP method handlers, available\\n// via Router#Method and Router#MethodFunc\\nfun\n  step 6: check {}\n  step 8: look {\"what\": \"tree.go:68-86 RegisterMethod\"}\n  step 13: look {\"what\": \"mux.go:127-133 Mux::Method\"}\n  step 15: look {\"what\": \"mux.go:120-140\"}\n  step 16: look {\"what\": \"TestCustomHTTPMethod\"}\n  step 17: look {\"what\": \"tree.go:42-86\"}\n  step 18: look {\"what\": \"tree.go:42-55\"}\n  step 22: look {\"what\": \"tree.go:380-410\"}\n  step 23: look {\"what\": \"tree.go:42-90\"}\nFiles changed so far:\ntree.go | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "chi",
+  "task": "regress",
+  "target": "main::RegisterMethod",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 105,
+  "distractors": [
+   "tree.go:266",
+   "tree.go:588"
+  ]
+ },
+ {
+  "tokens_in": 139018,
+  "tokens_out": 1032,
+  "steps": 25,
+  "tools": {
+   "check": 5,
+   "look": 17,
+   "replace": 3
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 7,
+   "no_progress": 1,
+   "soft_budget": 1
+  },
+  "stopped": "steps",
+  "handoff": "Task: The test `TestCustomHTTPMethod` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: ran out of steps.\nTried (distinct actions):\n  step 4: check {}\n  step 6: look {\"what\": \"mux.go:130\"}\n  step 7: look {\"what\": \"tree.go\"}\n  step 8: look {\"what\": \"tree.go:1-200\"}\n  step 9: look {\"what\": \"RegisterMethod\"}\n  step 10: look {\"what\": \"main.go:11\"}\n  step 11: look {\"what\": \"main.go\"}\n  step 12: look {\"what\": \"_examples/custom-method/main.go\"}\n  step 13: look {\"what\": \"_examples/custom-method/main.go:1-33\"}\n  step 14: look {\"what\": \"mux.go:125-133 Mux::Method\"}\n  step 15: look {\"what\": \"mux.go:120-145\"}\n  step 16: look {\"what\": \"TestCustomHTTPMethod\"}\n  step 19: look {\"what\": \"tree.go:68-86\"}\n  step 20: replace {\"code\": \"// RegisterMethod adds support for custom HTTP method handlers, available\\n// via Router#Method and Router#MethodFunc\\nfun\n  step 25: look {\"what\": \"mux_test.go:1802-1846\"}\nNo file was changed.\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": false,
+  "repo": "chi",
+  "task": "regress",
+  "target": "main::RegisterMethod",
+  "mode": "combo",
+  "repeat": 0,
+  "seconds": 121,
+  "distractors": [
+   "tree.go:266",
+   "tree.go:588"
+  ]
+ },
+ {
+  "tokens_in": 22188,
+  "tokens_out": 291,
+  "steps": 12,
+  "tools": {
+   "check": 1,
+   "look": 11
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 8,
+   "no_progress": 2
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `TestCustomHTTPMethod` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"TestCustomHTTPMethod\"}\n  step 2: look {\"what\": \"methodMap\"}\n  step 3: look {\"what\": \"RegisterMethod\"}\n  step 4: look {\"what\": \"tree.go:68-86 RegisterMethod\"}\nNo file was changed.\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": false,
+  "repo": "chi",
+  "task": "regress",
+  "target": "main::RegisterMethod",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 56,
+  "distractors": [
+   "tree.go:266",
+   "tree.go:588"
+  ]
+ }
+]

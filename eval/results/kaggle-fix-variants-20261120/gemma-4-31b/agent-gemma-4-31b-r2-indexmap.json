@@ -1,0 +1,136 @@
+[
+ {
+  "tokens_in": 6545,
+  "tokens_out": 380,
+  "steps": 4,
+  "tools": {
+   "check": 1,
+   "look": 1,
+   "try": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in the `decrement_indices` function in `src/inner.rs`. The condition for shifting indices during a full sweep was `start <= *i && *i <= end`, which incorrectly included the index at the `end` boundary. Changing it to `start <= *i && *i < end` ensures that only indices within the range `[start, end)` are decremented, matching the behavior of the alternative path and the intended logic for shifting entries.",
+  "guard": {},
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::Core::decrement_indices",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 223
+ },
+ {
+  "tokens_in": 10631,
+  "tokens_out": 390,
+  "steps": 6,
+  "tools": {
+   "check": 2,
+   "look": 2,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `decrement_indices` (src/inner.rs), where the condition for shifting indices during a full sweep was `start <= *i && *i <= end`. It should have been `start <= *i && *i < end`, as the range of shifted entries is `start..end` (exclusive of `end`). This caused an off-by-one error when updating indices.",
+  "guard": {},
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::Core::decrement_indices",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 81
+ },
+ {
+  "tokens_in": 5122,
+  "tokens_out": 172,
+  "steps": 4,
+  "tools": {
+   "check": 2,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `src/inner.rs` within the `decrement_indices` function. The condition for updating indices during a full sweep was incorrectly using `<=` instead of `<` for the `end` boundary (`if start <= *i && *i <= end`), which caused an extra index to be decremented. I changed it back to `if start <= *i && *i < end`.",
+  "guard": {},
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::Core::decrement_indices",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 42
+ },
+ {
+  "tokens_in": 16563,
+  "tokens_out": 418,
+  "steps": 7,
+  "tools": {
+   "check": 1,
+   "look": 4,
+   "try": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `decrement_indices`, where it used `<= end` instead of `< end` when shifting indices during a full sweep. This caused an extra index to be decremented incorrectly. I corrected this by changing the condition to `if start <= *i && *i < end`.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::Core::decrement_indices",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 88,
+  "distractors": [
+   "src/map.rs:167",
+   "src/inner.rs:652"
+  ]
+ },
+ {
+  "tokens_in": 28279,
+  "tokens_out": 466,
+  "steps": 10,
+  "tools": {
+   "check": 2,
+   "look": 6,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `decrement_indices` where it used `<= end` instead of `< end` when shifting indices during a full sweep. This caused entries with index equal to `end` (which were not part of the shifted range) to be incorrectly decremented. I corrected this by changing `if start <= *i && *i <= end` to `if start <= *i && *i < end`.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::Core::decrement_indices",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 100,
+  "distractors": [
+   "src/map.rs:167",
+   "src/inner.rs:652"
+  ]
+ },
+ {
+  "tokens_in": 8478,
+  "tokens_out": 362,
+  "steps": 5,
+  "tools": {
+   "check": 2,
+   "look": 1,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `decrement_indices` within `src/inner.rs`. The condition for shifting indices during a full sweep was incorrectly using `*i <= end` instead of `*i < end`, which caused an off-by-one error when updating the index map. I corrected it to `if start <= *i && *i < end {`.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::Core::decrement_indices",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 74,
+  "distractors": [
+   "src/map.rs:167",
+   "src/inner.rs:652"
+  ]
+ }
+]

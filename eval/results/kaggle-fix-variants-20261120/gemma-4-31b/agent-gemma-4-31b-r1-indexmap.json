@@ -1,0 +1,137 @@
+[
+ {
+  "tokens_in": 8064,
+  "tokens_out": 340,
+  "steps": 5,
+  "tools": {
+   "check": 2,
+   "look": 1,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `OccupiedEntry::swap_indices` where the condition for swapping indices was incorrectly set to `if self.index == other`. This meant the swap only attempted to execute when the indices were already identical (and effectively did nothing or failed), and skipped execution when they were different, which is when a swap is actually needed. Changing the condition to `if self.index != other` fixes the issue.",
+  "guard": {},
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::entry::OccupiedEntry::swap_indices",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 64
+ },
+ {
+  "tokens_in": 6296,
+  "tokens_out": 347,
+  "steps": 4,
+  "tools": {
+   "check": 1,
+   "look": 1,
+   "try": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `OccupiedEntry::swap_indices`, where it checked if `self.index == other` instead of `self.index != other`. This caused the function to do nothing when a swap was actually needed and attempt a swap (which would be a no-op but potentially panic or corrupt state) only when indices were already equal. Changing the condition to `if self.index != other` fixes the issue.",
+  "guard": {},
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::entry::OccupiedEntry::swap_indices",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 72
+ },
+ {
+  "tokens_in": 7902,
+  "tokens_out": 443,
+  "steps": 5,
+  "tools": {
+   "check": 2,
+   "look": 1,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `OccupiedEntry::swap_indices` where it checked if `self.index == other` instead of `self.index != other`. This caused the function to do nothing when a swap was actually needed and attempt to perform a swap (which would be redundant or potentially incorrect) only when the indices were already equal. I corrected the condition to `if self.index != other`.",
+  "guard": {},
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::entry::OccupiedEntry::swap_indices",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 77
+ },
+ {
+  "tokens_in": 11200,
+  "tokens_out": 343,
+  "steps": 6,
+  "tools": {
+   "check": 3,
+   "look": 1,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `OccupiedEntry::swap_indices` where the condition for performing the swap was incorrectly changed from `if self.index != other` to `if self.index == other`. This meant that swaps only attempted to occur when the indices were already identical (which does nothing) and skipped actual swaps. I have restored the correct condition.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::entry::OccupiedEntry::swap_indices",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 81,
+  "distractors": [
+   "src/inner.rs:322",
+   "src/map.rs:167"
+  ]
+ },
+ {
+  "tokens_in": 6753,
+  "tokens_out": 315,
+  "steps": 4,
+  "tools": {
+   "check": 1,
+   "look": 1,
+   "try": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `OccupiedEntry::swap_indices`, where a condition `if self.index == other` prevented the swap from occurring when the indices were different, which is exactly when it should have occurred. I changed it to `if self.index != other`.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::entry::OccupiedEntry::swap_indices",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 63,
+  "distractors": [
+   "src/inner.rs:322",
+   "src/map.rs:167"
+  ]
+ },
+ {
+  "tokens_in": 8299,
+  "tokens_out": 309,
+  "steps": 5,
+  "tools": {
+   "check": 2,
+   "look": 1,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `OccupiedEntry::swap_indices` where a condition `if self.index == other` prevented the swap from occurring when indices were different, which is exactly when it should have occurred. I changed it to `if self.index != other`.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::entry::OccupiedEntry::swap_indices",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 64,
+  "distractors": [
+   "src/inner.rs:322",
+   "src/map.rs:167"
+  ]
+ }
+]

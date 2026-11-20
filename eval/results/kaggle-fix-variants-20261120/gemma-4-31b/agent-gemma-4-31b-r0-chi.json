@@ -1,0 +1,74 @@
+[
+ {
+  "passed": false,
+  "error": "Remote end closed connection without response",
+  "repo": "chi",
+  "task": "fix",
+  "target": "middleware::parseRemoteAddr",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 123
+ },
+ {
+  "passed": false,
+  "error": "<urlopen error [Errno 111] Connection refused>",
+  "repo": "chi",
+  "task": "fix",
+  "target": "middleware::parseRemoteAddr",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 0
+ },
+ {
+  "passed": false,
+  "error": "<urlopen error [Errno 111] Connection refused>",
+  "repo": "chi",
+  "task": "fix",
+  "target": "middleware::parseRemoteAddr",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 0
+ },
+ {
+  "passed": false,
+  "error": "<urlopen error [Errno 111] Connection refused>",
+  "repo": "chi",
+  "task": "regress",
+  "target": "middleware::parseRemoteAddr",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 0,
+  "distractors": [
+   "middleware/terminal.go:48",
+   "middleware/terminal.go:48"
+  ]
+ },
+ {
+  "passed": false,
+  "error": "<urlopen error [Errno 111] Connection refused>",
+  "repo": "chi",
+  "task": "regress",
+  "target": "middleware::parseRemoteAddr",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 0,
+  "distractors": [
+   "middleware/terminal.go:48",
+   "middleware/terminal.go:48"
+  ]
+ },
+ {
+  "passed": false,
+  "error": "<urlopen error [Errno 111] Connection refused>",
+  "repo": "chi",
+  "task": "regress",
+  "target": "middleware::parseRemoteAddr",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 0,
+  "distractors": [
+   "middleware/terminal.go:48",
+   "middleware/terminal.go:48"
+  ]
+ }
+]

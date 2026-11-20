@@ -1,0 +1,72 @@
+[
+ {
+  "tokens_in": 81965,
+  "tokens_out": 807,
+  "steps": 21,
+  "tools": {
+   "check": 4,
+   "look": 14,
+   "replace": 3
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 11,
+   "no_progress": 2,
+   "soft_budget": 1
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `test_stmts` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"test_stmts\"}\n  step 2: look {\"what\": \"sqlparse/filters/others.py:134\"}\n  step 3: replace {\"code\": \"    def process(self, stmt, depth=0):\\n        [self.process(sgroup, depth + 1) for sgroup in stmt.get_sublists()]\\n      \n  step 4: check {}\n  step 6: look {\"what\": \"tests/test_format.py:400\"}\n  step 7: look {\"what\": \"sqlparse/filters/others.py:131-145\"}\n  step 8: look {\"what\": \"sqlparse/filters/others.py:131-136\"}\n  step 9: look {\"what\": \"sqlparse/filters/others.py:120-130\"}\n  step 11: look {\"what\": \"sqlparse/filters/others.py:84-130\"}\n  step 17: look {\"what\": \"sqlparse/filters/others.py:84-136\"}\nFiles changed so far:\nsqlparse/filters/others.py | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "fix",
+  "target": "sqlparse::filters::others::StripWhitespaceFilter::process",
+  "mode": "combo",
+  "repeat": 0,
+  "seconds": 81
+ },
+ {
+  "tokens_in": 107118,
+  "tokens_out": 878,
+  "steps": 23,
+  "tools": {
+   "check": 5,
+   "look": 16,
+   "replace": 2
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 12,
+   "no_progress": 2,
+   "soft_budget": 1
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `test_stmts` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"test_stmts\"}\n  step 2: look {\"what\": \"sqlparse/filters/others.py:131-136\"}\n  step 3: look {\"what\": \"StripWhitespaceFilter\"}\n  step 4: replace {\"code\": \"    def process(self, stmt, depth=0):\\n        [self.process(sgroup, depth + 1) for sgroup in stmt.get_sublists()]\\n      \n  step 5: check {}\n  step 7: look {\"what\": \"tests/test_format.py:400\"}\n  step 8: look {\"what\": \"sqlparse/filters/reindent.py\"}\n  step 9: look {\"what\": \"sqlparse/filters/reindent.py:126-130\"}\n  step 10: look {\"what\": \"sqlparse/filters/reindent.py:126-140\"}\n  step 11: look {\"what\": \"sqlparse/filters/reindent.py:126-138\"}\n  step 19: replace {\"code\": \"    def _split_statements(self, tlist):\\n        ttypes = T.Keyword.DML, T.Keyword.DDL\\n        tidx, token = tlist.token_\nFiles changed so far:\nsqlparse/filters/others.py | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "fix",
+  "target": "sqlparse::filters::others::StripWhitespaceFilter::process",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 88
+ },
+ {
+  "tokens_in": 10241,
+  "tokens_out": 292,
+  "steps": 6,
+  "tools": {
+   "check": 2,
+   "look": 2,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `StripWhitespaceFilter::process` where it incorrectly checked `depth != 0` instead of `depth == 0` when deciding whether to pop trailing whitespace from a statement. This caused trailing whitespace to be preserved at the top level (depth 0) but stripped inside sublists, which violated the expected behavior for multiple statements in a single string. I corrected the condition to `if depth == 0`.",
+  "guard": {},
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "fix",
+  "target": "sqlparse::filters::others::StripWhitespaceFilter::process",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 33
+ }
+]

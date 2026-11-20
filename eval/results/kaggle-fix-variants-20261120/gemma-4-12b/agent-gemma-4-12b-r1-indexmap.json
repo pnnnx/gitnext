@@ -1,0 +1,141 @@
+[
+ {
+  "tokens_in": 11635,
+  "tokens_out": 479,
+  "steps": 6,
+  "tools": {
+   "check": 2,
+   "look": 2,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `OccupiedEntry::swap_indices` where the condition `if self.index == other` was incorrectly checking for equality instead of inequality. This caused the swap logic to be skipped when it should have been executed, or vice versa depending on the intended behavior (the test confirmed that `!=` is correct). I corrected this by changing `self.index == other` to `self.index != other`.",
+  "guard": {},
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::entry::OccupiedEntry::swap_indices",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 44
+ },
+ {
+  "tokens_in": 7244,
+  "tokens_out": 456,
+  "steps": 5,
+  "tools": {
+   "check": 2,
+   "look": 1,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `OccupiedEntry::swap_indices` where the condition `if self.index == other` was used instead of `if self.index != other`. This caused the swap logic to only execute when the indices were identical (which is a no-op), and it failed to perform the swap when they were different. I corrected the condition to `self.index != other` and moved the bounds check outside the conditional block.",
+  "guard": {},
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::entry::OccupiedEntry::swap_indices",
+  "mode": "combo",
+  "repeat": 0,
+  "seconds": 41
+ },
+ {
+  "tokens_in": 10203,
+  "tokens_out": 461,
+  "steps": 6,
+  "tools": {
+   "check": 2,
+   "look": 2,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `OccupiedEntry::swap_indices` where it checked if `self.index == other` instead of `self.index != other`. This caused the swap logic to be skipped when the indices were different, which is the intended behavior for a swap operation. I corrected the condition to `self.index != other`.",
+  "guard": {},
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::entry::OccupiedEntry::swap_indices",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 42
+ },
+ {
+  "tokens_in": 12638,
+  "tokens_out": 403,
+  "steps": 7,
+  "tools": {
+   "check": 2,
+   "look": 3,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `OccupiedEntry::swap_indices` where it checked `if self.index == other` instead of `if self.index != other`. This caused the swap logic to be skipped when the indices were different, which is exactly when a swap should occur. I reverted this condition back to `!=`.",
+  "guard": {
+   "repeats": 1
+  },
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::entry::OccupiedEntry::swap_indices",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 41,
+  "distractors": [
+   "src/inner.rs:322",
+   "src/map.rs:167"
+  ]
+ },
+ {
+  "tokens_in": 7399,
+  "tokens_out": 434,
+  "steps": 5,
+  "tools": {
+   "check": 2,
+   "look": 1,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `OccupiedEntry::swap_indices` where it checked `if self.index == other` instead of `if self.index != other`. This caused the swap logic to only execute when the indices were identical, which is logically incorrect for a swap operation. I corrected the condition to `self.index != other`.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::entry::OccupiedEntry::swap_indices",
+  "mode": "combo",
+  "repeat": 0,
+  "seconds": 40,
+  "distractors": [
+   "src/inner.rs:322",
+   "src/map.rs:167"
+  ]
+ },
+ {
+  "tokens_in": 28926,
+  "tokens_out": 620,
+  "steps": 10,
+  "tools": {
+   "check": 2,
+   "look": 6,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `OccupiedEntry::swap_indices` where it checked `if self.index == other`. This condition is incorrect because `self.index` is the current index of the entry, and we want to swap it with a *different* index `other`. The check should have been `if self.index != other`, or simply removed as the logic handles the swap correctly regardless (as long as `other` is valid). Removing the incorrect equality check fixed the test failure.",
+  "guard": {
+   "repeats": 2
+  },
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::entry::OccupiedEntry::swap_indices",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 55,
+  "distractors": [
+   "src/inner.rs:322",
+   "src/map.rs:167"
+  ]
+ }
+]

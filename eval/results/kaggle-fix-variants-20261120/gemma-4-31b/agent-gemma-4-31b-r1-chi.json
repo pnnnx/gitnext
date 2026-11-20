@@ -1,0 +1,74 @@
+[
+ {
+  "passed": false,
+  "error": "HTTP Error 503: Service Unavailable",
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::node::findPattern",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 0
+ },
+ {
+  "passed": false,
+  "error": "HTTP Error 503: Service Unavailable",
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::node::findPattern",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 0
+ },
+ {
+  "passed": false,
+  "error": "HTTP Error 503: Service Unavailable",
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::node::findPattern",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 0
+ },
+ {
+  "passed": false,
+  "error": "HTTP Error 503: Service Unavailable",
+  "repo": "chi",
+  "task": "regress",
+  "target": "main::node::findPattern",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 0,
+  "distractors": [
+   "mux.go:72",
+   "mux.go:391"
+  ]
+ },
+ {
+  "passed": false,
+  "error": "HTTP Error 503: Service Unavailable",
+  "repo": "chi",
+  "task": "regress",
+  "target": "main::node::findPattern",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 0,
+  "distractors": [
+   "mux.go:72",
+   "mux.go:391"
+  ]
+ },
+ {
+  "passed": false,
+  "error": "HTTP Error 503: Service Unavailable",
+  "repo": "chi",
+  "task": "regress",
+  "target": "main::node::findPattern",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 0,
+  "distractors": [
+   "mux.go:72",
+   "mux.go:391"
+  ]
+ }
+]

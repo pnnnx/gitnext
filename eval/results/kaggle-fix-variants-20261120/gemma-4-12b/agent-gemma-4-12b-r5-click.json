@@ -1,0 +1,163 @@
+[
+ {
+  "tokens_in": 99089,
+  "tokens_out": 919,
+  "steps": 22,
+  "tools": {
+   "check": 3,
+   "look": 17,
+   "replace": 2
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 9,
+   "no_progress": 2,
+   "soft_budget": 1
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `test_bool_flag_group_competition_with_default_map` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"test_bool_flag_group_competition_with_default_map\"}\n  step 2: look {\"what\": \"src/click/core.py:798\"}\n  step 3: replace {\"code\": \"    def _default_map_has(self, name: str | None) -> bool:\\n        \\\"\\\"\\\"Check if :attr:`default_map` contains a real valu\n  step 4: check {}\n  step 6: look {\"what\": \"tests/test_options.py:3294\"}\n  step 7: look {\"what\": \"tests/test_options.py:3283-3294\"}\n  step 8: look {\"what\": \"tests/test_options.py:3270-3282\"}\n  step 9: look {\"what\": \"src/click/core.py:824\"}\n  step 10: look {\"what\": \"src/click/core.py:790-802\"}\n  step 15: look {\"what\": \"src/click/core.py:790-810\"}\n  step 16: look {\"what\": \"src/click/core.py:814-834\"}\n  step 17: look {\"what\": \"src/click/core.py:750-760\"}\n  step 18: look {\"what\": \"src/click/core.py:1-500\"}\nFiles changed so far:\nsrc/click/core.py | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "passed": true,
+  "repo": "click",
+  "task": "fix",
+  "target": "click::core::Context::_default_map_has",
+  "mode": "combo",
+  "repeat": 0,
+  "seconds": 86
+ },
+ {
+  "tokens_in": 80422,
+  "tokens_out": 844,
+  "steps": 20,
+  "tools": {
+   "check": 5,
+   "look": 13,
+   "replace": 2
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 10,
+   "no_progress": 2,
+   "soft_budget": 1
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `test_bool_flag_group_competition_with_default_map` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"test_bool_flag_group_competition_with_default_map\"}\n  step 2: look {\"what\": \"src/click/core.py:790-802\"}\n  step 3: look {\"what\": \"_default_map_has\"}\n  step 4: replace {\"code\": \"    def _default_map_has(self, name: str | None) -> bool:\\n        \\\"\\\"\\\"Check if :attr:`default_map` contains a real valu\n  step 5: check {}\n  step 8: look {\"what\": \"tests/test_options.py:3294\"}\n  step 9: look {\"what\": \"tests/test_options.py:3283-3294\"}\n  step 10: look {\"what\": \"tests/test_options.py:3270-3282\"}\n  step 11: look {\"what\": \"src/click/core.py:824\"}\n  step 16: look {\"what\": \"src/click/parser.py:169-200\"}\nFiles changed so far:\nsrc/click/core.py | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "passed": true,
+  "repo": "click",
+  "task": "fix",
+  "target": "click::core::Context::_default_map_has",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 82
+ },
+ {
+  "tokens_in": 167830,
+  "tokens_out": 1032,
+  "steps": 25,
+  "tools": {
+   "check": 3,
+   "replace": 2,
+   "look": 20
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 8,
+   "no_progress": 1,
+   "soft_budget": 1
+  },
+  "stopped": "steps",
+  "handoff": "Task: The test `test_bool_flag_group_competition_with_default_map` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: ran out of steps.\nTried (distinct actions):\n  step 3: check {}\n  step 5: look {\"what\": \"tests/test_options.py:3294\"}\n  step 6: look {\"what\": \"src/click/core.py:790-802\"}\n  step 8: look {\"what\": \"tests/test_options.py:3270-3285\"}\n  step 9: look {\"what\": \"src/click/parser.py:160-200\"}\n  step 10: look {\"what\": \"src/click/parser.py:400-500\"}\n  step 11: look {\"what\": \"src/click/core.py:1200-1300\"}\n  step 13: look {\"what\": \"src/click/core.py:1000-1100\"}\n  step 14: look {\"what\": \"src/click/core.py:1240-1350\"}\n  step 15: look {\"what\": \"src/click/core.py:840-950\"}\n  step 16: look {\"what\": \"src/click/core.py:1350-1450\"}\n  step 17: look {\"what\": \"src/click/core.py:700-750\"}\n  step 18: look {\"what\": \"src/click/core.py:830-840\"}\n  step 20: look {\"what\": \"src/click/core.py:740-760\"}\n  step 21: look {\"what\": \"src/click/core.py:814-834\"}\nFiles changed so far:\nsrc/click/core.py | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "passed": true,
+  "repo": "click",
+  "task": "fix",
+  "target": "click::core::Context::_default_map_has",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 237
+ },
+ {
+  "tokens_in": 134610,
+  "tokens_out": 1014,
+  "steps": 25,
+  "tools": {
+   "check": 4,
+   "replace": 2,
+   "look": 19
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 11,
+   "no_progress": 2,
+   "soft_budget": 1
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `test_bool_flag_group_competition_with_default_map` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"test_bool_flag_group_competition_with_default_map\"}\n  step 2: replace {\"code\": \"    def _default_map_has(self, name: str | None) -> bool:\\n        \\\"\\\"\\\"Check if :attr:`default_map` contains a real valu\n  step 3: check {}\n  step 5: look {\"what\": \"src/click/core.py:790-810\"}\n  step 6: look {\"what\": \"click::core::Context.lookup_default\"}\n  step 7: look {\"what\": \"src/click/core.py:805-830\"}\n  step 8: look {\"what\": \"tests/test_options.py:3294\"}\n  step 9: look {\"what\": \"tests/test_options.py:3270-3282\"}\n  step 10: look {\"what\": \"src/click/core.py:814-834\"}\n  step 11: look {\"what\": \"src/click/core.py:790-802\"}\n  step 12: look {\"what\": \"src/click/core.py:640-750\"}\n  step 13: look {\"what\": \"src/click/core.py:835-900\"}\n  step 14: look {\"what\": \"src/click/core.py:839-950\"}\n  step 17: look {\"what\": \"src/click/core.py:790-815\"}\nFiles changed so far:\nsrc/click/core.py | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "click",
+  "task": "regress",
+  "target": "click::core::Context::_default_map_has",
+  "mode": "combo",
+  "repeat": 0,
+  "seconds": 107,
+  "distractors": [
+   "src/click/core.py:1562",
+   "src/click/core.py:3839"
+  ]
+ },
+ {
+  "tokens_in": 42493,
+  "tokens_out": 357,
+  "steps": 12,
+  "tools": {
+   "check": 1,
+   "look": 11
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 8,
+   "no_progress": 2
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `test_bool_flag_group_competition_with_default_map` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"test_bool_flag_group_competition_with_default_map\"}\n  step 2: look {\"what\": \"tests/test_options.py:3294\"}\n  step 3: look {\"what\": \"src/click/core.py:790\"}\n  step 4: look {\"what\": \"src/click/core.py:790-802\"}\nNo file was changed.\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": false,
+  "repo": "click",
+  "task": "regress",
+  "target": "click::core::Context::_default_map_has",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 48,
+  "distractors": [
+   "src/click/core.py:1562",
+   "src/click/core.py:3839"
+  ]
+ },
+ {
+  "tokens_in": 32250,
+  "tokens_out": 383,
+  "steps": 11,
+  "tools": {
+   "check": 1,
+   "look": 10
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 8,
+   "no_progress": 2
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `test_bool_flag_group_competition_with_default_map` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"test_bool_flag_group_competition_with_default_map\"}\n  step 2: look {\"what\": \"src/click/core.py:790\"}\n  step 3: look {\"what\": \"src/click/core.py:790-802 _default_map_has\"}\nNo file was changed.\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": false,
+  "repo": "click",
+  "task": "regress",
+  "target": "click::core::Context::_default_map_has",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 45,
+  "distractors": [
+   "src/click/core.py:1562",
+   "src/click/core.py:3839"
+  ]
+ }
+]

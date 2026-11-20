@@ -1,0 +1,74 @@
+[
+ {
+  "passed": false,
+  "error": "Remote end closed connection without response",
+  "repo": "cobra",
+  "task": "fix",
+  "target": "main::Command::PersistentFlags",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 124
+ },
+ {
+  "passed": false,
+  "error": "<urlopen error [Errno 111] Connection refused>",
+  "repo": "cobra",
+  "task": "fix",
+  "target": "main::Command::PersistentFlags",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 0
+ },
+ {
+  "passed": false,
+  "error": "<urlopen error [Errno 111] Connection refused>",
+  "repo": "cobra",
+  "task": "fix",
+  "target": "main::Command::PersistentFlags",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 0
+ },
+ {
+  "passed": false,
+  "error": "<urlopen error [Errno 111] Connection refused>",
+  "repo": "cobra",
+  "task": "regress",
+  "target": "main::Command::PersistentFlags",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 0,
+  "distractors": [
+   "completions.go:244",
+   "command.go:1173"
+  ]
+ },
+ {
+  "passed": false,
+  "error": "<urlopen error [Errno 111] Connection refused>",
+  "repo": "cobra",
+  "task": "regress",
+  "target": "main::Command::PersistentFlags",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 0,
+  "distractors": [
+   "completions.go:244",
+   "command.go:1173"
+  ]
+ },
+ {
+  "passed": false,
+  "error": "<urlopen error [Errno 111] Connection refused>",
+  "repo": "cobra",
+  "task": "regress",
+  "target": "main::Command::PersistentFlags",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 0,
+  "distractors": [
+   "completions.go:244",
+   "command.go:1173"
+  ]
+ }
+]

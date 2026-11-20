@@ -1,0 +1,164 @@
+[
+ {
+  "tokens_in": 43467,
+  "tokens_out": 883,
+  "steps": 13,
+  "tools": {
+   "check": 3,
+   "replace": 2,
+   "look": 8
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 8,
+   "no_progress": 2
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `TestGetHead` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"TestGetHead\"}\n  step 2: replace {\"code\": \"\\t\\tif len(nds) != 0 {\\n\\t\\t\\tcontinue\\n\\t\\t}\\n\\n\\t\\tn = nn.findEdge(nds[0].typ, pattern[0])\\n\\t\\tif n == nil {\\n\\t\\t\\tcon\n  step 3: look {\"what\": \"tree.go:591-631\"}\n  step 4: replace {\"code\": \"func (n *node) findPattern(pattern string) bool {\\n\\tnn := n\\n\\tfor _, nds := range nn.children {\\n\\t\\tif len(nds) == 0 {\\\n  step 5: check {}\nFiles changed so far:\ntree.go | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "passed": true,
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::node::findPattern",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 96
+ },
+ {
+  "tokens_in": 93340,
+  "tokens_out": 1519,
+  "steps": 23,
+  "tools": {
+   "check": 5,
+   "look": 14,
+   "replace": 4
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 12,
+   "no_progress": 2,
+   "soft_budget": 1
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `TestGetHead` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"TestGetHead\"}\n  step 2: look {\"what\": \"tree.go:594-610\"}\n  step 3: look {\"what\": \"findPattern\"}\n  step 4: replace {\"code\": \"func (n *node) findPattern(pattern string) bool {\\n\\tnn := n\\n\\tfor _, nds := range nn.children {\\n\\t\\tif len(nds) == 0 {\\\n  step 5: check {}\n  step 7: look {\"what\": \"tree.go:591-631\"}\n  step 8: look {\"what\": \"tree.go:598\"}\n  step 9: look {\"what\": \"TestGetHead\"}\n  step 10: look {\"what\": \"middleware/get_head.go\"}\n  step 16: look {\"what\": \"middleware/get_head.go:1-39\"}\n  step 19: replace {\"code\": \"func (n *node) findPattern(pattern string) bool {\\n\\tnn := n\\n\\tfor _, nds := range nn.children {\\n\\t\\tif len(nds) == 0 {\\\nFiles changed so far:\ntree.go | 6 +++++-\n 1 file changed, 5 insertions(+), 1 deletion(-)\nNo failing command was seen.",
+  "passed": true,
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::node::findPattern",
+  "mode": "combo",
+  "repeat": 0,
+  "seconds": 147
+ },
+ {
+  "tokens_in": 62880,
+  "tokens_out": 615,
+  "steps": 16,
+  "tools": {
+   "check": 3,
+   "look": 12,
+   "replace": 1
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 10,
+   "no_progress": 2
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `TestGetHead` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"TestGetHead\"}\n  step 2: look {\"what\": \"tree.go:591-631\"}\n  step 3: look {\"what\": \"findPattern\"}\n  step 4: replace {\"code\": \"func (n *node) findPattern(pattern string) bool {\\n\\tnn := n\\n\\tfor _, nds := range nn.children {\\n\\t\\tif len(nds) == 0 {\\\n  step 5: check {}\n  step 8: look {\"what\": \"tree.go:598\"}\nFiles changed so far:\ntree.go | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "passed": true,
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::node::findPattern",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 87
+ },
+ {
+  "tokens_in": 98460,
+  "tokens_out": 2063,
+  "steps": 23,
+  "tools": {
+   "check": 6,
+   "replace": 4,
+   "look": 13
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 15,
+   "no_progress": 2,
+   "soft_budget": 1
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `TestGetHead` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"TestGetHead\"}\n  step 2: replace {\"code\": \"\\t\\tif len(nds) == 0 {\\n\\t\\t\\tcontinue\\n\\t\\t}\", \"symbol\": \"\\t\\tif len(nds) != 0 {\\n\\t\\t\\tcontinue\\n\\t\\t}\"}\n  step 3: check {}\n  step 5: look {\"what\": \"tree.go:591-631 findPattern\"}\n  step 6: look {\"what\": \"tree.go:591-631\"}\n  step 7: look {\"what\": \"tree.go:598\"}\n  step 15: look {\"what\": \"tree.go:580-600\"}\n  step 19: replace {\"code\": \"func (n *node) findPattern(pattern string) bool {\\n\\tnn := n\\n\\tfor _, nds := range nn.children {\\n\\t\\tif len(nds) == 0 {\\\nFiles changed so far:\ntree.go | 6 +++++-\n 1 file changed, 5 insertions(+), 1 deletion(-)\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "chi",
+  "task": "regress",
+  "target": "main::node::findPattern",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 186,
+  "distractors": [
+   "mux.go:72",
+   "mux.go:391"
+  ]
+ },
+ {
+  "tokens_in": 94088,
+  "tokens_out": 1501,
+  "steps": 23,
+  "tools": {
+   "check": 5,
+   "look": 14,
+   "replace": 4
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 11,
+   "no_progress": 2,
+   "soft_budget": 1
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `TestGetHead` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"TestGetHead\"}\n  step 2: look {\"what\": \"tree.go:594-610\"}\n  step 3: look {\"what\": \"findPattern\"}\n  step 4: replace {\"code\": \"func (n *node) findPattern(pattern string) bool {\\n\\tnn := n\\n\\tfor _, nds := range nn.children {\\n\\t\\tif len(nds) == 0 {\\\n  step 5: check {}\n  step 7: look {\"what\": \"tree.go:591-631\"}\n  step 8: look {\"what\": \"tree.go:598\"}\n  step 9: look {\"what\": \"TestGetHead\"}\n  step 10: look {\"what\": \"middleware/get_head.go\"}\n  step 16: look {\"what\": \"middleware/get_head.go:1-39\"}\n  step 19: replace {\"code\": \"func (n *node) findPattern(pattern string) bool {\\n\\tnn := n\\n\\tfor _, nds := range nn.children {\\n\\t\\tif len(nds) == 0 {\\\n  step 23: replace {\"code\": \"func (n *node) findPattern(pattern string) bool {\\n\\tnn := n\\n\\tfor _, nds := range nn.children {\\n\\t\\tif len(nds) != 0 {\\\nNo file was changed.\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": false,
+  "repo": "chi",
+  "task": "regress",
+  "target": "main::node::findPattern",
+  "mode": "combo",
+  "repeat": 0,
+  "seconds": 121,
+  "distractors": [
+   "mux.go:72",
+   "mux.go:391"
+  ]
+ },
+ {
+  "tokens_in": 51605,
+  "tokens_out": 565,
+  "steps": 14,
+  "tools": {
+   "check": 3,
+   "look": 10,
+   "replace": 1
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 8,
+   "no_progress": 2
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `TestGetHead` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"TestGetHead\"}\n  step 2: look {\"what\": \"tree.go:591-631\"}\n  step 3: look {\"what\": \"findPattern\"}\n  step 4: look {\"what\": \"tree.go:598\"}\n  step 5: replace {\"code\": \"func (n *node) findPattern(pattern string) bool {\\n\\tnn := n\\n\\tfor _, nds := range nn.children {\\n\\t\\tif len(nds) == 0 {\\\n  step 6: check {}\nFiles changed so far:\ntree.go | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "chi",
+  "task": "regress",
+  "target": "main::node::findPattern",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 81,
+  "distractors": [
+   "mux.go:72",
+   "mux.go:391"
+  ]
+ }
+]

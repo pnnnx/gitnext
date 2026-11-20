@@ -5,6 +5,67 @@ Runs 1–5: five repos (one per language), one sample (seed 7, 8 functions, 4 mu
 From run 6 on: ten repos, 20 functions and 8 mutants per repo, three seeds, and a threshold next to every number.
 Since the run after run 4, a rename only counts as ok if the project's tests still pass too.
 
+## Run 11 · fixing a bug: prove which change broke the test
+
+The weak kind of task in run 10 is fixing a seeded bug. Here four ways of answering `check <test>` when a test fails
+are compared on the same tasks (modes of `eval/agent.py`):
+
+- **V1 show** (`lite`, as in run 10): the failure, the code the test ran with the most likely culprit first, and what
+  changed since the tests last passed (`learn-tests`), as it was and as it is now.
+- **V2 prove** (`prove`): the harness undoes each change made since then on its own (at most six) and runs the
+  failing test; the one whose undoing makes it pass is named, with the function as it should be and the call that
+  puts it back. If no single change does, or gitnext does not find the test, the answer is V1's.
+- **V3 try** (`try`): V1, plus a `try` tool that puts up to three versions of a fix in place, runs `why` and `check`
+  on each and keeps the first that passes.
+- **V4 combined** (`combo`): V2's proof, the changes tried in the order gitnext ranks the code the test ran, and
+  shown without V1's view of the same change (the first answer of `check` about half as long); no proof → V1's
+  view; `try` with two versions.
+
+A new kind of task, **regress**: the seeded bug committed together with two meant changes — a comparison written the
+other way round (`a < b` → `b > a`), in other functions the failing test runs — so "undo everything since the tests
+last passed" is not a fix; solved = the tests pass and both meant changes are still there. **Fix** is the bug alone.
+The six projects, seed 11 (sets 0–3 are the bugs of run 10), `--learn`, context 16384, KV cache q8_0, temperature
+0.2, 25 steps, 20 minutes; gitnext `main` 9f5a623 with `eval/agent.py` of this run, llama.cpp 5676dfb. Every task in
+every variant; every run: [kaggle-fix-variants-20261120](kaggle-fix-variants-20261120) (`summary.md`,
+`summarize.py`).
+
+**Gemma 4 31B** (one server over both T4 cards, 2.6 hours): V1, V2, V3 solve 37 of 37, 41 of 41 and 38 of 39. Not a
+single pair differs but one (V3 lost a fix on sqlparse). The one difference that holds is cost: on fix V2 sends 16%
+fewer input tokens than V1 (median ratio, p = 0.04, Wilcoxon), V3 30% more than V2 (p = 0.01). 28 of the 145 runs
+fell on llama-server crashes and are left out: the server kept its prompt cache in host memory (`--cache-ram`, 8 GB by
+default) and the host ran out of it; the notebook's own report counted those runs as failures, and the early
+"V2 3 : 0" seen while it ran was those crashes.
+
+**Gemma 4 12B** (one server per card, 4.4 hours, `--cache-ram 0`, no crashes), 102 tasks per variant:
+
+| task | V1 show | V2 prove | V4 combined |
+|---|---|---|---|
+| fix | 28 of 53 | 46 of 53 | 49 of 53 |
+| regress | 21 of 49 | 45 of 49 | 38 of 49 |
+| both | 49 of 102 (48%) | 91 of 102 (89%) | 87 of 102 (85%) |
+
+| pair | gained / lost | p (sign) | difference, points (95% interval, bootstrap over tasks) |
+|---|---|---|---|
+| V1 → V2 | 45 / 3 | <0.001 | +41.2 (+30.4 to +52.0) |
+| V1 → V4 | 44 / 6 | <0.001 | +37.3 (+25.5 to +49.0) |
+| V2 → V4, fix | 5 / 2 | 0.45 | +5.7 (−3.8 to +15.1) |
+| V2 → V4, regress | 2 / 9 | 0.07 | −14.3 (−26.5 to −2.0) |
+| V2 → V4, both | 7 / 11 | 0.48 | −3.9 (−11.8 to +3.9) |
+
+- **The proof is what helps.** With V1 the 12B model often does not find the change at fault and spends its 25 steps;
+  told which change it is, it fixes nearly every bug: semver 3 → 15 of 15, sqlparse 4 → 16 of 19. Input tokens do
+  not change significantly (V1 → V2: median ratio 0.93, p = 0.29).
+- **Combining the three does not beat the proof alone.** V4 is slightly better on fix and worse on regress, where it
+  sends 13% more input tokens than V2 (p = 0.01). In the regress tasks it lost, the model calls `look` 14–24 times and
+  repeats itself; V2 solved several of the same tasks in 5–7 steps. The shorter answer leaves out the list of code the
+  test ran, and the 12B model goes looking for it.
+- **`try` was never called** in 102 V4 runs (nor did V3 help the 31B model).
+- **Regress works as a trap only for the weaker model:** the 31B model kept the meant changes in every run; the 12B
+  model reverted one of them in 3 runs (one per variant).
+- V1 here is not quite the lite of run 10: these runs learn the coverage map first (`--learn`) and use a newer
+  build (0.3.1), and cobra's fix tasks, which no mode could pass in run 10, pass here. Fix for Gemma 4 12B with V1
+  is 28 of 53 here against 7 of 30 there.
+
 ## Run 10 · the same tasks with models of four other families
 
 The agent results of the preprint come from one family (Qwen 3.5). Here the same harness, the same build and the

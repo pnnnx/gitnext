@@ -1,0 +1,166 @@
+[
+ {
+  "tokens_in": 123249,
+  "tokens_out": 1094,
+  "steps": 25,
+  "tools": {
+   "check": 4,
+   "replace": 1,
+   "look": 20
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 7,
+   "no_progress": 1,
+   "soft_budget": 1
+  },
+  "stopped": "steps",
+  "handoff": "Task: The test `test_basic` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: ran out of steps.\nTried (distinct actions):\n  step 5: look {\"what\": \"tests/test_version_req.rs:30-45\"}\n  step 6: look {\"what\": \"req\"}\n  step 7: look {\"what\": \"tests/test_version_req.rs\"}\n  step 8: look {\"what\": \"tests/test_version_req.rs:38-40\"}\n  step 10: look {\"what\": \"tests/test_version_req.rs:20-30\"}\n  step 11: look {\"what\": \"tests/test_version_req.rs:1-20\"}\n  step 12: look {\"what\": \"util::req\"}\n  step 13: look {\"what\": \"VersionReq::parse\"}\n  step 14: look {\"what\": \"VersionReq::from_str\"}\n  step 15: look {\"what\": \"version_req\"}\n  step 16: look {\"what\": \"comparator\"}\n  step 17: look {\"what\": \"parse::comparator\"}\n  step 18: look {\"what\": \"numeric_identifier\"}\n  step 19: look {\"what\": \"src/parse.rs:262-285\"}\n  step 25: look {\"what\": \"src/parse.rs:287-364\"}\nFiles changed so far:\nsrc/parse.rs | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "passed": true,
+  "repo": "semver",
+  "task": "fix",
+  "target": "semver::parse::op",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 94
+ },
+ {
+  "tokens_in": 131686,
+  "tokens_out": 1679,
+  "steps": 24,
+  "tools": {
+   "check": 4,
+   "look": 18,
+   "replace": 2
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 12,
+   "no_progress": 2,
+   "soft_budget": 1
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `test_basic` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"test_basic\"}\n  step 2: look {\"what\": \"src/parse.rs:264\"}\n  step 5: look {\"what\": \"src/parse.rs:260-285\"}\n  step 6: look {\"what\": \"tests/test_version_req.rs:39\"}\n  step 7: look {\"what\": \"src/parse.rs:260-310\"}\n  step 8: look {\"what\": \"src/parse.rs:287-310\"}\n  step 9: look {\"what\": \"src/parse.rs:100-150\"}\n  step 14: look {\"what\": \"src/parse.rs:287-364\"}\n  step 15: look {\"what\": \"src/parse.rs:150-260\"}\n  step 16: look {\"what\": \"src/parse.rs:262-285\"}\n  step 19: replace {\"code\": \"fn op(input: &str) -> (Op, &str) {\\n    let bytes = input.as_bytes();\\n    if bytes.first() == Some(&b'=') {\\n        (Op:\n  step 20: check {}\nFiles changed so far:\nsrc/parse.rs | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "passed": true,
+  "repo": "semver",
+  "task": "fix",
+  "target": "semver::parse::op",
+  "mode": "combo",
+  "repeat": 0,
+  "seconds": 139
+ },
+ {
+  "tokens_in": 132186,
+  "tokens_out": 1114,
+  "steps": 25,
+  "tools": {
+   "check": 4,
+   "look": 19,
+   "replace": 2
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 9,
+   "no_progress": 2,
+   "soft_budget": 1
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `test_basic` fails. Find the bug in the code and fix it (do not change the tests).\nStopped: no_progress.\nTried (distinct actions):\n  step 2: look {\"what\": \"src/parse.rs:262-285\"}\n  step 3: look {\"what\": \"op\"}\n  step 4: replace {\"code\": \"fn op(input: &str) -> (Op, &str) {\\n    let bytes = input.as_bytes();\\n    if bytes.first() == Some(&b'=') {\\n        (Op:\n  step 5: check {}\n  step 7: look {\"what\": \"tests/test_version_req.rs:39\"}\n  step 8: look {\"what\": \"util::req\"}\n  step 9: look {\"what\": \"VersionReq::parse\"}\n  step 10: look {\"what\": \"VersionReq::from_str\"}\n  step 11: look {\"what\": \"version_req\"}\n  step 12: look {\"what\": \"comparator\"}\n  step 13: look {\"what\": \"src/parse.rs:287-364 comparator\"}\n  step 14: look {\"what\": \"src/parse.rs:287-364\"}\n  step 15: look {\"what\": \"numeric_identifier\"}\n  step 16: look {\"what\": \"src/parse.rs:156-184\"}\n  step 17: look {\"what\": \"src/parse.rs:262-285 op\"}\nFiles changed so far:\nsrc/parse.rs | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "passed": true,
+  "repo": "semver",
+  "task": "fix",
+  "target": "semver::parse::op",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 99
+ },
+ {
+  "tokens_in": 147600,
+  "tokens_out": 918,
+  "steps": 25,
+  "tools": {
+   "check": 3,
+   "replace": 1,
+   "look": 21
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 9,
+   "no_progress": 1,
+   "soft_budget": 1
+  },
+  "stopped": "steps",
+  "handoff": "Task: The test `test_basic` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: ran out of steps.\nTried (distinct actions):\n  step 2: replace {\"code\": \"fn op(input: &str) -> (Op, &str) {\\n    let bytes = input.as_bytes();\\n    if bytes.first() == Some(&b'=') {\\n        (Op:\n  step 3: check {}\n  step 5: look {\"what\": \"src/parse.rs\"}\n  step 6: look {\"what\": \"src/parse.rs:287-360\"}\n  step 7: look {\"what\": \"numeric_identifier\"}\n  step 9: look {\"what\": \"src/parse.rs:28-35\"}\n  step 10: look {\"what\": \"src/parse.rs:198-205\"}\n  step 11: look {\"what\": \"src/parse.rs:34-81\"}\n  step 12: look {\"what\": \"tests/test_version_req.rs:39\"}\n  step 13: look {\"what\": \"src/parse.rs:287-364\"}\n  step 14: look {\"what\": \"src/parse.rs:109-135\"}\n  step 15: look {\"what\": \"src/parse.rs:404\"}\n  step 21: look {\"what\": \"src/parse.rs:262-285\"}\n  step 22: look {\"what\": \"src/parse.rs:102-135\"}\n  step 23: look {\"what\": \"src/parse.rs:87-105\"}\nFiles changed so far:\nsrc/parse.rs | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "semver",
+  "task": "regress",
+  "target": "semver::parse::op",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 90,
+  "distractors": [
+   "src/identifier.rs:201",
+   "src/eval.rs:135"
+  ]
+ },
+ {
+  "tokens_in": 141801,
+  "tokens_out": 1136,
+  "steps": 25,
+  "tools": {
+   "check": 3,
+   "look": 21,
+   "replace": 1
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 7,
+   "no_progress": 1,
+   "soft_budget": 1
+  },
+  "stopped": "steps",
+  "handoff": "Task: The test `test_basic` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: ran out of steps.\nTried (distinct actions):\n  step 4: check {}\n  step 6: look {\"what\": \"tests/test_version_req.rs:39\"}\n  step 7: look {\"what\": \"util::req\"}\n  step 8: look {\"what\": \"VersionReq::parse\"}\n  step 9: look {\"what\": \"VersionReq::from_str\"}\n  step 10: look {\"what\": \"version_req\"}\n  step 11: look {\"what\": \"comparator\"}\n  step 12: look {\"what\": \"src/parse.rs:287-364 comparator\"}\n  step 13: look {\"what\": \"src/parse.rs:287-364\"}\n  step 14: look {\"what\": \"numeric_identifier\"}\n  step 15: look {\"what\": \"src/parse.rs:156-184\"}\n  step 16: look {\"what\": \"src/parse.rs:262-285\"}\n  step 17: look {\"what\": \"src/parse.rs:293\"}\n  step 19: look {\"what\": \"src/parse.rs:34-105\"}\n  step 25: look {\"what\": \"src/parse.rs:262-300\"}\nFiles changed so far:\nsrc/parse.rs | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "semver",
+  "task": "regress",
+  "target": "semver::parse::op",
+  "mode": "combo",
+  "repeat": 0,
+  "seconds": 105,
+  "distractors": [
+   "src/identifier.rs:201",
+   "src/eval.rs:135"
+  ]
+ },
+ {
+  "tokens_in": 109824,
+  "tokens_out": 697,
+  "steps": 25,
+  "tools": {
+   "check": 2,
+   "look": 23
+  },
+  "answer": "",
+  "guard": {
+   "repeats": 13,
+   "no_progress": 2,
+   "soft_budget": 1
+  },
+  "stopped": "no_progress",
+  "handoff": "Task: The test `test_basic` fails. Find the bug in the code and fix it (do not change the tests). The last commit also has changes that are meant: keep them, change only what is wrong.\nStopped: no_progress.\nTried (distinct actions):\n  step 1: check {\"test\": \"test_basic\"}\n  step 2: look {\"what\": \"tests/test_version_req.rs:39\"}\n  step 3: look {\"what\": \"src/parse.rs:262-285 op\"}\n  step 4: look {\"what\": \"src/parse.rs\"}\n  step 6: look {\"what\": \"src/parse.rs:262\"}\n  step 8: look {\"what\": \"src/parse.rs:250-300\"}\n  step 11: look {\"what\": \"src/parse.rs:287-364 comparator\"}\n  step 13: look {\"what\": \"src/parse.rs:287-364\"}\n  step 14: look {\"what\": \"src/parse.rs:156-160 numeric_identifier\"}\n  step 16: look {\"what\": \"src/parse.rs:156-170 numeric_identifier\"}\n  step 17: look {\"what\": \"src/parse.rs:156-170\"}\n  step 21: look {\"what\": \"src/parse.rs:156-184 numeric_identifier\"}\nNo file was changed.\nNo failing command was seen.",
+  "distractors_kept": "2/2",
+  "passed": false,
+  "repo": "semver",
+  "task": "regress",
+  "target": "semver::parse::op",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 66,
+  "distractors": [
+   "src/identifier.rs:201",
+   "src/eval.rs:135"
+  ]
+ }
+]

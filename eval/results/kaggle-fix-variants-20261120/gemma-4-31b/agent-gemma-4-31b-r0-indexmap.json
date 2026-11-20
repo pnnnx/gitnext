@@ -1,0 +1,143 @@
+[
+ {
+  "tokens_in": 23993,
+  "tokens_out": 464,
+  "steps": 10,
+  "tools": {
+   "check": 5,
+   "look": 3,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `reserve_entries` in `src/inner.rs`. The condition `if try_add > additional || self.entries.try_reserve_exact(try_add).is_ok()` incorrectly returned early if `try_add` was greater than `additional`, even if the reservation hadn't actually happened or succeeded for the required amount. I changed it to `if try_add >= additional && self.entries.try_reserve_exact(try_add).is_ok()`, ensuring that we only return early if we have successfully reserved at least as much capacity as request",
+  "guard": {
+   "repeats": 1
+  },
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::Core::reserve_entries",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 118
+ },
+ {
+  "tokens_in": 20552,
+  "tokens_out": 407,
+  "steps": 9,
+  "tools": {
+   "check": 6,
+   "look": 1,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `indexmap::inner::Core::reserve_entries`, where a logical OR (`||`) was used instead of a logical AND (`&&`) when deciding whether to return early from the reservation process. This caused the function to return without reserving enough capacity if `try_add` was greater than `additional`, even if the actual reservation hadn't happened yet. Changing `||` back to `&&` fixed the issue and allowed the tests to pass.",
+  "guard": {
+   "repeats": 2
+  },
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::Core::reserve_entries",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 92
+ },
+ {
+  "tokens_in": 9396,
+  "tokens_out": 484,
+  "steps": 5,
+  "tools": {
+   "check": 1,
+   "look": 2,
+   "try": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `reserve_entries` where a logical OR (`||`) was used instead of a logical AND (`&&`) when checking if it could reserve based on the indices' capacity. This caused the function to return early without actually reserving the requested capacity if `try_add > additional`. Changing it to `&&` ensures that we only skip the explicit `reserve_exact(additional)` call if we have successfully reserved at least as much space as requested using the soft-limit logic.",
+  "guard": {},
+  "passed": true,
+  "repo": "indexmap",
+  "task": "fix",
+  "target": "indexmap::inner::Core::reserve_entries",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 94
+ },
+ {
+  "tokens_in": 32260,
+  "tokens_out": 517,
+  "steps": 12,
+  "tools": {
+   "check": 7,
+   "look": 3,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `reserve_entries` where the condition for skipping `reserve_exact(additional)` used a logical OR (`||`) instead of a logical AND (`&&`). Specifically, it would return early if `try_add > additional`, even if `try_reserve_exact(try_add)` failed. I changed the condition to `if try_add >= additional && self.entries.try_reserve_exact(try_add).is_ok() { return; }` to ensure that we only skip the explicit reservation when we have already successfully reserved enough capacity (or more) t",
+  "guard": {
+   "repeats": 3
+  },
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::Core::reserve_entries",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 105,
+  "distractors": [
+   "src/map.rs:167",
+   "src/inner.rs:322"
+  ]
+ },
+ {
+  "tokens_in": 8232,
+  "tokens_out": 314,
+  "steps": 5,
+  "tools": {
+   "check": 2,
+   "look": 1,
+   "replace": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `src/inner.rs` within the `reserve_entries` function. A logical OR (`||`) was used instead of a logical AND (`&&`) when checking if the current capacity (up to a soft limit) was sufficient or could be reserved without failing, which caused it to return prematurely and skip necessary memory reservation. Changing `||` back to `&&` fixed the issue.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::Core::reserve_entries",
+  "mode": "prove",
+  "repeat": 0,
+  "seconds": 56,
+  "distractors": [
+   "src/map.rs:167",
+   "src/inner.rs:322"
+  ]
+ },
+ {
+  "tokens_in": 6840,
+  "tokens_out": 451,
+  "steps": 4,
+  "tools": {
+   "check": 1,
+   "look": 1,
+   "try": 1,
+   "finish": 1
+  },
+  "answer": "The bug was in `reserve_entries` where a logical OR (`||`) was used instead of a logical AND (`&&`). Specifically, if `try_add > additional`, the function would return immediately without actually reserving any capacity, causing tests that check for minimum capacity to fail. Changing it back to `&&` ensures that we only skip the explicit reservation if we already have enough capacity or can successfully reserve the required amount.",
+  "guard": {},
+  "distractors_kept": "2/2",
+  "passed": true,
+  "repo": "indexmap",
+  "task": "regress",
+  "target": "indexmap::inner::Core::reserve_entries",
+  "mode": "try",
+  "repeat": 0,
+  "seconds": 64,
+  "distractors": [
+   "src/map.rs:167",
+   "src/inner.rs:322"
+  ]
+ }
+]

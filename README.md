@@ -37,6 +37,18 @@ Three local models (Qwen 3.5 4B, 9B and 27B), the same 72 tasks each way — fin
 
 The same harness, the same gitnext build and the same tasks with models of four other makers — Gemma 4 12B (Google), gpt-oss-20b (OpenAI), Ministral 3 14B (Mistral AI) and Granite 4.1 8B (IBM), 120 tasks each (the 72 above and 48 new ones), 4-bit, on two T4 cards. With the five gitnext tools the four solve 331 of 480 tasks against 192 with plain tools: 69% against 40%, +29 points (the 95% interval is +23 to +35), and each model gains on its own (p < 0.001 for each). Without gitnext the models lie 14 points apart (32–46%), with it 7 points (64–71%). Listing the callers gains most (26 → 99 of 120); fixing a seeded bug stays the weak kind (16 → 40). Qwen 3.5 9B, run again on its 72 tasks as an anchor, solved 47 and 53 (44 and 51 the first time); a single task came out the same in 85% and 92% of cases. Details: [eval/results/HISTORY.md](eval/results/HISTORY.md) (run 10); every run: [eval/results/kaggle-families-20261120](eval/results/kaggle-families-20261120).
 
+### Fixing a bug: prove which change broke the test
+
+When a test fails, the harness can do more than show what changed since the tests last passed: it undoes each of those changes on its own and runs the failing test, and the model is told which change makes it pass again (`eval/agent.py --modes prove`). Gemma 4 12B, the same 102 tasks each way — a seeded bug alone (fix), or the bug committed together with two changes that are meant and must stay (regress), on the six projects:
+
+| what the model gets | fix | regress | all |
+|---|---:|---:|---:|
+| what changed (V1, `lite`) | 28 of 53 | 21 of 49 | 49 of 102 (48%) |
+| **the change proven to be the cause (V2, `prove`)** | 46 of 53 | **45 of 49** | **91 of 102 (89%)** |
+| the proof, shorter, plus two tries (V4, `combo`) | **49 of 53** | 38 of 49 | 87 of 102 (85%) |
+
+The proof turns 45 failures into fixes and 3 fixes into failures (+41 points, the 95% interval +30 to +52, p < 0.001), for the same tokens. Combining it with a shorter answer and a `try` tool that tests two versions of a fix does not help: −4 points against the proof alone (−12 to +4), worse on regress (2 gained, 9 lost), and the model never called `try`. Gemma 4 31B solves nearly every task either way (116 of 117), so the proof is not needed there and does not get in the way. For now the proof lives in the evaluation harness, not yet in `gitnext check`. Details: [eval/results/HISTORY.md](eval/results/HISTORY.md) (run 11); every run: [eval/results/kaggle-fix-variants-20261120](eval/results/kaggle-fix-variants-20261120).
+
 ### A failing test leads to the function at fault
 
 <p align="center"><img src="docs/images/why.svg" width="900" alt="Share of seeded bugs where gitnext why names the function at fault first: 18% from the call graph, 86% with the learned coverage map"></p>
@@ -72,7 +84,7 @@ Most of an agent session is the system prompt re-sent on every step, so the win 
 - 149 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
 - The coverage map for Java needs Maven and tests that run on the JUnit Platform (JUnit 5, or JUnit 4 under surefire 3.6 and newer); Gradle is not learned. For JS / TS it needs vitest.
 - A rename breaks the build or the tests in 9% of cases — mostly dynamic access and names shared by unrelated types.
-- Small models rarely fix a seeded bug: 6 of 18 at best for the 4B and the 9B model, and 7–16 of 30 for the four other families with the five tools. With the full tool list they do not start from `check <test>` (the 9B model never did in 18 tasks) — give them the short list.
+- Small models rarely fix a seeded bug on their own: 6 of 18 at best for the 4B and the 9B model, and 7–16 of 30 for the four other families with the five tools. Told which change broke the test (above), Gemma 4 12B fixes 46 of 53. With the full tool list they do not start from `check <test>` (the 9B model never did in 18 tasks) — give them the short list.
 - A rename done with the tool passed the judge no more often than one done by hand (12–13 of 18 against 14): names that are also common words, and mentions in documentation — the latter are renamed now.
 
 ## Install
