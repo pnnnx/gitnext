@@ -180,6 +180,11 @@ pub fn prove(root: &Path, g: &Graph, since: &str, failing: &[&Step], rank: &[usi
     if std::env::var("GITNEXT_PROVE").as_deref() == Ok("0") || failing.is_empty() || failing.iter().any(|s| s.timed_out) {
         return None;
     }
+    // the output names no failing test or error: the command itself did not run (`pytest: command
+    // not found`, no test runner) — undoing the code would change nothing
+    if failing.iter().any(|s| s.digest.failures.is_empty()) {
+        return None;
+    }
     let mut hunks = changes_since(root, since);
     if hunks.is_empty() {
         return None;

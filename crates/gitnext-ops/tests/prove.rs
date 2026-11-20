@@ -1,6 +1,7 @@
 //! `why <test>` proves which change since the tests last passed breaks the test: each change is
-//! undone on its own and the test run again. Here a real project (Python, pytest) gets a bug and a
-//! meant change after its map was learned; the bug is found, and every file is as it was after.
+//! undone on its own and the test run again. Here a real project (a Rust crate under `cargo test`)
+//! gets a bug and a meant change after its map was learned; the bug is found, and every file is as
+//! it was after.
 
 use gitnext_ops::gitnext_index::{Graph, Index, TestMap};
 use gitnext_ops::prove::{self, Hunk};
@@ -31,8 +32,8 @@ fn git(dir: &Path, args: &[&str]) -> String {
     String::from_utf8(out.stdout).unwrap()
 }
 
-const CALC: &str = "def bigger(a, b):\n    return a > b\n\n\ndef pick(a, b):\n    if bigger(a, b):\n        return a\n    return b\n\n\ndef double(x):\n    return x * 2\n";
-const TESTS: &str = "from pkg.calc import pick, double\n\n\ndef test_pick():\n    assert pick(3, 2) == 3\n    assert pick(1, 5) == 5\n\n\ndef test_double():\n    assert double(4) == 8\n";
+const CALC: &str = "pub fn bigger(a: i32, b: i32) -> bool {\n    a > b\n}\n\npub fn pick(a: i32, b: i32) -> i32 {\n    if bigger(a, b) {\n        a\n    } else {\n        b\n    }\n}\n\npub fn double(x: i32) -> i32 {\n    x * 2\n}\n";
+const TESTS: &str = "use demo::calc::{double, pick};\n\n#[test]\nfn test_pick() {\n    assert_eq!(pick(3, 2), 3);\n    assert_eq!(pick(1, 5), 5);\n}\n\n#[test]\nfn test_double() {\n    assert_eq!(double(4), 8);\n}\n";
 
 #[test]
 fn hunks_of_a_diff_are_undone_one_at_a_time() {
@@ -49,7 +50,11 @@ fn hunks_of_a_diff_are_undone_one_at_a_time() {
 
 #[test]
 fn the_change_that_breaks_the_test_is_proven_and_the_rest_is_left_alone() {
-    let dir = project("e2e", &[("pkg/__init__.py", ""), ("pkg/calc.py", CALC), ("tests/__init__.py", ""), ("tests/test_calc.py", TESTS)]);
+    let dir = project(
+        "e2e",
+        &[("Cargo.toml", "[package]\nname = \"demo\"\nversion = \"0.1.0\"\nedition = \"2021\"\n\n[workspace]\n"), ("src/lib.rs", "pub mod calc;\n"), ("src/calc.rs", CALC), ("tests/test_calc.rs", TESTS)],
+    );
+    std::fs::write(dir.join(".gitignore"), "target/\n").unwrap();
     git(&dir, &["init", "-q"]);
     git(&dir, &["add", "-A"]);
     git(&dir, &["-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "commit.gpgsign=false", "commit", "-q", "-m", "tests pass"]);
@@ -60,36 +65,36 @@ fn the_change_that_breaks_the_test_is_proven_and_the_rest_is_left_alone() {
         .iter()
         .map(|n| {
             let i = (0..g.syms.len()).find(|&i| g.syms[i].sym.name == *n).unwrap();
-            (g.unique_name(i), g.syms[i].sym.body_hash.clone(), "tests/test_calc.py".to_string(), "test_pick".to_string())
+            (g.unique_name(i), g.syms[i].sym.body_hash.clone(), "tests/test_calc.rs".to_string(), "test_pick".to_string())
         })
         .collect();
     TestMap::write(&dir, "test", &ran).unwrap();
     TestMap::open_existing(&dir).unwrap().set_meta("commit", commit.trim()).unwrap();
     // since then: the bug, and a change that is meant (it keeps test_double passing)
-    let changed = CALC.replace("return a > b", "return a < b").replace("return x * 2", "return 2 * x");
-    std::fs::write(dir.join("pkg/calc.py"), &changed).unwrap();
+    let changed = CALC.replace("    a > b", "    a < b").replace("x * 2", "2 * x");
+    std::fs::write(dir.join("src/calc.rs"), &changed).unwrap();
     let g = graph(&dir);
     let t = why::find_tests(&g, "test_pick");
-    let w = why::why(&dir, &g, &t, std::time::Duration::from_secs(120));
+    let w = why::why(&dir, &g, &t, std::time::Duration::from_secs(300));
     assert!(w.failed(), "the test must fail: {}", why::render(&g, &dir, &w));
     let text = why::render(&g, &dir, &w);
     let p = w.proof.as_ref().unwrap_or_else(|| panic!("no proof: {text}"));
     let cause = p.cause.as_ref().unwrap_or_else(|| panic!("no cause: {text}"));
-    assert_eq!((cause.file.as_str(), cause.minus.clone(), cause.plus.clone()), ("pkg/calc.py", vec!["    return a > b".to_string()], vec!["    return a < b".to_string()]));
+    assert_eq!((cause.file.as_str(), cause.minus.clone(), cause.plus.clone()), ("src/calc.rs", vec!["    a > b".to_string()], vec!["    a < b".to_string()]));
     // bigger is the most suspect: the first change tried is the cause
     assert_eq!((p.changes, p.tried), (2, 1), "{text}");
-    assert!(text.contains("Undoing the change in `bigger` (pkg/calc.py:2) makes the test pass"), "{text}");
-    assert!(text.contains("  - return a > b\n  + return a < b\n"), "{text}");
+    assert!(text.contains("Undoing the change in `bigger` (src/calc.rs:2) makes the test pass"), "{text}");
+    assert!(text.contains("  - a > b\n  + a < b\n"), "{text}");
     assert!(text.contains("the other change since then is not the cause of this failure — keep it."), "{text}");
     // one line that stands in one place: it is put back by itself
-    assert!(text.contains("next: `gitnext edit replace \"return a < b\"` with \"return a > b\" as the code"), "{text}");
-    assert_eq!(p.fixed.as_deref(), Some("def bigger(a, b):\n    return a > b"));
+    assert!(text.contains("next: `gitnext edit replace \"a < b\"` with \"a > b\" as the code"), "{text}");
+    assert_eq!(p.fixed.as_deref(), Some("pub fn bigger(a: i32, b: i32) -> bool {\n    a > b\n}"));
     // the files are as they were, and nothing is left behind
-    assert_eq!(std::fs::read_to_string(dir.join("pkg/calc.py")).unwrap(), changed);
+    assert_eq!(std::fs::read_to_string(dir.join("src/calc.rs")).unwrap(), changed);
     assert!(!std::fs::read_dir(dir.join(".gitnext")).unwrap().flatten().any(|e| e.file_name().to_string_lossy().starts_with("prove-")));
     // the tools' wording of the next step
     let tools = why::Next { replace: "replace(symbol=\"{}\", code=<the whole corrected function>)", check: "check() with no arguments", line: "replace(symbol={line}, code={was})" };
-    assert!(why::render_for(&g, &dir, &w, &tools).contains("next: replace(symbol=\"return a < b\", code=\"return a > b\") — puts the line back as it was; then check() with no arguments."));
+    assert!(why::render_for(&g, &dir, &w, &tools).contains("next: replace(symbol=\"a < b\", code=\"a > b\") — puts the line back as it was; then check() with no arguments."));
     let _ = std::fs::remove_dir_all(&dir);
 }
 
@@ -112,5 +117,16 @@ fn a_change_left_undone_by_a_killed_why_is_put_back() {
     std::fs::write(note.join("wrote"), "x = 9\n").unwrap();
     assert!(prove::recover(&dir).is_empty());
     assert_eq!(std::fs::read_to_string(dir.join("a.py")).unwrap(), "x = 2\n");
+    let _ = std::fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn a_test_command_that_did_not_run_is_not_a_reason_to_undo_anything() {
+    let dir = project("norunner", &[("a.py", "def f():\n    return 1\n")]);
+    let g = graph(&dir);
+    // what `sh` says when the runner is not installed: no failing test, no error in the code
+    let step = gitnext_ops::check::run(&dir, &g, "tests", "echo 'sh: pytest: command not found'; exit 127", std::time::Duration::from_secs(10));
+    assert!(!step.ok && step.digest.failures.is_empty());
+    assert!(prove::prove(&dir, &g, "HEAD", &[&step], &[], std::time::Duration::from_secs(10)).is_none());
     let _ = std::fs::remove_dir_all(&dir);
 }

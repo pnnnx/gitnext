@@ -18,3 +18,15 @@ keywords:
   - tree-sitter
   - evaluation
   - small language models
+references:
+  - type: article
+    title: "Code Navigation Tools for Local LLM Agents: Five Model Families, and a Proven Cause That Doubles Bug Fixes"
+    authors:
+      - family-names: Kononenko
+        given-names: Leonid A.
+        orcid: "https://orcid.org/0009-0009-8407-9214"
+    year: 2026
+    publisher:
+      name: Zenodo
+    doi: 10.5281/zenodo.24406286
+    notes: Preprint. The evaluation of gitnext across five model families and of the bug-fix hint.

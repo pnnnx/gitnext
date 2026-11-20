@@ -9,6 +9,7 @@
   <a href="https://github.com/pnnnx/gitnext/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/pnnnx/gitnext/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <a href="https://zenodo.org/badge/latestdoi/1453025544"><img alt="DOI" src="https://zenodo.org/badge/1453025544.svg"></a>
+  <a href="https://doi.org/10.5281/zenodo.24406286"><img alt="Preprint" src="https://img.shields.io/badge/preprint-10.5281%2Fzenodo.24406286-1f6feb.svg"></a>
   <img alt="Rust" src="https://img.shields.io/badge/written%20in-Rust-orange.svg">
 </p>
 
@@ -24,7 +25,7 @@ gitnext — спутник git (`gitnext` = `git` + индекс кода). Он
 
 ## Результаты
 
-Всё здесь измерено на чужом коде — десять открытых проектов на пяти языках — и судят компиляторы и тесты самих проектов. Как получена каждая цифра и какая её часть — шум: [eval/results/HISTORY.md](eval/results/HISTORY.md).
+Всё здесь измерено на чужом коде — десять открытых проектов на пяти языках — и судят компиляторы и тесты самих проектов. Как получена каждая цифра и какая её часть — шум: [eval/results/HISTORY.md](eval/results/HISTORY.md). Статья о моделях разных семейств и подсказке при починке ошибки: [препринт, doi:10.5281/zenodo.24406286](https://doi.org/10.5281/zenodo.24406286).
 
 ### Агент доходит до ответа за треть шагов
 
@@ -84,7 +85,7 @@ gitnext — спутник git (`gitnext` = `git` + индекс кода). Он
 
 ### Что проверено и что пока плохо
 
-- 152 модульных теста; вывод парсеров закреплён эталонами на восьми языках; каждая команда и каждый MCP-инструмент — всего 86 — запускаются на каждом из десяти проектов (860 вызовов, ни один не падает). Чем проверена каждая функция: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
+- 153 модульных теста; вывод парсеров закреплён эталонами на восьми языках; каждая команда и каждый MCP-инструмент — всего 86 — запускаются на каждом из десяти проектов (860 вызовов, ни один не падает). Чем проверена каждая функция: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
 - Карте покрытия для Java нужны Maven и тесты, которые идут через JUnit Platform (JUnit 5 или JUnit 4 под surefire 3.6 и новее); Gradle пока не поддержан. Для JS / TS нужен vitest.
 - Переименование ломает сборку или тесты в 9% случаев — в основном динамический доступ и одинаковые имена у несвязанных типов.
 - Малые модели редко чинят подсаженную ошибку сами: в лучшем случае 6 из 18 у 4B и у 9B, и 7–16 из 30 у четырёх других семейств с пятью инструментами. Если сказать, какое изменение сломало тест (выше), Gemma 4 12B чинит 46 из 53. С полным набором инструментов они не начинают с `check <тест>` (модель 9B — ни разу за 18 заданий): им нужен короткий набор.
@@ -205,6 +206,21 @@ gitnext branches          # насколько ветки впереди/поз�
 | [lazygit](https://github.com/jesseduffield/lazygit), [GitButler](https://gitbutler.com) | удобный git-интерфейс | TUI показывает код по функциям и связям, а не только файлы и куски diff |
 
 Чего нет у других: точность, проверенная компиляторами и тестами на десяти проектах, и эффект на настоящем агенте — в том числе на локальной модели на 4B ([eval](eval), [integrations/ab](integrations/ab), [integrations/loca](integrations/loca)).
+
+## Как цитировать
+
+Программа: каждый релиз сохраняется на Zenodo — значок DOI вверху ведёт на последний (0.3.2: [doi:10.5281/zenodo.24406143](https://doi.org/10.5281/zenodo.24406143)); подробности — в [CITATION.cff](CITATION.cff), по нему GitHub показывает «Cite this repository». Замер пяти инструментов на моделях разных семейств и подсказки при починке ошибки:
+
+```bibtex
+@misc{kononenko2026gitnext,
+  author    = {Kononenko, Leonid A.},
+  title     = {Code Navigation Tools for Local {LLM} Agents: Five Model Families, and a Proven Cause That Doubles Bug Fixes},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.24406286},
+  note      = {Preprint}
+}
+```
 
 ## Лицензия
 

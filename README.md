@@ -9,6 +9,7 @@
   <a href="https://github.com/pnnnx/gitnext/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/pnnnx/gitnext/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <a href="https://zenodo.org/badge/latestdoi/1453025544"><img alt="DOI" src="https://zenodo.org/badge/1453025544.svg"></a>
+  <a href="https://doi.org/10.5281/zenodo.24406286"><img alt="Preprint" src="https://img.shields.io/badge/preprint-10.5281%2Fzenodo.24406286-1f6feb.svg"></a>
   <img alt="Rust" src="https://img.shields.io/badge/written%20in-Rust-orange.svg">
 </p>
 
@@ -23,7 +24,7 @@ The repository stays plain git — GitHub, CI and your other tools keep working.
 
 ## Results
 
-Everything here is measured on other people's code — ten open-source projects in five languages — and judged by their own compilers and test suites. How each number is obtained and how much of it is noise: [eval/results/HISTORY.md](eval/results/HISTORY.md).
+Everything here is measured on other people's code — ten open-source projects in five languages — and judged by their own compilers and test suites. How each number is obtained and how much of it is noise: [eval/results/HISTORY.md](eval/results/HISTORY.md). The paper on the model families and the bug-fix hint: [preprint, doi:10.5281/zenodo.24406286](https://doi.org/10.5281/zenodo.24406286).
 
 ### Agents get there in a third of the steps
 
@@ -83,7 +84,7 @@ Most of an agent session is the system prompt re-sent on every step, so the win 
 
 ### What is checked, and what is not good yet
 
-- 152 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
+- 153 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
 - The coverage map for Java needs Maven and tests that run on the JUnit Platform (JUnit 5, or JUnit 4 under surefire 3.6 and newer); Gradle is not learned. For JS / TS it needs vitest.
 - A rename breaks the build or the tests in 9% of cases — mostly dynamic access and names shared by unrelated types.
 - Small models rarely fix a seeded bug on their own: 6 of 18 at best for the 4B and the 9B model, and 7–16 of 30 for the four other families with the five tools. Told which change broke the test (above), Gemma 4 12B fixes 46 of 53. With the full tool list they do not start from `check <test>` (the 9B model never did in 18 tasks) — give them the short list.
@@ -180,6 +181,21 @@ Each piece exists elsewhere; gitnext puts them in one tool and measures the effe
 | [lazygit](https://github.com/jesseduffield/lazygit), [GitButler](https://gitbutler.com) | friendly git UIs | the TUI shows code by function and relation, not only files and hunks |
 
 What we can show that others do not: accuracy against compilers and tests on ten projects, and the effect on a real agent — including a 4B local model ([eval](eval), [integrations/ab](integrations/ab), [integrations/loca](integrations/loca)).
+
+## Citing
+
+The software: every release is archived on Zenodo — the DOI badge above points to the latest (0.3.2: [doi:10.5281/zenodo.24406143](https://doi.org/10.5281/zenodo.24406143)); [CITATION.cff](CITATION.cff) gives the details, and GitHub's "Cite this repository" uses it. The evaluation of the five tools across model families and of the bug-fix hint:
+
+```bibtex
+@misc{kononenko2026gitnext,
+  author    = {Kononenko, Leonid A.},
+  title     = {Code Navigation Tools for Local {LLM} Agents: Five Model Families, and a Proven Cause That Doubles Bug Fixes},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.24406286},
+  note      = {Preprint}
+}
+```
 
 ## License
 
