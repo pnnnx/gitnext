@@ -33,11 +33,13 @@ Three local models (Qwen 3.5 4B, 9B and 27B), the same 72 tasks each way — fin
 
 ### Not only Qwen: four other model families
 
-<p align="center"><img src="docs/images/families.svg" width="900" alt="Tasks solved with plain tools and with the five gitnext tools: Gemma 4 12B 55 and 84 of 120, gpt-oss-20b 48 and 77, Ministral 3 14B 51 and 85, Granite 4.1 8B 38 and 85, Qwen 3.5 9B 47 and 53 of 72"></p>
+<p align="center"><img src="docs/images/families.svg" width="900" alt="Tasks solved with plain tools and with the five gitnext tools: Gemma 4 12B 55 and 84 of 120, gpt-oss-20b 48 and 77, Ministral 3 14B 51 and 85, Granite 4.1 8B 38 and 85, the four together 192 and 331 of 480, Qwen 3.5 9B 47 and 53 of 72"></p>
 
 The same harness, the same gitnext build and the same tasks with models of four other makers — Gemma 4 12B (Google), gpt-oss-20b (OpenAI), Ministral 3 14B (Mistral AI) and Granite 4.1 8B (IBM), 120 tasks each (the 72 above and 48 new ones), 4-bit, on two T4 cards. With the five gitnext tools the four solve 331 of 480 tasks against 192 with plain tools: 69% against 40%, +29 points (the 95% interval is +23 to +35), and each model gains on its own (p < 0.001 for each). Without gitnext the models lie 14 points apart (32–46%), with it 7 points (64–71%). Listing the callers gains most (26 → 99 of 120); fixing a seeded bug stays the weak kind (16 → 40). Qwen 3.5 9B, run again on its 72 tasks as an anchor, solved 47 and 53 (44 and 51 the first time); a single task came out the same in 85% and 92% of cases. Details: [eval/results/HISTORY.md](eval/results/HISTORY.md) (run 10); every run: [eval/results/kaggle-families-20261120](eval/results/kaggle-families-20261120).
 
 ### Fixing a bug: prove which change broke the test
+
+<p align="center"><img src="docs/images/fix-variants.svg" width="900" alt="Seeded bugs fixed by Gemma 4 12B: 49 of 102 when shown what changed, 91 of 102 when told which change is the cause, 87 of 102 with the proof shortened and two tries"></p>
 
 When a test fails, the harness can do more than show what changed since the tests last passed: it undoes each of those changes on its own and runs the failing test, and the model is told which change makes it pass again (`eval/agent.py --modes prove`). Gemma 4 12B, the same 102 tasks each way — a seeded bug alone (fix), or the bug committed together with two changes that are meant and must stay (regress), on the six projects:
 
