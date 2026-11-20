@@ -1,0 +1,139 @@
+[
+ {
+  "passed": false,
+  "error": "HTTP Error 500: Internal Server Error",
+  "repo": "sqlparse",
+  "task": "find",
+  "target": "sqlparse::lexer::Lexer::set_SQL_REGEX",
+  "mode": "base",
+  "repeat": 0,
+  "seconds": 4
+ },
+ {
+  "tokens_in": 1929,
+  "tokens_out": 84,
+  "steps": 1,
+  "tools": {
+   "look": 1
+  },
+  "answer": "sqlparse/lexer.py",
+  "guard": {},
+  "gate": {
+   "nochange": 1
+  },
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "find",
+  "target": "sqlparse::lexer::Lexer::set_SQL_REGEX",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 3
+ },
+ {
+  "tokens_in": 11476,
+  "tokens_out": 1150,
+  "steps": 7,
+  "tools": {
+   "grep": 2,
+   "read_file": 4,
+   "finish": 1
+  },
+  "answer": "insert_before\ninsert_after\ngroup_where\ngroup_aliased\n_process_default\nReindent.process",
+  "guard": {},
+  "recall": 0.6666666666666666,
+  "passed": false,
+  "repo": "sqlparse",
+  "task": "callers",
+  "target": "sqlparse::sql::TokenList::token_index",
+  "mode": "base",
+  "repeat": 0,
+  "seconds": 29
+ },
+ {
+  "tokens_in": 5979,
+  "tokens_out": 254,
+  "steps": 3,
+  "tools": {
+   "look": 3
+  },
+  "answer": "group_where\nAlignedIndentFilter::_process_default\nReindentFilter::_process_identifierlist\ninsert_before\ninsert_after\nget_type",
+  "guard": {},
+  "gate": {
+   "nochange": 1
+  },
+  "recall": 1.0,
+  "passed": true,
+  "repo": "sqlparse",
+  "task": "callers",
+  "target": "sqlparse::sql::TokenList::token_index",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 8
+ },
+ {
+  "tokens_in": 57635,
+  "tokens_out": 1588,
+  "steps": 21,
+  "tools": {
+   "list_dir": 1,
+   "grep": 4,
+   "edit_file": 14,
+   "read_file": 2
+  },
+  "answer": "I couldn't complete all replacements within the step limit.",
+  "guard": {
+   "repeats": 5,
+   "soft_budget": 1
+  },
+  "left": "examples/extract_table_names.py:47:                yield identifier.get_name()\nexamples/extract_table_names.py:49:            yield item.get_name()\nsqlparse/sql.py:408:                return token.get",
+  "passed": false,
+  "repo": "sqlparse",
+  "task": "rename",
+  "target": "sqlparse::sql::TokenList::get_name",
+  "mode": "base",
+  "repeat": 0,
+  "seconds": 45
+ },
+ {
+  "passed": false,
+  "error": "HTTP Error 500: Internal Server Error",
+  "repo": "sqlparse",
+  "task": "rename",
+  "target": "sqlparse::sql::TokenList::get_name",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 10
+ },
+ {
+  "tokens_in": 20429,
+  "tokens_out": 1645,
+  "steps": 10,
+  "tools": {
+   "grep": 2,
+   "read_file": 2,
+   "edit_file": 5,
+   "finish": 1
+  },
+  "answer": "Implemented correct compact logic in ReindentFilter's case handling, ensuring line breaks are suppressed when compact mode is enabled and the condition fits within wrap limits.",
+  "guard": {
+   "seesaw": 1
+  },
+  "passed": false,
+  "repo": "sqlparse",
+  "task": "fix",
+  "target": "sqlparse::filters::reindent::ReindentFilter::_process_case",
+  "mode": "base",
+  "repeat": 0,
+  "seconds": 46
+ },
+ {
+  "passed": false,
+  "error": "HTTP Error 500: Internal Server Error",
+  "repo": "sqlparse",
+  "task": "fix",
+  "target": "sqlparse::filters::reindent::ReindentFilter::_process_case",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 165
+ }
+]

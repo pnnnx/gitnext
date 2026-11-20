@@ -1,0 +1,148 @@
+[
+ {
+  "tokens_in": 16745,
+  "tokens_out": 401,
+  "steps": 7,
+  "tools": {
+   "grep": 5,
+   "read_file": 2
+  },
+  "answer": "tree.go",
+  "guard": {},
+  "passed": true,
+  "repo": "chi",
+  "task": "find",
+  "target": "main::endpoints::Value",
+  "mode": "base",
+  "repeat": 0,
+  "seconds": 13
+ },
+ {
+  "tokens_in": 2083,
+  "tokens_out": 88,
+  "steps": 1,
+  "tools": {
+   "look": 1
+  },
+  "answer": "src/tree.go",
+  "guard": {},
+  "gate": {
+   "nochange": 1
+  },
+  "passed": true,
+  "repo": "chi",
+  "task": "find",
+  "target": "main::endpoints::Value",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 3
+ },
+ {
+  "tokens_in": 11243,
+  "tokens_out": 216,
+  "steps": 5,
+  "tools": {
+   "grep": 3,
+   "read_file": 2
+  },
+  "answer": "Recoverer\n\n",
+  "guard": {},
+  "recall": 1.0,
+  "passed": true,
+  "repo": "chi",
+  "task": "callers",
+  "target": "middleware::GetLogEntry",
+  "mode": "base",
+  "repeat": 0,
+  "seconds": 10
+ },
+ {
+  "tokens_in": 6396,
+  "tokens_out": 259,
+  "steps": 4,
+  "tools": {
+   "look": 4
+  },
+  "answer": "Recoverer",
+  "guard": {
+   "repeats": 1
+  },
+  "gate": {
+   "nochange": 1
+  },
+  "recall": 1.0,
+  "passed": true,
+  "repo": "chi",
+  "task": "callers",
+  "target": "middleware::GetLogEntry",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 8
+ },
+ {
+  "passed": false,
+  "error": "HTTP Error 500: Internal Server Error",
+  "repo": "chi",
+  "task": "rename",
+  "target": "_examples::rest::NewUserPayloadResponse",
+  "mode": "base",
+  "repeat": 0,
+  "seconds": 13
+ },
+ {
+  "passed": false,
+  "error": "HTTP Error 500: Internal Server Error",
+  "repo": "chi",
+  "task": "rename",
+  "target": "_examples::rest::NewUserPayloadResponse",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 9
+ },
+ {
+  "tokens_in": 79764,
+  "tokens_out": 2951,
+  "steps": 21,
+  "tools": {
+   "run": 4,
+   "list_dir": 2,
+   "read_file": 7,
+   "grep": 1,
+   "edit_file": 7
+  },
+  "answer": "I couldn't resolve the issue within the remaining steps.",
+  "guard": {
+   "repeats": 4,
+   "no_progress": 1,
+   "soft_budget": 1
+  },
+  "passed": false,
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::node::findPattern",
+  "mode": "base",
+  "repeat": 0,
+  "seconds": 85
+ },
+ {
+  "tokens_in": 21678,
+  "tokens_out": 1334,
+  "steps": 8,
+  "tools": {
+   "check": 3,
+   "replace": 3,
+   "look": 2
+  },
+  "answer": "I couldn't resolve the issue within the constraints.",
+  "guard": {
+   "repeats": 3
+  },
+  "passed": true,
+  "repo": "chi",
+  "task": "fix",
+  "target": "main::node::findPattern",
+  "mode": "lite",
+  "repeat": 0,
+  "seconds": 67
+ }
+]

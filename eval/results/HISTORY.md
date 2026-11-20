@@ -5,6 +5,44 @@ Runs 1–5: five repos (one per language), one sample (seed 7, 8 functions, 4 mu
 From run 6 on: ten repos, 20 functions and 8 mutants per repo, three seeds, and a threshold next to every number.
 Since the run after run 4, a rename only counts as ok if the project's tests still pass too.
 
+## Run 10 · the same tasks with models of four other families
+
+The agent results of the preprint come from one family (Qwen 3.5). Here the same harness, the same build and the
+same tasks are given to models of four other makers. Everything but the models is as in the three-model experiment
+below: gitnext 0.3.0 with the patch of that run (sha256 fd44a28b…), `eval/agent.py` of that build, llama.cpp 5676dfb
+(built without the server's web UI), context 16384, KV cache q8_0, temperature 0.2, 25 steps, 20 minutes; the six
+projects; find, who calls, fix, rename; five task sets drawn with seed 11 (sets 0–2 are the 72 tasks of that
+experiment, sets 3–4 are new). Two modes: plain tools (base) and the five tools (lite). One model per T4, two at a
+time, set after set; 7.7 hours, 1104 runs. Notebook `gitnext-kaggle-families-v2.ipynb`; every run:
+[kaggle-families-20261120](kaggle-families-20261120) (`report.md` is the notebook's own summary).
+
+| model (Q4_K_M; gpt-oss MXFP4) | family | tasks | base → lite | gained / lost | p (sign) | median steps | input tokens, k |
+|---|---|---|---|---|---|---|---|
+| Gemma 4 12B | Google | 120 | 55 → 84 | 31 / 2 | <0.001 | 13 → 5 | 80.8 → 35.7 |
+| gpt-oss-20b (reasoning low) | OpenAI | 120 | 48 → 77 | 39 / 10 | <0.001 | 7 → 5 | 18.4 → 25.9 |
+| Ministral 3 14B | Mistral AI | 120 | 51 → 85 | 39 / 5 | <0.001 | 4 → 2 | 7.8 → 3.7 |
+| Granite 4.1 8B | IBM | 120 | 38 → 85 | 47 / 0 | <0.001 | 5 → 3 | 16.5 → 22.2 |
+| Qwen 3.5 9B, again (anchor) | Qwen | 72 | 47 → 53 | 10 / 4 | 0.18 | 10 → 4 | 52.7 → 39.5 |
+
+By kind, the four new models together (of 120): find 106 → 118, who calls 26 → 99, fix 16 → 40, rename 44 → 74.
+By language (of 160): Python 68 → 111, Rust 67 → 118, Go 57 → 102.
+
+- **Every family gains, each on its own:** the four together 192 → 331 of 480 (40.0% → 69.0%), +29.0 points, the 95%
+  interval +22.9 to +35.0 (bootstrap over tasks), p < 0.001 (sign-flip permutation over tasks). The lite gate sent
+  back 9 fix and rename runs (no change made, or a change that failed the check) that then passed; counted as
+  failures, +27.1 points (+21.2 to +33.3).
+- **The tools bring the models together:** 32–46% solved with plain tools, 64–71% with the five.
+- **Who calls** carries most of it: Granite's plain tools never return a full list (0 of 30), with the five tools 25.
+- **Steps fall for every model; input tokens fall only for Gemma and Ministral** — gpt-oss and Granite keep short
+  plain conversations, and `look` answers at length.
+- **Fixing a bug stays the weak kind** (13% → 33%). In lite a third of the fix runs of Gemma (10 of 30) and Granite
+  (9 of 30) end at 25 steps; Ministral often answers a fix without a single call. Cobra's fix tasks cannot pass this
+  judge in any mode (the test that fails as root).
+- **gpt-oss-20b does not gain on rename** (7 → 8 of 30) — its traces are to be read.
+- **The anchor:** Qwen 3.5 9B on the 72 tasks of the earlier run: 47 and 53 (then 44 and 51); a single task came out
+  the same in 61 of 72 (base) and 66 of 72 (lite), and the gain repeated (+6, then +7). All 720 runs of sets 0–2 got
+  the same task (the same target) as that run.
+
 ## Run 9 · baselines and projects held out from tuning
 
 A review of the write-up asked three things the earlier runs did not answer: what a plain search for the name gives on

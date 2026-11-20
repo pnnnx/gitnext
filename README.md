@@ -31,6 +31,12 @@ Everything here is measured on other people's code — ten open-source projects 
 
 Three local models (Qwen 3.5 4B, 9B and 27B), the same 72 tasks each way — find a function, list its callers, rename it, fix a seeded bug — on six projects in Python, Rust and Go, judged by the projects' own compilers and tests. With the five gitnext tools (`gitnext mcp --profile lite`) they solve 163 of 216 tasks against 144 with plain read / grep / edit / run (+9 points; the 95% interval is +1 to +17), in a median of 3–4 steps instead of 9–10, and the 27B model sends 2.4 times fewer tokens. The clear gain is a bug fixed by the larger model: 14 of 18 against 7, never the other way round. For one model alone the difference in solved tasks is inside the noise, and an earlier 24-task run that showed 4 against 15 for the 4B model did not repeat: with today's harness the plain model solves 19 of those 24. On a large project (Prometheus, 406 thousand lines of Go; the 4B and 27B models, 36 tasks each way, no bug fixes) the gain is larger: 62 of 72 tasks against 49 (+18 points, the 95% interval is +7 to +31), for a third of the tokens.
 
+### Not only Qwen: four other model families
+
+<p align="center"><img src="docs/images/families.svg" width="900" alt="Tasks solved with plain tools and with the five gitnext tools: Gemma 4 12B 55 and 84 of 120, gpt-oss-20b 48 and 77, Ministral 3 14B 51 and 85, Granite 4.1 8B 38 and 85, Qwen 3.5 9B 47 and 53 of 72"></p>
+
+The same harness, the same gitnext build and the same tasks with models of four other makers — Gemma 4 12B (Google), gpt-oss-20b (OpenAI), Ministral 3 14B (Mistral AI) and Granite 4.1 8B (IBM), 120 tasks each (the 72 above and 48 new ones), 4-bit, on two T4 cards. With the five gitnext tools the four solve 331 of 480 tasks against 192 with plain tools: 69% against 40%, +29 points (the 95% interval is +23 to +35), and each model gains on its own (p < 0.001 for each). Without gitnext the models lie 14 points apart (32–46%), with it 7 points (64–71%). Listing the callers gains most (26 → 99 of 120); fixing a seeded bug stays the weak kind (16 → 40). Qwen 3.5 9B, run again on its 72 tasks as an anchor, solved 47 and 53 (44 and 51 the first time); a single task came out the same in 85% and 92% of cases. Details: [eval/results/HISTORY.md](eval/results/HISTORY.md) (run 10); every run: [eval/results/kaggle-families-20261120](eval/results/kaggle-families-20261120).
+
 ### A failing test leads to the function at fault
 
 <p align="center"><img src="docs/images/why.svg" width="900" alt="Share of seeded bugs where gitnext why names the function at fault first: 18% from the call graph, 86% with the learned coverage map"></p>
@@ -66,7 +72,7 @@ Most of an agent session is the system prompt re-sent on every step, so the win 
 - 149 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
 - The coverage map for Java needs Maven and tests that run on the JUnit Platform (JUnit 5, or JUnit 4 under surefire 3.6 and newer); Gradle is not learned. For JS / TS it needs vitest.
 - A rename breaks the build or the tests in 9% of cases — mostly dynamic access and names shared by unrelated types.
-- Small models rarely fix a seeded bug: 6 of 18 at best for the 4B and the 9B model. With the full tool list they do not start from `check <test>` (the 9B model never did in 18 tasks) — give them the short list.
+- Small models rarely fix a seeded bug: 6 of 18 at best for the 4B and the 9B model, and 7–16 of 30 for the four other families with the five tools. With the full tool list they do not start from `check <test>` (the 9B model never did in 18 tasks) — give them the short list.
 - A rename done with the tool passed the judge no more often than one done by hand (12–13 of 18 against 14): names that are also common words, and mentions in documentation — the latter are renamed now.
 
 ## Install
