@@ -106,7 +106,7 @@ fn tools() -> Value {
              json!({ "text": { "type": "string" } }), &["text"]),
         tool("check", "A test fails: call this first with test = its name — the same as `why`. After a change: call it with no arguments — builds the project and runs the tests of what changed, answers with a verdict (ok / what failed, where, the message).",
              json!({ "test": { "type": "string", "description": "a failing test to explain instead of checking the change" } }), &[]),
-        tool("why", "A test fails: runs it and returns the failure in a few lines (what, where, the message) and the code the test reaches, most likely culprit first, with the code of the top ones. Use this first when told that a test fails.",
+        tool("why", "A test fails: runs it and returns the failure in a few lines (what, where, the message) and the code the test reaches, most likely culprit first, with the code of the top ones; when the code changed since the tests last passed (`learn-tests`), which change breaks the test, proven by undoing each one. Use this first when told that a test fails.",
              json!({ "test": { "type": "string", "description": "test name; `greater_than` finds `test_greater_than`" } }), &["test"]),
         tool("tests_for", "Tests that exercise a symbol: the 10 most likely to fail if it breaks (direct calls and tests named after it first) with the exact command to run them, plus one command for the whole test files.",
              json!({ "symbol": sym, "depth": { "type": "integer" }, "all": { "type": "boolean", "description": "name every test, not only the top 10" } }), &["symbol"]),
@@ -137,7 +137,7 @@ fn lite_tools() -> Value {
           "description": "Rename a function or class everywhere: definition, calls, imports, tests.",
           "inputSchema": { "type": "object", "properties": { "symbol": str_("current name"), "new_name": str_("new name") }, "required": ["symbol", "new_name"] } },
         { "name": "check",
-          "description": "A test fails: call this first with test = its name — it runs the test and shows the failure and the code to fix. After your change: call it with no arguments — says ok or what failed.",
+          "description": "A test fails: call this first with test = its name — it runs the test and shows the failure, which change broke it and the code to fix. After your change: call it with no arguments — says ok or what failed.",
           "inputSchema": { "type": "object", "properties": { "test": str_("the name of a failing test (optional)") } } },
     ])
 }
@@ -311,6 +311,7 @@ impl Server {
                 let next = gitnext_ops::why::Next {
                     replace: if self.profile == Profile::Lite { "replace(symbol=\"{}\", code=<the whole corrected function>)" } else { "replace_symbol(symbol=\"{}\", code=<the whole corrected function>)" },
                     check: "check() with no arguments",
+                    line: if self.profile == Profile::Lite { "replace(symbol={line}, code={was})" } else { "replace_symbol(symbol={line}, code={was})" },
                 };
                 gitnext_ops::why::render_for(g, &root, &gitnext_ops::why::why(&root, g, &ids, std::time::Duration::from_secs(600)), &next)
             }

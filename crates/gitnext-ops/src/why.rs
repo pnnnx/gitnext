@@ -49,6 +49,10 @@ pub struct Why {
     pub learned: bool,
     /// the commit the map was learned on, when it is known
     pub since: Option<String>,
+    /// which change since then makes the test fail, found by undoing each one (`prove`)
+    pub proof: Option<crate::prove::Proof>,
+    /// files a killed earlier `why` had left with a change undone, now put back
+    pub recovered: Vec<String>,
 }
 
 impl Why {
@@ -146,14 +150,23 @@ fn reached(g: &Graph, forward: &HashMap<usize, Vec<usize>>, tests: &[usize]) -> 
 
 /// Run the tests; when they fail, rank the code they reach.
 pub fn why(root: &Path, g: &Graph, tests: &[usize], timeout: Duration) -> Why {
+    let recovered = crate::prove::recover(root);
     let refs: Vec<TestRef> = tests.iter().map(|&t| TestRef { symbol: t, how: "asked".into() }).collect();
     let steps: Vec<Step> = check::test_commands(g, root, &refs).iter().map(|c| check::run(root, g, "tests", c, timeout)).collect();
-    explain(root, g, tests, steps)
+    let mut w = explain(root, g, tests, steps);
+    w.recovered = recovered;
+    // the test failed and the code changed since it last passed: which change is it
+    if let Some(since) = w.since.clone().filter(|_| w.failed() && w.learned) {
+        let failing: Vec<&Step> = w.steps.iter().filter(|s| !s.ok).collect();
+        let rank: Vec<usize> = w.suspects.iter().map(|x| x.symbol).collect();
+        w.proof = crate::prove::prove(root, g, &since, &failing, &rank, timeout);
+    }
+    w
 }
 
 /// The same from runs already made: which code to look at, given how the tests failed.
 pub fn explain(root: &Path, g: &Graph, tests: &[usize], steps: Vec<Step>) -> Why {
-    let mut w = Why { tests: tests.to_vec(), steps, suspects: Vec::new(), learned: false, since: None };
+    let mut w = Why { tests: tests.to_vec(), steps, suspects: Vec::new(), learned: false, since: None, proof: None, recovered: Vec::new() };
     if !w.failed() {
         return w;
     }
@@ -306,6 +319,11 @@ pub fn json(g: &Graph, w: &Why) -> serde_json::Value {
         "failed": w.failed(),
         "learned": w.learned,
         "failures": w.steps.iter().flat_map(|s| s.digest.failures.iter()).map(|f| serde_json::json!({ "what": f.what, "file": f.file, "line": f.line, "message": f.message, "count": f.count })).collect::<Vec<_>>(),
+        "proof": w.proof.as_ref().map(|p| serde_json::json!({
+            "since": p.since, "changes": p.changes, "tried": p.tried,
+            "cause": p.cause.as_ref().map(|h| serde_json::json!({ "file": h.file, "line": h.new, "was": h.minus, "now": h.plus })),
+            "symbol": p.symbol.map(|i| g.syms[i].sym.qualified.as_str()),
+        })),
         "suspects": w.suspects.iter().map(|x| {
             let r = &g.syms[x.symbol];
             serde_json::json!({ "symbol": r.sym.qualified, "file": r.file, "line": r.sym.start_line, "depth": x.depth, "overlap": x.overlap, "tests": x.tests, "named": x.in_failure.is_some(), "ran": x.ran, "changed": x.changed })
@@ -318,9 +336,12 @@ pub fn json(g: &Graph, w: &Why) -> serde_json::Value {
 pub struct Next<'a> {
     pub replace: &'a str,
     pub check: &'a str,
+    /// one line put back as it was: `{line}` is the line as it is now, `{was}` as it was (both quoted)
+    pub line: &'a str,
 }
 
-pub const CLI: Next<'static> = Next { replace: "`gitnext edit replace {}`", check: "`gitnext check`" };
+pub const CLI: Next<'static> =
+    Next { replace: "`gitnext edit replace {}`", check: "`gitnext check`", line: "`gitnext edit replace {line}` with {was} as the code" };
 
 pub fn render(g: &Graph, root: &Path, w: &Why) -> String {
     render_for(g, root, w, &CLI)
@@ -342,6 +363,9 @@ pub fn render_for(g: &Graph, root: &Path, w: &Why, next: &Next) -> String {
         return s;
     }
     let _ = writeln!(s, "why: {} — FAILS ({secs:.1}s)", names.join(", "));
+    if !w.recovered.is_empty() {
+        let _ = writeln!(s, "note: an earlier `why` was interrupted while it tried a change undone; your code is back in {}", w.recovered.join(", "));
+    }
     for st in w.steps.iter().filter(|x| !x.ok) {
         let _ = writeln!(s, "  {}", st.command);
         if st.timed_out {
@@ -419,6 +443,11 @@ pub fn render_for(g: &Graph, root: &Path, w: &Why, next: &Next) -> String {
         }
         let _ = writeln!(s, "```");
     }
+    if let Some(p) = &w.proof {
+        if render_proof(&mut s, g, root, w, p, next) {
+            return s;
+        }
+    }
     // the next step, spelled out: a small model that reads "the bug is in X" answers "the bug is in X" and stops
     let first = &g.syms[w.suspects[0].symbol];
     let name = g.short_name(w.suspects[0].symbol);
@@ -431,4 +460,59 @@ pub fn render_for(g: &Graph, root: &Path, w: &Why, next: &Next) -> String {
         next.check
     );
     s
+}
+
+/// A string as the next step quotes it: in double quotes, the way a tool call takes it.
+fn quoted(x: &str) -> String {
+    serde_json::to_string(x.trim()).unwrap_or_default()
+}
+
+/// The proof, after the rest of the answer. With a cause it also gives the next step and the
+/// function as it should be (true); without one it says so and the usual next step follows (false).
+fn render_proof(s: &mut String, g: &Graph, _root: &Path, w: &Why, p: &crate::prove::Proof, next: &Next) -> bool {
+    let test = w.tests.first().map(|&t| g.syms[t].sym.name.as_str()).unwrap_or("the test");
+    let since = &p.since[..p.since.len().min(8)];
+    let _ = writeln!(s);
+    let Some(h) = &p.cause else {
+        let _ = writeln!(
+            s,
+            "proof: {} since the tests last passed (commit {since}); undoing {} of them one at a time did not make `{test}` pass — the cause is not a single one of them.",
+            crate::changes::plural(p.changes, "change"),
+            if p.tried == p.changes { "each".to_string() } else { format!("the {} most suspect", p.tried) }
+        );
+        return false;
+    };
+    let place = match p.symbol {
+        Some(i) => format!("`{}` ({}:{})", g.short_name(i), h.file, h.new),
+        None => format!("{}:{}", h.file, h.new),
+    };
+    let _ = writeln!(s, "proof: gitnext undid the changes made since the tests last passed (commit {since}) one at a time and ran `{test}`.");
+    let _ = writeln!(s, "Undoing the change in {place} makes the test pass (- as it was, + as it is now):");
+    for l in h.minus.iter().take(CHANGED_LINES) {
+        let _ = writeln!(s, "  - {}", l.trim());
+    }
+    for l in h.plus.iter().take(CHANGED_LINES) {
+        let _ = writeln!(s, "  + {}", l.trim());
+    }
+    match p.changes {
+        0 | 1 => {}
+        2 => {
+            let _ = writeln!(s, "Undoing this one alone is enough: the other change since then is not the cause of this failure — keep it.");
+        }
+        n => {
+            let _ = writeln!(s, "Undoing this one alone is enough: the other {} changes since then are not the cause of this failure — keep them.", n - 1);
+        }
+    }
+    if p.unique_line {
+        let call = next.line.replace("{line}", &quoted(&h.plus[0])).replace("{was}", &quoted(&h.minus[0]));
+        let _ = writeln!(s, "next: {call} — puts the line back as it was; then {}.", next.check);
+        return true;
+    }
+    if let (Some(i), Some(fixed)) = (p.symbol, &p.fixed) {
+        let fence = gitnext_parse::lang_for(Path::new(&h.file)).map(|l| l.fence()).unwrap_or("");
+        let _ = writeln!(s, "The function as it should be:\n```{fence}\n{fixed}\n```");
+        let _ = writeln!(s, "next: put it back — {}; then {}.", next.replace.replace("{}", g.short_name(i)), next.check);
+        return true;
+    }
+    false
 }

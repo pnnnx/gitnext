@@ -9,6 +9,8 @@ authors:
     affiliation: Independent researcher
 repository-code: "https://github.com/pnnnx/gitnext"
 license: MIT
+version: 0.3.2
+date-released: "2026-11-20"
 keywords:
   - AI agents
   - code navigation

@@ -1,7 +1,16 @@
 # Changelog
 
-## Unreleased
+## 0.3.2 — 2026-11-20
 
+- **`why <test>` and `check <test>` prove which change broke the test.** When the code changed since the tests
+  last passed (the commit `learn-tests` ran on), each change is undone on its own, the most suspect first (at
+  most six, five minutes in all), and the failing test is run again. The change whose undoing alone makes it pass
+  is named, as it was and as it is now, with the function as it should be and the call that puts it back; the
+  other changes are said not to be the cause, so they stay. In the agent runs this hint took Gemma 4 12B from
+  49 to 91 of 102 seeded bugs fixed, the same tasks either way (+41 points, the 95% interval +30 to +52), for
+  the same tokens; Gemma 4 31B solves them either way (`eval/results/HISTORY.md`, run 11). Every file is put
+  back after each run; what a run is about to change is written to `.gitnext/prove-<pid>/` first, and the next
+  `why` puts back what a killed one left. `GITNEXT_PROVE=0` switches it off, `GITNEXT_PROVE_SECONDS` sets the time.
 - **`gitnext learn-tests` for Java** (Maven; JUnit 5, and JUnit 4 under surefire 3.6 and newer): one test run with
   the JaCoCo agent, its data taken around every test, so `tests-for`, `look`, `check` and `why` name the tests
   that really run a method — 99% and 94% of the failing ones on JSON-java and jsoup (the call graph: 71% and
@@ -23,6 +32,10 @@
   that place is replaced; text in several places is answered with the places and the functions they are in.
 - **A quarter less time per command on a very large repository** (Kubernetes, 5.6M lines: seven commands took
   22.4 s, now 16.9 s): the graph is read on two threads and is not taken apart when the command ends.
+- eval: models of four other families (Gemma 4 12B, gpt-oss-20b, Ministral 3 14B, Granite 4.1 8B), 120 tasks each:
+  331 of 480 solved with the five tools against 192 with plain tools (run 10). Fixing a bug: modes `prove`, `try`
+  and `combo` of `eval/agent.py` and a new kind of task, `regress` (the bug committed with two meant changes that
+  must stay), compared on the same tasks (run 11); `prove` is what helped and is now in `why` itself.
 
 ## 0.3.1 — 2026-11-13
 

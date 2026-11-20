@@ -295,8 +295,8 @@ def prove(root: Path, test: str, out: str) -> str:
     The change whose undoing alone makes it pass is the cause, shown with the one call that undoes it;
     the others are said to be not the cause."""
     base = learned_commit(root)
-    if " FAILS" not in out.split("\n", 1)[0]:
-        return out  # gitnext did not run the test (no test of that name): nothing to prove with
+    if " FAILS" not in out.split("\n", 1)[0] or "\nproof: " in out:
+        return out  # gitnext did not run the test, or (0.3.2 and newer) proved the cause itself
     hunks = changes_since(root, base)[:PROVE_MAX] if base else []
     if not hunks:
         return out

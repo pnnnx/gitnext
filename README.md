@@ -41,7 +41,7 @@ The same harness, the same gitnext build and the same tasks with models of four 
 
 <p align="center"><img src="docs/images/fix-variants.svg" width="900" alt="Seeded bugs fixed by Gemma 4 12B: 49 of 102 when shown what changed, 91 of 102 when told which change is the cause, 87 of 102 with the proof shortened and two tries"></p>
 
-When a test fails, the harness can do more than show what changed since the tests last passed: it undoes each of those changes on its own and runs the failing test, and the model is told which change makes it pass again (`eval/agent.py --modes prove`). Gemma 4 12B, the same 102 tasks each way — a seeded bug alone (fix), or the bug committed together with two changes that are meant and must stay (regress), on the six projects:
+When a test fails, gitnext can do more than show what changed since the tests last passed: it undoes each of those changes on its own and runs the failing test, and the model is told which change makes it pass again. It is not a sixth tool — the agent still has five, and `check <test>` (or `gitnext why <test>`) answers with the proof. Gemma 4 12B, the same 102 tasks each way — a seeded bug alone (fix), or the bug committed together with two changes that are meant and must stay (regress), on the six projects:
 
 | what the model gets | fix | regress | all |
 |---|---:|---:|---:|
@@ -49,13 +49,13 @@ When a test fails, the harness can do more than show what changed since the test
 | **the change proven to be the cause (V2, `prove`)** | 46 of 53 | **45 of 49** | **91 of 102 (89%)** |
 | the proof, shorter, plus two tries (V4, `combo`) | **49 of 53** | 38 of 49 | 87 of 102 (85%) |
 
-The proof turns 45 failures into fixes and 3 fixes into failures (+41 points, the 95% interval +30 to +52, p < 0.001), for the same tokens. Combining it with a shorter answer and a `try` tool that tests two versions of a fix does not help: −4 points against the proof alone (−12 to +4), worse on regress (2 gained, 9 lost), and the model never called `try`. Gemma 4 31B solves nearly every task either way (116 of 117), so the proof is not needed there and does not get in the way. For now the proof lives in the evaluation harness, not yet in `gitnext check`. Details: [eval/results/HISTORY.md](eval/results/HISTORY.md) (run 11); every run: [eval/results/kaggle-fix-variants-20261120](eval/results/kaggle-fix-variants-20261120).
+The proof turns 45 failures into fixes and 3 fixes into failures (+41 points, the 95% interval +30 to +52, p < 0.001), for the same tokens. Combining it with a shorter answer and a `try` tool that tests two versions of a fix does not help: −4 points against the proof alone (−12 to +4), worse on regress (2 gained, 9 lost), and the model never called `try`. Gemma 4 31B solves nearly every task either way (116 of 117), so the proof is not needed there and does not get in the way. The runs were made with the proof in the evaluation harness (`eval/agent.py --modes prove`); since 0.3.2 `why` and `check <test>` do it themselves (`GITNEXT_PROVE=0` switches it off). Details: [eval/results/HISTORY.md](eval/results/HISTORY.md) (run 11); every run: [eval/results/kaggle-fix-variants-20261120](eval/results/kaggle-fix-variants-20261120).
 
 ### A failing test leads to the function at fault
 
 <p align="center"><img src="docs/images/why.svg" width="900" alt="Share of seeded bugs where gitnext why names the function at fault first: 18% from the call graph, 86% with the learned coverage map"></p>
 
-`gitnext why <test>` runs the test and answers in a dozen lines: the failure itself, the code the test ran with the most likely culprit first, and the lines that changed since the tests last passed. `gitnext learn-tests` is one test run with coverage (Python, Go, Rust); a long build or test log goes through `gitnext digest` (a vitest run with 35 failures: 843 lines → 12).
+`gitnext why <test>` runs the test and answers in a dozen lines: the failure itself, the code the test ran with the most likely culprit first, and the lines that changed since the tests last passed — and which of those changes breaks the test, proven by undoing each one. `gitnext learn-tests` is one test run with coverage (Python, Go, Rust); a long build or test log goes through `gitnext digest` (a vitest run with 35 failures: 843 lines → 12).
 
 ### How accurate the code graph is
 
@@ -83,7 +83,7 @@ Most of an agent session is the system prompt re-sent on every step, so the win 
 
 ### What is checked, and what is not good yet
 
-- 149 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
+- 152 unit tests; parser output is pinned by fixtures in eight languages; every command and every MCP tool — 86 in all — is run on each of the ten projects (860 calls, none fails). What checks each function: [eval/results/COVERAGE.md](eval/results/COVERAGE.md).
 - The coverage map for Java needs Maven and tests that run on the JUnit Platform (JUnit 5, or JUnit 4 under surefire 3.6 and newer); Gradle is not learned. For JS / TS it needs vitest.
 - A rename breaks the build or the tests in 9% of cases — mostly dynamic access and names shared by unrelated types.
 - Small models rarely fix a seeded bug on their own: 6 of 18 at best for the 4B and the 9B model, and 7–16 of 30 for the four other families with the five tools. Told which change broke the test (above), Gemma 4 12B fixes 46 of 53. With the full tool list they do not start from `check <test>` (the 9B model never did in 18 tasks) — give them the short list.
@@ -119,7 +119,7 @@ gitnext             # open the TUI
 | what breaks, which tests to run | `gitnext impact <Sym>` · `gitnext tests-for <Sym>` (the 10 most likely to fail + one command for the rest) |
 | which tests really run a function | `gitnext learn-tests` — the tests run once with coverage (Python: pytest-cov; Go; Rust: `llvm-tools-preview`; JS / TS: vitest with `@vitest/coverage-v8`; Java: Maven with the JaCoCo agent); `tests-for`, `look`, `check` and `why` then use the real list |
 | did my change break anything | `gitnext check` — builds and runs the tests of what changed, prints a verdict; a test that fails without the change too is named as not caused by it (`gitnext rename A B --check` does it right after the rename) |
-| a test fails — why | `gitnext why <test>` / `check` with `test` — runs it: the failure in a few lines, the code the test ran with the most likely culprit first, the lines changed since the tests passed |
+| a test fails — why | `gitnext why <test>` / `check` with `test` — runs it: the failure in a few lines, the code the test ran with the most likely culprit first, the lines changed since the tests passed, and which change breaks the test (proven by undoing it) |
 | a long build or test log | `cargo test 2>&1 \| gitnext digest` — what failed, where, the message (a vitest run with 35 failures: 843 lines → 12) |
 | error or traceback → code | `gitnext locate` (stdin) / `locate` |
 | where were we | `gitnext brief` · `gitnext journal` |

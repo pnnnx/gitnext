@@ -103,7 +103,7 @@ fn second_of(t: std::time::SystemTime) -> u64 {
 /// Waits until the clock's second is past the last write of these files, and gives that second.
 /// Python keeps compiled code by the source's size and the second it was written in, other tools
 /// by the time alone: a file swapped within the same second would run as the old one.
-fn past_the_second_of(files: &[PathBuf]) -> u64 {
+pub(crate) fn past_the_second_of(files: &[PathBuf]) -> u64 {
     let last = files.iter().filter_map(|f| std::fs::metadata(f).and_then(|m| m.modified()).ok()).map(second_of).max().unwrap_or(0);
     let limit = Instant::now() + Duration::from_secs(3); // a file dated in the future is not waited for
     // the file system's clock runs a tick behind: a write just past the second is still dated in it
@@ -114,7 +114,7 @@ fn past_the_second_of(files: &[PathBuf]) -> u64 {
 }
 
 /// Writes the file so that it is dated in a later second than `after`.
-fn write_later(file: &Path, bytes: &[u8], after: u64) -> std::io::Result<()> {
+pub(crate) fn write_later(file: &Path, bytes: &[u8], after: u64) -> std::io::Result<()> {
     for _ in 0..50 {
         std::fs::write(file, bytes)?;
         if std::fs::metadata(file).and_then(|m| m.modified()).map(second_of).unwrap_or(u64::MAX) > after {

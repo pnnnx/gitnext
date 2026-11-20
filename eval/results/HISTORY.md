@@ -66,6 +66,10 @@ default) and the host ran out of it; the notebook's own report counted those run
   build (0.3.1), and cobra's fix tasks, which no mode could pass in run 10, pass here. Fix for Gemma 4 12B with V1
   is 28 of 53 here against 7 of 30 there.
 
+Since 0.3.2 the proof of V2 is part of gitnext: `why <test>` and the `check` tool with a test undo the changes
+since `learn-tests` one at a time, the most suspect first, and name the one that breaks the test, as in V2. The
+harness's `prove` mode leaves the answer as it is when gitnext has proved the cause itself.
+
 ## Run 10 · the same tasks with models of four other families
 
 The agent results of the preprint come from one family (Qwen 3.5). Here the same harness, the same build and the

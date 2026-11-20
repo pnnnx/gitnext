@@ -25,6 +25,7 @@ pub mod locate;
 pub mod look;
 pub mod lsp;
 pub mod oplog;
+pub mod prove;
 pub mod render;
 pub mod trust;
 pub mod why;

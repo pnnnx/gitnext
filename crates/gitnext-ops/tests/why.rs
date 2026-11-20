@@ -81,7 +81,7 @@ fn the_function_named_like_the_test_comes_first_with_its_code() {
         "{text}"
     );
     // an agent is told the same in the words of its own tools
-    let tools = why::Next { replace: "replace(symbol=\"{}\", code=<the whole corrected function>)", check: "check() with no arguments" };
+    let tools = why::Next { replace: "replace(symbol=\"{}\", code=<the whole corrected function>)", check: "check() with no arguments", line: "replace(symbol={line}, code={was})" };
     let text = why::render_for(&g, &dir, &w, &tools);
     assert!(text.ends_with("corrected one: replace(symbol=\"matches_greater\", code=<the whole corrected function>); then check() with no arguments.\n"), "{text}");
 }
